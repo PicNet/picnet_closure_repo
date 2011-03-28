@@ -1,0 +1,155 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="../../lib/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('goog.testing.AsyncTestCase');
+    </script>
+    <script>
+goog.require('picnet.data.LocalStorageRepository');
+goog.require('picnet.data.LocalDataProvider');
+
+
+var ldp;
+var type = 'LocalDataProviderTestType';	
+var types = [type];    
+
+var setUpPage = function() {  
+  ldp = new picnet.data.LocalDataProvider(new picnet.data.LocalStorageRepository('testdb'));    
+};
+
+var testGetEntities_InMemory = function() {		
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {      
+    ldp.updateLocalData(type, [{ID:1,Name:'Data 1'}, {ID:2,Name:'Data 2'}], function() {      
+      ldp.repository.getList(type, function(entities) {          
+        asyncTestCase.continueTesting();
+
+        assertEquals(2, entities.length);                
+        assertEquals(1, entities[0].ID);
+        assertEquals(2, entities[1].ID);
+        assertEquals('Data 1', entities[0].Name);
+        assertEquals('Data 2', entities[1].Name);
+      });    
+    });    
+  });    
+};  
+
+var testGetEntities_NotInMemory = function() {
+    asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.updateLocalData(type, [{ID:1,Name:'Data 1'}, {ID:2,Name:'Data 2'}], function() {
+      ldp.repository.getList('RandomType', function(entities) {
+                asyncTestCase.continueTesting();
+        assertEquals(0, entities.length);      
+      });    
+    });    
+  });
+};  
+
+var testSaveEntity_New = function() {    
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.saveEntity(type, {ID:1,Name:'Data 1'}, function (err) {
+      ldp.repository.getList(type, function(entities) {
+        asyncTestCase.continueTesting();
+        assertEquals(1, entities.length);
+        assertEquals(1, entities[0].ID);
+        assertEquals('Data 1', entities[0].Name);
+      });      
+    });    
+  });    
+};  
+
+var testSaveEntity_0IDEntity = function() {    
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.saveEntity(type, {ID:0,Name:'Data 0'}, function (err) {
+      ldp.repository.getList(type, function(entities) {
+        asyncTestCase.continueTesting();
+        assertEquals(1, entities.length);
+        assertTrue(entities[0].ID < 0); // NegativeID
+        assertEquals('Data 0', entities[0].Name);
+      });      
+    });    
+  });    
+};  
+
+var testSaveEntities_0IDEntity = function() {    
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.saveEntity(type, {ID:0,Name:'Data 0'}, function() {});
+    ldp.saveEntity(type, {ID:0,Name:'Data 1'}, function() {});
+    ldp.saveEntity(type, {ID:0,Name:'Data 2'}, function() {});
+    ldp.repository.getList(type, function(entities) {
+      asyncTestCase.continueTesting();
+      assertEquals(3, entities.length);
+      assertTrue(entities[0].ID < 0); // NegativeID
+      assertTrue(entities[1].ID < 0); // NegativeID
+      assertTrue(entities[2].ID < 0); // NegativeID
+
+      assertTrue(entities[0].ID !== entities[1].ID && entities[0].ID !== entities[2].ID && entities[1].ID != entities[2].ID);
+
+      assertEquals('Data 0', entities[0].Name);
+      assertEquals('Data 1', entities[1].Name);
+      assertEquals('Data 2', entities[2].Name);
+    });      
+  });    
+};  
+
+var testSaveEntity_Update = function() {    
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.updateLocalData(type, [{ID:1,Name:'Data 1'}, {ID:2,Name:'Data 2'}], function() {
+      ldp.saveEntity(type, {ID:1,Name:'Data 123'}, function (err) {
+        ldp.repository.getList(type, function(entities) {
+          asyncTestCase.continueTesting();
+          assertEquals(2, entities.length);
+          assertEquals(1, entities[0].ID);
+          assertEquals(2, entities[1].ID);
+          assertEquals('Data 123', entities[0].Name);
+          assertEquals('Data 2', entities[1].Name);
+        });      
+      });      
+    });    
+  });    
+};  
+
+
+var testDeleteEntity_InMainMemory = function() {
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {
+    ldp.updateLocalData(type, [{ID:1,Name:'Data 1'}, {ID:2,Name:'Data 2'}], function() {
+      ldp.deleteEntity(type, 1, function (err) {
+        ldp.repository.getList(type, function(entities) {
+          asyncTestCase.continueTesting();
+          assertEquals(1, entities.length);
+          assertEquals(2, entities[0].ID);
+        });        
+      });    
+    });    
+  });    
+};
+
+var testDeleteEntity_InLocalAndMainMemory = function() {
+  asyncTestCase.waitForAsync();
+  ldp.clearEntireDatabase(function() {            
+    ldp.saveEntity(type, {ID:1,Name:'Data 1'}, function (err) {});                
+    ldp.saveEntity(type, {ID:2,Name:'Data 2'}, function (err) {});            
+    ldp.deleteEntity(type, 1, function (err) {            
+      ldp.repository.getList(type, function(entities) {                
+        asyncTestCase.continueTesting();
+        assertEquals(1, entities.length);
+        assertEquals(2, entities[0].ID);
+      });
+    });    
+  });    
+};
+
+var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
+    </script>    
+  </body>
+</html>

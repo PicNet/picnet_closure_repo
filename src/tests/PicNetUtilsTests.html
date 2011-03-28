@@ -1,0 +1,42 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="../../lib/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('picnet.Utils');
+
+var setUp = function() {};
+
+var testSimpleJSONSerialise = function () {		
+  if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
+  var simpleObject = {'stringval':'stringvalue','numberval':10.1,'boolval':true,'objval':{'str':'string'}};
+
+  var jsonstr1 = JSON.stringify(simpleObject);
+  var jsonstr2 = picnet.Utils.serialiseJson(simpleObject);	
+  assertEquals(jsonstr1, jsonstr2);
+};
+
+var testComplexJSONSerialise = function () {			
+  if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
+  var complexObject = {'stringval':'stringvalue','dateval':new Date()};
+
+  var jsonstr1 = JSON.stringify(complexObject);
+  var jsonstr2 = picnet.Utils.serialiseJson(complexObject);	
+  assertEquals(jsonstr1, jsonstr2);
+};
+
+var testIsNull = function () {
+  assertEquals(true, picnet.Utils.isNull(''));
+  assertEquals(true, picnet.Utils.isNull(' '));
+  assertEquals(true, picnet.Utils.isNull('     '));
+  assertEquals(false, picnet.Utils.isNull(0));    
+  assertEquals(false, picnet.Utils.isNull('0.14'));
+  assertEquals(false, picnet.Utils.isNull('-20.14'));
+  assertEquals(false, picnet.Utils.isNull(-20.14));
+};
+    </script>    
+  </body>
+</html>
