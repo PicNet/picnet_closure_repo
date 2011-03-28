@@ -1,0 +1,234 @@
+/*
+ * Copyright 2009 The Closure Library Authors. All Rights Reserved.
+ *
+ * Use of this source code is governed by the Apache License, Version 2.0.
+ * See the COPYING file for details.
+ */
+
+/*
+ * Standard styling for a goog.ui.DatePicker.
+ *
+ * @author arv@google.com (Erik Arvidsson)
+ */
+
+.goog-date-picker,
+.goog-date-picker th,
+.goog-date-picker td,
+button {
+  font: 12px Arial, sans-serif;
+}
+
+.goog-date-picker,
+#date_list_container, 
+#date_list_panel,
+.goog-date-picker table, 
+.picnet-daterangepicker, 
+.picnet-daterangepicker-label {
+	display:inline;
+	float:left;
+	position:relative;
+	}
+
+#date_list_container {
+	margin-bottom:20px;
+	}
+
+.picnet-daterangepicker-label {
+	font-size:0.75em;
+	}
+
+.goog-date-picker {
+	-moz-user-focus: normal;
+	-moz-user-select: none;
+	float: left;
+	padding: 2px;
+	color: #333;
+	cursor: default;
+	top:0px;
+	margin-top:5px;
+	}
+
+.goog-date-picker table {
+	margin-right:10px;
+	background: #f1f1f1;
+	border: 1px solid #fff;
+	-moz-box-shadow:#999 0px 1px 5px;
+	-webkit-box-shadow:#999 0px 1px 5px;
+	}
+
+.goog-date-picker th {
+	text-align: center;
+	}
+
+.goog-date-picker td {
+	text-align: center;
+	vertical-align: middle;
+	padding: 1px 3px;
+	}
+
+.goog-date-picker-menu {
+	position: absolute;
+	background: threedface;
+	border: 1px solid gray;
+	-moz-user-focus: normal;
+	z-index: 1;
+	outline: none;
+	}
+
+.goog-date-picker-menu ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.goog-date-picker-menu ul li {
+  cursor: default;
+}
+
+.goog-date-picker-menu-selected {
+  background: #ccf;
+}
+
+.goog-date-picker th {
+  font-size: .9em;
+}
+
+.goog-date-picker td div {
+  float: left;
+}
+
+.goog-date-picker button {
+  padding: 0px;
+  margin: 1px 0;
+  border: 0;
+  color: #00334e;
+  font-weight: bold;
+  background: transparent;
+}
+
+.goog-date-picker-date {
+  background: #fff;
+}
+
+.goog-date-picker-week,
+.goog-date-picker-wday {
+  padding: 1px 3px;
+  border: 0;
+  border-color: #a2bbdd;
+  border-style: solid;
+  color:#999;
+}
+
+.goog-date-picker-week {
+  border-right-width: 1px;
+}
+
+.goog-date-picker-wday {
+  border-bottom-width: 1px;
+}
+
+.goog-date-picker-head td {
+  text-align: center;
+}
+
+/** Use td.className instead of !important */
+td.goog-date-picker-today-cont {
+  text-align: center;
+}
+
+/** Use td.className instead of !important */
+td.goog-date-picker-none-cont {
+  text-align: center;
+}
+
+.goog-date-picker-month {
+  width: 12ex;
+}
+
+.goog-date-picker-year {
+  width: 6ex;
+}
+
+.goog-date-picker table {
+  border-collapse: collapse;
+}
+
+.goog-date-picker-other-month {
+  color: #888;
+}
+
+.goog-date-picker-wkend-start,
+.goog-date-picker-wkend-end {
+  background: #eee;
+}
+
+/** Use td.className instead of !important */
+td.goog-date-picker-selected {
+  background: #0079c1;
+  color:#fff;
+}
+
+.goog-date-picker-today {
+  background: #00334e;
+  font-weight: bold !important;
+  border-color: #246 #9bd #9bd #246;
+  color: #fff;
+}
+
+
+td.goog-date-picker-invalid-in-range {
+  background: #ddd;
+}
+
+.picnet-daterangepicker-button, 
+.picnet-daterangepicker-clearbutton {
+	display:inline-block;
+	position:relative;
+	float:left;
+	width:13px;
+	height:13px;
+	margin-left:5px;
+	background-image:url('images/rangepicker_sprite.png');
+	text-indent:-9999px;
+	}
+
+.picnet-daterangepicker-button {
+	background-position:0px 0px;
+	}
+
+.picnet-daterangepicker-clearbutton {
+	background-position:13px 0px;
+	}
+
+.picnet-daterangepicker-button:hover {
+	cursor:pointer;
+	background-position:0px -13px;
+	} 
+
+.picnet-daterangepicker-clearbutton:hover {
+	cursor:pointer;
+	background-position:13px -13px;
+	}
+	
+.picnet-daterangepicker-button:active {
+	background-position:0px -26px;
+	} 
+
+.picnet-daterangepicker-clearbutton:active {
+	background-position:13px -26px;
+	}
+
+#date_list_panel {
+	clear:both;
+	width:100%;
+	}
+	
+button {
+	color:#00334e;	
+	}
+
+button:hover {
+	cursor:pointer;
+	text-decoration:underline;
+	color:#0079c1
+	}
