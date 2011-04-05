@@ -1,16 +1,3 @@
-/*
- * Copyright 2007 The Closure Library Authors. All Rights Reserved.
- *
- * Use of this source code is governed by the Apache License, Version 2.0.
- * See the COPYING file for details.
- */
-
-/* Author: attila@google.com (Attila Bodis) */
-
-
-@import url(../../css/common.css);
-
-
 body {
   background-color: #ffe;
   font: normal 10pt Arial, sans-serif;
