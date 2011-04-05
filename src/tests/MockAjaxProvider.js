@@ -20,18 +20,17 @@ function MockAjaxProvider(types) {
 
 /** @inheritDoc */
 MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
-    this.log.fine('MockAjaxProvider.makeAjaxRequest: ' + method);	
-
+    this.log.fine('MockAjaxProvider.makeAjaxRequest: ' + method);	    
     switch(method) {
-      case 'SaveEntity': 
-        var entity = picnet.Utils.parseJson(data.entity);
-        this.memory.saveItem(data.type, /** @type {picnet.data.IEntity} */ (entity)); 
+      case 'SaveEntity':         
+        var entity = /** @type {picnet.data.IEntity} */ (picnet.Utils.parseJson(data['entity']));        
+        this.memory.saveItem(data['type'], entity); 
         return callback.call(handler, {ClientID:entity.ID,ID:entity.ID,Errors:[]});
       case 'SaveEntities': 	
-        var allEntities = picnet.Utils.parseJson(data.data);
+        var allEntities = picnet.Utils.parseJson(data['data']);
         var results = [];
         for (var type in allEntities) {
-          var entities = /** @type {!Array} */ (picnet.Utils.parseJson(allEntities[type]));				
+          var entities = /** @type {!Array.<picnet.data.IEntity>} */ (picnet.Utils.parseJson(allEntities[type]));				
           goog.array.forEach(entities, function(e, idx) { if (e.ID < 0) e.ID = new Date().getTime() + idx; })
           this.memory.saveList(type, entities); 
           allEntities[type] = entities;				
@@ -39,18 +38,18 @@ MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, of
         }														
         return callback.call(handler, results);
       case 'GetEntities': 
-        return callback.call(handler, this.memory.getList(data.type));
+        return callback.call(handler, this.memory.getList(data['type']));
       case 'GetEntity': 
-        return callback.call(handler, this.memory.getItem(data.type, data.id));
+        return callback.call(handler, this.memory.getItem(data['type'], data['id']));
       case 'DeleteEntity':			 
-        this.memory.deleteItem(data.type, data.id); 
-        return callback.call(handler, {ClientID:data.id,ID:data.id,Errors:[]});
+        this.memory.deleteItem(data['type'], data['id']); 
+        return callback.call(handler, {ClientID:data['id'],ID:data['id'],Errors:[]});
       case 'DeleteEntities':            
-        goog.array.forEach(data.ids, function(id) { this.memory.deleteItem(data.type, id) }, this); 
-        return callback.call(handler, goog.array.map(data.ids, function(id) { return {ClientID:id,ID:id,Errors:[]} }));
+        goog.array.forEach(data['ids'], function(id) { this.memory.deleteItem(data['type'], id) }, this); 
+        return callback.call(handler, goog.array.map(data['ids'], function(id) { return {ClientID:id,ID:id,Errors:[]} }));
       case 'UpdateServer':			
-        var todelete = picnet.Utils.parseJson(data.todelete);
-        this.makeAjaxRequest('SaveEntities', {data:data.tosave}, function() {}, null, this);
+        var todelete = picnet.Utils.parseJson(data['todelete']);
+        this.makeAjaxRequest('SaveEntities', {data:data['tosave']}, function() {}, null, this);
         for (var i in todelete) { this.makeAjaxRequest('DeleteEntities', {type:i,ids:todelete[i]}, function() {}, null, this); }
         return callback.call(handler);
       // case 'GetChangesSince'            

@@ -14,7 +14,12 @@ goog.require('picnet.data.LocalStorageRepository');
 picnet.closure.repo.demoscripts.daterangepicker = function() {
   var drp = new picnet.ui.DateRangePicker();
   drp.setFirstWeekday(0);
-  drp.setAllowedDateRange(new Date(2010, 1, 1), new Date(2011, 1, 1));
+  var now = new Date();
+  var from = new Date();
+  from.setDate(now.getDate() - 10);
+  var to = new Date();
+  to.setDate(now.getDate() + 10);
+  drp.setAllowedDateRange(from, to);
   drp.render(document.getElementById('range_picker'));
 
   goog.events.listen(drp, 'change', updateLog);

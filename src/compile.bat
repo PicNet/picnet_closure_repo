@@ -1,5 +1,5 @@
 c:\Python27\python.exe ^
-	../lib/closure-library/closure/bin/calcdeps.py ^
+	..\lib\closure-library\closure\bin\calcdeps.py ^
 	-i requirements.js ^
   -i ../lib/closure-library/closure/goog/deps.js ^
 	-p ../lib/closure-library/closure/ ^
