@@ -1,5 +1,5 @@
 var db;
-moz_indexedDB.open("MyTestDatabase", "MyTestDatabase").onsuccess = function(event) {  
+moz_indexedDB.open("MydemoDatabase", "MydemoDatabase").onsuccess = function(event) {  
   db = event.result;
 
   // If the database is at the correct version then we can skip straight to using it.
@@ -29,6 +29,6 @@ function useDatabase(db) {
     db.close();
     alert("A new version of this page is ready. Please reload!");
   };
-  var os = db.createObjectStore('Test', 'ID');
+  var os = db.createObjectStore('demo', 'ID');
   // Do stuff with the database.
 }

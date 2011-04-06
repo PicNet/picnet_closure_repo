@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>picnet.data.DataManager</title>
+  
+  <!-- DEBUG -->
+  <script src="../../lib/closure-library/closure/goog/base.js"></script>
+  <script src="../deps.js"></script>  
+  <script>goog.require('picnet.demo.Binddemo');</script>
+  
+  <!-- COMPILED -->
+  <!--
+  <script src="scripts.min.js"></script>
+  -->
+  <link rel="stylesheet" href="css/demo.css">    
+</head>
+<body>
+  <h1>picnet.bind.Bind</h1>
+  <table style='width:100%'><tr>
+    <td style='width:50%'>
+      <div>
+        <h2>Binding to a label</h2>
+        <div>
+          This example takes a very simple javascript object and binds one of the 
+          properties to the label below.  The link below will change the value
+          of this property on the object and the change should automatically be
+          reflected in the label.      
+        </div>
+        <br/>
+        <a href='#' id='link1'>Press to set random property on source object.</a>
+        <br/>
+        <label id='lbl1' style='border:solid 1px red;width:300px;'></label>    
+      </div>  
+      <div>
+        <h2>2 Way binding (Object/text Box)</h2>
+        <div>
+          In this example we bind a text box to an object bidirectionally so any change
+          to the object is instantly represented by the textbox and the same applies
+          in the opposite case.
+        </div>
+        <br/>
+        <a href='#' id='link2'>Press to set random property on source object.</a>
+        <br/>
+        <label id='lbl2' style='border:solid 1px red;width:300px;'></label>    
+        <br/>
+        <input id='inp2' type='text' ></input>    
+      </div>  
+      <div>
+        <h2>2 Way binding (Text Box/Text Box)</h2>
+        <div>
+          Same as above, we have 2 bound objects but in this case they are 2 text 
+          boxes.
+        </div>
+        <br/>
+        <input id='inp3_1' type='text' value='Initial Value on First TB'></input>    
+        <br/>
+        <input id='inp3_2' type='text' ></input>    
+      </div>      
+    </td>
+    <td style='width:50%'>
+      <div>
+        <h2>List to control binding</h2>
+        <div>
+          This is a more binding that bonds a list to a table.
+        </div>
+        <br/>
+        Source List:
+        <br/>
+        <label id='lbl4' style='border:solid 1px red;width:300px;'></label>  
+        <br/>
+        <a href='#' id='link4'>Press to set random properties on source list.</a>
+        <br/>
+        <div id='tbl4'></div>
+      </div>  
+      <div>
+        <h2>List to control 2 way binding</h2>
+        <div>
+          This is a more complex 2 way binding that bonds a list to a table.  The
+          table then has controls that are bound back to the source list.
+        </div>
+        <br/>
+        Source List:
+        <br/>
+        <label id='lbl5' style='border:solid 1px red;width:300px;'></label>  
+        <br/>
+        <a href='#' id='link5'>Press to set random properties on source list.</a>
+        <br/>
+        <div id='tbl5'></div>
+      </div>  
+    </td>
+  </tr></table>      
+
+  <script type="text/javascript">    
+  new picnet.demo.Binddemo();  
+  </script>
+</body>
+</html>
