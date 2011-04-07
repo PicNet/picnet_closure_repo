@@ -6,6 +6,7 @@ goog.require('goog.events');
 goog.require('goog.fx.Animation');
 goog.require('goog.fx.easing');
 goog.require('goog.style');
+goog.require('goog.userAgent');
 
 goog.require('picnet.ui.TabSlideMenuSettings');
 
@@ -120,7 +121,13 @@ picnet.ui.TabSlideMenu.prototype.initialise_ = function(args) {
     containerWidth: elemSize.width,
     containerHeight: elemSize.height,
     tabWidth: tabHandleSize.width,
-    tabHeight: tabHandleSize.height
+    tabHeight: tabHandleSize.height,
+    // If user is using IE9 + then use the 'right' style property for hiding 
+    // right hand side menus
+    rightStyleProperty: 
+      goog.userAgent.IE && parseInt(goog.userAgent.VERSION.charAt(0), 10) >= 0 ? 
+        'right' : 
+        'marginRigt'
   };
 
   if (this.settings_.tabLocation === 'top' ||
@@ -161,7 +168,7 @@ picnet.ui.TabSlideMenu.prototype.initialise_ = function(args) {
         this.properties_.containerHeight + 'px;top:' + this.settings_.topPos +
         'px;padding-left:' + this.properties_.tabWidth +
         'px;position:absolute;overflow:hidden;right:0px;"></div>');
-    this.element_.style.marginRight = '-' +
+    this.element_.style[this.properties_.rightStyleProperty] = '-' +
         this.properties_.containerWidth + 'px';
     this.element_.style.position = 'relative';
     this.settings_.tabHandle.style.left = '-' +
@@ -210,7 +217,7 @@ picnet.ui.TabSlideMenu.prototype.onAnimate_ = function(e) {
         this.getPositionAtPercentage_(this.properties_.containerWidth,
         percentage) + 'px';
   } else if (this.settings_.tabLocation === 'right') {
-    this.element_.style.marginRight = '-' +
+    this.element_.style[this.properties_.rightStyleProperty] = '-' +
         this.getPositionAtPercentage_(this.properties_.containerWidth,
         percentage) + 'px';
   } else if (this.settings_.tabLocation === 'bottom') {
