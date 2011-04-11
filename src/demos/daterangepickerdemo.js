@@ -1,13 +1,13 @@
 
-goog.provide('picnet.demo.daterangepickerdemo');
+goog.provide('pn.demo.daterangepickerdemo');
 
-goog.require('picnet.ui.DateRangePicker');
+goog.require('pn.ui.DateRangePicker');
 
 /**
  * @export
  */
-picnet.demo.daterangepickerdemo = function() {
-  var drp = new picnet.ui.DateRangePicker();
+pn.demo.daterangepickerdemo = function() {
+  var drp = new pn.ui.DateRangePicker();
   drp.setFirstWeekday(0);
   var now = new Date();
   var from = new Date();
@@ -30,5 +30,5 @@ picnet.demo.daterangepickerdemo = function() {
     goog.dom.setTextContent(document.getElementById('picker_log'), desc);
   };
 };
-goog.exportSymbol('picnet.demo.daterangepickerdemo',
-    picnet.demo.daterangepickerdemo);
+goog.exportSymbol('pn.demo.daterangepickerdemo',
+    pn.demo.daterangepickerdemo);

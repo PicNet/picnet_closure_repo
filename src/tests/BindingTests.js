@@ -5,16 +5,16 @@ goog.require('goog.dom');
 goog.require('goog.events.EventType');
 goog.require('goog.testing.events');
 
-goog.require('picnet.bind.Binding')
-goog.require('picnet.bind.Source')
-goog.require('picnet.bind.Target')
-goog.require('picnet.bind.List');
+goog.require('pn.bind.Binding')
+goog.require('pn.bind.Source')
+goog.require('pn.bind.Target')
+goog.require('pn.bind.List');
 
 var ns, tb, obj, list;
 
 function setUpPage() { 
-  list = picnet.bind.List;
-  ns = picnet.bind; 
+  list = pn.bind.List;
+  ns = pn.bind; 
 };
 
 function setUp() {

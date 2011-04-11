@@ -1,31 +1,31 @@
 
-goog.provide('picnet.demo.datamanagerdemo');
+goog.provide('pn.demo.datamanagerdemo');
 
-goog.require('picnet.data.DataManager');
-goog.require('picnet.MockAjaxProvider');
-goog.require('picnet.data.LocalStorageRepository');
+goog.require('pn.data.DataManager');
+goog.require('pn.MockAjaxProvider');
+goog.require('pn.data.LocalStorageRepository');
 
 /**
  * @export
  * @suppress {visibility}
  */
-picnet.demo.datamanagerdemo = function() {
+pn.demo.datamanagerdemo = function() {
   var type = 'demoEntity';
   var types = [type];  
   var currentId = 1;
   var memrepo = new MockAjaxProvider(types);
   var remoterepo = new MockAjaxProvider.RealServerAjax();
   // TODO: Demo allow selection of options
-  // picnet.data.DefaultRepositoryFactory.setRepository(rep);
-	var data = new picnet.data.DataManager(memrepo, types);				
+  // pn.data.DefaultRepositoryFactory.setRepository(rep);
+	var data = new pn.data.DataManager(memrepo, types);				
   data.databaseName = 'picnetdemo';
   
   data.init(function() { data.clearEntireDatabase_(function() {
     document.getElementById('currentRepo').innerHTML = 
-      data.local_.repository.constructor === picnet.data.WebSQLRepository.prototype.constructor ? 'Web SQL' :
-      data.local_.repository.constructor === picnet.data.GearsRepository.prototype.constructor ? 'Gears' :
-      data.local_.repository.constructor === picnet.data.IndexedDBRepository.prototype.constructor ? 'IndexedDB' :
-      data.local_.repository.constructor === picnet.data.LocalStorageRepository.prototype.constructor ? 'localStorage' : 'unknown';
+      data.local_.repository.constructor === pn.data.WebSQLRepository.prototype.constructor ? 'Web SQL' :
+      data.local_.repository.constructor === pn.data.GearsRepository.prototype.constructor ? 'Gears' :
+      data.local_.repository.constructor === pn.data.IndexedDBRepository.prototype.constructor ? 'IndexedDB' :
+      data.local_.repository.constructor === pn.data.LocalStorageRepository.prototype.constructor ? 'localStorage' : 'unknown';
     
     goog.events.listen(document.getElementById('addDatabaseEntry'), 'click', function() {
       var e = {ID: currentId++, Name: 'Name - ' + currentId, Date: new Date()};
@@ -88,5 +88,5 @@ picnet.demo.datamanagerdemo = function() {
   });});
 };
 
-goog.exportSymbol('picnet.demo.datamanagerdemo',
-    picnet.demo.datamanagerdemo);
+goog.exportSymbol('pn.demo.datamanagerdemo',
+    pn.demo.datamanagerdemo);

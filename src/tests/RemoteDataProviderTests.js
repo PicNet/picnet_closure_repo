@@ -1,10 +1,10 @@
 ﻿goog.require('goog.testing.AsyncTestCase');
 goog.require('goog.testing.jsunit');
 
-goog.require('picnet.Utils');
-goog.require('picnet.data.RemoteDataProvider');
-goog.require('picnet.data.InMemoryRepository');
-goog.require('picnet.data.AbstractRepository');
+goog.require('pn.Utils');
+goog.require('pn.data.RemoteDataProvider');
+goog.require('pn.data.InMemoryRepository');
+goog.require('pn.data.AbstractRepository');
 
 var type = 'TestEntity';	
 var types = [type];
@@ -24,7 +24,7 @@ var setUp = function() {
     ajax = new MockAjaxProvider.RealServerAjax();
     ajax.url = 'http://127.0.0.1:8124/';              
   }
-  provider = new picnet.data.RemoteDataProvider(ajax, types);	    
+  provider = new pn.data.RemoteDataProvider(ajax, types);	    
 }
 
 var testSaveEntities_Empty = function() {

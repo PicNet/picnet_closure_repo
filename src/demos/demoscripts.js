@@ -1,8 +1,8 @@
 
-goog.provide('picnet.closure.repo.demoscripts');
+goog.provide('pn.closure.repo.demoscripts');
 
 
-goog.require('picnet.demo.daterangepickerdemo');
-goog.require('picnet.demo.tabslidemenudemo');
-goog.require('picnet.demo.datamanagerdemo');
-goog.require('picnet.demo.Binddemo');
+goog.require('pn.demo.daterangepickerdemo');
+goog.require('pn.demo.tabslidemenudemo');
+goog.require('pn.demo.datamanagerdemo');
+goog.require('pn.demo.Binddemo');

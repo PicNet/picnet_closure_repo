@@ -3,12 +3,12 @@ goog.require('goog.array');
 goog.require('goog.debug.Logger');
 goog.require('goog.debug.Console');
 
-goog.require('picnet.MockAjaxProvider');      
-goog.require("picnet.data.AbstractRepository")
-goog.require('picnet.data.LocalStorageRepository');
-goog.require('picnet.data.WebSQLRepository');
-goog.require('picnet.data.GearsRepository');
-goog.require('picnet.data.IndexedDBRepository');
+goog.require('pn.MockAjaxProvider');      
+goog.require("pn.data.AbstractRepository")
+goog.require('pn.data.LocalStorageRepository');
+goog.require('pn.data.WebSQLRepository');
+goog.require('pn.data.GearsRepository');
+goog.require('pn.data.IndexedDBRepository');
 
 var type = 'TestEntity';		
 var log;
@@ -19,7 +19,7 @@ var setUpPage = function () {
     log.setLevel(goog.debug.Logger.Level.FINEST);
     new goog.debug.Console().setCapturing(true);     
 
-    rep = new picnet.data[repname]('testgendb');
+    rep = new pn.data[repname]('testgendb');
     var types = [type, type + '2', '3' + type];	
     rep.types = types;
 }	

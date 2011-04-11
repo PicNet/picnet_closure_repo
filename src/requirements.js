@@ -1,2 +1,2 @@
 
-goog.require('picnet.closure.repo.demoscripts');
+goog.require('pn.closure.repo.demoscripts');

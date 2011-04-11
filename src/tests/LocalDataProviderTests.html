@@ -9,8 +9,8 @@ goog.require('goog.testing.jsunit');
 goog.require('goog.testing.AsyncTestCase');
     </script>
     <script>
-goog.require('picnet.data.LocalStorageRepository');
-goog.require('picnet.data.LocalDataProvider');
+goog.require('pn.data.LocalStorageRepository');
+goog.require('pn.data.LocalDataProvider');
 
 
 var ldp;
@@ -18,7 +18,7 @@ var type = 'LocalDataProviderTestType';
 var types = [type];    
 
 var setUpPage = function() {  
-  ldp = new picnet.data.LocalDataProvider(new picnet.data.LocalStorageRepository('testdb'));    
+  ldp = new pn.data.LocalDataProvider(new pn.data.LocalStorageRepository('testdb'));    
 };
 
 var testGetEntities_InMemory = function() {		

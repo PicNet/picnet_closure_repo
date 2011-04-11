@@ -1,14 +1,14 @@
 
-goog.provide('picnet.demo.tabslidemenudemo');
+goog.provide('pn.demo.tabslidemenudemo');
 
-goog.require('picnet.ui.TabSlideMenu');
-goog.require('picnet.ui.TabSlideMenuSettings');
+goog.require('pn.ui.TabSlideMenu');
+goog.require('pn.ui.TabSlideMenuSettings');
 
 /**
  * @export
  */
-picnet.demo.tabslidemenudemo = function() {
-  var opts = new picnet.ui.TabSlideMenuSettings();
+pn.demo.tabslidemenudemo = function() {
+  var opts = new pn.ui.TabSlideMenuSettings();
   opts.tabHandle = goog.dom.getElement('panel1_handle');
   opts.pathToTabImage = 'images/window_left_tab.png';
   opts.imageHeight = 153;
@@ -19,16 +19,16 @@ picnet.demo.tabslidemenudemo = function() {
   opts.topPos = 100;
   opts.fixedPosition = false;
   opts.onLoadSlideOut = true;
-  new picnet.ui.TabSlideMenu(goog.dom.getElement('panel1'), opts);
+  new pn.ui.TabSlideMenu(goog.dom.getElement('panel1'), opts);
 
   opts.tabHandle = goog.dom.getElement('panel2_handle');
   opts.pathToTabImage = 'images/window_right_tab.png';
   opts.imageHeight = 102;
   opts.imageWidth = 18;
   opts.tabLocation = 'right';
-  new picnet.ui.TabSlideMenu(goog.dom.getElement('panel2'), opts);
+  new pn.ui.TabSlideMenu(goog.dom.getElement('panel2'), opts);
 };
-goog.exportSymbol('picnet.demo.tabslidemenudemo',
-    picnet.demo.tabslidemenudemo);
+goog.exportSymbol('pn.demo.tabslidemenudemo',
+    pn.demo.tabslidemenudemo);
 
     

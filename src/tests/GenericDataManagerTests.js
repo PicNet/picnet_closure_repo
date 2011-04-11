@@ -2,13 +2,13 @@
 goog.require('goog.array');
 goog.require('goog.debug.Console');
 
-goog.require('picnet.MockAjaxProvider');
-goog.require('picnet.data.DefaultRepositoryFactory');
-goog.require('picnet.data.LocalStorageRepository');
-goog.require('picnet.data.WebSQLRepository');
-goog.require('picnet.data.IndexedDBRepository');
-goog.require('picnet.data.AbstractRepository');
-goog.require('picnet.data.DataManager');
+goog.require('pn.MockAjaxProvider');
+goog.require('pn.data.DefaultRepositoryFactory');
+goog.require('pn.data.LocalStorageRepository');
+goog.require('pn.data.WebSQLRepository');
+goog.require('pn.data.IndexedDBRepository');
+goog.require('pn.data.AbstractRepository');
+goog.require('pn.data.DataManager');
 
 // TODO
 
@@ -23,7 +23,7 @@ var setUpPage = function () {
   log.setLevel(goog.debug.Logger.Level.FINEST);
   new goog.debug.Console().setCapturing(true);     
     
-  rep = new picnet.data[repname]('unittestdb2');    
+  rep = new pn.data[repname]('unittestdb2');    
 };
     
 var preTest = function(test) {
@@ -35,8 +35,8 @@ var preTest = function(test) {
 	asyncTestCase.stepTimeout = 10000;	
   asyncTestCase.waitForAsync();    	    	
 	if (!data) {				
-		picnet.data.DefaultRepositoryFactory.setRepository(rep);
-		data = new picnet.data.DataManager(new MockAjaxProvider(types), types);				
+		pn.data.DefaultRepositoryFactory.setRepository(rep);
+		data = new pn.data.DataManager(new MockAjaxProvider(types), types);				
     data.databaseName = 'unittestdb';
 		data.init(function() { data.clearEntireDatabase_(test, this); }, this);		
 	} else {	
