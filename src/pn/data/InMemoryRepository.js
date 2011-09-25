@@ -15,9 +15,9 @@ goog.provide('pn.data.InMemoryRepository');
 pn.data.InMemoryRepository = function() {
   goog.Disposable.call(this);
   /**
-     * @private
-     * @type {!Object.<string, !Array.<Object>>}
-     */
+   * @private
+   * @type {!Object.<string, !Array.<Object>>}
+   */
   this.db_ = {};
 };
 goog.inherits(pn.data.InMemoryRepository, goog.Disposable);

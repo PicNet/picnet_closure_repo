@@ -34,7 +34,7 @@ goog.inherits(pn.data.AbstractSQLRepository,
  * @param {!Array.<Object>} args The args to pass to the executing command.
  * @param {!function(Array.<Object>)} successCallback The success callback.
  * @param {function(Object)|null} failCallback The fail callback.
- * @param {Object} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.AbstractSQLRepository.prototype.execute = goog.abstractMethod;
 
@@ -52,39 +52,38 @@ pn.data.AbstractSQLRepository.prototype.db = function() { };
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.isInitialised =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   this.execute(
       "SELECT count(name) FROM sqlite_master WHERE name='UnsavedEntities'", [],
       function(results) {
-        callback.call(handler || this, (results.length === 1 &&
+        callback.call(opt_handler || this, (results.length === 1 &&
             parseInt(results[0], 10) > 0));
       },  // onsuccess
       function() {
-        callback.call(handler || this, false);
+        callback.call(opt_handler || this, false);
       }, this); // onerror
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.getList =
-    function(type, callback, handler) {
-  var that = this;
+    function(type, callback, opt_handler) {
   this.execute('SELECT value FROM [' + type + ']', [], function(results) {
     var list = [];
     for (var i = 0; i < results.length; i++) {
       list.push(this.recreateDates(pn.Utils.parseJson(results[i])));
     }
-    callback.call(handler || this, list);
+    callback.call(opt_handler || this, list);
   }, null, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.getLists =
-    function(typeprefix, callback, handler) {
+    function(typeprefix, callback, opt_handler) {
   if (typeprefix === 'UnsavedEntities' || typeprefix === 'DeletedIDs') {
     this.getUnsavedLists(typeprefix, function(dict2) {
-      callback.call(handler || this, dict2);
+      callback.call(opt_handler || this, dict2);
     }, this);
   } else
   {
@@ -92,14 +91,14 @@ pn.data.AbstractSQLRepository.prototype.getLists =
     var tables = goog.array.filter(this.types,
         function(t) { return t.indexOf(typeprefix) === 0; }
         );
-    this.getListsImpl(tables, dict, callback, handler);
+    this.getListsImpl(tables, dict, callback, opt_handler);
   }
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
-    function(typename, callback, handler) {
+    function(typename, callback, opt_handler) {
   this.execute('SELECT [TYPE], value FROM [' + typename + '] ORDER BY type', [],
       function(results) {
         var dict = {};
@@ -109,7 +108,7 @@ pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
           var safeVal = this.recreateDates(pn.Utils.parseJson(dr[1]));
           dict[tablename].push(safeVal);
         }, this);
-        callback.call(handler || this, dict);
+        callback.call(opt_handler || this, dict);
       }, null, this);
 };
 
@@ -120,28 +119,28 @@ pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
  *    fill with the retreived lists.
  * @param {!function(Object.<string, Array.<pn.data.IEntity>>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.AbstractSQLRepository.prototype.getListsImpl =
-    function(types, dict, callback, handler) {
-  if (types.length === 0) { callback.call(handler || this, dict); return; }
+    function(types, dict, callback, opt_handler) {
+  if (types.length === 0) { callback.call(opt_handler || this, dict); return; }
   var type = types.pop();
   this.getList(type, function(list) {
-    dict[type] = list; this.getListsImpl(types, dict, callback, handler);
+    dict[type] = list; this.getListsImpl(types, dict, callback, opt_handler);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.deleteList =
-    function(type, callback, handler) {
+    function(type, callback, opt_handler) {
   this.execute('DELETE FROM [' + type + ']', [], function(results) {
     if (type === 'UnsavedEntities') {
       this.removeLocalUnsavedItems_(goog.array.clone(this.types), function() {
-        callback.call(handler || this, true);
+        callback.call(opt_handler || this, true);
       }, this);
     }
-    else callback.call(handler || this, true);
+    else callback.call(opt_handler || this, true);
   }, null, this);
 };
 
@@ -150,47 +149,47 @@ pn.data.AbstractSQLRepository.prototype.deleteList =
  * @private
  * @param {!Array.<string>} types The types of lists to clear of unsaved items.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.AbstractSQLRepository.prototype.removeLocalUnsavedItems_ =
-    function(types, callback, handler) {
-  if (types.length === 0) {callback.call(handler || this); return; }
+    function(types, callback, opt_handler) {
+  if (types.length === 0) {callback.call(opt_handler || this); return; }
   var type = types.pop();
   this.execute('DELETE FROM [' + type + '] WHERE ID < 0', [], function() {
-    this.removeLocalUnsavedItems_(types, callback, handler);
+    this.removeLocalUnsavedItems_(types, callback, opt_handler);
   }, null, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.getItem =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.execute('SELECT value FROM [' + type + '] WHERE ID = ?', [id],
       function(results) {
         var e = results.length === 1 ?
             this.recreateDates(pn.Utils.parseJson(results[0])) : null;
-        callback.call(handler || this, e);
+        callback.call(opt_handler || this, e);
       }, null, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.deleteItem =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   var typepos = type.split('|');
   var sql = typepos.length === 2 ?
       'DELETE FROM [' + typepos[0] + "] WHERE TYPE = '" + typepos[1] +
       "' AND ID = ?" :
       'DELETE FROM [' + typepos[0] + '] WHERE ID = ?';
   this.execute(sql, [id], function(results) {
-    callback.call(handler || this, true);
+    callback.call(opt_handler || this, true);
   }, null, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.deleteItems =
-    function(type, ids, callback, handler) {
+    function(type, ids, callback, opt_handler) {
   var typepos = type.split('|');
   var idsstr = ids.join(',');
   var sql = typepos.length === 2 ?
@@ -198,14 +197,14 @@ pn.data.AbstractSQLRepository.prototype.deleteItems =
       typepos[1] + "' AND ID IN (" + idsstr + ')' :
       'DELETE FROM [' + typepos[0] + '] WHERE ID IN (' + idsstr + ')';
   this.execute(sql, [], function(results) {
-    callback.call(handler || this, true);
+    callback.call(opt_handler || this, true);
   }, null, this);
 };
 
 
 /** @inheritDoc */
 pn.data.AbstractSQLRepository.prototype.saveItem =
-    function(type, item, callback, handler) {
+    function(type, item, callback, opt_handler) {
   var typepos = type.indexOf('|');
   var itemid = (typeof(item) === 'number' ? item : item.ID);
   var itemstr = (typeof(item) !== 'number' ?
@@ -216,7 +215,7 @@ pn.data.AbstractSQLRepository.prototype.saveItem =
       '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
       '\', ?)' :
       'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
-      [itemid, itemstr], function() { callback.call(handler || this, true)},
+      [itemid, itemstr], function() { callback.call(opt_handler || this, true)},
       null, this);
 };
 
@@ -226,9 +225,9 @@ pn.data.AbstractSQLRepository.prototype.saveItem =
  * @param {string} sql The sql that caused the errors.
  * @param {!Array} args The arguments passed to the executing
  *    command that caused the error.
- * @param {Object=} err The error throws by the specified sql and args.
+ * @param {Object=} opt_err The error throws by the specified sql and args.
  */
-pn.data.AbstractSQLRepository.prototype.error = function(sql, args, err) {
+pn.data.AbstractSQLRepository.prototype.error = function(sql, args, opt_err) {
   throw ('Local SQL Database Error\n\tSQL: ' + sql + '\n\tMessage: ' +
-      err.message);
+      opt_err.message);
 };

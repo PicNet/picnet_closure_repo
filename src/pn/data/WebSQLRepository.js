@@ -55,14 +55,13 @@ pn.data.WebSQLRepository.prototype.db = function() {
 
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.init =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
   var start = new Date().getTime();
   this.types = types;
   this.isInitialised(function(isInitialised) {
-    if (isInitialised) return callback.call(handler || this);
-    var that = this;
-    this.db().transaction(function(t) {
-      goog.array.forEach(that.types, function(type) {
+    if (isInitialised) return callback.call(opt_handler || this);
+    this.db().transaction(goog.bind(function(t) {
+      goog.array.forEach(this.types, function(type) {
         t.executeSql('CREATE TABLE IF NOT EXISTS [' + type +
             '] (ID INTEGER UNIQUE PRIMARY KEY, value TEXT)');
       });
@@ -72,26 +71,27 @@ pn.data.WebSQLRepository.prototype.init =
       t.executeSql('CREATE TABLE IF NOT EXISTS [DeletedIDs] ' +
           '([TYPE] VARCHAR(30), ID INTEGER, value INTEGER, PRIMARY KEY ' +
           '([TYPE], ID))');
-    },
-    function(tx, err) { that.error('initialisation', [], err); },
-    function() {
-      that.log.fine('init took: ' + (new Date().getTime() - start) + 'ms');
-      callback.call(handler || that);
-    });
+    }, this),
+    goog.bind(function(tx, err) {
+      this.error('initialisation', [], err);
+    }, this),
+    goog.bind(function() {
+      this.log.fine('init took: ' + (new Date().getTime() - start) + 'ms');
+      callback.call(opt_handler || this);
+    }, this));
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.saveList =
-    function(type, list, callback, handler) {
+    function(type, list, callback, opt_handler) {
   var typepos = type.indexOf('|');
-  var that = this;
-  this.db().transaction(function(t) {
+  this.db().transaction(goog.bind(function(t) {
     goog.array.forEach(list, function(item) {
       var itemid = (typeof(item) === 'number' ? item : item.ID);
       var itemstr = (typeof(item) !== 'number' ?
-          pn.Utils.serialiseJson(that.makeDateSafe(item)) : item);
+          pn.Utils.serialiseJson(this.makeDateSafe(item)) : item);
 
       t.executeSql(typepos !== -1 ?
           'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
@@ -100,39 +100,39 @@ pn.data.WebSQLRepository.prototype.saveList =
           'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
           [itemid, itemstr]);
     }, this);
-  }, function(tx, err) { that.error('savelist', [], err); }, function() {
-    callback.call(handler || that, true);
-  });
+  }, this), goog.bind(function(tx, err) { this.error('savelist', [], err); },
+      function() { callback.call(opt_handler || this, true); }, this));
 };
 
 
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.clearEntireDatabase =
-    function(callback, handler) {
-  var that = this;
-  this.db().transaction(function(t) {
-    goog.array.forEach(that.types, function(type) {
+    function(callback, opt_handler) {
+  this.db().transaction(goog.bind(function(t) {
+    goog.array.forEach(this.types, function(type) {
       t.executeSql('DELETE FROM [' + type + ']', []);
     }, this);
-  }, function(tx, err) { that.error('clearEntireDatabase', [], err); }
-  , function() {
-    callback.call(handler || that);
-  });
+  }, this), goog.bind(function(tx, err) {
+    this.error('clearEntireDatabase', [], err);
+  }, this), goog.bind(function() {
+    callback.call(opt_handler || this);
+  }, this));
 };
 
 
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.execute =
-    function(sql, args, successCallback, failCallback, handler) {
+    function(sql, args, successCallback, failCallback, opt_handler) {
   if (this.transaction_) {
-    this.executeImpl_(sql, args, successCallback, failCallback, handler, false);
+    this.executeImpl_(sql, args, successCallback, failCallback,
+        opt_handler, false);
     return;
   }
-  var that = this;
-  this.db().transaction(function(t) {
-    that.transaction_ = t;
-    that.executeImpl_(sql, args, successCallback, failCallback, handler, true);
-  });
+  this.db().transaction(goog.bind(function(t) {
+    this.transaction_ = t;
+    this.executeImpl_(sql, args, successCallback, failCallback,
+        opt_handler, true);
+  }, this));
 };
 
 
@@ -142,14 +142,13 @@ pn.data.WebSQLRepository.prototype.execute =
  * @param {!Array.<Object>} args The args to pass to the executing statement.
  * @param {!function(Array.<Object>)} successCallback The success callback.
  * @param {function(Object)|null} failCallback The fail callback.
- * @param {Object} handler The context to use when calling the callback.
- * @param {boolean=} kill Wether to kill the transaction after this
+ * @param {Object=} opt_handler The context to use when calling the callback.
+ * @param {boolean=} opt_kill Wether to kill the transaction after this
  *    command.
  */
 pn.data.WebSQLRepository.prototype.executeImpl_ =
-    function(sql, args, successCallback, failCallback, handler, kill) {
-  var that = this;
-  this.transaction_.executeSql(sql, args, function(tx, results) {
+    function(sql, args, successCallback, failCallback, opt_handler, opt_kill) {
+  this.transaction_.executeSql(sql, args, goog.bind(function(tx, results) {
     var list = [];
     for (var i = 0; i < results.rows.length; i++) {
       var item = results.rows.item(i);
@@ -157,14 +156,14 @@ pn.data.WebSQLRepository.prototype.executeImpl_ =
       for (var j in item) { vals.push(item[j]); }
       list.push(vals.length === 1 ? vals[0] : vals);
     }
-    successCallback.call(handler || this, list);
-    if (kill) { that.transaction_ = null; }
-  }, function(tx, err) {
-    if (failCallback) { failCallback.call(handler || this, err); }
-    else { that.error(sql, args, err); }
+    successCallback.call(opt_handler || this, list);
+    if (opt_kill) { this.transaction_ = null; }
+  }, this), goog.bind(function(tx, err) {
+    if (failCallback) { failCallback.call(opt_handler || this, err); }
+    else { this.error(sql, args, err); }
 
-    if (kill) that.transaction_ = null;
-  });
+    if (opt_kill) this.transaction_ = null;
+  }, this));
 };
 
 

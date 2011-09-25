@@ -39,18 +39,18 @@ pn.data.InMemoryProvider.prototype.getEntity = function(type, id) {
 
 /** @inheritDoc */
 pn.data.InMemoryProvider.prototype.saveEntity =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   if (data.ID === 0) {
     throw new Error('InMemoryProvider does not support saveEntity with ID = 0');
   }
   this.repository.saveItem(type, data);
-  if (callback) callback.call(handler || this, null);
+  if (callback) callback.call(opt_handler || this, null);
 };
 
 
 /** @inheritDoc */
 pn.data.InMemoryProvider.prototype.saveEntities =
-    function(data, callback, handler) {
+    function(data, callback, opt_handler) {
   goog.object.forEach(data, function(entities) {
     if (goog.array.contains(entities, function(e) { return e.ID === 0; })) {
       throw new Error('InMemoryProvider does not support saveEntities with' +
@@ -58,23 +58,23 @@ pn.data.InMemoryProvider.prototype.saveEntities =
     }
   });
   for (var type in data) { this.repository.saveList(type, data[type]); }
-  if (callback) callback.call(handler || this, null);
+  if (callback) callback.call(opt_handler || this, null);
 };
 
 
 /** @inheritDoc */
 pn.data.InMemoryProvider.prototype.deleteEntity =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.repository.deleteItem(type, id);
-  if (callback) callback.call(handler || this, null);
+  if (callback) callback.call(opt_handler || this, null);
 };
 
 
 /** @inheritDoc */
 pn.data.InMemoryProvider.prototype.deleteEntities =
-    function(type, ids, callback, handler) {
+    function(type, ids, callback, opt_handler) {
   this.repository.deleteItems(type, ids);
-  if (callback) callback.call(handler || this, null);
+  if (callback) callback.call(opt_handler || this, null);
 };
 
 

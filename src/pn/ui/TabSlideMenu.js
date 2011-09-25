@@ -122,12 +122,11 @@ pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
     containerHeight: elemSize.height,
     tabWidth: tabHandleSize.width,
     tabHeight: tabHandleSize.height,
-    // If user is using IE9 + then use the 'right' style property for hiding 
-    // right hand side menus    
-    rightStyleProperty: 
-      goog.userAgent.IE && parseInt(goog.userAgent.VERSION.charAt(0), 10) >= 0 ? 
-        'right' : 
-        'marginRight'
+    // If user is using IE9 + then use the 'right' style property for hiding
+    // right hand side menus
+    rightStyleProperty:
+        goog.userAgent.IE && parseInt(
+        goog.userAgent.VERSION.charAt(0), 10) >= 0 ? 'right' : 'marginRight'
   };
   if (this.settings_.tabLocation === 'top' ||
       this.settings_.tabLocation === 'bottom') {

@@ -53,11 +53,11 @@ pn.data.GearsRepository.prototype.db = function() {
 
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.init =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
   var start = new Date().getTime();
   this.types = types;
   this.isInitialised(function(isInitialised) {
-    if (isInitialised) return callback.call(handler || this);
+    if (isInitialised) return callback.call(opt_handler || this);
     this.db().execute('BEGIN');
 
     goog.array.forEach(this.types, function(t) {
@@ -71,21 +71,20 @@ pn.data.GearsRepository.prototype.init =
     this.db().execute('COMMIT');
 
     this.log.fine('init took: ' + (new Date().getTime() - start) + 'ms');
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.saveList =
-    function(type, list, callback, handler) {
+    function(type, list, callback, opt_handler) {
   var typepos = type.indexOf('|');
-  var that = this;
   this.db().execute('BEGIN');
   goog.array.forEach(list, function(item) {
     var itemid = (typeof(item) === 'number' ? item : item.ID);
     var itemstr = (typeof(item) !== 'number' ?
-        pn.Utils.serialiseJson(that.makeDateSafe(item)) : item);
+        pn.Utils.serialiseJson(this.makeDateSafe(item)) : item);
 
     this.db().execute(typepos !== -1 ?
         'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
@@ -95,13 +94,13 @@ pn.data.GearsRepository.prototype.saveList =
         [itemid, itemstr]);
   }, this);
   this.db().execute('COMMIT');
-  callback.call(handler || this, true);
+  callback.call(opt_handler || this, true);
 };
 
 
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.clearEntireDatabase =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   this.db().execute('BEGIN');
   goog.array.forEach(this.types, function(t) {
     this.db().execute('DELETE FROM [' + t + ']', []);
@@ -109,14 +108,13 @@ pn.data.GearsRepository.prototype.clearEntireDatabase =
   this.db().execute('DELETE FROM [UnsavedEntities]');
   this.db().execute('DELETE FROM [DeletedIDs]');
   this.db().execute('COMMIT');
-  callback.call(handler || this);
+  callback.call(opt_handler || this);
 };
 
 
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.execute =
-    function(sql, args, successCallback, failCallback, handler) {
-  var that = this;
+    function(sql, args, successCallback, failCallback, opt_handler) {
   var list = [];
   try {
     var rs = this.db().execute(sql, args);
@@ -133,27 +131,27 @@ pn.data.GearsRepository.prototype.execute =
     }
     rs.close();
   } catch (e) {
-    if (failCallback) { failCallback.call(handler || this, e); }
-    else { that.error(sql, args, e); }
+    if (failCallback) { failCallback.call(opt_handler || this, e); }
+    else { this.error(sql, args, e); }
     return;
   }
 
-  successCallback.call(handler || this, list);
+  successCallback.call(opt_handler || this, list);
 };
 
 
 /**
  * @param {function()} callback The succcess callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
-pn.data.GearsRepository.installGears = function(callback, handler) {
+pn.data.GearsRepository.installGears = function(callback, opt_handler) {
   pn.data.GearsRepository.setUpGreasFactory();
   if (!window['google'] || !google.gears)
     document.location.href =
         pn.data.GearsRepository.GOOGLE_GEARS_SUPPORT_URL +
         '&return=' + document.location.href;
   else
-    callback.call(handler);
+    callback.call(opt_handler);
 };
 
 

@@ -113,9 +113,9 @@ pn.data.DataManager.setLocalSettings = function(key, value) {
 
 /**
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
-pn.data.DataManager.prototype.init = function(callback, handler) {
+pn.data.DataManager.prototype.init = function(callback, opt_handler) {
   var rep =
       pn.data.DefaultRepositoryFactory.getRepository(this.databaseName);
   this.local_ = new pn.data.LocalDataProvider(rep);
@@ -126,7 +126,7 @@ pn.data.DataManager.prototype.init = function(callback, handler) {
           'local repository is initialised.');
     }
     var provider = isinit ? this.local_ : this.remote_;
-    rep.init(this.types_, function() { callback.call(handler || this); });
+    rep.init(this.types_, function() { callback.call(opt_handler || this); });
   }, this);
 };
 
@@ -135,14 +135,14 @@ pn.data.DataManager.prototype.init = function(callback, handler) {
  * @param {boolean} initialRequest Wether this is the initial data manager sync
  *    request.
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.synchronize =
-    function(initialRequest, callback, handler) {
+    function(initialRequest, callback, opt_handler) {
   if (!this.isonline_) {
     this.updateClientWithLatestServerChanges_(initialRequest,
         function(results) {
-          callback.call(handler || this, results);
+          callback.call(opt_handler || this, results);
         }
     );
     return;
@@ -150,7 +150,7 @@ pn.data.DataManager.prototype.synchronize =
   this.updateServerWithLocalChanges(function(serverResults) {
     this.updateClientWithLatestServerChanges_(initialRequest,
         function(clientResults) {
-          callback.call(handler || this, clientResults);
+          callback.call(opt_handler || this, clientResults);
         });
   }, this);
 };
@@ -158,12 +158,12 @@ pn.data.DataManager.prototype.synchronize =
 
 /**
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateServerWithLocalChanges =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   if (!this.isonline_) {
-    callback.call(handler || this, null);
+    callback.call(opt_handler || this, null);
     return;
   }
   // We have just switched to online mode.  This is also called on first load
@@ -171,12 +171,12 @@ pn.data.DataManager.prototype.updateServerWithLocalChanges =
     this.local_.getAllDeletedEntities(function(deleted) {
       if (goog.object.isEmpty(unsaved) && goog.object.isEmpty(deleted)) {
         this.local_.resetLocalChanges(function() {
-          this.removeAllLocalUsavedItems_(callback, handler);
+          this.removeAllLocalUsavedItems_(callback, opt_handler);
         }, this);
       } else {
         this.remote_.updateServer(unsaved, deleted, function(results) {
           this.local_.resetLocalChanges(function() {
-            this.removeAllLocalUsavedItems_(callback, handler);
+            this.removeAllLocalUsavedItems_(callback, opt_handler);
           }, this);
         }, this);
       }
@@ -188,14 +188,14 @@ pn.data.DataManager.prototype.updateServerWithLocalChanges =
 /**
  * @private
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.removeAllLocalUsavedItems_ =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   goog.array.forEach(this.types_, function(t) {
     this.memory_.repository.deleteLocalUnsavedItems(t);
   }, this);
-  callback.call(handler || this);
+  callback.call(opt_handler || this);
 };
 
 
@@ -204,16 +204,16 @@ pn.data.DataManager.prototype.removeAllLocalUsavedItems_ =
  * @param {boolean} initialRequest Wether this is the intial request to the
  *    server.
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateClientWithLatestServerChanges_ =
-    function(initialRequest, callback, handler) {
+    function(initialRequest, callback, opt_handler) {
   if (!this.isonline_) {
-    this.updateEntireInMemoryStore(callback, handler);
+    this.updateEntireInMemoryStore(callback, opt_handler);
     return;
   }
   this.updateClientWithLatestServerChangesImpl_(
-      initialRequest, callback, handler);
+      initialRequest, callback, opt_handler);
 };
 
 
@@ -222,10 +222,10 @@ pn.data.DataManager.prototype.updateClientWithLatestServerChanges_ =
  * @param {boolean} initialRequest Wether this is the intial request to the
  *    server.
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateClientWithLatestServerChangesImpl_ =
-    function(initialRequest, callback, handler) {
+    function(initialRequest, callback, opt_handler) {
   var lastupdate = pn.data.DataManager.getLocalSettings(
       pn.data.DataManager.LAST_SYNC_TIME_) || '-1';
   if (lastupdate === 'undefined') lastupdate = '-1';
@@ -240,10 +240,10 @@ pn.data.DataManager.prototype.updateClientWithLatestServerChangesImpl_ =
               pn.data.DataManager.LAST_SYNC_TIME_, changes['ServerTime']);
           if (initialRequest) {
             this.updateEntireInMemoryStore(function() {
-              callback.call(handler || this, null);
-            } , handler);
+              callback.call(opt_handler || this, null);
+            } , opt_handler);
           } else {
-            callback.call(handler || this, null);
+            callback.call(opt_handler || this, null);
           }
         }, this);
       }, this);
@@ -259,17 +259,17 @@ pn.data.DataManager.prototype.updateClientWithLatestServerChangesImpl_ =
  * @param {!Object.<string, Array.<pn.data.IEntity>>} changes The remote
  *    changes that need to be applied to the local repository.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateLocalChanges_ =
-    function(initialRequest, changes, callback, handler) {
+    function(initialRequest, changes, callback, opt_handler) {
   var arr = [];
   goog.object.forEach(changes, function(o, type) {
     if (type !== 'DeletedIDs' && type !== 'ServerTime')
       arr.push({'entities': o, 'type': type});
   });
   this.updateLocalChangesImpl_(initialRequest, arr, function() {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
@@ -281,11 +281,11 @@ pn.data.DataManager.prototype.updateLocalChanges_ =
  * @param {Array.<Array.<{entities:pn.data.IEntity,type:string}>>} arr The
  *    changes to be applied to the local repository
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateLocalChangesImpl_ =
-    function(initialRequest, arr, callback, handler) {
-  if (arr.length === 0) {callback.call(handler || this); return; }
+    function(initialRequest, arr, callback, opt_handler) {
+  if (arr.length === 0) {callback.call(opt_handler || this); return; }
   var elementsData =
       /** @type {{entities:!Array.<pn.data.IEntity>,type:string}} */
       (arr.pop());
@@ -294,7 +294,8 @@ pn.data.DataManager.prototype.updateLocalChangesImpl_ =
         if (!initialRequest) {
           this.memory_.repository.saveList(
               elementsData.type, elementsData.entities, function() {}, this); }
-        this.updateLocalChangesImpl_(initialRequest, arr, callback, handler);
+        this.updateLocalChangesImpl_(
+            initialRequest, arr, callback, opt_handler);
       }, this);
 };
 
@@ -302,11 +303,11 @@ pn.data.DataManager.prototype.updateLocalChangesImpl_ =
 /**
  * @private
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.clearEntireDatabase_ =
-    function(callback, handler) {
-  this.local_.clearEntireDatabase(callback, handler);
+    function(callback, opt_handler) {
+  this.local_.clearEntireDatabase(callback, opt_handler);
 };
 
 
@@ -317,10 +318,10 @@ pn.data.DataManager.prototype.clearEntireDatabase_ =
  * @param {!Object.<string, Array.<pn.data.IEntity>>} changes The entities
  *    that need to be removed from the local repository.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.deleteLocalEntities_ =
-    function(initialRequest, changes, callback, handler) {
+    function(initialRequest, changes, callback, opt_handler) {
   var arr = [];
   goog.object.forEach(changes['DeletedIDs'], function(o) {
     var idpos = o.indexOf('_');
@@ -330,7 +331,7 @@ pn.data.DataManager.prototype.deleteLocalEntities_ =
   });
 
   this.deleteLocalEntitiesImpl_(initialRequest, arr, function() {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
@@ -341,16 +342,17 @@ pn.data.DataManager.prototype.deleteLocalEntities_ =
  * @param {Array.<Array.<{entities:pn.data.IEntity,type:string}>>} arr The
  *    entities that need to be removed from the local repository.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 
 pn.data.DataManager.prototype.deleteLocalEntitiesImpl_ =
-    function(initialRequest, arr, callback, handler) {
-  if (arr.length === 0) {callback.call(handler || this); return; }
+    function(initialRequest, arr, callback, opt_handler) {
+  if (arr.length === 0) {callback.call(opt_handler || this); return; }
   var elementsData = /** @type {{type:string,id:number}} */ (arr.pop());
   this.local_.repository.deleteItem(elementsData.type, elementsData.id,
       function() {
-        this.deleteLocalEntitiesImpl_(initialRequest, arr, callback, handler);
+        this.deleteLocalEntitiesImpl_(initialRequest, arr, callback,
+            opt_handler);
       }, this);
   if (!initialRequest) {
     this.memory_.deleteEntity(elementsData.type, elementsData.id,
@@ -361,10 +363,10 @@ pn.data.DataManager.prototype.deleteLocalEntitiesImpl_ =
 
 /**
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateEntireInMemoryStore =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   var start = new Date().getTime();
 
   var alldata = {};
@@ -375,7 +377,7 @@ pn.data.DataManager.prototype.updateEntireInMemoryStore =
     }
     this.log('updateEntireInMemoryStore took: ' +
         (new Date().getTime() - start) + 'ms');
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
@@ -394,11 +396,11 @@ pn.data.DataManager.prototype.getEntity = function(type, id) {
 
 /** @inheritDoc */
 pn.data.DataManager.prototype.saveEntity =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   if (this.onPreSave && !this.onPreSave(type, data)) return;
   var errors = this.onValidateEntity ? this.onValidateEntity(type, data) : [];
   if (errors.length > 0) {
-    callback.call(handler || this,
+    callback.call(opt_handler || this,
         /** @type {pn.data.TransactionResult} */ ({'Errors': errors}));
     return;
   }
@@ -407,24 +409,24 @@ pn.data.DataManager.prototype.saveEntity =
     if (!this.isonline_) {
       this.local_.saveEntity(type, data, function(results2) {
         if (results2.Errors && results2.Errors.length > 0) {
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
           return;
         }
         data.ID = results2.ID;
         this.memory_.saveEntity(type, data);
         this.local_.saveUnsavedEntity(type, data, function() {
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
         }, this);
       }, this);
     } else {
       if (results.Errors && results.Errors.length > 0) {
-        callback.call(handler || this, results);
+        callback.call(opt_handler || this, results);
         return;
       }
       data.ID = results.ID;
       this.local_.saveEntity(type, data, function() {
         this.memory_.saveEntity(type, data);
-        callback.call(handler || this, results);
+        callback.call(opt_handler || this, results);
       }, this);
     }
   }, this);
@@ -433,28 +435,28 @@ pn.data.DataManager.prototype.saveEntity =
 
 /** @inheritDoc */
 pn.data.DataManager.prototype.deleteEntity =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.remote_.deleteEntity(type, id, function(results) {
     if (results === pn.data.RemoteDataProvider.OFFLINE) {
       this.local_.deleteEntity(type, id, function(results2) {
         if (results2.Errors && results2.Errors.length > 0) {
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
           return;
         }
         this.local_.saveDeletedEntity(type, id, function() {
           this.memory_.deleteEntity(type, id, function() {
-            callback.call(handler || this, results2);
+            callback.call(opt_handler || this, results2);
           });
         }, this);
       }, this);
     } else {
       if (results.Errors && results.Errors.length > 0) {
-        callback.call(handler || this, results);
+        callback.call(opt_handler || this, results);
         return;
       }
       this.local_.deleteEntity(type, id, function() {
         this.memory_.deleteEntity(type, id, function() {
-          callback.call(handler || this, results);
+          callback.call(opt_handler || this, results);
         });
       }, this);
     }
@@ -464,9 +466,9 @@ pn.data.DataManager.prototype.deleteEntity =
 
 /** @inheritDoc */
 pn.data.DataManager.prototype.deleteEntities =
-    function(type, ids, callback, handler) {
+    function(type, ids, callback, opt_handler) {
   if (!ids || ids.length === 0) {
-    callback.call(handler || this, []);
+    callback.call(opt_handler || this, []);
     return;
   }
 
@@ -478,12 +480,12 @@ pn.data.DataManager.prototype.deleteEntities =
           errors2 = goog.array.concat(errors, tr.Errors);
         } });
         if (errors2 && errors2.length > 0) {
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
           return;
         }
         this.local_.saveDeletedEntities(type, ids, function() {
           this.memory_.deleteEntities(type, ids, function() {});
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
           return;
         }, this);
       }, this);
@@ -493,13 +495,13 @@ pn.data.DataManager.prototype.deleteEntities =
         errors = goog.array.concat(errors, tr.Errors); }
       });
       if (errors && errors.length > 0) {
-        callback.call(handler || this, results);
+        callback.call(opt_handler || this, results);
         return;
       }
 
       this.local_.deleteEntities(type, ids, function() {
         this.memory_.deleteEntities(type, ids, function() {
-          callback.call(handler || this, results);
+          callback.call(opt_handler || this, results);
         });
       }, this);
     }
@@ -509,7 +511,7 @@ pn.data.DataManager.prototype.deleteEntities =
 
 /** @inheritDoc */
 pn.data.DataManager.prototype.saveEntities =
-    function(data, callback, handler) {
+    function(data, callback, opt_handler) {
   for (var type in data) {
     var entities = data[type];
     if (this.onPreSave) {
@@ -528,7 +530,7 @@ pn.data.DataManager.prototype.saveEntities =
         }
       }, this);
       if (errors.length > 0) {
-        callback.call(handler || this, [{'Errors': errors}]);
+        callback.call(opt_handler || this, [{'Errors': errors}]);
         return;
       }
     }
@@ -538,17 +540,17 @@ pn.data.DataManager.prototype.saveEntities =
   this.remote_.saveEntities(data, function(results) {
     if (results === pn.data.RemoteDataProvider.OFFLINE) {
       this.local_.saveEntities(data, function(results2) {
-        if (!this.postSave_(data, results2, callback, handler)) { return; }
+        if (!this.postSave_(data, results2, callback, opt_handler)) { return; }
         this.memory_.saveEntities(data);
         this.local_.saveUnsavedEntities(data, function() {
-          callback.call(handler || this, results2);
+          callback.call(opt_handler || this, results2);
         }, this);
       }, this);
     } else {
-      if (!this.postSave_(data, results, callback, handler)) { return; }
+      if (!this.postSave_(data, results, callback, opt_handler)) { return; }
       this.local_.saveEntities(data, function() {
         this.memory_.saveEntities(data);
-        callback.call(handler || this, results);
+        callback.call(opt_handler || this, results);
         return;
       }, this);
     }
@@ -564,17 +566,17 @@ pn.data.DataManager.prototype.saveEntities =
  *    save operation.
  * @param {!function(Array.<pn.data.TransactionResult>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  * @return {boolean} Wether the postSave operation was successful.
  */
 pn.data.DataManager.prototype.postSave_ =
-    function(data, results, callback, handler) {
+    function(data, results, callback, opt_handler) {
   var errors = [];
   goog.array.forEach(results, function(tr) {
     if (tr.Errors) { errors = goog.array.concat(errors, tr.Errors); }
   });
   if (errors && errors.length > 0) {
-    callback.call(handler || this, results);
+    callback.call(opt_handler || this, results);
     return false;
   }
 

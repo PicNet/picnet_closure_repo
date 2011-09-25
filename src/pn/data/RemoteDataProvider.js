@@ -28,10 +28,10 @@ pn.data.IDataAjaxRequest = function() {};
  *    success callback.
  * @param {!function()|null} offlineCallback The callback to use when the
  *    application has gone offline.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IDataAjaxRequest.prototype.makeAjaxRequest =
-    function(method, data, callback, offlineCallback, handler) {};
+    function(method, data, callback, offlineCallback, opt_handler) {};
 
 
 
@@ -80,49 +80,51 @@ pn.data.RemoteDataProvider.prototype.getEntity = function(type, id) {
 
 /** @inheritDoc */
 pn.data.RemoteDataProvider.prototype.saveEntity =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   if (this.onPreSave && !this.onPreSave(type, data)) {
-    callback.call(handler, null);
+    callback.call(opt_handler, null);
     return;
   }
 
   this.ajax_.makeAjaxRequest('SaveEntity', {'type': type, 'entity':
         pn.Utils.serialiseJson(data)}, callback, function() {
-    callback.call(handler, pn.data.RemoteDataProvider.OFFLINE);
-  }, handler);
+    callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
+  }, opt_handler);
 };
 
 
 /** @inheritDoc */
 pn.data.RemoteDataProvider.prototype.deleteEntity =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('DeleteEntity', {'type': type, 'id': id}, callback,
       function() {
-        callback.call(handler, pn.data.RemoteDataProvider.OFFLINE);
-      }, handler);
+        callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
+      }, opt_handler);
 };
 
 
 /** @inheritDoc */
 pn.data.RemoteDataProvider.prototype.deleteEntities =
-    function(type, ids, callback, handler) {
-  if (!ids || ids.length === 0) { return callback.call(handler || this, []); }
+    function(type, ids, callback, opt_handler) {
+  if (!ids || ids.length === 0) {
+    return callback.call(opt_handler || this, []);
+  }
   this.ajax_.makeAjaxRequest('DeleteEntities', {'type': type, 'ids': ids},
       callback, function() {
-        callback.call(handler, pn.data.RemoteDataProvider.OFFLINE);
-      }, handler);
+        callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
+      }, opt_handler);
 };
 
 
 /** @inheritDoc */
 pn.data.RemoteDataProvider.prototype.saveEntities =
-    function(data, callback, handler) {
+    function(data, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('SaveEntities', {'data':
         pn.Utils.serialiseJson(
         this.convertToPolymorphicablePackage_(data))},
   callback, function() {
-    callback.call(handler, pn.data.RemoteDataProvider.OFFLINE);
-  }, handler);
+    callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
+  }, opt_handler);
 };
 
 
@@ -154,12 +156,12 @@ pn.data.RemoteDataProvider.prototype.convertToPolymorphicablePackage_ =
  * @param {!Object.<string, !Array.<number>>} todelete The batch data map
  *    to delete.
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.RemoteDataProvider.prototype.updateServer =
-    function(tosave, todelete, callback, handler) {
+    function(tosave, todelete, callback, opt_handler) {
   if (goog.object.isEmpty(tosave) && goog.object.isEmpty(todelete)) {
-    callback.call(handler || this, null);
+    callback.call(opt_handler || this, null);
     return;
   }
   this.ajax_.makeAjaxRequest('UpdateServer', {
@@ -167,19 +169,19 @@ pn.data.RemoteDataProvider.prototype.updateServer =
         pn.Utils.serialiseJson(
         this.convertToPolymorphicablePackage_(tosave)),
     'todelete': pn.Utils.serialiseJson(todelete)
-  }, callback, null, handler);
+  }, callback, null, opt_handler);
 };
 
 
 /**
  * @param {string} since The data to get changes from.
  * @param {!function(Array.<string>)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.RemoteDataProvider.prototype.getChangesSince =
-    function(since, callback, handler) {
+    function(since, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('GetChangesSince', {'since': since},
-      callback, null, handler);
+      callback, null, opt_handler);
 };
 
 

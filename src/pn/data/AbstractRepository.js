@@ -22,21 +22,22 @@ pn.data.AbstractRepository = function(databaseName) {
   goog.Disposable.call(this);
 
   /**
-     * @protected
-     * @type {goog.debug.Logger}
-     */
+   *
+   * @protected
+   * @type {goog.debug.Logger}
+   */
   this.log = goog.debug.Logger.getLogger('pn.data.AbstractRepository');
   this.log.setLevel(goog.debug.Logger.Level.FINEST);
 
   /**
-     * @protected
-     * @type {string}
-     */
+   * @protected
+   * @type {string}
+   */
   this.databaseName = databaseName;
   /**
-     * @protected
-     * @type {Array.<string>}
-     */
+   * @protected
+   * @type {Array.<string>}
+   */
   this.types;
 };
 goog.inherits(pn.data.AbstractRepository, goog.Disposable);
@@ -88,7 +89,7 @@ pn.data.AbstractRepository.prototype.deleteItems = goog.abstractMethod;
 
 /** @inheritDoc */
 pn.data.AbstractRepository.prototype.clearEntireDatabase =
-    function(callback, handler) {};
+    function(callback, opt_handler) {};
 
 
 /**
@@ -96,7 +97,7 @@ pn.data.AbstractRepository.prototype.clearEntireDatabase =
  * @param {string} typename The name of the unsynced list type to retreive.
  * @param {!function(Object.<string, Array.<string>>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.AbstractRepository.prototype.getUnsyncLists = goog.abstractMethod;
 
@@ -106,10 +107,10 @@ pn.data.AbstractRepository.prototype.getUnsyncLists = goog.abstractMethod;
  * @param {string} typename The name of the unsaved list type to retreive.
  * @param {!function(Object.<string, Array.<pn.data.IEntity|number>>)}
  *    callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.AbstractRepository.prototype.getUnsavedLists =
-    function(typename, callback, handler) {
+    function(typename, callback, opt_handler) {
   this.getUnsyncLists(typename, function(dict) {
     var dict2 = {};
     for (var type in dict) {
@@ -117,7 +118,7 @@ pn.data.AbstractRepository.prototype.getUnsavedLists =
         return (typename === 'UnsavedEntities' ? t : parseInt(t, 10));
       }, this);
     }
-    callback.call(handler || this, dict2);
+    callback.call(opt_handler || this, dict2);
   }, this);
 };
 

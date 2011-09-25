@@ -61,14 +61,14 @@ pn.data.IndexedDBRepository.isSupported = function() {
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.isInitialised =
-    function(callback, handler) {
-  callback.call(handler || this, goog.isDefAndNotNull(this.db_));
+    function(callback, opt_handler) {
+  callback.call(opt_handler || this, goog.isDefAndNotNull(this.db_));
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.init =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
 
   this.types = types;
   this.osNames_ = goog.array.concat([], this.types);
@@ -79,7 +79,7 @@ pn.data.IndexedDBRepository.prototype.init =
       goog.array.map(this.types,
       function(t) { return 'DeletedIDs|' + t; }));
 
-  this.getDatabase_(callback, handler); // Init the DB
+  this.getDatabase_(callback, opt_handler); // Init the DB
 };
 
 
@@ -87,12 +87,12 @@ pn.data.IndexedDBRepository.prototype.init =
  * @private
  * @param {function(IDBDatabase)} callback The callback to call with the open
  *    database.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.getDatabase_ =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   if (this.db_) {
-    callback.call(handler, this.db_);
+    callback.call(opt_handler, this.db_);
     return;
   }
   this.runRequest_(window.indexedDB.open(
@@ -100,7 +100,7 @@ pn.data.IndexedDBRepository.prototype.getDatabase_ =
       function(result) {
         this.db_ = result;
         if (this.db_.version === '1.1') {
-          callback.call(handler, this.db_);
+          callback.call(opt_handler, this.db_);
           return;
         }
 
@@ -108,7 +108,7 @@ pn.data.IndexedDBRepository.prototype.getDatabase_ =
           goog.array.forEach(this.osNames_, function(t) {
             this.db_.createObjectStore(t, {'keyPath': 'ID'}, false);
           }, this);
-          callback.call(handler, this.db_);
+          callback.call(opt_handler, this.db_);
         }, this);
       }, this);
 };
@@ -144,8 +144,8 @@ pn.data.IndexedDBRepository.prototype.getTransaction_ =
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.getList =
-    function(type, callback, handler) {
-  this.getListImpl_(this.getObjectStore_(type, false), callback, handler);
+    function(type, callback, opt_handler) {
+  this.getListImpl_(this.getObjectStore_(type, false), callback, opt_handler);
 };
 
 
@@ -154,13 +154,13 @@ pn.data.IndexedDBRepository.prototype.getList =
  * @param {!IDBObjectStore} os The object store to use for the getAll operation.
  * @param {!function(Array.<pn.data.IEntity>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.getListImpl_ =
-    function(os, callback, handler) {
+    function(os, callback, opt_handler) {
   if (os.getAll) {
     this.runRequest_(os.getAll(), function(result) {
-      callback.call(handler || this, result);
+      callback.call(opt_handler || this, result);
     }, this);
   } else {
     var list = [];
@@ -168,24 +168,24 @@ pn.data.IndexedDBRepository.prototype.getListImpl_ =
     this.doOnCursor_(os, function(c) {
       list.push(c.value);
     }, function() {
-      callback.call(handler || this, list);
-    }, handler);
+      callback.call(opt_handler || this, list);
+    }, opt_handler);
   }
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.getLists =
-    function(typeprefix, callback, handler) {
+    function(typeprefix, callback, opt_handler) {
   if (typeprefix === 'UnsavedEntities' || typeprefix === 'DeletedIDs') {
     this.getUnsavedLists(typeprefix, function(dict2) {
-      callback.call(handler || this, dict2);
+      callback.call(opt_handler || this, dict2);
     }, this);
   } else {
     var types = goog.array.filter(this.types, function(t) {
       return t.indexOf(typeprefix) === 0;
     });
-    this.getListsFromTransaction_(types, callback, handler);
+    this.getListsFromTransaction_(types, callback, opt_handler);
   }
 };
 
@@ -195,13 +195,13 @@ pn.data.IndexedDBRepository.prototype.getLists =
  * @param {!Array.<string>} types The types to retreive.
  * @param {!function(Object.<string, Array.<pn.data.IEntity|number>>)}
  *    callback  The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.getListsFromTransaction_ =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
   var dict = {};
   var trans = this.getTransaction_(types, false);
-  this.getListsImpl_(trans, types, dict, callback, handler);
+  this.getListsImpl_(trans, types, dict, callback, opt_handler);
 };
 
 
@@ -215,41 +215,41 @@ pn.data.IndexedDBRepository.prototype.getListsFromTransaction_ =
  *    the retreived data.
  * @param {function(Object.<string, Array.<string>>)} callback The callback to
  *    call with the retreived data.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.getListsImpl_ =
-    function(transaction, types, dict, callback, handler) {
-  if (types.length === 0) { callback.call(handler || this, dict); return; }
+    function(transaction, types, dict, callback, opt_handler) {
+  if (types.length === 0) { callback.call(opt_handler || this, dict); return; }
   var type = types.pop();
 
   var os = transaction.objectStore(type);
   this.getListImpl_(os, function(list) {
     dict[type] = list;
-    this.getListsImpl_(transaction, types, dict, callback, handler);
+    this.getListsImpl_(transaction, types, dict, callback, opt_handler);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.deleteList =
-    function(type, callback, handler) {
+    function(type, callback, opt_handler) {
   if (type === 'UnsavedEntities') {
     this.removeLocalUnsavedItems_(goog.array.clone(this.types), function() {
-      callback.call(handler || this, true);
+      callback.call(opt_handler || this, true);
     }, this);
   } else if (!goog.array.contains(this.osNames_, type)) {
-    callback.call(handler || this, false);
+    callback.call(opt_handler || this, false);
   } else {
     var os = this.getObjectStore_(type, true);
     if (os.clear) {
       this.runRequest_(os.clear(), function() {
-        callback.call(handler || this, true);
+        callback.call(opt_handler || this, true);
       }, this);
     } else {
       // WebKit unfortunatelly does not support clear so ugly cursor here
       this.doOnCursor_(os, function(c) {
         c['delete']();
-      }, callback, handler);
+      }, callback, opt_handler);
     }
   }
 };
@@ -261,16 +261,16 @@ pn.data.IndexedDBRepository.prototype.deleteList =
  * @param {function(!IDBCursor):undefined} op The operation to perform in each
  *    iteration.
  * @param {!function()} callback The callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.doOnCursor_ =
-    function(os, op, callback, handler) {
+    function(os, op, callback, opt_handler) {
   this.runRequest_(os.openCursor(), function(cursor) {
     if (!cursor) {
-      callback.call(handler || this, true);
+      callback.call(opt_handler || this, true);
       return;
     }
-    op.call(handler || this, cursor);
+    op.call(opt_handler || this, cursor);
     cursor['continue']();
   }, this);
 };
@@ -280,12 +280,12 @@ pn.data.IndexedDBRepository.prototype.doOnCursor_ =
  * @private
  * @param {!Array.<string>} types The types to remove unsaved items from.
  * @param {!function()} callback The callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.removeLocalUnsavedItems_ =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
   if (types.length === 0) {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
     return;
   }
   var type = types.pop();
@@ -299,7 +299,7 @@ pn.data.IndexedDBRepository.prototype.removeLocalUnsavedItems_ =
     } }, this);
     this.deleteItems(type, ids, function() {
       this.deleteList(unsavedtype, function(deleted) {
-        this.removeLocalUnsavedItems_(types, callback, handler);
+        this.removeLocalUnsavedItems_(types, callback, opt_handler);
         return;
       }, this);
     }, this);
@@ -309,9 +309,10 @@ pn.data.IndexedDBRepository.prototype.removeLocalUnsavedItems_ =
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.saveList =
-    function(type, list, callback, handler) {
+    function(type, list, callback, opt_handler) {
   list = goog.array.clone(list);
-  this.saveListImpl_(this.getObjectStore_(type, true), list, callback, handler);
+  this.saveListImpl_(this.getObjectStore_(type, true), list,
+      callback, opt_handler);
 };
 
 
@@ -320,41 +321,41 @@ pn.data.IndexedDBRepository.prototype.saveList =
  * @param {!IDBObjectStore} os The object store.
  * @param {!Array.<pn.data.IEntity|number>} list The list to save.
  * @param {!function(boolean)} callback The callback to call after save.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.saveListImpl_ =
-    function(os, list, callback, handler) {
+    function(os, list, callback, opt_handler) {
   if (!list || list.length === 0) {
-    callback.call(handler, true);
+    callback.call(opt_handler, true);
     return;
   }
 
   var item = list.pop();
   os.add(item);
-  this.saveListImpl_(os, list, callback, handler);
+  this.saveListImpl_(os, list, callback, opt_handler);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.deleteItem =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   var os = this.getObjectStore_(type, true);
   this.runRequest_(os['delete'](id),
       function() {
-        callback.call(handler || this, true);
+        callback.call(opt_handler || this, true);
       }, this, function() {
-        callback.call(handler || this, false);
+        callback.call(opt_handler || this, false);
       });
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.deleteItems =
-    function(type, ids, callback, handler) {
-  if (ids.length === 0) {return callback.call(handler || this, true); }
+    function(type, ids, callback, opt_handler) {
+  if (ids.length === 0) {return callback.call(opt_handler || this, true); }
   ids = goog.array.clone(ids);
   this.deleteItemsImpl_(this.getObjectStore_(type, true),
-      type, ids, callback, handler);
+      type, ids, callback, opt_handler);
 };
 
 
@@ -364,47 +365,47 @@ pn.data.IndexedDBRepository.prototype.deleteItems =
  * @param {string} type The entity type.
  * @param {!Array.<number>} ids The ids to delete (of the specified type).
  * @param {!function(boolean)} callback Success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.deleteItemsImpl_ =
-    function(os, type, ids, callback, handler) {
+    function(os, type, ids, callback, opt_handler) {
   if (!ids || ids.length === 0) {
-    callback.call(handler || this, true);
+    callback.call(opt_handler || this, true);
     return;
   }
 
   var id = ids.pop();
   this.runRequest_(os['delete'](id), function() {
-    this.deleteItemsImpl_(os, type, ids, callback, handler);
+    this.deleteItemsImpl_(os, type, ids, callback, opt_handler);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.getItem =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.runRequest_(this.getObjectStore_(type, false).get(id), function(result) {
-    callback.call(handler || this, result);
+    callback.call(opt_handler || this, result);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.saveItem =
-    function(type, item, callback, handler) {
+    function(type, item, callback, opt_handler) {
   if (typeof(item) === 'number') { item = {ID: item}; }
 
   var os = this.getObjectStore_(type, true);
   this.runRequest_(os.put(item),
       function() {
-        callback.call(handler || this, true);
+        callback.call(opt_handler || this, true);
       }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.clearEntireDatabase =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   this.deleteListsImpl_(goog.array.clone(this.osNames_),
       callback, this);
 };
@@ -414,23 +415,23 @@ pn.data.IndexedDBRepository.prototype.clearEntireDatabase =
  * @private
  * @param {Array.<string>} types The types to delete.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.deleteListsImpl_ =
-    function(types, callback, handler) {
+    function(types, callback, opt_handler) {
   if (types.length === 0) {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
     return;
   }
   this.deleteList(types.pop(), function() {
-    this.deleteListsImpl_(types, callback, handler);
+    this.deleteListsImpl_(types, callback, opt_handler);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.getUnsyncLists =
-    function(typename, callback, handler) {
+    function(typename, callback, opt_handler) {
   var dict = {};
   var types = [];
   goog.array.forEach(this.types, function(type) {
@@ -450,7 +451,7 @@ pn.data.IndexedDBRepository.prototype.getUnsyncLists =
           function(item) { return item.ID; }); }
       dict3[i.split('|')[1]] = list;
     }
-    callback.call(handler || this, dict3);
+    callback.call(opt_handler || this, dict3);
   }, this);
 };
 
@@ -460,22 +461,21 @@ pn.data.IndexedDBRepository.prototype.getUnsyncLists =
  * @param {IDBRequest} req The indexeddb request.
  * @param {function(IDBSuccessEvent=,*=):undefined} callback The success
  *    callback.
- * @param {Object=} handler The context to use when calling the callback.
- * @param {Function=} onerror The error callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
+ * @param {Function=} opt_onerror The error callback.
  */
 pn.data.IndexedDBRepository.prototype.runRequest_ =
-    function(req, callback, handler, onerror) {
-  if (onerror) {
-    req.onerror = function(e) { onerror.call(handler || this, e); }
+    function(req, callback, opt_handler, opt_onerror) {
+  if (opt_onerror) {
+    req.onerror = function(e) { opt_onerror.call(opt_handler || this, e); }
   } else {
-    var that = this;
-    req.onerror = function(e) {
-      that.log.severe(goog.debug.expose(e));
-    }
+    req.onerror = goog.bind(function(e) {
+      this.log.severe(goog.debug.expose(e));
+    }, this);
   }
 
   req.onsuccess = function(e) {
-    callback.call(handler || this, e.result || req['result']);
+    callback.call(opt_handler || this, e.result || req['result']);
   }
 };
 

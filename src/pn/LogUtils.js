@@ -1,4 +1,4 @@
-﻿
+﻿;
 goog.require('goog.debug');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.LogManager');
@@ -34,15 +34,15 @@ pn.LogUtils.initialise = function() {
 
 /**
  * @param {string} name The name of the logger to create.
- * @param {boolean=} exclusive Wether to turn off all other loggers.
+ * @param {boolean=} opt_exclusive Wether to turn off all other loggers.
  * @return {goog.debug.Logger} The logger create with the specified name.
  */
-pn.LogUtils.getLogger = function(name, exclusive) {
+pn.LogUtils.getLogger = function(name, opt_exclusive) {
   if (pn.LogUtils.OFF_ || pn.LogUtils.isExclusive_) {
     return pn.LogUtils.getLoggerImpl_(name,
         goog.debug.Logger.Level.OFF); }
 
-  if (exclusive) {
+  if (opt_exclusive) {
     pn.LogUtils.isExclusive_ = true;
     goog.object.forEach(goog.debug.LogManager.getLoggers(), function(l) {
       l.setLevel(goog.debug.Logger.Level.OFF);

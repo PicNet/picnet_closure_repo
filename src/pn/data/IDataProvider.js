@@ -31,10 +31,10 @@ pn.data.IDataProvider.prototype.getEntities = function(type) {};
  * @param {!pn.data.IEntity} data The data to save.
  * @param {!function(pn.data.TransactionResult)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IDataProvider.prototype.saveEntity =
-    function(type, data, callback, handler) {};
+    function(type, data, callback, opt_handler) {};
 
 
 /**
@@ -42,10 +42,10 @@ pn.data.IDataProvider.prototype.saveEntity =
  *    representing the entities to save.
  * @param {!function(Array.<pn.data.TransactionResult>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IDataProvider.prototype.saveEntities =
-    function(data, callback, handler) {};
+    function(data, callback, opt_handler) {};
 
 
 /**
@@ -53,10 +53,10 @@ pn.data.IDataProvider.prototype.saveEntities =
  * @param {number} id The ID of the entity to delete.
  * @param {!function(pn.data.TransactionResult)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IDataProvider.prototype.deleteEntity =
-    function(type, id, callback, handler) {};
+    function(type, id, callback, opt_handler) {};
 
 
 /**
@@ -64,7 +64,7 @@ pn.data.IDataProvider.prototype.deleteEntity =
  * @param {!Array.<number>} ids The IDs of the entities to delete.
  * @param {!function(Array.<pn.data.TransactionResult>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IDataProvider.prototype.deleteEntities =
-    function(type, ids, callback, handler) {};
+    function(type, ids, callback, opt_handler) {};

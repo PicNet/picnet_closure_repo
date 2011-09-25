@@ -33,14 +33,14 @@ goog.inherits(pn.data.LocalDataProvider, goog.Disposable);
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.getEntities = function(type) {
   throw new Error('LocalDataProvider.getEntities not supported');
-  // this.repository.getList(type, callback, handler);
+  // this.repository.getList(type, callback, opt_handler);
 };
 
 
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.getEntity = function(type, id) {
   throw new Error('LocalDataProvider.getEntity not supported');
-  // this.repository.getItem(type, id, callback, handler);
+  // this.repository.getItem(type, id, callback, opt_handler);
 };
 
 
@@ -55,7 +55,7 @@ pn.data.LocalDataProvider.prototype.localSaveEntityIndex_ = 0;
 
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.saveEntity =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   var clientid = 0;
   if (typeof(data) !== 'number' && !data.ID) {
     // new entities get a negative ID for locals
@@ -63,9 +63,9 @@ pn.data.LocalDataProvider.prototype.saveEntity =
     this.setValidEntityIDPreSave_(data);
   }
   this.repository.saveItem(type, data, function() {
-    callback.call(handler || this,
+    callback.call(opt_handler || this,
         {'ClientID': clientid, 'ID': data.ID, 'Errors': []});
-  }, handler);
+  }, opt_handler);
 };
 
 
@@ -73,12 +73,12 @@ pn.data.LocalDataProvider.prototype.saveEntity =
  * @param {string} type The type of the unsaved entity.
  * @param {!pn.data.IEntity} data The entity data.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveUnsavedEntity =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   this.repository.saveItem('UnsavedEntities|' + type, data, function() {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
@@ -87,14 +87,14 @@ pn.data.LocalDataProvider.prototype.saveUnsavedEntity =
  * @param {!Object.<string, !Array.<pn.data.IEntity>>} data The unsaved
  *    entities map.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveUnsavedEntities =
-    function(data, callback, handler) {
+    function(data, callback, opt_handler) {
   for (var type in data) {
     this.repository.saveList('UnsavedEntities|' + type, data[type],
         function() {
-          callback.call(handler || this);
+          callback.call(opt_handler || this);
         }, this);
   }
 };
@@ -102,9 +102,9 @@ pn.data.LocalDataProvider.prototype.saveUnsavedEntities =
 
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.saveEntities =
-    function(data, callback, handler) {
+    function(data, callback, opt_handler) {
   var types = goog.object.getKeys(data);
-  this.saveEntitiesImpl_(types, data, callback, handler);
+  this.saveEntitiesImpl_(types, data, callback, opt_handler);
 };
 
 
@@ -116,12 +116,12 @@ pn.data.LocalDataProvider.prototype.saveEntities =
  *    to save.
  * @param {!function(Array.<pn.data.TransactionResult>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveEntitiesImpl_ =
-    function(types, data, callback, handler) {
+    function(types, data, callback, opt_handler) {
   if (!types || types.length === 0) {
-    callback.call(handler, []);
+    callback.call(opt_handler, []);
     return;
   }
   var type = types.pop();
@@ -129,21 +129,21 @@ pn.data.LocalDataProvider.prototype.saveEntitiesImpl_ =
   goog.array.forEach(entities, this.setValidEntityIDPreSave_, this);
   this.repository.saveList(type, entities, function(success) {
     if (!success) {
-      callback.call(handler || this, [{Errors: 'Unknown Error'}]);
+      callback.call(opt_handler || this, [{Errors: 'Unknown Error'}]);
       return;
     }
-    this.saveEntitiesImpl_(types, data, callback, handler);
+    this.saveEntitiesImpl_(types, data, callback, opt_handler);
   }, this);
 };
 
 
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.deleteEntity =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   this.repository.deleteItem('UnsavedEntities|' + type, id, function() {
     // Offline Delete, add to the Deleted_type list for later server update
     this.repository.deleteItem(type, id, function(result) {
-      if (callback) callback.call(handler || this, result);
+      if (callback) callback.call(opt_handler || this, result);
     }, this);
   }, this);
 };
@@ -151,11 +151,11 @@ pn.data.LocalDataProvider.prototype.deleteEntity =
 
 /** @inheritDoc */
 pn.data.LocalDataProvider.prototype.deleteEntities =
-    function(type, ids, callback, handler) {
+    function(type, ids, callback, opt_handler) {
   this.repository.deleteItems('UnsavedEntities|' + type, ids, function() {
     // Offline Delete, add to the Deleted_type list for later server update
     this.repository.deleteItems(type, ids, function(result) {
-      if (callback) callback.call(handler || this, result);
+      if (callback) callback.call(opt_handler || this, result);
     }, this);
   }, this);
 };
@@ -165,16 +165,16 @@ pn.data.LocalDataProvider.prototype.deleteEntities =
  * @param {string} type The type of the local deleted eneity.
  * @param {number} id The ID of the entity that has been deleted.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveDeletedEntity =
-    function(type, id, callback, handler) {
+    function(type, id, callback, opt_handler) {
   if (id < 0) {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
     return;
   }
   this.repository.saveItem('DeletedIDs|' + type, id, function() {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
   }, this);
 };
 
@@ -183,17 +183,18 @@ pn.data.LocalDataProvider.prototype.saveDeletedEntity =
  * @param {string} type The type of the entities that have been deleted.
  * @param {!Array.<number>} ids The IDs of the entities that have been deleted.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveDeletedEntities =
-    function(type, ids, callback, handler) {
+    function(type, ids, callback, opt_handler) {
   var posids = goog.array.filter(ids, function(t) { return t > 0; });
   if (posids.length <= 0) {
-    callback.call(handler || this);
+    callback.call(opt_handler || this);
     return;
   }
   this.repository.saveList('DeletedIDs|' + type, posids, function(success) {
-    callback.call(handler || this, success ? [] : [{Errors: 'Unknown Error'}]);
+    callback.call(opt_handler || this, success ? [] :
+        [{Errors: 'Unknown Error'}]);
   }, this);
 };
 
@@ -222,33 +223,33 @@ pn.data.LocalDataProvider.getRandomNegativeID = function() {
 /**
  * @param {!function(Object.<string, Array.<Object>>)} callback The
  *    success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.getAllUnsavedEntities =
-    function(callback, handler) {
-  this.repository.getLists('UnsavedEntities', callback, handler);
+    function(callback, opt_handler) {
+  this.repository.getLists('UnsavedEntities', callback, opt_handler);
 };
 
 
 /**
  * @param {!function(Object.<string, Array.<number>>)} callback The success
  *    callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.getAllDeletedEntities =
-    function(callback, handler) {
-  this.repository.getLists('DeletedIDs', callback, handler);
+    function(callback, opt_handler) {
+  this.repository.getLists('DeletedIDs', callback, opt_handler);
 };
 
 
 /**
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.resetLocalChanges =
-    function(callback, handler) {
+    function(callback, opt_handler) {
   this.repository.deleteList('UnsavedEntities', function() {
-    this.repository.deleteList('DeletedIDs', callback, handler);
+    this.repository.deleteList('DeletedIDs', callback, opt_handler);
   }, this);
 };
 
@@ -257,41 +258,41 @@ pn.data.LocalDataProvider.prototype.resetLocalChanges =
  * @param {string} type The type of the local data to update.
  * @param {!Object} data The local data to update.
  * @param {!function(boolean)} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.updateLocalData =
-    function(type, data, callback, handler) {
+    function(type, data, callback, opt_handler) {
   if (data['Data'] && data['Results']) { // Append imports data
     if (data['Data'].length === 0) {
-      callback.call(handler || this, true);
+      callback.call(opt_handler || this, true);
       return;
     }
     this.repository.getList(type, function(list) {
       this.repository.saveList(type,
-          list.concat(data['Data']), callback, handler);
+          list.concat(data['Data']), callback, opt_handler);
     }, this);
-    this.repository.saveList(type, data['Data'], callback, handler);
+    this.repository.saveList(type, data['Data'], callback, opt_handler);
   // This is a getEntities result, replace list
   } else if (pn.Utils.isArray(data)) {
     this.repository.saveList(type, /** @type {!Array} */ (data),
-        callback, handler);
+        callback, opt_handler);
   } else {  // Others
     var isdelete = typeof data === 'number' || !isNaN(parseInt(data, 10));
     if (isdelete) { this.repository.deleteItem(type, /** @type {number} */
-        (data), callback, handler); }
+        (data), callback, opt_handler); }
     else { this.repository.saveItem(type, /** @type {!pn.data.IEntity} */
-        (data), callback, handler); }
+        (data), callback, opt_handler); }
   }
 };
 
 
 /**
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.clearEntireDatabase =
-    function(callback, handler) {
-  this.repository.clearEntireDatabase(callback, handler);
+    function(callback, opt_handler) {
+  this.repository.clearEntireDatabase(callback, opt_handler);
 };
 
 
@@ -300,11 +301,11 @@ pn.data.LocalDataProvider.prototype.clearEntireDatabase =
  * @private
  * @param {!Array.<string>} types The types supported by this repository.
  * @param {!function()} callback The success callback.
- * @param {Object=} handler The context to use when calling the callback.
+ * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.reset_ =
-    function(types, callback, handler) {
-  this.repository.init(types, callback, handler);
+    function(types, callback, opt_handler) {
+  this.repository.init(types, callback, opt_handler);
 };
 
 
