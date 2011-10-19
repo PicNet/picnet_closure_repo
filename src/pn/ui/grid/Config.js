@@ -5,8 +5,13 @@ goog.provide('pn.ui.grid.Config');
 
 /**
  * @constructor
+ * @param {string} type The entity types of this grid.
  */
-pn.ui.grid.Config = function() {
+pn.ui.grid.Config = function(type) {
+  /** @type {string} */
+  this.type = type;
+  /** @type {boolean} */
+  this.allowAdd = true;
   /** @type {boolean} */
   this.enableColumnReorder = false;
   /** @type {boolean} */
@@ -15,6 +20,8 @@ pn.ui.grid.Config = function() {
   this.multiSelect = false;
   /** @type {boolean} */
   this.editable = true;
+  /** @type {boolean} */
+  this.checkboxRowSelect = false;
 };
 
 

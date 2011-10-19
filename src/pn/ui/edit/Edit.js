@@ -8,23 +8,26 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.Command');
+goog.require('pn.ui.edit.ComplexRenderer');
+goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Field');
+goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.edit.FieldValidator');
+goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.Config');
+goog.require('pn.ui.grid.Grid');
 
 
 
 /**
- * The pn.ui.edit.Edit is built atop SlickEdit
- * (https://github.com/mleibman/SlickEdit/).  See SlickEdit documentation for
- * full detauils.
- *
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!Object} data The data object to edit.
+ * @param {!Object} data The data object to edit, null for new entity.
  * @param {!Array.<pn.ui.edit.Command>} commands The commands to show in the
  *    edit page.
  * @param {!Array.<pn.ui.edit.Field>} fields The field specs to show in the
  *    edit page.
- * @param {!Object} cfg Global options for this control.
+ * @param {!pn.ui.edit.Config} cfg Global options for this control.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
 pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
@@ -32,6 +35,7 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
   goog.asserts.assert(commands);
   goog.asserts.assert(fields);
   goog.asserts.assert(cfg);
+  goog.asserts.assert(cache);
 
   goog.ui.Component.call(this);
 
@@ -55,13 +59,13 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
 
   /**
    * @private
-   * @type {!Object}
+   * @type {!pn.ui.edit.Config}
    */
   this.cfg_ = cfg;
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!Object.<!Array>}
    */
   this.cache_ = cache;
 
@@ -73,7 +77,7 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
 
   /**
    * @private
-   * @type {!Object.<!Element>}
+   * @type {!Object.<!Element|!goog.ui.Component>}
    */
   this.inputs_ = {};
 
@@ -82,6 +86,12 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    * @type {!goog.events.EventHandler}
    */
   this.eh_ = new goog.events.EventHandler(this);
+
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.LogUtils.getLogger('pn.ui.edit.Edit');
 };
 goog.inherits(pn.ui.edit.Edit, goog.ui.Component);
 
@@ -95,10 +105,10 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-
   var opts = {'class': 'details-container', 'style': 'display:none'};
   var div = goog.dom.createDom('div', opts);
   goog.dom.appendChild(element, div);
+
   this.decorateCommands_(div);
   this.decorateFields_(div);
 
@@ -124,13 +134,21 @@ pn.ui.edit.Edit.prototype.decorateCommands_ = function(parent) {
  * @param {!Element} parent The parent element to attach the fields to.
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
+  var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
+  goog.dom.appendChild(parent, fieldset);
   goog.array.forEach(this.fields_, function(f, idx) {
-    var input = this.createInput_(f);
+    var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
+        goog.dom.createDom('label', { 'for': f.id }, f.name));
+    goog.dom.appendChild(fieldset, dom);
+
+    var input = pn.ui.edit.FieldBuilder.createAndAttachInput(
+        f, dom, this.data_, this.cache_);
     this.inputs_[f.id] = input;
-    var fieldDom = goog.dom.createDom('div', {'class': f.className || 'field'},
-        goog.dom.createDom('label', {'for': f.id}), input);
-    goog.dom.append(parent, fieldDom);
-    if (idx === 0) { goog.Timer.callOnce(function() { input.focus(); }, 0); }
+    this.attachOnChangeListenerIfRequired_(f, input);
+
+    if (idx === 0) { goog.Timer.callOnce(function() {
+      if (input.focus) input.focus();
+    }, 0); }
   }, this);
 };
 
@@ -138,35 +156,39 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 /**
  * @private
  * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @return {!Element} The created dom element.
+ * @param {!Element} input The element to attach the change listener to.
  */
-pn.ui.edit.Edit.prototype.createInput_ = function(field) {
-  var val = this.data_[field.id];
-  return field.renderer ?
-      field.renderer(val) :
-      field.source ? this.createParentEntitySelect_(field, val) :
-      goog.dom.createDom('input',
-      {'id': field.id, 'type': 'text', 'value': val});
+pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
+    function(field, input) {
+  if (field.onchange) {
+    this.eh_.listen(input, goog.events.EventType.CHANGE, function(e) {
+      field.onchange(pn.ui.edit.FieldBuilder.getFieldValue(input), input, e);
+    });
+    field.onchange(pn.ui.edit.FieldBuilder.getFieldValue(input), input, null);
+  }
 };
 
 
 /**
  * @private
- * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {number} id The admin entity ID.
- * @return {!Element} The created dom element.
+ * @return {boolean} If this form is valid.
  */
-pn.ui.edit.Edit.prototype.createParentEntitySelect_ = function(field, id) {
-  var list = this.cache_[field.source];
-  var select = goog.dom.createDom('select', { 'id': field.id });
-  goog.array.forEach(list, function(e) {
-    var eid = e[field.source + 'ID'];
-    var opts = {'value': eid};
-    if (eid === id) { opts['selected'] = 'selected'; }
-    goog.dom.append(select,
-        goog.dom.createDom('option', opts, e[field.sourceField]));
+pn.ui.edit.Edit.prototype.isValidForm_ = function() {
+  var errors = [];
+  goog.array.forEach(this.fields_, function(f) {
+    var error = pn.ui.edit.FieldValidator.validateFieldValue(
+        f, pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]));
+    if (error) errors.push(error);
   }, this);
-  return select;
+
+  if (errors.length) {
+    var et = pn.ui.edit.Edit.EventType.VALIDATION_ERROR;
+    var event = new goog.events.Event(et, this);
+    event.errors = errors;
+    this.dispatchEvent(event);
+  }
+
+  return !errors.length;
 };
 
 
@@ -178,19 +200,11 @@ pn.ui.edit.Edit.prototype.getCurrentFormData_ = function() {
   var current = {};
   goog.object.extend(current, this.data_);
   goog.array.forEach(this.fields_, function(f) {
-    current[f.id] = this.getFieldValue_(f);
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    if (val === undefined) delete current[f.id];
+    else current[f.id] = val;
   }, this);
   return current;
-};
-
-
-/**
- * @private
- * @param {pn.ui.edit.Field} field The Field to get the current value.
- * @return {Object} The value in the specified field.
- */
-pn.ui.edit.Edit.prototype.getFieldValue_ = function(field) {
-  return this.inputs_[field.id].value;
 };
 
 
@@ -198,20 +212,57 @@ pn.ui.edit.Edit.prototype.getFieldValue_ = function(field) {
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
-  goog.array.forEach(this.commands_, function(c, i) {
-    var button = this.buttons_[i];
-    this.eh_.listen(button, goog.ui.Component.EventType.ACTION, function() {
-      var event = new goog.events.Event(c.eventType, this);
-      event.data = this.getCurrentFormData_();
-      this.dispatchEvent(event);
-    });
-  }, this);
+  goog.array.forEach(this.commands_, this.enterDocumentOnCommand_, this);
+  goog.array.forEach(this.fields_, this.enterDocumentOnField_, this);
+};
+
+
+/**
+ * @private
+ * @param {pn.ui.edit.Command} command The command to attach events to.
+ * @param {number} idx The index of the specified command.
+ */
+pn.ui.edit.Edit.prototype.enterDocumentOnCommand_ = function(command, idx) {
+  var button = this.buttons_[idx];
+  this.eh_.listen(button, goog.ui.Component.EventType.ACTION, function() {
+    if (command.validate && !this.isValidForm_()) { return; }
+    var event = new goog.events.Event(command.eventType, this);
+    event.data = this.getCurrentFormData_();
+    this.dispatchEvent(event);
+  });
+};
+
+
+/**
+ * @private
+ * @param {pn.ui.edit.Field} field The field to attach events to.
+ */
+pn.ui.edit.Edit.prototype.enterDocumentOnField_ = function(field) {
+  if (!field.table) return;
+  var relationship = field.table.split('.');
+  var grid = this.inputs_[field.id];
+  this.eh_.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
+    var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
+    e.parent = this.data_;
+    e.entityType = relationship[0];
+    e.parentField = relationship[1];
+    this.dispatchEvent(e);
+  });
+  this.eh_.listen(grid, pn.ui.grid.Grid.EventType.ROW_SELECTED, function(ev) {
+    var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
+    e.entity = ev.selected;
+    e.parent = this.data_;
+    e.entityType = relationship[0];
+    e.parentField = relationship[1];
+    this.dispatchEvent(e);
+  });
 };
 
 
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.exitDocument = function() {
   pn.ui.edit.Edit.superClass_.exitDocument.call(this);
+
   this.eh_.removeAll();
 };
 
@@ -221,10 +272,15 @@ pn.ui.edit.Edit.prototype.disposeInternal = function() {
   pn.ui.edit.Edit.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.eh_);
+  goog.dispose(this.log_);
   goog.array.forEach(this.buttons_, goog.dispose);
+  goog.object.forEach(this.inputs_, goog.dispose);
+
+  delete this.inputs_;
   delete this.eh_;
   delete this.fields_;
   delete this.cfg_;
+  delete this.log_;
 };
 
 
@@ -235,5 +291,8 @@ pn.ui.edit.Edit.EventType = {
   SAVE: 'save',
   CANCEL: 'cancel',
   DELETE: 'delete',
-  CLONE: 'clone'
+  CLONE: 'clone',
+  ADD_CHILD: 'add-child',
+  EDIT_CHILD: 'edit-child',
+  VALIDATION_ERROR: 'validation-error'
 };

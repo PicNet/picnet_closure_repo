@@ -1,98 +1,142 @@
 ﻿;
+goog.provide('pn.ui.FileUpload');
+goog.provide('pn.ui.FileUpload.EventType');
+
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.net.EventType');
 goog.require('goog.net.IframeIo');
-
-goog.provide('pn.ui.FileUpload');
+goog.require('goog.ui.Component');
 
 
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.ui.Component}
  *
  * @param {string} id The id to use for the file input control.
  * @param {string} serverAction The server action name.
- * @param {!Element} parent The parent element to attache the input control to.
- * @param {function(string, !goog.net.IframeIo):undefined} complete The
- *    complete callback.
- * @param {function():Object.<string, string>=} opt_getData The optional data
- *    provider.
+ * @param {(Object.<string, string>|function():Object.<string, string>)=}
+ *    opt_getData The optional data provider.
  * @param {function(string):boolean=} opt_validateData The optional data
  *    validator.
- * @param {Object=} opt_handler The optional handler for callbacks.
  */
-pn.ui.FileUpload = function(id, serverAction, parent, complete, 
-    opt_getData, opt_validateData, opt_handler) {
-  goog.Disposable.call(this);
+pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
+  goog.asserts.assert(id);
+  goog.asserts.assert(serverAction);
 
-  if (!cdm.online) { return; } // No upload in offline mode
-
-  /**
-   * @private
-   * @type {!Element}
-   */
-  this.fileinput_ =
-      goog.dom.createDom('input', {'id': id, 'name': id, 'type': 'file'});
+  goog.ui.Component.call(this);
 
   /**
    * @private
-   * @type {!HTMLFormElement}
+   * @type {string}
    */
-  this.uploadform_ = /** @type {!HTMLFormElement} */ (
-      goog.dom.createDom('form', {'id': id + 'form',
-        'enctype': 'multipart/form-data', 'method': 'POST', 'action' :
-            serverAction}, this.fileinput_));
-  this.uploadform_.encoding = 'multipart/form-data'; // For IE
+  this.fuid_ = id;
 
   /**
    * @private
-   * @type {function():Object.<string, string>|undefined}
+   * @type {string}
    */
-  this.opt_getData_ = opt_getData;
+  this.serverAction_ = serverAction;
+
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.fileInput_ = null;
+
+
+  /**
+   * @private
+   * @type {HTMLFormElement}
+   */
+  this.uploadform_ = null;
+
+  /**
+   * @private
+   * @type {goog.net.IframeIo}
+   */
+  var io_ = null;
+  /**
+   * @private
+   * @type {Object.<string, string>|function():Object.<string, string>|
+   *    undefined}
+   */
+  this.getData_ = opt_getData;
   /**
    * @private
    * @type {function(string):boolean|undefined}
    */
-  this.opt_validateData_ = opt_validateData;
+  this.validateData_ = opt_validateData;
+
   /**
    * @private
-   * @type {function(string, !goog.net.IframeIo):undefined}
+   * @type {!goog.events.EventHandler}
    */
-  this.complete_ = complete;
-  /**
-   * @private
-   * @type {Object|undefined}
-   */
-  this.opt_handler_ = opt_handler;
-
-
-  goog.dom.appendChild(parent, this.uploadform_);
-  // Works in IE, FF and Chrome
-  this.listen(this.fileinput_, goog.events.EventType.CHANGE, this.doUpload_);
+  this.eh_ = new goog.events.EventHandler(this);
 };
-goog.inherits(pn.ui.FileUpload, goog.Disposable);
+goog.inherits(pn.ui.FileUpload, goog.ui.Component);
+
+
+/** @inheritDoc */
+pn.ui.FileUpload.prototype.createDom = function() {
+  this.decorateInternal(this.dom_.createElement('div'));
+};
+
+
+/** @inheritDoc */
+pn.ui.FileUpload.prototype.decorateInternal = function(element) {
+  this.setElementInternal(element);
+
+  this.fileInput_ = goog.dom.createDom('input',
+      {'id': this.fuid_, 'name': this.fuid_, 'type': 'file'});
+  this.uploadform_ = /** @type {!HTMLFormElement} */ (
+      goog.dom.createDom('form', {'id': this.fuid_ + '_form',
+        'enctype': 'multipart/form-data', 'method': 'POST', 'action' :
+            this.serverAction_}, this.fileInput_));
+  this.uploadform_.encoding = 'multipart/form-data'; // For IE
+  goog.dom.appendChild(element, this.uploadform_);
+};
+
+
+/** @inheritDoc */
+pn.ui.FileUpload.prototype.enterDocument = function() {
+  pn.ui.FileUpload.superClass_.enterDocument.call(this);
+  this.eh_.listen(this.fileInput_, goog.events.EventType.CHANGE,
+      this.doUpload_);
+};
+
+
+/** @inheritDoc */
+pn.ui.FileUpload.prototype.exitDocument = function() {
+  pn.ui.FileUpload.superClass_.exitDocument.call(this);
+  this.eh_.removeAll();
+
+  goog.dispose(this.eh_);
+};
 
 
 /**
  * @private
  */
 pn.ui.FileUpload.prototype.doUpload_ = function() {
-  if (this.opt_validateData_ &&
-      !this.opt_validateData_.call(
-      this.opt_handler_ || this, this.fileinput_.value)) return;
+  this.io_ = new goog.net.IframeIo();
+  this.eh_.listen(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
 
-  if (this.opt_getData_) {
-    this.setUploadData_(this.opt_getData_.call(this.opt_handler_ || this));
+  if (this.validateData_ &&
+      !this.validateData_.call(this, this.fileInput_.value)) return;
+
+  if (this.getData_) {
+    var data = typeof (this.getData_) === 'object' ?
+        this.getData_ : this.getData_.call(this);
+    this.setUploadData_(data);
   }
 
-  cdm.nav.showMessage('Uploading...');
-  var io = new goog.net.IframeIo();
-  this.listen(io, goog.net.EventType.COMPLETE, this.onComplete_);
-  io.sendFromForm(this.uploadform_, undefined, true);
+  this.io_.sendFromForm(this.uploadform_, undefined, true);
 };
 
 
@@ -118,11 +162,19 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
  * @param {goog.events.Event} e The oncomplete event.
  */
 pn.ui.FileUpload.prototype.onComplete_ = function(e) {
-  cdm.nav.showMessage('');
-  var io = /** @type {!goog.net.IframeIo} */ (e.target);
-  this.complete_.call(this.opt_handler_ || this, this.fileinput_.value, io);
-  this.fileinput_.disabled = false;
-  goog.dispose(io);
+  //var io = /** @type {!goog.net.IframeIo} */ (e.target);
+  var et = this.io_.isSuccess() ?
+      pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :
+      pn.ui.FileUpload.EventType.UPLOAD_ERROR;
+  var event = new goog.events.Event(et, this);
+  event.io = this.io_;
+  event.data = this.io_.isSuccess() ?
+      this.io_.getResponseHtml() :
+      this.io_.getLastError();
+  this.dispatchEvent(event);
+
+  this.fileInput_.disabled = false;
+  goog.dispose(this.io_);
 };
 
 
@@ -130,9 +182,16 @@ pn.ui.FileUpload.prototype.onComplete_ = function(e) {
 pn.ui.FileUpload.prototype.disposeInternal = function() {
   pn.ui.FileUpload.superClass_.disposeInternal.call(this);
 
-  delete this.fileinput_;
+  delete this.fileInput_;
   delete this.uploadform_;
-  delete this.opt_getData_;
-  delete this.complete_;
-  delete this.opt_handler_;
+  delete this.getData_;
+};
+
+
+/**
+ * @enum {string}
+ */
+pn.ui.FileUpload.EventType = {
+  UPLOAD_COMPLETE: 'upload-complete',
+  UPLOAD_ERROR: 'upload-error'
 };
