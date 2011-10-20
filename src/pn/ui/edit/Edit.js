@@ -96,6 +96,37 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
 goog.inherits(pn.ui.edit.Edit, goog.ui.Component);
 
 
+/**
+ * @return {boolean} Wether the current edit screen is dirty.
+ */
+pn.ui.edit.Edit.prototype.isDirty = function() {
+  if (!this.data_) return false;
+
+  var current = this.getCurrentFormData_();
+  for (var field in current) {
+    var curr = current[field];
+    var orig = this.data_[field];
+    if (!curr && !orig) continue;
+    curr = curr + '';
+    orig = orig + '';
+    if (curr !== orig) {
+      this.log_.info('Found dirty field: ' + field + ' original: ' +
+          orig + ' current: ' + curr);
+      return true;
+    }
+  }
+  return false;
+};
+
+
+/**
+ * Resets the dirty state of the current view
+ */
+pn.ui.edit.Edit.prototype.resetDirty = function() {
+  delete this.data_;
+};
+
+
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));

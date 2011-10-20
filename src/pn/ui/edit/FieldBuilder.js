@@ -19,7 +19,9 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
       if (o.selected) { arr.push(o.value); }
     });
     return inp.multiple ? arr : arr[0];
-  } else { return inp.value; }
+  }
+  else if (inp.type === 'checkbox') { return inp.checked; }
+  else { return inp.value; }
 };
 
 
@@ -80,6 +82,8 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
     opts['rows'] = 2;
   }
   var select = goog.dom.createDom('select', opts);
+  goog.dom.appendChild(select, goog.dom.createDom('option',
+      {'value': '0' }, 'Select ' + field.name + ' ...'));
   goog.array.forEach(list, function(e) {
     var eid = e['ID'];
     var opts = {'value': eid};

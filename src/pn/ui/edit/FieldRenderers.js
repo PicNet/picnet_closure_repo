@@ -38,7 +38,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
  */
 pn.ui.edit.FieldRenderers.boolRenderer = function(val, parent, opt_search) {
   var inp = goog.dom.createDom('input', {'type': 'checkbox'});
-  if (val === true) inp.selected = 'selected';
+  inp.checked = val === true;
   goog.dom.appendChild(parent, inp);
   return inp;
 };
