@@ -478,7 +478,7 @@ pn.ui.DateRangePicker.prototype.highlightDateRangeImpl_ = function(from, to,
         enabled = true;
       if (to && date.equals(to) && picker === this.datePickerFrom_)
         enabled = true;
-      goog.dom.classes.enable(el, goog.getCssName('picnet-datehighlighted'), 
+      goog.dom.classes.enable(el, goog.getCssName('picnet-datehighlighted'),
           enabled);
     }, this);
   }, this);

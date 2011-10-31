@@ -62,8 +62,8 @@ pn.data.LocalDataProvider.prototype.saveEntity =
     clientid = data.ID;
     this.setValidEntityIDPreSave_(data);
   }
-  this.repository.saveItem(type, data, function() {    
-    callback.call(opt_handler || this, 
+  this.repository.saveItem(type, data, function() {
+    callback.call(opt_handler || this,
         /** @type {!pn.data.TransactionResult} */ (
         {'ClientID': clientid, 'ID': data.ID, 'Errors': []}));
   }, opt_handler);
