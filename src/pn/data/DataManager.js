@@ -104,10 +104,9 @@ pn.data.DataManager.getLocalSettings = function(key) {
  * TODO: This should use localStorage
  * @param {string} key The key of the local setting to set.
  * @param {string} value The value of the local setting.
- * @return {string} The specified value.
  */
 pn.data.DataManager.setLocalSettings = function(key, value) {
-  return goog.net.cookies.set(key, value, 99999999);
+  goog.net.cookies.set(key, value, 99999999);
 };
 
 
@@ -362,7 +361,7 @@ pn.data.DataManager.prototype.deleteLocalEntitiesImpl_ =
 
 
 /**
- * @param {!function(Array.<string>)} callback The success callback.
+ * @param {!function()} callback The success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateEntireInMemoryStore =

@@ -118,8 +118,9 @@ pn.data.LocalStorageRepository.prototype.saveList =
 pn.data.LocalStorageRepository.prototype.getItem =
     function(type, id, callback, opt_handler) {
   this.getList(type, function(list) {
-    callback.call(opt_handler || this, !list ? null : goog.array.find(list,
-        function(e) { return e.ID === id; }));
+    var entity = !list ? null :  /** @type {pn.data.IEntity} */ 
+        (goog.array.find(list, function(e) { return e.ID === id; }));
+    callback.call(opt_handler || this, entity);
   });
 };
 

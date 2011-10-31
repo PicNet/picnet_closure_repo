@@ -1,18 +1,18 @@
-c:\Python27\python.exe ../lib/closure-library/closure/bin/calcdeps.py ^
+c:\Python27\python.exe ../closure-library/closure/bin/calcdeps.py ^
 	-i requirements.js ^
 	-o deps ^
-	-d ../lib/closure-library/closure/ ^
-	-p ./ ^
+	-d ../closure-library/closure/ ^
+	-p src/ ^
 	--output_file=deps.js ^
   && ^
 c:\Python27\python.exe ^
-	..\lib\closure-library\closure\bin\calcdeps.py ^
-	-i requirements.js ^
-  -i ../lib/closure-library/closure/goog/deps.js ^
-	-p ../lib/closure-library/closure/ ^
-	-p . ^
-  --output_file=demos/scripts.min.js ^
-	-c ../lib/compiler.jar ^
+	..\closure-library\closure\bin\calcdeps.py ^
+	-i src/requirements.js ^
+  -i ../closure-library/closure/goog/deps.js ^
+	-p ../closure-library/closure/ ^
+	-p src/ ^
+  --output_file=src/demos/scripts.min.js ^
+	-c ../compiler.jar ^
 	-f "--compilation_level=ADVANCED_OPTIMIZATIONS" ^
 	-f "--debug=true" ^
 	-f "--process_closure_primitives=true" ^

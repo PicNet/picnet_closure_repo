@@ -327,8 +327,10 @@ pn.ui.DateRangePicker.prototype.setDateRange = function(from, to) {
  * @param {goog.date.Date|Date} to The date range to date to allow.
  */
 pn.ui.DateRangePicker.prototype.setAllowedDateRange = function(from, to) {
-  this.datePickerFrom_.setAllowedDateRange(from, to);
-  this.datePickerTo_.setAllowedDateRange(from, to);
+  // TODO: Change was not accepted into the closure libs
+  // http://code.google.com/p/closure-library/issues/detail?id=216
+  // this.datePickerFrom_.setAllowedDateRange(from, to);
+  // this.datePickerTo_.setAllowedDateRange(from, to);
 };
 
 
@@ -431,17 +433,18 @@ pn.ui.DateRangePicker.prototype.onDateChanged_ = function(event) {
  * @private
  */
 pn.ui.DateRangePicker.prototype.setLabelText_ = function(from, to) {
+  var tos, froms;
   if (this.dateFormat_) {
-    from = from ? this.dateFormat_.format(from) : '';
-    to = to ? this.dateFormat_.format(to) : '';
+    froms = from ? this.dateFormat_.format(from) : '';
+    tos = to ? this.dateFormat_.format(to) : '';
   } else {
-    from = from ? from.toIsoString(true) : '';
-    to = to ? to.toIsoString(true) : '';
+    froms = from ? from.toIsoString(true) : '';
+    tos = to ? to.toIsoString(true) : '';
   }
-  if (from && to) {
-    goog.dom.setTextContent(this.label_, from + ' - ' + to); }
-  else if (from) { goog.dom.setTextContent(this.label_, 'after ' + from); }
-  else if (to) { goog.dom.setTextContent(this.label_, 'before ' + to); }
+  if (froms && tos) {
+    goog.dom.setTextContent(this.label_, froms + ' - ' + tos); }
+  else if (froms) { goog.dom.setTextContent(this.label_, 'after ' + froms); }
+  else if (tos) { goog.dom.setTextContent(this.label_, 'before ' + tos); }
   else { goog.dom.setTextContent(this.label_, 'Select Date Range'); }
 };
 
@@ -468,14 +471,14 @@ pn.ui.DateRangePicker.prototype.highlightDateRangeImpl_ = function(from, to,
   goog.array.forEach(picker.grid_, function(dates, y) {
     goog.array.forEach(dates, function(date, x) {
       var el = picker.elTable_[y + 1][x + 1];
-      var enabled = (from || to) &&
-          (!from || date > from) &&
-          (!to || date < to);
+      var enabled = !!(from || to) &&
+          !!(!from || date > from) &&
+          !!(!to || date < to);
       if (from && date.equals(from) && picker === this.datePickerTo_)
         enabled = true;
       if (to && date.equals(to) && picker === this.datePickerFrom_)
         enabled = true;
-      goog.dom.classes.enable(el, goog.getCssName('picnet-datehighlighted'),
+      goog.dom.classes.enable(el, goog.getCssName('picnet-datehighlighted'), 
           enabled);
     }, this);
   }, this);

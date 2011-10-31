@@ -11,6 +11,7 @@ goog.require('goog.ui.Component.EventType');
 
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
+goog.require('pn.ui.grid.QuickFilterHelpers');
 
 
 
@@ -100,6 +101,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {null|function(Object):boolean}
    */
   this.currentFilter_ = null;
+
+  /**
+   * @private
+   * @type {Object.<string>}
+   */
+  this.quickFilters_ = {};
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
@@ -117,10 +124,11 @@ pn.ui.grid.Grid.prototype.filter = function(filter) {
 
 /**
  * @private
- * @param {Object} item The row item to pass to the currentFilter_.
- * @return {boolean} Wether the specified item satisfies the currentFilter.
+ * @param {!Object} item The row item to pass to the currentFilter_.
+ * @return {boolean} Whether the specified item satisfies the currentFilter.
  */
 pn.ui.grid.Grid.prototype.filterImpl_ = function(item) {
+  if (this.cfg_.enableQuickFilters && !this.quickFilter_(item)) return false;
   return !this.currentFilter_ || this.currentFilter_(item);
 };
 
@@ -209,6 +217,7 @@ pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
+  // Selecting
   this.slick_['setSelectionModel'](new window['Slick']['RowSelectionModel']());
   this.selectionHandler_ = goog.bind(this.handleSelection_, this);
   this.slick_['onSelectedRowsChanged']['subscribe'](this.selectionHandler_);
@@ -216,22 +225,43 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
   }, this);
 
+  // Sorting
   this.slick_['onSort']['subscribe'](goog.bind(function(e, args) {
     this.dataView_.sort(function(a, b) {
       var x = a[args['sortCol']['field']], y = b[args['sortCol']['field']];
       return (x == y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
   }, this));
-
   this.dataView_['onRowsChanged']['subscribe'](goog.bind(function(e, args) {
     this.slick_['invalidateRows'](args.rows);
     this.slick_['render']();
   }, this));
 
+  // Filtering
+  this.dataView_['onRowCountChanged']['subscribe'](goog.bind(function() {
+    this.slick_['updateRowCount']();
+    this.slick_['render']();
+  }, this));
+
+  // Quick Filters
+  if (this.cfg_.enableQuickFilters) {
+    this.slick_['onColumnsReordered']['subscribe'](
+        goog.bind(this.updateFiltersRow_, this));
+
+    this.slick_['onColumnsResized']['subscribe'](
+        goog.bind(this.updateFiltersRow_, this));
+  }
+
+
+  // Initialise
   this.dataView_['beginUpdate']();
   this.dataView_['setItems'](this.list_, 'ID');
   this.dataView_['setFilter'](goog.bind(this.filterImpl_, this));
   this.dataView_['endUpdate']();
+
+  if (this.cfg_.enableQuickFilters) {
+    this.updateFiltersRow_();
+  }
 };
 
 
@@ -239,6 +269,53 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 pn.ui.grid.Grid.prototype.exitDocument = function() {
   pn.ui.grid.Grid.superClass_.exitDocument.call(this);
   this.eh_.removeAll();
+};
+
+
+/** @private */
+pn.ui.grid.Grid.prototype.updateFiltersRow_ = function() {
+  for (var i = 0; i < this.cols_.length; i++) {
+    var col = this.cols_[i];
+    var header = this.slick_['getHeaderRowColumn'](col.id);
+    // TODO: This is not working on the admin pages.
+    var width = Math.max(col.width || 0, col.minWidth || 0);
+    var val = this.quickFilters_[col.id];
+    var input = pn.ui.grid.QuickFilterHelpers.
+        createFilterInput(col, width, val, this.cache_);
+    input['data-id'] = col.id;
+    goog.dom.removeChildren(header);
+    goog.dom.appendChild(header, input);
+  }
+
+  var dv = this.dataView_;
+  var qf = this.quickFilters_;
+  // TODO: Add delay?
+  $(this.slick_['getHeaderRow']()).delegate(':input', 'change keyup',
+      function() {
+        qf[this['data-id']] = $.trim(
+            /** @type {string} */ ($(this).val())).toLowerCase();
+        dv.refresh();
+      });
+};
+
+
+/**
+ * @private
+ * @param {!Object} item the row data item.
+ * @return {boolean} Wether the item meets the quick filters.
+ */
+pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
+  for (var columnId in this.quickFilters_) {
+    if (columnId && this.quickFilters_[columnId]) {
+      var c = this.slick_['getColumns']()[
+          this.slick_['getColumnIndex'](columnId)];
+      var val = ('' + item[c['field']]).toLowerCase();
+      if (val && val.indexOf(this.quickFilters_[columnId]) < 0) {
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
 
@@ -262,12 +339,14 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 
   goog.array.forEach(this.commands_, goog.dispose);
   goog.array.forEach(this.cols_, goog.dispose);
+  goog.object.forEach(this.quickFilters_, goog.dispose);
   goog.dispose(this.cfg_);
   if (this.slick_) this.slick_['destroy']();
   goog.dispose(this.slick_);
   goog.dispose(this.dataView_);
   goog.dispose(this.eh_);
   goog.dispose(this.log_);
+  delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;
   delete this.dataView_;

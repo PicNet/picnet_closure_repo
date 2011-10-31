@@ -267,7 +267,7 @@ pn.data.IndexedDBRepository.prototype.doOnCursor_ =
     function(os, op, callback, opt_handler) {
   this.runRequest_(os.openCursor(), function(cursor) {
     if (!cursor) {
-      callback.call(opt_handler || this, true);
+      callback.call(opt_handler || this);
       return;
     }
     op.call(opt_handler || this, cursor);
@@ -393,7 +393,9 @@ pn.data.IndexedDBRepository.prototype.getItem =
 /** @inheritDoc */
 pn.data.IndexedDBRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
-  if (typeof(item) === 'number') { item = {ID: item}; }
+  if (typeof(item) === 'number') {
+    item = /** @type {!pn.data.IEntity} */ ({ID: item});
+  }
 
   var os = this.getObjectStore_(type, true);
   this.runRequest_(os.put(item),
@@ -459,7 +461,7 @@ pn.data.IndexedDBRepository.prototype.getUnsyncLists =
 /**
  * @private
  * @param {IDBRequest} req The indexeddb request.
- * @param {function(IDBSuccessEvent=,*=):undefined} callback The success
+ * @param {function(Object=,*=):undefined} callback The success
  *    callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  * @param {Function=} opt_onerror The error callback.

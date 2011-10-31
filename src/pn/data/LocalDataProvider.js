@@ -62,9 +62,10 @@ pn.data.LocalDataProvider.prototype.saveEntity =
     clientid = data.ID;
     this.setValidEntityIDPreSave_(data);
   }
-  this.repository.saveItem(type, data, function() {
-    callback.call(opt_handler || this,
-        {'ClientID': clientid, 'ID': data.ID, 'Errors': []});
+  this.repository.saveItem(type, data, function() {    
+    callback.call(opt_handler || this, 
+        /** @type {!pn.data.TransactionResult} */ (
+        {'ClientID': clientid, 'ID': data.ID, 'Errors': []}));
   }, opt_handler);
 };
 
@@ -182,14 +183,14 @@ pn.data.LocalDataProvider.prototype.saveDeletedEntity =
 /**
  * @param {string} type The type of the entities that have been deleted.
  * @param {!Array.<number>} ids The IDs of the entities that have been deleted.
- * @param {!function()} callback The success callback.
+ * @param {!function(!Array.<string>)} callback The success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.LocalDataProvider.prototype.saveDeletedEntities =
     function(type, ids, callback, opt_handler) {
   var posids = goog.array.filter(ids, function(t) { return t > 0; });
   if (posids.length <= 0) {
-    callback.call(opt_handler || this);
+    callback.call(opt_handler || this, []);
     return;
   }
   this.repository.saveList('DeletedIDs|' + type, posids, function(success) {

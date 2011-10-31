@@ -20,12 +20,8 @@ pn.ui.edit.Field = function(id, name) {
   goog.asserts.assert(id);
   goog.asserts.assert(name);
 
-  pn.ui.SpecDisplayItem.call(this);
+  pn.ui.SpecDisplayItem.apply(this, arguments);
 
-  /** @type {string} */
-  this.id = id;
-  /** @type {string} */
-  this.name = name;
   /** @type {pn.ui.edit.ComplexRenderer|
         function(Object, !Element, boolean=):!Element} */
   this.renderer = null;

@@ -16,12 +16,8 @@ pn.ui.grid.Column = function(id, name) {
   goog.asserts.assert(id);
   goog.asserts.assert(name);
 
-  pn.ui.SpecDisplayItem.call(this);
+  pn.ui.SpecDisplayItem.apply(this, arguments);
 
-  /** @type {string} */
-  this.id = id;
-  /** @type {string} */
-  this.name = name;
   /** @type {boolean} */
   this.resizable = true;
   /** @type {boolean} */

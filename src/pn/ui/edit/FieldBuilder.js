@@ -45,10 +45,11 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
     } else {
       elem = field.renderer(val, parent, opt_search);
     }
-  } else if (field.source)
-    elem = pn.ui.edit.FieldBuilder.createParentEntitySelect_(
-        field, val, parent, cache, opt_search);
-  else if (field.table)
+  } else if (field.source) {
+    elem = pn.ui.edit.FieldBuilder.createParentEntitySelect(
+        field, val, cache, opt_search);
+    goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
+  } else if (field.table)
     elem = pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_(
         field, parent, entity, cache);
   else {
@@ -61,29 +62,28 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
 
 
 /**
- * @private
- * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
+ * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
+ *    dom tree for.
  * @param {number} id The ID of the current child entity (this).
- * @param {!Element} parent The parent to attach this input control to.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @param {boolean=} opt_search If this field is being created in search mode.
- * @return {!Element|!goog.ui.Component} The created dom element.
+ * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
-    function(field, id, parent, cache, opt_search) {
-  var relationship = field.source.split('.');
+pn.ui.edit.FieldBuilder.createParentEntitySelect =
+    function(spec, id, cache, opt_search) {
+  var relationship = spec.source.split('.');
   var list = cache[relationship[0]];
   if (!list) throw new Error('Expected access to "' + relationship[0] +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(field));
+      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
 
-  var opts = { 'id': field.id };
+  var opts = { 'id': spec.id };
   if (opt_search === true) {
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
   }
   var select = goog.dom.createDom('select', opts);
   goog.dom.appendChild(select, goog.dom.createDom('option',
-      {'value': '0' }, 'Select ' + field.name + ' ...'));
+      {'value': '0' }, 'Select ' + spec.name + ' ...'));
   goog.array.forEach(list, function(e) {
     var eid = e['ID'];
     var opts = {'value': eid};
@@ -92,7 +92,6 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
         goog.dom.createDom('option', opts,
             e[relationship[1] || relationship[0] + 'Name']));
   });
-  goog.dom.appendChild(parent, select);
   return select;
 };
 

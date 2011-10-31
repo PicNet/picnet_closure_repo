@@ -22,6 +22,8 @@ pn.ui.grid.Config = function(type) {
   this.editable = true;
   /** @type {boolean} */
   this.checkboxRowSelect = false;
+  /** @type {boolean} */
+  this.enableQuickFilters = true;
 };
 
 
@@ -33,6 +35,7 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'enableColumnReorder': this.enableColumnReorder,
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
-    'editable': this.editable
+    'editable': this.editable,
+    'showHeaderRow': this.enableQuickFilters
   };
 };

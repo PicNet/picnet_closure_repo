@@ -29,7 +29,7 @@ pn.data.IDataProvider.prototype.getEntities = function(type) {};
 /**
  * @param {string} type The type of the entity to save.
  * @param {!pn.data.IEntity} data The data to save.
- * @param {!function(pn.data.TransactionResult)} callback The
+ * @param {!function((pn.data.TransactionResult|string))} callback The
  *    success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
@@ -40,7 +40,7 @@ pn.data.IDataProvider.prototype.saveEntity =
 /**
  * @param {!Object.<string, !Array.<pn.data.IEntity>>} data The data map
  *    representing the entities to save.
- * @param {!function(Array.<pn.data.TransactionResult>)} callback The
+ * @param {!function((Array.<pn.data.TransactionResult>|string))} callback The
  *    success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
@@ -51,7 +51,7 @@ pn.data.IDataProvider.prototype.saveEntities =
 /**
  * @param {string} type The type of the entity to delete.
  * @param {number} id The ID of the entity to delete.
- * @param {!function(pn.data.TransactionResult)} callback The
+ * @param {!function((pn.data.TransactionResult|string))} callback The
  *    success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
@@ -62,7 +62,7 @@ pn.data.IDataProvider.prototype.deleteEntity =
 /**
  * @param {string} type The type of the entities to delete.
  * @param {!Array.<number>} ids The IDs of the entities to delete.
- * @param {!function(Array.<pn.data.TransactionResult>)} callback The
+ * @param {!function((Array.<pn.data.TransactionResult>|string))} callback The
  *    success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */

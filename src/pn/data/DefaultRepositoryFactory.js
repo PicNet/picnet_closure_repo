@@ -7,13 +7,6 @@ goog.require('pn.data.WebSQLRepository');
 goog.provide('pn.data.DefaultRepositoryFactory');
 
 
-
-/**
- * @constructor
- */
-pn.data.DefaultRepositoryFactory = {};
-
-
 /**
  * @private
  * @type {!pn.data.IRepository|undefined}
