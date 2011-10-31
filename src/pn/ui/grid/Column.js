@@ -23,7 +23,9 @@ pn.ui.grid.Column = function(id, name) {
   /** @type {boolean} */
   this.sortable = true;
   /** @type {number} */
-  this.minWidth = 100;
+  this.minWidth = 0;
+  /** @type {number} */
+  this.width = 100;
   /** @type {boolean} */
   this.rerenderOnResize = false;
   /** @type {string} */
@@ -49,6 +51,7 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     'resizable': this.resizable,
     'sortable': this.sortable,
     'minWidth': this.minWidth,
+    'width': this.width,
     'rerenderOnResize': this.rerenderOnResize,
     'headerCssClass': this.headerCssClass,
     'behavior': this.behavior,

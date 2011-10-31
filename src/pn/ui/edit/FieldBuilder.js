@@ -35,9 +35,11 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  */
 pn.ui.edit.FieldBuilder.createAndAttachInput =
     function(field, parent, entity, cache, opt_search) {
+  var fb = pn.ui.edit.FieldBuilder;
   var val = entity ? entity[field.id] : '';
   var elem;
   if (field.renderer) {
+    if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
     if (typeof (field.renderer) === 'object') {
       elem = field.renderer;
       field.renderer.initialise(val, entity, opt_search);
@@ -46,20 +48,17 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
       elem = field.renderer(val, parent, opt_search);
     }
   } else if (field.source) {
-    elem = pn.ui.edit.FieldBuilder.createParentEntitySelect(
-        field, val, cache, opt_search);
+    elem = fb.createParentEntitySelect(field, val, cache, opt_search);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
-  } else if (field.table)
-    elem = pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_(
-        field, parent, entity, cache);
-  else {
+  } else if (field.table) {
+    elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
+  } else {
     elem = goog.dom.createDom('input',
         { 'id': field.id, 'type': 'text', 'value': val || '' });
     goog.dom.appendChild(parent, elem);
   }
   return elem;
 };
-
 
 /**
  * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
@@ -75,24 +74,44 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   var list = cache[relationship[0]];
   if (!list) throw new Error('Expected access to "' + relationship[0] +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
-
+     
   var opts = { 'id': spec.id };
   if (opt_search === true) {
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
   }
   var select = goog.dom.createDom('select', opts);
-  goog.dom.appendChild(select, goog.dom.createDom('option',
+  goog.dom.appendChild(select, goog.dom.createDom('option',    
       {'value': '0' }, 'Select ' + spec.name + ' ...'));
-  goog.array.forEach(list, function(e) {
+  goog.array.forEach(list, function(e) {        
     var eid = e['ID'];
     var opts = {'value': eid};
     if (eid === id) { opts['selected'] = 'selected'; }
-    goog.dom.appendChild(select,
-        goog.dom.createDom('option', opts,
-            e[relationship[1] || relationship[0] + 'Name']));
+    var txt = e[relationship[1] || relationship[0] + 'Name'];
+    goog.asserts.assert(txt, 
+      'Could not find the label of the select option for spec ' + 
+        spec.id);
+    goog.dom.appendChild(select, goog.dom.createDom('option', opts, txt));
   });
   return select;
+};
+
+/**
+ * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
+ *    dom tree for.
+ * @param {number} id The ID of the current child entity (this).
+ * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @return {string} The value from the selected parent eneity
+ */
+pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
+  var relationship = spec.source.split('.');
+  var list = cache[relationship[0]];
+  if (!list) throw new Error('Expected access to "' + relationship[0] +
+      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
+  var source = goog.array.find(list, function(e) {
+    return e['ID'] === id;
+  });
+  return source[relationship[1] || relationship[0] + 'Name'];
 };
 
 
@@ -107,7 +126,8 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
 pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
     function(field, parent, entity, cache) {
   goog.asserts.assert(entity);
-  goog.asserts.assert(entity['ID']);
+  goog.asserts.assert(entity['ID'], 
+      'Cannot create child entity table for entities that have not been saved');
 
   var parentId = entity['ID'];
   var relationship = field.table.split('.');

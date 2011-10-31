@@ -13,19 +13,17 @@ goog.require('pn.ui.SpecDisplayItem');
  */
 pn.ui.grid.QuickFilterHelpers.createFilterInput =
     function(col, width, value, cache) {
-  var inp;
+  var inp;  
   if (col.source) {
-    width += 2;
     inp = pn.ui.edit.FieldBuilder.createParentEntitySelect(col, -1, cache);
   } else if (col.formatter) {
-    value = '';
-    width += 2;
+    value = '';    
+    inp = goog.dom.createDom('div', {});
     inp.innerHTML = '&nbsp;';
   } else {
-    width -= 2;
     inp = goog.dom.createDom('input', {'type': 'text'});
   }
-  goog.style.setWidth(inp, width);
+  goog.style.setWidth(inp, width - 3);
   if (value) { inp.value = value; }
   return inp;
 };

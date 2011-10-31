@@ -168,6 +168,9 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
   goog.dom.appendChild(parent, fieldset);
   goog.array.forEach(this.fields_, function(f, idx) {
+    // Do not do child tables on new entities
+    if (f.table && !this.data_['ID']) { return; }
+    
     var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
         goog.dom.createDom('label', { 'for': f.id }, f.name));
     goog.dom.appendChild(fieldset, dom);
@@ -244,7 +247,9 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
   goog.array.forEach(this.commands_, this.enterDocumentOnCommand_, this);
-  goog.array.forEach(this.fields_, this.enterDocumentOnField_, this);
+  if (this.data_['ID']) {
+    goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
+  }
 };
 
 
@@ -268,7 +273,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnCommand_ = function(command, idx) {
  * @private
  * @param {pn.ui.edit.Field} field The field to attach events to.
  */
-pn.ui.edit.Edit.prototype.enterDocumentOnField_ = function(field) {
+pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
   if (!field.table) return;
   var relationship = field.table.split('.');
   var grid = this.inputs_[field.id];

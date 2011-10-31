@@ -30,9 +30,13 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  */
 pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
   goog.asserts.assert(list);
-  goog.asserts.assert(cols);
+  goog.asserts.assert(cols);  
+  var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
+  goog.array.removeDuplicates(uniqueColIds);
+  goog.asserts.assert(cols.length === uniqueColIds.length, 
+    'All column IDs should be unique. Grid type: ' + cfg.type);    
   goog.asserts.assert(cfg);
-  goog.asserts.assert(cache);
+  goog.asserts.assert(cache);  
 
   goog.ui.Component.call(this);
 
@@ -140,15 +144,20 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 
 
 /** @inheritDoc */
-pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
+pn.ui.grid.Grid.prototype.decorateInternal = function(element) {  
   this.setElementInternal(element);
-
   goog.array.forEach(this.commands_, function(c) {
     c.decorate(element);
   }, this);
 
-  var opts = {'class': 'grid-container', 'style': 'display:none'};
-  var div = goog.dom.createDom('div', opts);
+  var width = Math.max(
+    parseInt(goog.style.getComputedStyle(element.parentNode, 'width'), 10),
+    1000); // Cannot get the computed width of child tables so use 1000px 
+  
+  var div = goog.dom.createDom('div', {
+    'class': 'grid-container', 
+    'style': 'display:none;width:' + width + 'px'
+  });
   goog.dom.appendChild(element, div);
 
   this.dataView_ = new window['Slick']['Data']['DataView']();
@@ -273,15 +282,17 @@ pn.ui.grid.Grid.prototype.exitDocument = function() {
 
 
 /** @private */
-pn.ui.grid.Grid.prototype.updateFiltersRow_ = function() {
-  for (var i = 0; i < this.cols_.length; i++) {
-    var col = this.cols_[i];
+pn.ui.grid.Grid.prototype.updateFiltersRow_ = function() {  
+  var headerTemplates = $('.slick-header-columns .slick-header-column');
+  
+  for (var i = 0; i < this.cols_.length; i++) {    
+    var col = this.cols_[i];    
     var header = this.slick_['getHeaderRowColumn'](col.id);
-    // TODO: This is not working on the admin pages.
-    var width = Math.max(col.width || 0, col.minWidth || 0);
+    var width = /** @type {number} */ ($(headerTemplates[i]).width());
+    
     var val = this.quickFilters_[col.id];
     var input = pn.ui.grid.QuickFilterHelpers.
-        createFilterInput(col, width, val, this.cache_);
+        createFilterInput(col, width, val, this.cache_);    
     input['data-id'] = col.id;
     goog.dom.removeChildren(header);
     goog.dom.appendChild(header, input);
