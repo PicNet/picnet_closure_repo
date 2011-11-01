@@ -151,7 +151,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }, this);
 
   var width = Math.max(
-    parseInt(goog.style.getComputedStyle(element.parentNode, 'width'), 10),
+    parseInt(goog.style.getComputedStyle(element, 'width'), 10),
     1000); // Cannot get the computed width of child tables so use 1000px 
   
   var div = goog.dom.createDom('div', {

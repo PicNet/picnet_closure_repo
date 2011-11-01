@@ -83,6 +83,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   var select = goog.dom.createDom('select', opts);
   goog.dom.appendChild(select, goog.dom.createDom('option',    
       {'value': '0' }, 'Select ' + spec.name + ' ...'));
+  var options = [];
   goog.array.forEach(list, function(e) {        
     var eid = e['ID'];
     var opts = {'value': eid};
@@ -91,7 +92,11 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
     goog.asserts.assert(txt, 
       'Could not find the label of the select option for spec ' + 
         spec.id);
-    goog.dom.appendChild(select, goog.dom.createDom('option', opts, txt));
+    options.push(goog.dom.createDom('option', opts, txt));    
+  });
+  goog.array.sortObjectsByKey(options, 'innerHTML');
+  goog.array.forEach(options, function(o) {
+    goog.dom.appendChild(select, o);
   });
   return select;
 };
@@ -110,8 +115,8 @@ pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
   var source = goog.array.find(list, function(e) {
     return e['ID'] === id;
-  });
-  return source[relationship[1] || relationship[0] + 'Name'];
+  });  
+  return !source ? 'n/a' : source[relationship[1] || relationship[0] + 'Name'];
 };
 
 
