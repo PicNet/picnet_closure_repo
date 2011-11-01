@@ -251,16 +251,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.slick_['updateRowCount']();
     this.slick_['render']();
   }, this));
-
-  // Quick Filters
-  if (this.cfg_.enableQuickFilters) {
-    this.slick_['onColumnsReordered']['subscribe'](
-        goog.bind(this.updateFiltersRow_, this));
-
-    this.slick_['onColumnsResized']['subscribe'](
-        goog.bind(this.updateFiltersRow_, this));
-  }
-
+  
 
   // Initialise
   this.dataView_['beginUpdate']();
@@ -268,8 +259,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.dataView_['setFilter'](goog.bind(this.filterImpl_, this));
   this.dataView_['endUpdate']();
 
+  // Quick Filters
   if (this.cfg_.enableQuickFilters) {
-    this.updateFiltersRow_();
+    var rfr = goog.bind(this.resizeFiltersRow_, this);
+    this.slick_['onColumnsReordered']['subscribe'](rfr); 
+    this.slick_['onColumnsResized']['subscribe'](rfr);    
+    this.initFiltersRow_();
   }
 };
 
@@ -282,18 +277,15 @@ pn.ui.grid.Grid.prototype.exitDocument = function() {
 
 
 /** @private */
-pn.ui.grid.Grid.prototype.updateFiltersRow_ = function() {  
-  var headerTemplates = $('.slick-header-columns .slick-header-column');
-  
+pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   for (var i = 0; i < this.cols_.length; i++) {    
     var col = this.cols_[i];    
     var header = this.slick_['getHeaderRowColumn'](col.id);
-    var width = /** @type {number} */ ($(headerTemplates[i]).width());
-    
     var val = this.quickFilters_[col.id];
     var input = pn.ui.grid.QuickFilterHelpers.
-        createFilterInput(col, width, val, this.cache_);    
+        createFilterInput(col, 100, val, this.cache_);    
     input['data-id'] = col.id;
+    
     goog.dom.removeChildren(header);
     goog.dom.appendChild(header, input);
   }
@@ -307,7 +299,27 @@ pn.ui.grid.Grid.prototype.updateFiltersRow_ = function() {
             /** @type {string} */ ($(this).val())).toLowerCase();
         dv.refresh();
       });
+  
+  this.resizeFiltersRow_();
 };
+
+/** @private */
+pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
+  var grid = this.slick_['getHeaderRow']().parentNode.parentNode;
+  var headerTemplates = goog.dom.getElementsByClass('slick-header-column', grid);
+  for (var i = 0; i < this.cols_.length; i++) {    
+    var col = this.cols_[i];    
+    var header = this.slick_['getHeaderRowColumn'](col.id);    
+    
+    var input = goog.dom.getChildren(header)[0];
+    var width = 
+        parseInt(goog.style.getComputedStyle(headerTemplates[i], 'width'), 10);
+    
+    goog.style.setWidth(header, width - 1);
+    goog.style.setWidth(input, width - 3);
+    
+  }
+}; 
 
 
 /**
