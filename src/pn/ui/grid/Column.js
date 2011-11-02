@@ -82,7 +82,7 @@ pn.ui.grid.Column.dateRenderer =
 /**
  * @param {number} row The row index.
  * @param {number} cell The cell index in the specified row.
- * @param {Date} value The date value displayed in the cell.
+ * @param {boolean} value The date value displayed in the cell.
  * @param {Object} columnDef The column specifications, i.e.
  *    Column.toSlick result.
  * @param {Object} dataContext The data item displayed in this row.

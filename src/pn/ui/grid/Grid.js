@@ -212,7 +212,7 @@ pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
     function(row, cell, value, col, dataContext) {
   
   value = dataContext[col.dataColumn];      
-  if (!value) return '';  
+  if (!value) return '';    
   return this.getCachedEntityName_(col, value);
 };
 
@@ -223,18 +223,35 @@ pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
  * @return {string} The entities name
  */
 pn.ui.grid.Grid.prototype.getCachedEntityName_ = function(col, id) {
-  var src = col.source.split('.');
-  var type = src[0];  
-  var nameField = src[1] || (type + 'Name');
-  goog.asserts.assert(this.cache_[type], 'Type: ' + type + 
-      ' not found in cache');
-  var entity = goog.array.find(this.cache_[type], function(e) {
-    return e['ID'] === id;
-  }, this);
-  if (!entity) throw new Error('Could not find related entity of type[' + type + '] id[' + id + ']');
-  return entity[nameField];
+  var steps = col.source.split('.');
+  var entity = this.getTargetEntity_(goog.array.clone(steps), id);
+  if (!entity) return '';
+  
+  var name = steps.length > 1 ? steps[steps.length - 1] : (steps[0] + 'Name');
+  return entity[name];
 };
 
+/**
+ * @private
+ * @param {!Array.<string>} steps The steps (path) to the entity
+ * @param {number} id The id of the entitiy in the list
+ * @return {Object} The matched entity
+ */
+pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
+  if (id <= 0) return null;
+  var type = steps[0];    
+  goog.asserts.assert(this.cache_[type], 'Type: ' + type + 
+      ' not found in cache');
+  var entity = /** @type {Object} */ 
+      (goog.array.find(this.cache_[type], 
+        function(e) { return e['ID'] === id; }, this));
+  if (steps.length > 2) {    
+    var id2 = entity[steps[1] + 'ID'];
+    steps.shift();
+    return this.getTargetEntity_(steps, id2);
+  }
+  return entity;
+};
 
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
@@ -345,14 +362,14 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {      
       var filterVal = this.quickFilters_[columnId];      
-      var spec = goog.array.find(this.cols_, function(col) {
-        return col.id === columnId;
-      });
+      var spec = /** @type {pn.ui.grid.Column} */ 
+          (goog.array.find(this.cols_, 
+              function(col) { return col.id === columnId; }));
       var val = item[spec.dataColumn];
       if (spec.isParentFormatter) {        
         val = val ? this.getCachedEntityName_(spec, val) : '';        
       } else if (spec.formatter) {        
-        val = spec.formatter(0, 0, val);
+        val = spec.formatter(0, 0, val, spec, item);
       } 
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
