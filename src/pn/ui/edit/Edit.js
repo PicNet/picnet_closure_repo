@@ -231,12 +231,12 @@ pn.ui.edit.Edit.prototype.isValidForm_ = function() {
  * @return {Object} The current form data (Read from input controls).
  */
 pn.ui.edit.Edit.prototype.getCurrentFormData_ = function() {
-  var current = {};
+  var current = {};  
   goog.object.extend(current, this.data_);
-  goog.array.forEach(this.fields_, function(f) {
+  goog.array.forEach(this.fields_, function(f) {    
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
-    if (val === undefined) delete current[f.id];
-    else current[f.id] = val;
+    if (val === undefined) delete current[f.dataColumn];
+    else current[f.dataColumn] = val;
   }, this);
   return current;
 };

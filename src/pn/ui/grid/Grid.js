@@ -152,7 +152,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   var width = Math.max(
     parseInt(goog.style.getComputedStyle(element, 'width'), 10),
-    1000); // Cannot get the computed width of child tables so use 1000px 
+    1150); // Cannot get the computed width of child tables so use 1000px 
   
   var div = goog.dom.createDom('div', {
     'class': 'grid-container', 
@@ -163,8 +163,11 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new window['Slick']['Data']['DataView']();
   this.slick_ = new window['Slick']['Grid'](div, this.dataView_,
       goog.array.map(this.cols_, function(c) {
-        c.formatter = c.formatter ||
-            (c.source ? goog.bind(this.parentColumnFormatter_, this) : null);
+        
+        if (!c.formatter && c.source) {
+          c.isParentFormatter = true;
+          c.formatter = goog.bind(this.parentColumnFormatter_, this);
+        }
         return c.toSlick(c.formatter);
       }, this),
       this.cfg_.toSlick());
@@ -174,7 +177,8 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
 
 /**
- * @return {Array.<Array.<string>>} The data of the grid.
+ * @return {Array.<Array.<string>>} The data of the grid. This is used when 
+ *    exporting the grid contents.
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cols_,
@@ -184,8 +188,8 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowData = this.list_[row];
     var rowTxt = [];
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
-      var cc = this.cols_[col];
-      var dat = rowData[cc.id];
+      var cc = this.cols_[col];      
+      var dat = rowData[cc.dataColumn];
       var txt = cc.formatter ? cc.formatter(row, col, dat, cc, rowData) : dat;
       rowTxt.push(txt);
     }
@@ -200,25 +204,35 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
  * @param {number} row The row index.
  * @param {number} cell The cell index.
  * @param {Object} value The raw cell value.
- * @param {Object} col The Slick column config object.
+ * @param {pn.ui.grid.Column} col The Slick column config object.
  * @param {Object} dataContext entity data being displayed in this row.
  * @return {string} The html to render for this field.
  */
 pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
     function(row, cell, value, col, dataContext) {
-  if (!value) return '';
+  
+  value = dataContext[col.dataColumn];      
+  if (!value) return '';  
+  return this.getCachedEntityName_(col, value);
+};
+
+/**
+ * @private
+ * @param {pn.ui.grid.Column} col The Slick column config object.
+ * @param {number} id The id of the entitiy in the list
+ * @return {string} The entities name
+ */
+pn.ui.grid.Grid.prototype.getCachedEntityName_ = function(col, id) {
   var src = col.source.split('.');
-  var type = src[0];
-
-  goog.asserts.assert(this.cache_[type],
-      'Type: ' + type + ' not found in cache');
-
+  var type = src[0];  
+  var nameField = src[1] || (type + 'Name');
+  goog.asserts.assert(this.cache_[type], 'Type: ' + type + 
+      ' not found in cache');
   var entity = goog.array.find(this.cache_[type], function(e) {
-    return e['ID'] === value;
+    return e['ID'] === id;
   }, this);
-  if (!entity) throw new Error('Could not find related entity of type[' +
-      type + '] id[' + value + ']');
-  return entity[src[1] || (type + 'Name')];
+  if (!entity) throw new Error('Could not find related entity of type[' + type + '] id[' + id + ']');
+  return entity[nameField];
 };
 
 
@@ -283,7 +297,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
     var header = this.slick_['getHeaderRowColumn'](col.id);
     var val = this.quickFilters_[col.id];
     var input = pn.ui.grid.QuickFilterHelpers.
-        createFilterInput(col, 100, val, this.cache_);    
+        createFilterInput(col, 100, val);    
     input['data-id'] = col.id;
     
     goog.dom.removeChildren(header);
@@ -327,13 +341,21 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
  * @param {!Object} item the row data item.
  * @return {boolean} Wether the item meets the quick filters.
  */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
+pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {    
   for (var columnId in this.quickFilters_) {
-    if (columnId && this.quickFilters_[columnId]) {
-      var c = this.slick_['getColumns']()[
-          this.slick_['getColumnIndex'](columnId)];
-      var val = ('' + item[c['field']]).toLowerCase();
-      if (val && val.indexOf(this.quickFilters_[columnId]) < 0) {
+    if (columnId && this.quickFilters_[columnId]) {      
+      var filterVal = this.quickFilters_[columnId];      
+      var spec = goog.array.find(this.cols_, function(col) {
+        return col.id === columnId;
+      });
+      var val = item[spec.dataColumn];
+      if (spec.isParentFormatter) {        
+        val = val ? this.getCachedEntityName_(spec, val) : '';        
+      } else if (spec.formatter) {        
+        val = spec.formatter(0, 0, val);
+      } 
+      if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
+      if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
         return false;
       }
     }

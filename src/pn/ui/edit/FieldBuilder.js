@@ -35,8 +35,8 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  */
 pn.ui.edit.FieldBuilder.createAndAttachInput =
     function(field, parent, entity, cache, opt_search) {
-  var fb = pn.ui.edit.FieldBuilder;
-  var val = entity ? entity[field.id] : '';
+  var fb = pn.ui.edit.FieldBuilder;  
+  var val = entity ? entity[field.dataColumn] : '';
   var elem;
   if (field.renderer) {
     if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
@@ -71,8 +71,15 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
 pn.ui.edit.FieldBuilder.createParentEntitySelect =
     function(spec, id, cache, opt_search) {
   var relationship = spec.source.split('.');
-  var list = cache[relationship[0]];
-  if (!list) throw new Error('Expected access to "' + relationship[0] +
+  if (relationship.length > 2 && id > 0) {
+    throw new Error('Can only have embedded parent lists when in filter mode');
+  }
+  var entityType = relationship[
+      relationship.length === 1 ? 0 : relationship.length - 2];
+  var textField = relationship.length === 1 ? 
+      entityType + 'Name' : relationship[relationship.length - 1];
+  var list = cache[entityType];
+  if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
      
   var opts = { 'id': spec.id };
@@ -84,14 +91,14 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   goog.dom.appendChild(select, goog.dom.createDom('option',    
       {'value': '0' }, 'Select ' + spec.name + ' ...'));
   var options = [];
-  goog.array.forEach(list, function(e) {        
+  goog.array.forEach(list, function(e, i) {        
     var eid = e['ID'];
-    var opts = {'value': eid};
-    if (eid === id) { opts['selected'] = 'selected'; }
-    var txt = e[relationship[1] || relationship[0] + 'Name'];
-    goog.asserts.assert(txt, 
-      'Could not find the label of the select option for spec ' + 
-        spec.id);
+    opts = {'value': eid};
+    if (eid === id) { opts['selected'] = 'selected'; }        
+    var txt = e[textField] ? e[textField].toString() : null;
+    goog.asserts.assert(txt !== undefined, 
+      'Could not find the label of the select option for spec ' + spec.id + 
+        ' textField: ' + textField);
     options.push(goog.dom.createDom('option', opts, txt));    
   });
   goog.array.sortObjectsByKey(options, 'innerHTML');
