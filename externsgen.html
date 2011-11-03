@@ -11,7 +11,11 @@ Object to extern: <input id='object_to_extern' type='text' value='jQuery' style=
 </body></html>
 <script>
 var externed = '';
-$('#load').click(function() {
+var done = {};
+$('#load').click(loadScript);
+$('#go').click(go);
+
+function loadScript() {
   var uri = $('#script_uri').val();
   if (!uri) {
     alert('Please enter script to load');
@@ -25,8 +29,9 @@ $('#load').click(function() {
 
   console.log('Successfully loaded the script at: ' + uri);
   return false;
-});
-$('#go').click(function() {  
+};
+
+function go() {  
   var name = $('#object_to_extern').val();
   if (!name) {
     alert('Please enter an object to extern. Example: "jQuery"');
@@ -37,23 +42,26 @@ $('#go').click(function() {
     alert('Could not find the specified object.');
     return false;
   }
+  done = {};
   externed = '/** @constructor */\nfunction ' + name + '() {};';
   externObject(o, name + '.prototype.');
-  $('#console').val(externed);
-  console.log('Externed: ' + externed);
-});
+  $('#console').val(externed);  
+};
 
 function externObject(o, prefix) {    
   for (var i in o) {    
+    if (!isValidPropName(i)) continue; // Invalid prop name  
     var prop = o[i];
     var type = typeof(prop);
-    var name = prefix + i;
-    if (type === 'function') {
-      externed += '\n' + name + ' = function() {};';
-    } else if (type === 'object') {
-      externed += '\n/** @constructor */\nfunction ' + i + '() {};';      
-      externed += '\n/** @type {' + i +'} */\n' + name + ';';      
-      externObject(prop, i + '.prototype.');
+    var name = prefix + i;   
+    var key = name + '_' + type;
+    if (done[key] === 1) { continue; }
+    done[key] = 1;
+    
+    if (type === 'function') {    
+      externFunction(name, prop);
+    } else if (type === 'object') {    
+      externInnerObject(name, prop, i)
     } else if (type === 'boolean') {
       externed += '\n/** @type {boolean} */\n' + name + ';';
     } else if (type === 'number') {
@@ -63,4 +71,48 @@ function externObject(o, prefix) {
     }
   }
 };
+
+function isValidPropName(propName) { 
+   var re = /^[a-zA-Z]+[a-zA-Z_0-9]*$/;
+   var valid = re.test(propName);   
+   return valid;
+};
+
+function externFunction(name, prop) {    
+  var desc = prop.toString();
+  var paramNames = getParamNames(desc);
+  var ret = hasReturn(desc);
+  if (ret || paramNames.length) {
+    externed += '\n/**';
+    for (var i = 0; i < paramNames.length; i++) {
+      externed += '\n * @param {*} ' + paramNames[i];  
+    }    
+    if (ret) { externed += '\n * @return {*}'; }
+    externed += '\n */';
+  }
+  externed += '\n' + name + 
+    ' = function(' + paramNames.join(',') + ') {};';
+};
+
+function getParamNames(desc) {   
+  desc = desc.substring(desc.indexOf('(') + 1);
+  desc = desc.substring(0, desc.indexOf(')'));    
+  return !desc ? [] : desc.split(',');
+};
+
+function hasReturn(desc) {
+  return desc.indexOf('return ') >= 0;
+};
+
+function externInnerObject(name, prop, fieldName) {
+  var key = fieldName + '_function';
+  if (done[key] === 1) { return; }
+  done[key] = 1;
+    
+  externed += '\n/** @constructor */\nfunction ' + fieldName + '() {};';      
+  externed += '\n/** @type {' + fieldName +'} */\n' + name + ';';      
+  externObject(prop, fieldName + '.prototype.');
+};
+
+go();
 </script>
