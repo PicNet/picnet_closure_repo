@@ -13,9 +13,12 @@ goog.provide('pn.ui.edit.FieldRenderers');
  * @return {!goog.ui.InputDatePicker} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
-  var dt = val ? new Date(val) : null;
-  if (dt && dt.getFullYear() <= 1970) { dt = null; }
-
+  var dt = null;
+  if (val) {
+    dt = new goog.date.Date();
+    dt.setTime(val);
+    if (dt.getFullYear() <= 1970) dt = null;
+  }
   var glb = pn.rcdb.Global;
 
   var fieldLabelInput = new goog.ui.LabelInput('DD/MMM/YYYY');
@@ -24,7 +27,10 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
 
   var idp = new goog.ui.InputDatePicker(glb.dateFormat, glb.dateParser);
   idp.decorate(fieldLabelInput.getElement());
-  if (dt) { idp.setDate(new goog.date.Date(dt)); }
+  if (dt) {
+    idp.setDate(dt);
+    
+  }
 
   return idp;
 };

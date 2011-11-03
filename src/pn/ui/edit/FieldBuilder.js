@@ -10,6 +10,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
   goog.asserts.assert(inp);
   if (inp.getDate) {
     var date = inp.getDate();
+    if (date) date = new goog.date.Date(date.getYear(), date.getMonth(), date.getDate());
     return date ? date.getTime() : 0;
   }
   if (inp.getValue) { return inp.getValue(); }
