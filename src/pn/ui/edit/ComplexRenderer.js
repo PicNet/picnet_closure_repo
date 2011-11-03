@@ -15,7 +15,7 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {Object}
+   * @type {*}
    */
   this.val = null;
 
@@ -35,7 +35,7 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
 
 /**
- * @param {Object} val The value to display in this field.
+ * @param {*} val The value to display in this field.
  * @param {Object} entity The entity being displayed.
  * @param {boolean=} opt_search If this field is being created in search mode.
  */

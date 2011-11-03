@@ -1,6 +1,8 @@
 ﻿;
 goog.provide('pn.ui.edit.FieldBuilder');
 
+goog.require('goog.date.Date');
+
 
 /**
  * @param {!(Element|goog.ui.Component)} inp The input field.
@@ -8,10 +10,11 @@ goog.provide('pn.ui.edit.FieldBuilder');
  */
 pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
   goog.asserts.assert(inp);
+
   if (inp.getDate) {
-    var date = inp.getDate();
-    if (date) date = new goog.date.Date(date.getYear(), date.getMonth(), date.getDate());
-    return date ? date.getTime() : 0;
+    var d = inp.getDate();
+    if (d) d = new goog.date.Date(d.getYear(), d.getMonth(), d.getDate());
+    return d ? d.getTime() : 0;
   }
   if (inp.getValue) { return inp.getValue(); }
   else if (inp.options) {
@@ -36,7 +39,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  */
 pn.ui.edit.FieldBuilder.createAndAttachInput =
     function(field, parent, entity, cache, opt_search) {
-  var fb = pn.ui.edit.FieldBuilder;  
+  var fb = pn.ui.edit.FieldBuilder;
   var val = entity ? entity[field.dataColumn] : '';
   var elem;
   if (field.renderer) {
@@ -61,6 +64,7 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
   return elem;
 };
 
+
 /**
  * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
  *    dom tree for.
@@ -77,30 +81,30 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   }
   var entityType = relationship[
       relationship.length === 1 ? 0 : relationship.length - 2];
-  var textField = relationship.length === 1 ? 
+  var textField = relationship.length === 1 ?
       entityType + 'Name' : relationship[relationship.length - 1];
   var list = cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
-     
+
   var opts = { 'id': spec.id };
   if (opt_search === true) {
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
   }
   var select = goog.dom.createDom('select', opts);
-  goog.dom.appendChild(select, goog.dom.createDom('option',    
+  goog.dom.appendChild(select, goog.dom.createDom('option',
       {'value': '0' }, 'Select ' + spec.name + ' ...'));
   var options = [];
-  goog.array.forEach(list, function(e, i) {        
+  goog.array.forEach(list, function(e, i) {
     var eid = e['ID'];
     opts = {'value': eid};
-    if (eid === id) { opts['selected'] = 'selected'; }        
+    if (eid === id) { opts['selected'] = 'selected'; }
     var txt = e[textField] ? e[textField].toString() : null;
-    goog.asserts.assert(txt !== undefined, 
-      'Could not find the label of the select option for spec ' + spec.id + 
+    goog.asserts.assert(txt !== undefined,
+        'Could not find the label of the select option for spec ' + spec.id +
         ' textField: ' + textField);
-    options.push(goog.dom.createDom('option', opts, txt));    
+    options.push(goog.dom.createDom('option', opts, txt));
   });
   goog.array.sortObjectsByKey(options, 'innerHTML');
   goog.array.forEach(options, function(o) {
@@ -109,12 +113,14 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   return select;
 };
 
+
 /**
+ * @private
  * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
  *    dom tree for.
  * @param {number} id The ID of the current child entity (this).
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @return {string} The value from the selected parent eneity
+ * @return {string} The value from the selected parent eneity.
  */
 pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
   var relationship = spec.source.split('.');
@@ -123,7 +129,7 @@ pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
   var source = goog.array.find(list, function(e) {
     return e['ID'] === id;
-  });  
+  });
   return !source ? 'n/a' : source[relationship[1] || relationship[0] + 'Name'];
 };
 
@@ -139,7 +145,7 @@ pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
 pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
     function(field, parent, entity, cache) {
   goog.asserts.assert(entity);
-  goog.asserts.assert(entity['ID'], 
+  goog.asserts.assert(entity['ID'],
       'Cannot create child entity table for entities that have not been saved');
 
   var parentId = entity['ID'];

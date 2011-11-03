@@ -11,7 +11,7 @@ goog.provide('pn.ui.SpecDisplayItem');
 pn.ui.SpecDisplayItem = function(id, name) {
   goog.asserts.assert(id);
   goog.asserts.assert(name);
-  
+
   /** @type {string} */
   this.id = id;
   /** @type {string} */

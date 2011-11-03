@@ -22,8 +22,8 @@ pn.ui.edit.Field = function(id, name) {
 
   pn.ui.SpecDisplayItem.apply(this, arguments);
 
-  /** @type {pn.ui.edit.ComplexRenderer|
-        function(Object, !Element, boolean=):!Element} */
+  /** @type
+      {pn.ui.edit.ComplexRenderer|function(*, !Element, boolean=):!Element} */
   this.renderer = null;
   /** @type {null|pn.ui.edit.ValidateInfo|
       function(pn.ui.edit.Field, *):string} */

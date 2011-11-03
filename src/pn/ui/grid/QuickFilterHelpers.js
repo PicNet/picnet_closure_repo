@@ -12,9 +12,9 @@ goog.require('pn.ui.SpecDisplayItem');
  */
 pn.ui.grid.QuickFilterHelpers.createFilterInput =
     function(col, width, value) {
-  var inp;  
+  var inp;
   if (!col.source && col.formatter) {
-    value = '';    
+    value = '';
     inp = goog.dom.createDom('div', {});
     inp.innerHTML = '&nbsp;';
   } else {

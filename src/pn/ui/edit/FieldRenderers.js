@@ -7,16 +7,18 @@ goog.provide('pn.ui.edit.FieldRenderers');
 
 
 /**
- * @param {number} val The date (millis since 1970) to display.
+ * @param {*} val The date (millis since 1970) to display.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!goog.ui.InputDatePicker} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
+  goog.asserts.assert(!goog.isDefAndNotNull(val) || goog.isNumber(val));
+
   var dt = null;
   if (val) {
     dt = new goog.date.Date();
-    dt.setTime(val);
+    dt.setTime(/** @type {number} */ (val));
     if (dt.getFullYear() <= 1970) dt = null;
   }
   var glb = pn.rcdb.Global;
@@ -29,7 +31,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
   idp.decorate(fieldLabelInput.getElement());
   if (dt) {
     idp.setDate(dt);
-    
+
   }
 
   return idp;
@@ -37,7 +39,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(val, parent, opt_search) {
 
 
 /**
- * @param {boolean} val The boolean to display.
+ * @param {*} val The boolean to display.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The checkbox control.
@@ -51,7 +53,7 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(val, parent, opt_search) {
 
 
 /**
- * @param {string} val The text to display.
+ * @param {*} val The text to display.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
@@ -68,7 +70,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(val, parent, opt_search) {
 
 
 /**
- * @param {string} val The text to display.
+ * @param {*} val The text to display.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The readonly text field control.

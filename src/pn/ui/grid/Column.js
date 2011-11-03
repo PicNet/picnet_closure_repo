@@ -79,6 +79,7 @@ pn.ui.grid.Column.dateRenderer =
   return value ? pn.rcdb.Global.dateFormat.format(value) : '';
 };
 
+
 /**
  * @param {number} row The row index.
  * @param {number} cell The cell index in the specified row.
