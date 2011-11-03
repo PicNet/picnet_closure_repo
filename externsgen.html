@@ -1,0 +1,66 @@
+<html><body>
+Script Uri: <input id='script_uri' type='text' value='http://code.jquery.com/jquery-latest.js' style='width:400;'></input>
+<a id='load' href='#'>Load Script</a>
+<br/>
+Object to extern: <input id='object_to_extern' type='text' value='jQuery' style='width:400;'></input>
+<a id='go' href='#'>Go!</a>
+<br/>
+<textarea id='console' rows='1000' cols='100'></textarea>
+<br/>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
+</body></html>
+<script>
+var externed = '';
+$('#load').click(function() {
+  var uri = $('#script_uri').val();
+  if (!uri) {
+    alert('Please enter script to load');
+    return false;
+  }
+  console.log('Loading: ' + uri);
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = uri;
+  document.body.appendChild(script);
+
+  console.log('Successfully loaded the script at: ' + uri);
+  return false;
+});
+$('#go').click(function() {  
+  var name = $('#object_to_extern').val();
+  if (!name) {
+    alert('Please enter an object to extern. Example: "jQuery"');
+    return false;
+  }
+  var o = eval(name);
+  if (!o) {
+    alert('Could not find the specified object.');
+    return false;
+  }
+  externed = '/** @constructor */\nfunction ' + name + '() {};';
+  externObject(o, name + '.prototype.');
+  $('#console').val(externed);
+  console.log('Externed: ' + externed);
+});
+
+function externObject(o, prefix) {    
+  for (var i in o) {    
+    var prop = o[i];
+    var type = typeof(prop);
+    var name = prefix + i;
+    if (type === 'function') {
+      externed += '\n' + name + ' = function() {};';
+    } else if (type === 'object') {
+      externed += '\n/** @constructor */\nfunction ' + i + '() {};';      
+      externed += '\n/** @type {' + i +'} */\n' + name + ';';      
+      externObject(prop, i + '.prototype.');
+    } else if (type === 'boolean') {
+      externed += '\n/** @type {boolean} */\n' + name + ';';
+    } else if (type === 'number') {
+      externed += '\n/** @type {number} */\n' + name + ';';
+    } else if (type === 'number') {
+      externed += '\n/** @type {' + type + '} */\n' + name + ';';
+    }
+  }
+};
+</script>
