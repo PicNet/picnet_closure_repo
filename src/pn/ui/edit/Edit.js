@@ -109,7 +109,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
     if (!curr && !orig) continue;
     curr = curr + '';
     orig = orig + '';
-    if (curr !== orig) {
+    if (curr !== orig) {      
       this.log_.info('Found dirty field: ' + field + ' original: ' +
           orig + ' current: ' + curr);
       return true;
@@ -233,7 +233,8 @@ pn.ui.edit.Edit.prototype.isValidForm_ = function() {
 pn.ui.edit.Edit.prototype.getCurrentFormData_ = function() {
   var current = {};  
   goog.object.extend(current, this.data_);
-  goog.array.forEach(this.fields_, function(f) {    
+  goog.array.forEach(this.fields_, function(f) {
+    if (f.renderer === pn.ui.edit.FieldRenderers.readOnlyTextField) return;
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
     if (val === undefined) delete current[f.dataColumn];
     else current[f.dataColumn] = val;
