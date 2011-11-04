@@ -27,7 +27,7 @@ pn.ui.grid.ExportCommand = function() {
 
   /**
    * @private
-   * @type {goog.ui.Select}
+   * @type {Element}
    */
   this.select_ = null;
 
@@ -49,25 +49,23 @@ pn.ui.grid.ExportCommand.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  this.select_ = new goog.ui.Select('Export Data...');
-  this.select_.addItem(new goog.ui.Option('Export Data...', ''));
-  this.select_.addItem(new goog.ui.Option('CSV', 'csv'));
-  this.select_.addItem(new goog.ui.Option('TXT (tab delimited)', 'txt'));
-  this.select_.addItem(new goog.ui.Option('Excel', 'xls'));
-  this.select_.addItem(new goog.ui.Option('PDF', 'pdf'));
-
-  this.select_.setSelectedIndex(0);
-
-  this.select_.render(element);
+  this.select_ = goog.dom.createDom('select', {'class': 'export-select'},
+      goog.dom.createDom('option', {'value': '0'}, 'Export Data...'),
+      goog.dom.createDom('option', {'value': 'csv'}, 'CSV'),
+      goog.dom.createDom('option', {'value': 'txt'}, 'TXT'),
+      goog.dom.createDom('option', {'value': 'xls'}, 'Exce;'),
+      goog.dom.createDom('option', {'value': 'pdf'}, 'PDF')
+      );
+  goog.dom.appendChild(element, this.select_);
 };
 
 
 /** @inheritDoc */
 pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
-  this.eh_.listen(this.select_, goog.ui.Component.EventType.ACTION, function() {
-    var exportFormat = this.select_.getValue();
+  this.eh_.listen(this.select_, goog.events.EventType.CHANGE, function() {
+    var exportFormat = this.select_.value;
     if (!exportFormat) return;
-    this.select_.setSelectedIndex(0);
+    this.select_.selectedIndex = 0;
     var e = new goog.events.Event(this.eventType, this);
     e.exportFormat = exportFormat;
     this.dispatchEvent(e);

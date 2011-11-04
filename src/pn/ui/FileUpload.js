@@ -162,7 +162,6 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
  * @param {goog.events.Event} e The oncomplete event.
  */
 pn.ui.FileUpload.prototype.onComplete_ = function(e) {
-  //var io = /** @type {!goog.net.IframeIo} */ (e.target);
   var et = this.io_.isSuccess() ?
       pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :
       pn.ui.FileUpload.EventType.UPLOAD_ERROR;
@@ -171,8 +170,8 @@ pn.ui.FileUpload.prototype.onComplete_ = function(e) {
   event.data = this.io_.isSuccess() ?
       this.io_.getResponseHtml() :
       this.io_.getLastError();
-  this.dispatchEvent(event);
 
+  this.dispatchEvent(event);
   this.fileInput_.disabled = false;
   goog.dispose(this.io_);
 };

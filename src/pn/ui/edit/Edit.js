@@ -177,7 +177,6 @@ pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
-
   if (errors.length) {
     var et = pn.ui.edit.Edit.EventType.VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
