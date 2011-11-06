@@ -53,7 +53,7 @@ pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
       goog.dom.createDom('option', {'value': '0'}, 'Export Data...'),
       goog.dom.createDom('option', {'value': 'csv'}, 'CSV'),
       goog.dom.createDom('option', {'value': 'txt'}, 'TXT'),
-      goog.dom.createDom('option', {'value': 'xls'}, 'Exce;'),
+      goog.dom.createDom('option', {'value': 'xls'}, 'Excel'),
       goog.dom.createDom('option', {'value': 'pdf'}, 'PDF')
       );
   goog.dom.appendChild(element, this.select_);

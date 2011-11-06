@@ -149,7 +149,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.array.forEach(this.commands_, function(c) {
     c.decorate(element);
   }, this);
-  var parentWidth = parseInt(goog.style.getComputedStyle(element, 'width'), 10);
+  var parentWidth = jQuery(element).width();
   // Cannot get the computed width of child tables so use 1000px
   var width = parentWidth > 200 ? parentWidth : 1000;
 
@@ -162,7 +162,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new window['Slick']['Data']['DataView']();
   this.slick_ = new window['Slick']['Grid'](div, this.dataView_,
       goog.array.map(this.cols_, function(c) {
-
         if (!c.formatter && c.source) {
           c.isParentFormatter = true;
           c.formatter = goog.bind(this.parentColumnFormatter_, this);
@@ -208,8 +207,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
  * @return {string} The html to render for this field.
  */
 pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
-    function(row, cell, value, col, dataContext) {
-
+    function(row, cell, value, col, dataContext) {        
   value = dataContext[col.dataColumn];
   if (!value) return '';
   return this.getCachedEntityName_(col, value);
@@ -258,7 +256,7 @@ pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
-
+  
   // Selecting
   this.slick_['setSelectionModel'](new window['Slick']['RowSelectionModel']());
   this.selectionHandler_ = goog.bind(this.handleSelection_, this);
@@ -347,9 +345,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
     var header = this.slick_['getHeaderRowColumn'](col.id);
 
     var input = goog.dom.getChildren(header)[0];
-    var width =
-        parseInt(goog.style.getComputedStyle(headerTemplates[i], 'width'), 10);
-
+    var width = jQuery(headerTemplates[i]).width();
     goog.style.setWidth(header, width - 1);
     goog.style.setWidth(input, width - 3);
 
