@@ -345,7 +345,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
     var header = this.slick_.getHeaderRowColumn(col.id);
 
     var input = goog.dom.getChildren(header)[0];
-    var width = 200;
+    var width = jQuery(headerTemplates[i]).width();
     goog.style.setWidth(header, width - 1);
     goog.style.setWidth(input, width - 3);
 
