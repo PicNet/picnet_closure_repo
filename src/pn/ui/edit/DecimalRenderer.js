@@ -48,7 +48,7 @@ pn.ui.edit.DecimalRenderer.prototype.decorateInternal =
     function(element) {
   this.setElementInternal(element);
   this.input_ =
-      goog.dom.createDom('input', {'type': 'number', 'value': this.val});
+      goog.dom.createDom('input', {'type': 'number', 'value': this.val || 0});
   goog.dom.appendChild(element, this.input_);
 };
 
