@@ -78,13 +78,13 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
-   * @type {Object}
+   * @type {Slick.Grid}
    */
   this.slick_ = null;
 
   /**
    * @private
-   * @type {Object}
+   * @type {Slick.Data.DataView}
    */
   this.dataView_ = null;
 
@@ -121,8 +121,8 @@ goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 pn.ui.grid.Grid.prototype.filter = function(filter) {
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;
-  this.dataView_['refresh']();
-  this.slick_['render']();
+  this.dataView_.refresh();
+  this.slick_.render();
 };
 
 
@@ -145,22 +145,21 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
+  goog.asserts.assert(this.cfg_.width);
+  
   this.setElementInternal(element);
   goog.array.forEach(this.commands_, function(c) {
     c.decorate(element);
-  }, this);
-  var parentWidth = jQuery(element).width();
-  // Cannot get the computed width of child tables so use 1000px
-  var width = parentWidth > 200 ? parentWidth : 1000;
-
+  }, this);  
+  var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
   var div = goog.dom.createDom('div', {
     'class': 'grid-container',
-    'style': 'display:none;width:' + width + 'px'
+    'style': 'width:' + this.cfg_.width + 'px;height:' + height
   });
   goog.dom.appendChild(element, div);
 
-  this.dataView_ = new window['Slick']['Data']['DataView']();
-  this.slick_ = new window['Slick']['Grid'](div, this.dataView_,
+  this.dataView_ = new Slick.Data.DataView();
+  this.slick_ = new Slick.Grid(div, this.dataView_,
       goog.array.map(this.cols_, function(c) {
         if (!c.formatter && c.source) {
           c.isParentFormatter = true;
@@ -207,7 +206,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
  * @return {string} The html to render for this field.
  */
 pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
-    function(row, cell, value, col, dataContext) {        
+    function(row, cell, value, col, dataContext) {
   value = dataContext[col.dataColumn];
   if (!value) return '';
   return this.getCachedEntityName_(col, value);
@@ -256,45 +255,45 @@ pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
-  
+
   // Selecting
-  this.slick_['setSelectionModel'](new window['Slick']['RowSelectionModel']());
+  this.slick_.setSelectionModel(new Slick.RowSelectionModel());
   this.selectionHandler_ = goog.bind(this.handleSelection_, this);
-  this.slick_['onSelectedRowsChanged']['subscribe'](this.selectionHandler_);
+  this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
   goog.array.forEach(this.commands_, function(c) {
     this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
   }, this);
 
   // Sorting
-  this.slick_['onSort']['subscribe'](goog.bind(function(e, args) {
+  this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.dataView_.sort(function(a, b) {
-      var x = a[args['sortCol']['field']], y = b[args['sortCol']['field']];
+      var x = a[args['sortCol.field']], y = b[args['sortCol.field']];
       return (x == y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
   }, this));
-  this.dataView_['onRowsChanged']['subscribe'](goog.bind(function(e, args) {
-    this.slick_['invalidateRows'](args.rows);
-    this.slick_['render']();
+  this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
+    this.slick_.invalidateRows(args.rows);
+    this.slick_.render();
   }, this));
 
   // Filtering
-  this.dataView_['onRowCountChanged']['subscribe'](goog.bind(function() {
-    this.slick_['updateRowCount']();
-    this.slick_['render']();
+  this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
+    this.slick_.updateRowCount();
+    this.slick_.render();
   }, this));
 
 
   // Initialise
-  this.dataView_['beginUpdate']();
-  this.dataView_['setItems'](this.list_, 'ID');
-  this.dataView_['setFilter'](goog.bind(this.filterImpl_, this));
-  this.dataView_['endUpdate']();
+  this.dataView_.beginUpdate();
+  this.dataView_.setItems(this.list_, 'ID');
+  this.dataView_.setFilter(goog.bind(this.filterImpl_, this));
+  this.dataView_.endUpdate();
 
   // Quick Filters
   if (this.cfg_.enableQuickFilters) {
     var rfr = goog.bind(this.resizeFiltersRow_, this);
-    this.slick_['onColumnsReordered']['subscribe'](rfr);
-    this.slick_['onColumnsResized']['subscribe'](rfr);
+    this.slick_.onColumnsReordered.subscribe(rfr);
+    this.slick_.onColumnsResized.subscribe(rfr);
     this.initFiltersRow_();
   }
 };
@@ -311,7 +310,7 @@ pn.ui.grid.Grid.prototype.exitDocument = function() {
 pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   for (var i = 0; i < this.cols_.length; i++) {
     var col = this.cols_[i];
-    var header = this.slick_['getHeaderRowColumn'](col.id);
+    var header = this.slick_.getHeaderRowColumn(col.id);
     var val = this.quickFilters_[col.id];
     var input = pn.ui.grid.QuickFilterHelpers.
         createFilterInput(col, 100, val);
@@ -324,7 +323,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   var dv = this.dataView_;
   var qf = this.quickFilters_;
   // TODO: Add delay?
-  $(this.slick_['getHeaderRow']()).delegate(':input', 'change keyup',
+  $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
             /** @type {string} */ ($(this).val())).toLowerCase();
@@ -337,15 +336,16 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
 
 /** @private */
 pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
-  var grid = this.slick_['getHeaderRow']().parentNode.parentNode;
+  var grid = /** @type {Element} */
+      (this.slick_.getHeaderRow().parentNode.parentNode);
   var headerTemplates =
       goog.dom.getElementsByClass('slick-header-column', grid);
   for (var i = 0; i < this.cols_.length; i++) {
     var col = this.cols_[i];
-    var header = this.slick_['getHeaderRowColumn'](col.id);
+    var header = this.slick_.getHeaderRowColumn(col.id);
 
     var input = goog.dom.getChildren(header)[0];
-    var width = jQuery(headerTemplates[i]).width();
+    var width = 200;
     goog.style.setWidth(header, width - 1);
     goog.style.setWidth(input, width - 3);
 
@@ -403,7 +403,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.array.forEach(this.cols_, goog.dispose);
   goog.object.forEach(this.quickFilters_, goog.dispose);
   goog.dispose(this.cfg_);
-  if (this.slick_) this.slick_['destroy']();
+  if (this.slick_) this.slick_.destroy();
   goog.dispose(this.slick_);
   goog.dispose(this.dataView_);
   goog.dispose(this.eh_);

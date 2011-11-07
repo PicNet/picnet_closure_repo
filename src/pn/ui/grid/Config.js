@@ -24,18 +24,23 @@ pn.ui.grid.Config = function(type) {
   this.checkboxRowSelect = false;
   /** @type {boolean} */
   this.enableQuickFilters = true;
+  /** @type {number} */
+  this.width = 0;
 };
 
 
 /**
- * @return {Object} A SlickGrid compative object even when in COMPILE mode.
+ * @return {pn.ui.grid.Config} A SlickGrid compative object even when
+ *    in COMPILE mode.
  */
 pn.ui.grid.Config.prototype.toSlick = function() {
-  return {
+  var cfg = /** @type {pn.ui.grid.Config} */ (goog.object.clone(this));
+  goog.object.extend(cfg, {
     'enableColumnReorder': this.enableColumnReorder,
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
     'editable': this.editable,
     'showHeaderRow': this.enableQuickFilters
-  };
+  });
+  return cfg;
 };

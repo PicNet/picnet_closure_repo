@@ -43,10 +43,12 @@ goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 /**
  * @param {function(number,number,Object,Object,Object):string}
  *    formatter The formatter to use for this column.
- * @return {Object} A SlickGrid compative object even when in COMPILE mode.
+ * @return {pn.ui.grid.Column} A SlickGrid compative object even when in
+ *    COMPILE mode.
  */
 pn.ui.grid.Column.prototype.toSlick = function(formatter) {
-  return {
+  var col = /** @type {pn.ui.grid.Column} */ (goog.object.clone(this));
+  goog.object.extend(col, {
     'id': this.id,
     'dataColumn': this.dataColumn,
     'field': this.id,
@@ -60,7 +62,8 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     'behavior': this.behavior,
     'formatter': formatter,
     source: this.source
-  };
+  });
+  return col;
 };
 
 

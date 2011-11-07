@@ -90,9 +90,10 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   for (var field in current) {
     var curr = current[field];
     var orig = this.data_[field];
-    if (!curr && !orig) continue;
-    curr = curr + '';
-    orig = orig + '';
+    if ((curr === '0' || !curr) && !orig) continue;
+    curr = curr ? curr.toString() : '';
+    orig = orig ? orig.toString() : '';
+
     if (curr !== orig) {
       this.log_.info('Found dirty field: ' + field + ' original: ' +
           orig + ' current: ' + curr);
