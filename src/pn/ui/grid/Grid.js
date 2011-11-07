@@ -146,11 +146,11 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.asserts.assert(this.cfg_.width);
-  
+
   this.setElementInternal(element);
   goog.array.forEach(this.commands_, function(c) {
     c.decorate(element);
-  }, this);  
+  }, this);
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
   var div = goog.dom.createDom('div', {
     'class': 'grid-container',

@@ -158,7 +158,8 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       function(c) { return c[parentField] === parentId; });
 
   var spec = pn.rcdb.Global.getSpec(relationship[0]);
-  var width = jQuery('.rc-details-container').width() - 190;
+  var width = goog.style.getSize(
+      goog.dom.getElement('view-container')).width - 210;
   var cfg = spec.getGridConfig(width);
   var grid = new pn.ui.grid.Grid(tableData,
       spec.getGridColumns(), spec.getGridCommands(), cfg, cache);
