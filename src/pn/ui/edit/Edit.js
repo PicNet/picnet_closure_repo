@@ -206,7 +206,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
-  goog.object.extend(current, this.data_); // TODO: Should we really do this?
+  goog.object.extend(current, this.data_);
   goog.object.extend(current, this.getFormData());
   return current;
 };

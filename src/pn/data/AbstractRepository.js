@@ -141,29 +141,6 @@ pn.data.AbstractRepository.prototype.updateListWithItem =
 
 /**
  * @protected
- * @param {Object|number} e The entity to make date safe.
- * @return {Object|number} The data safe object.
- */
-pn.data.AbstractRepository.prototype.makeDateSafe = function(e) {
-  if (1 === 1) return e; // TODO REMOVE THIS METHOD
-
-  if (e.length) {
-    return goog.array.map(/** @type {Array} */ (e),
-        function(e2) { return this.makeDateSafe(e2); }, this);
-  } else if (typeof(e) === 'number') { return e; }
-
-  var e3 = goog.object.clone(e);
-  for (var i in e3) {
-    if (e3[i] && e3[i].getFullYear) {
-      e3[i] = '\\/Date(' + e3[i].getTime() + ')\\/';
-    }
-  }
-  return e3;
-};
-
-
-/**
- * @protected
  * @param {Object} o The object to recreate dates on.
  * @return {Object|number} The new object (with valid dates).
  */

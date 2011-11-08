@@ -91,22 +91,28 @@ pn.data.DataManager.LAST_SYNC_TIME_ = '-1';
 
 
 /**
- * TODO: This should use localStorage
  * @param {string} key The key of the local setting to retreive.
  * @return {string|undefined} The setting value.
  */
 pn.data.DataManager.getLocalSettings = function(key) {
-  return goog.net.cookies.get(key);
+  if (typeof(window['localStorage']) !== 'undefined') {
+    return window['localStorage'][key];
+  } else {
+    return goog.net.cookies.get(key);
+  }
 };
 
 
 /**
- * TODO: This should use localStorage
  * @param {string} key The key of the local setting to set.
  * @param {string} value The value of the local setting.
  */
 pn.data.DataManager.setLocalSettings = function(key, value) {
-  goog.net.cookies.set(key, value, 99999999);
+  if (typeof(window['localStorage']) !== 'undefined') {
+    window['localStorage'][key] = value;
+  } else {
+    goog.net.cookies.set(key, value, 99999999);
+  }
 };
 
 

@@ -322,19 +322,6 @@ pn.ui.DateRangePicker.prototype.setDateRange = function(from, to) {
 
 
 /**
- * Sets the allowed date range.
- * @param {goog.date.Date|Date} from The date range from date to allow.
- * @param {goog.date.Date|Date} to The date range to date to allow.
- */
-pn.ui.DateRangePicker.prototype.setAllowedDateRange = function(from, to) {
-  // TODO: Change was not accepted into the closure libs
-  // http://code.google.com/p/closure-library/issues/detail?id=216
-  // this.datePickerFrom_.setAllowedDateRange(from, to);
-  // this.datePickerTo_.setAllowedDateRange(from, to);
-};
-
-
-/**
  * @return {Element} The last element that triggered the popup.
  */
 pn.ui.DateRangePicker.prototype.getLastTarget = function() {

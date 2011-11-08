@@ -17,9 +17,6 @@ if ('webkitIndexedDB' in window) {
 
 
 /**
- * NOTE: This is broken in the current FireFox 4b7 release.  Please use FF4b6 to
- * test. I'm sure it will be fixed when FF4 is relerased next year
- *
  * @constructor
  * @extends {pn.data.AbstractRepository}
  * @param {string} databaseName The name of the database to open or create.

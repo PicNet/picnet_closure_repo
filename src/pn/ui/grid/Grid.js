@@ -322,7 +322,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
 
   var dv = this.dataView_;
   var qf = this.quickFilters_;
-  // TODO: Add delay?
+  
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
