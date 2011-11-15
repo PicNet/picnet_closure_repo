@@ -386,9 +386,9 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
  * @param {Event} ev The selection event from the SlickGrid.
  * @param {Object} evData The data for the selection event.
  */
-pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
+pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {  
   var idx = evData['rows'][0];
-  var selected = this.list_[idx];
+  var selected = this.dataView_.getItem(idx);
   var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
   e.selected = selected;
   this.dispatchEvent(e);
