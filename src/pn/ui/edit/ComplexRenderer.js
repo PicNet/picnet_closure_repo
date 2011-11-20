@@ -30,6 +30,18 @@ pn.ui.edit.ComplexRenderer = function() {
    * @type {boolean}
    */
   this.inSearchFilter = false;
+
+  /**
+   * @protected
+   * @type {!Object.<Array>}
+   */
+  this.cache = {};
+
+  /**
+   * @protected
+   * @type {!pn.ui.SpecDisplayItem}
+   */
+  this.spec;
 };
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
@@ -37,12 +49,20 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 /**
  * @param {*} val The value to display in this field.
  * @param {Object} entity The entity being displayed.
+ * @param {!Object.<Array>} cache The admin cache for entities related to the
+ *    current entity.
+ * @param {!pn.ui.SpecDisplayItem} spec The field spec
  * @param {boolean=} opt_search If this field is being created in search mode.
  */
 pn.ui.edit.ComplexRenderer.prototype.initialise =
-    function(val, entity, opt_search) {
+    function(val, entity, cache, spec, opt_search) {
+  goog.asserts.assert(cache);
+  goog.asserts.assert(spec);
+
   this.val = val;
   this.entity = entity;
+  this.cache = cache;
+  this.spec = spec;
   this.inSearchFilter = opt_search === true;
 };
 

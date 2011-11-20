@@ -31,6 +31,7 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
 pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
   goog.asserts.assert(list);
   goog.asserts.assert(cols);
+  
   var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
   goog.array.removeDuplicates(uniqueColIds);
   goog.asserts.assert(cols.length === uniqueColIds.length,
@@ -267,8 +268,9 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.dataView_.sort(function(a, b) {
-      var x = a[args['sortCol.field']], y = b[args['sortCol.field']];
-      return (x == y ? 0 : (x > y ? 1 : -1));
+      var x = a[args['sortCol']['field']], 
+          y = b[args['sortCol']['field']];
+      return (x === y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
   }, this));
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
