@@ -58,6 +58,8 @@ pn.ui.grid.Command.prototype.createDom = function() {
 pn.ui.grid.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.commandElement_ = new goog.ui.Button(this.name_);
+  this.commandElement_.enableClassName(
+      goog.string.removeAll(this.name_.toLowerCase(), ''), true);
   this.commandElement_.render(element);
 };
 

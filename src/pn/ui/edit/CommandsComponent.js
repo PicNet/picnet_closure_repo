@@ -90,6 +90,8 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
     var button = new goog.ui.Button(c.name);
+    button.enableClassName(
+        goog.string.removeAll(c.name.toLowerCase(), ''), true);
     button.render(parent);
     this.buttons_.push(button);
   }, this);
@@ -113,7 +115,8 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
     function(command, idx) {
   var button = this.buttons_[idx];
   this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
-    if (command.validate && !this.isValidForm()) { return; }
+    if (!command.onclick() || 
+        (command.validate && !this.isValidForm())) { return; }
     this.fireCommandEvent(command.eventType, this.getCurrentFormData());
   });
 };
