@@ -73,6 +73,8 @@ pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
 
 /** @inheritDoc */
 pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
+  goog.asserts.assert(element);
+
   this.setElementInternal(element);
   if (!this.commands_.length) return;
 

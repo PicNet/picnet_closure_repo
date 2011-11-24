@@ -13,7 +13,7 @@ goog.require('pn.ui.SpecDisplayItem');
 pn.ui.grid.QuickFilterHelpers.createFilterInput =
     function(col, width, value) {
   var inp;
-  if (!col.source && col.formatter) {
+  if (!col.source && col.renderer) {
     value = '';
     inp = goog.dom.createDom('div', {});
     inp.innerHTML = '&nbsp;';

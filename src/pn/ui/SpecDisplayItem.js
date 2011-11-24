@@ -22,4 +22,6 @@ pn.ui.SpecDisplayItem = function(id, name) {
   this.source = '';
   /** @type {string} */
   this.table = '';
+  /** @type {string} */
+  this.readOnlyTable = '';
 };

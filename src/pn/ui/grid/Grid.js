@@ -149,9 +149,11 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.asserts.assert(this.cfg_.width);
 
   this.setElementInternal(element);
-  goog.array.forEach(this.commands_, function(c) {
-    c.decorate(element);
-  }, this);
+  if (!this.cfg_.readonly) {
+    goog.array.forEach(this.commands_, function(c) {
+      c.decorate(element);
+    }, this);
+  }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
   var div = goog.dom.createDom('div', {
     'class': 'grid-container',
@@ -162,11 +164,11 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(div, this.dataView_,
       goog.array.map(this.cols_, function(c) {
-        if (!c.formatter && c.source) {
+        if (!c.renderer && c.source) {
           c.isParentFormatter = true;
-          c.formatter = goog.bind(this.parentColumnFormatter_, this);
+          c.renderer = goog.bind(this.parentColumnFormatter_, this);
         }
-        return c.toSlick(c.formatter);
+        return c.toSlick(c.renderer);
       }, this),
       this.cfg_.toSlick());
 
@@ -188,7 +190,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
       var dat = rowData[cc.dataColumn];
-      var txt = cc.formatter ? cc.formatter(row, col, dat, cc, rowData) : dat;
+      var txt = cc.renderer ? cc.renderer(row, col, dat, cc, rowData) : dat;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -258,13 +260,14 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
   // Selecting
-  this.slick_.setSelectionModel(new Slick.RowSelectionModel());
-  this.selectionHandler_ = goog.bind(this.handleSelection_, this);
-  this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
-  goog.array.forEach(this.commands_, function(c) {
-    this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
-  }, this);
-
+  if (!this.cfg_.readonly) {
+    this.slick_.setSelectionModel(new Slick.RowSelectionModel());
+    this.selectionHandler_ = goog.bind(this.handleSelection_, this);
+    this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
+    goog.array.forEach(this.commands_, function(c) {
+      this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
+    }, this);
+  }
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.dataView_.sort(function(a, b) {
@@ -370,8 +373,8 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
       var val = item[spec.dataColumn];
       if (spec.isParentFormatter) {
         val = val ? this.getCachedEntityName_(spec, val) : '';
-      } else if (spec.formatter) {
-        val = spec.formatter(0, 0, val, spec, item);
+      } else if (spec.renderer) {
+        val = spec.renderer(0, 0, val, spec, item);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {

@@ -6,7 +6,7 @@ goog.provide('pn.ui.edit.Command');
 /**
  * @constructor
  * @param {string} name The name/caption of this column.
- * @param {pn.ui.edit.Edit.EventType} eventType The event to fire on '
+ * @param {string} eventType The event to fire on '
  *    componenet action.
  * @param {boolean=} opt_allowOnAdd Wether to allow this command on a new
  *    entity being added.
@@ -19,12 +19,14 @@ pn.ui.edit.Command = function(name, eventType, opt_allowOnAdd, opt_validate) {
 
   /** @type {string} */
   this.name = name;
-  /** @type {pn.ui.edit.Edit.EventType} */
+  /** @type {string} */
   this.eventType = eventType;
   /** @type {boolean} */
   this.allowOnAdd = opt_allowOnAdd === true;
   /** @type {boolean} */
   this.validate = opt_validate === true;
-  /** @type {function():boolean} Wether to continue with the operation. */
+  /** @type {function():boolean} Wether to continue with the command. */
   this.onclick = function() { return true; };
+  /** @type {null|function(string,Object):undefined} The command handler. */
+  this.handler = null;
 };

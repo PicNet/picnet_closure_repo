@@ -11,6 +11,8 @@ pn.ui.grid.Config = function(type) {
   /** @type {string} */
   this.type = type;
   /** @type {boolean} */
+  this.readonly = false;
+  /** @type {boolean} */
   this.allowAdd = true;
   /** @type {boolean} */
   this.enableColumnReorder = false;

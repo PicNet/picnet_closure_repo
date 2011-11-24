@@ -3,6 +3,18 @@ goog.provide('pn.ui.edit.FieldBuilder');
 
 goog.require('goog.date.Date');
 
+/**
+ * @param {string} id The id of this label/field
+ * @param {string} name The text for this label
+ * @param {string=} opt_clazz An optional class name.  Will use 'field' if 
+ *    not specified.
+ * @return {!Element}
+ */
+pn.ui.edit.FieldBuilder.getFieldLabel = function (id, name, opt_clazz) {
+  var dom = goog.dom.createDom('div', { 'class' : opt_clazz || 'field' }, 
+  goog.dom.createDom('label', { 'for': id }, name));
+  return dom;
+};
 
 /**
  * @param {!(Element|goog.ui.Component)} inp The input field.
@@ -37,7 +49,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element|!goog.ui.Component} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createAndAttachInput =
+pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache, opt_search) {
   var fb = pn.ui.edit.FieldBuilder;
   var val = entity ? entity[field.dataColumn] : '';
@@ -49,12 +61,12 @@ pn.ui.edit.FieldBuilder.createAndAttachInput =
       field.renderer.initialise(val, entity, cache, field, opt_search);
       elem.render(parent);
     } else {
-      elem = field.renderer(val, parent, opt_search);
+      elem = field.renderer(val, entity, parent, opt_search);
     }
   } else if (field.source) {
     elem = fb.createParentEntitySelect(field, val, cache, opt_search);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
-  } else if (field.table) {
+  } else if (field.table || field.readOnlyTable) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
   } else {
     elem = goog.dom.createDom('input',
@@ -84,26 +96,44 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   var textField = relationship.length === 1 ?
       entityType + 'Name' : relationship[relationship.length - 1];
   var list = cache[entityType];
+  if (spec.sourceFilter) { list = spec.sourceFilter(list, cache); }
+
   if (!list) throw new Error('Expected access to "' + entityType +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
+      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));  
 
   var opts = { 'id': spec.id };
   if (opt_search === true) {
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
   }
+  var selTxt = 'Select ' + spec.name + ' ...';
+  return pn.ui.edit.FieldBuilder.
+      createDropDownList(selTxt, list, textField, 'ID', id, opts);  
+};
+
+/**
+ * @param {string} selectTxt The message to display in the first element of the 
+ *    list
+ * @param {!Array.<Object>} list The list of entities
+ * @param {string} txtf The text field property name
+ * @param {string} valf The value field property name
+ * @param {*} selValue The selected value in the valf field.
+ * @param {!Object} opts The select list additional options
+ * @return {!Element} The select box
+ */
+pn.ui.edit.FieldBuilder.createDropDownList = 
+    function(selectTxt, list, txtf, valf, selValue, opts) {
   var select = goog.dom.createDom('select', opts);
-  goog.dom.appendChild(select, goog.dom.createDom('option',
-      {'value': '0' }, 'Select ' + spec.name + ' ...'));
+  if (selectTxt) {
+    goog.dom.appendChild(select, goog.dom.createDom('option',
+        {'value': '0' }, selectTxt));
+  }
   var options = [];
-  goog.array.forEach(list, function(e, i) {
-    var eid = e['ID'];
-    opts = {'value': eid};
-    if (eid === id) { opts['selected'] = 'selected'; }
-    var txt = e[textField] ? e[textField].toString() : null;
-    goog.asserts.assert(txt !== undefined,
-        'Could not find the label of the select option for spec ' + spec.id +
-        ' textField: ' + textField);
+  goog.array.forEach(list, function(e) {
+    opts = {'value': e[valf]};
+    if (selValue && e[valf] === selValue) { opts['selected'] = 'selected'; }
+    var txt = e[txtf] ? e[txtf].toString() : null;
+    goog.asserts.assert(txt !== undefined);
     options.push(goog.dom.createDom('option', opts, txt));
   });
   goog.array.sortObjectsByKey(options, 'innerHTML');
@@ -112,7 +142,6 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   });
   return select;
 };
-
 
 /**
  * @private
@@ -147,22 +176,37 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
   goog.asserts.assert(entity);
   goog.asserts.assert(entity['ID'],
       'Cannot create child entity table for entities that have not been saved');
-
   var parentId = entity['ID'];
-  var relationship = field.table.split('.');
+  var table = field.table || field.readOnlyTable;  
+
+  var relationship = table.split('.');
   var parentField = relationship[1];
   var list = cache[relationship[0]];
   if (!list) throw new Error('Expected access to "' + relationship[0] +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(field));
-  var tableData = !parentId ? [] : goog.array.filter(list,
+      '" but could not be found in cache. Field: ' + goog.debug.expose(field));  
+  var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
+  var spec = pn.rcdb.Global.getSpec(relationship[0]);  
+  var g = pn.ui.edit.FieldBuilder.createGrid(spec, !field.table, data, cache);
+  g.decorate(parent);
+  return g;
+};
 
-  var spec = pn.rcdb.Global.getSpec(relationship[0]);
+/**
+ * @param {!pn.rcdb.ui.specs.SpecsBase} spec The specs for the entities in 
+ *    this grid.
+ * @param {boolean} readonly Wether this table is readonly
+ * @param {!Array.<Object>} data The grid data
+ * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @return {!pn.ui.grid.Grid} The created grid
+ */
+pn.ui.edit.FieldBuilder.createGrid = function (spec, readonly, data, cache) {
   var width = goog.style.getSize(
       goog.dom.getElement('view-container')).width - 210;
   var cfg = spec.getGridConfig(width);
-  var grid = new pn.ui.grid.Grid(tableData,
-      spec.getGridColumns(), spec.getGridCommands(), cfg, cache);
-  grid.decorate(parent);
+  cfg.readonly = readonly;
+  var cols = spec.getGridColumns();
+  var commands = spec.getGridCommands();
+  var grid = new pn.ui.grid.Grid(data, cols, commands, cfg, cache);  
   return grid;
 };

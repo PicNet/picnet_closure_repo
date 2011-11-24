@@ -42,6 +42,11 @@ pn.ui.edit.ComplexRenderer = function() {
    * @type {!pn.ui.SpecDisplayItem}
    */
   this.spec;
+
+  /**
+   * @type {boolean}
+   */
+  this.showLabel = true;
 };
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
@@ -78,3 +83,10 @@ pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
  * @return {string} Any error (if any) for the specified field.
  */
 pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
+
+
+/** @inheritDoc */
+pn.ui.edit.ComplexRenderer.prototype.createDom =
+    function() {
+  this.decorateInternal(this.dom_.createElement('div'));
+};

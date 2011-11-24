@@ -31,7 +31,8 @@ goog.require('pn.ui.grid.Grid');
  * @param {!pn.ui.edit.Config} cfg Global options for this control.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
+pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {  
+
   goog.asserts.assert(data);
   goog.asserts.assert(commands);
   goog.asserts.assert(fields);
@@ -139,18 +140,37 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
  * @param {!Element} parent The parent element to attach the fields to.
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
+  var fb = pn.ui.edit.FieldBuilder;
+  var fr = pn.ui.edit.FieldRenderers;
+
   var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
   goog.dom.appendChild(parent, fieldset);
-  goog.array.forEach(this.fields_, function(f, idx) {
+  
+  goog.array.forEach(this.fields_, function(f, idx) {   
     // Do not do child tables on new entities
-    if (f.table && !this.data_['ID']) { return; }
+    var newEntity = !this.data_['ID'];
+    var isChildTable = f.table || f.readOnlyTable;
+    if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
-    var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
-        goog.dom.createDom('label', { 'for': f.id }, f.name));
-    goog.dom.appendChild(fieldset, dom);
+    var fieldParent = fieldset;
+    if (!f.renderer || f.renderer.showLabel !== false) {
+      fieldParent = fb.getFieldLabel(f.id, f.name, f.className);
+      if (fr.hiddenTextField === f.renderer) {
+        goog.style.showElement(fieldParent, false);
+      }
+      goog.dom.appendChild(fieldset, fieldParent);
+    }
 
-    var input = pn.ui.edit.FieldBuilder.createAndAttachInput(
-        f, dom, this.data_, this.cache_);
+    var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);    
+    
+    // If displaying data from a parent (and not a parent selector) then 
+    // disable the field as its obviousle there as a reference.  See: 
+    // FormulaMaterial for an example.
+    if (!goog.string.endsWith(f.id, 'ID') && 
+        f.source && f.source.indexOf('.') > 0) {
+      input['disabled'] = 'disabled';
+    }
+
     this.inputs_[f.id] = input;
     this.attachOnChangeListenerIfRequired_(f, input);
 
@@ -231,9 +251,12 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<pn.ui.edit.Field>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
+  var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
-    return !f.table && f.renderer !==
-        pn.ui.edit.FieldRenderers.readOnlyTextField;
+    return f.id.indexOf('.') < 0 &&
+        !f.table && !f.readOnlyTable && 
+        (f.showOnAdd || !newEntity) &&
+        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField;
   });
 };
 
@@ -261,9 +284,14 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  * @param {pn.ui.edit.Field} field The field to attach events to.
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
-  if (!field.table) return;
-  var relationship = field.table.split('.');
+  var table = field.table || field.readOnlyTable;
+  if (!table) return;
+  var readonly = !field.table;
+
+  var relationship = table.split('.');
   var grid = this.inputs_[field.id];
+  if (readonly) return;
+
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;

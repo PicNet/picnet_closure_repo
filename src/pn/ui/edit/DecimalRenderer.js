@@ -35,14 +35,6 @@ pn.ui.edit.DecimalRenderer.prototype.validate =
   return '';
 };
 
-
-/** @inheritDoc */
-pn.ui.edit.DecimalRenderer.prototype.createDom =
-    function() {
-  this.decorateInternal(this.dom_.createElement('div'));
-};
-
-
 /** @inheritDoc */
 pn.ui.edit.DecimalRenderer.prototype.decorateInternal =
     function(element) {

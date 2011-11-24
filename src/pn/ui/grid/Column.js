@@ -35,7 +35,7 @@ pn.ui.grid.Column = function(id, name) {
   /** @type {boolean} */
   this.isParentFormatter = false;
   /** @type {null|function(number,number,Object,Object,Object):string} */
-  this.formatter = null;
+  this.renderer = null;
 };
 goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 
@@ -78,8 +78,10 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
  */
 pn.ui.grid.Column.dateRenderer =
     function(row, cell, value, columnDef, dataContext) {
-  if (value && value.getFullYear() <= 1970) { value = null; }
-  return value ? pn.rcdb.Global.dateFormat.format(value) : '';
+  var date = null;
+  if (value) { date = new Date(value); }
+  if (date && date.getFullYear() <= 1970) { date = null; }
+  return date ? pn.rcdb.Global.dateFormat.format(date) : '';
 };
 
 
