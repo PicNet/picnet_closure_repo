@@ -31,7 +31,7 @@ goog.require('pn.ui.grid.Grid');
  * @param {!pn.ui.edit.Config} cfg Global options for this control.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {  
+pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
 
   goog.asserts.assert(data);
   goog.asserts.assert(commands);
@@ -145,8 +145,27 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
   goog.dom.appendChild(parent, fieldset);
-  
-  goog.array.forEach(this.fields_, function(f, idx) {   
+
+  /*
+  // NOTE: This is only for generating the report
+  var isTableReport = false;
+  goog.array.forEach(this.fields_, function(f) {
+    if (isTableReport) {
+      console.log('<th>' + f.name + '</th>');
+    } else {
+      var rep = '${RcReportUtils.GetDisplay(Model.' + (f.source || f.id) + ')}';
+      console.log('<tr><th>' + f.name + '</th><td>' + rep + '</td></tr>');
+    }
+  });
+  if (isTableReport) {
+    goog.array.forEach(this.fields_, function(f) {
+      var rep = '${RcReportUtils.GetDisplay(Model.' + (f.source || f.id) + ')}';
+      console.log('<td>' + rep + '</td>');
+    });
+  }
+  */
+
+  goog.array.forEach(this.fields_, function(f, idx) {
     // Do not do child tables on new entities
     var newEntity = !this.data_['ID'];
     var isChildTable = f.table || f.readOnlyTable;
@@ -161,12 +180,14 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       goog.dom.appendChild(fieldset, fieldParent);
     }
 
-    var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);    
-    
-    // If displaying data from a parent (and not a parent selector) then 
-    // disable the field as its obviousle there as a reference.  See: 
+    var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
+    if (f.oncreate) {
+      f.oncreate(input, this.data_);
+    }
+    // If displaying data from a parent (and not a parent selector) then
+    // disable the field as its obviousle there as a reference.  See:
     // FormulaMaterial for an example.
-    if (!goog.string.endsWith(f.id, 'ID') && 
+    if (!goog.string.endsWith(f.id, 'ID') &&
         f.source && f.source.indexOf('.') > 0) {
       input['disabled'] = 'disabled';
     }
@@ -188,11 +209,12 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
  */
 pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
     function(field, input) {
+  var gfb = pn.ui.edit.FieldBuilder.getFieldValue;
   if (field.onchange) {
-    this.eh.listen(input, goog.events.EventType.CHANGE, function(e) {
-      field.onchange(pn.ui.edit.FieldBuilder.getFieldValue(input), input, e);
+    this.eh.listen(input, goog.events.EventType.CHANGE, function() {
+      field.onchange(gfb(input), input, this.data_);
     });
-    field.onchange(pn.ui.edit.FieldBuilder.getFieldValue(input), input, null);
+    field.onchange(gfb(input), input, this.data_);
   }
 };
 
@@ -254,7 +276,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
     return f.id.indexOf('.') < 0 &&
-        !f.table && !f.readOnlyTable && 
+        !f.table && !f.readOnlyTable &&
         (f.showOnAdd || !newEntity) &&
         f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField;
   });

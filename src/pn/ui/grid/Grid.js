@@ -31,7 +31,7 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
 pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
   goog.asserts.assert(list);
   goog.asserts.assert(cols);
-  
+
   var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
   goog.array.removeDuplicates(uniqueColIds);
   goog.asserts.assert(cols.length === uniqueColIds.length,
@@ -271,7 +271,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.dataView_.sort(function(a, b) {
-      var x = a[args['sortCol']['field']], 
+      var x = a[args['sortCol']['field']],
           y = b[args['sortCol']['field']];
       return (x === y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
@@ -327,7 +327,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
 
   var dv = this.dataView_;
   var qf = this.quickFilters_;
-  
+
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
@@ -391,7 +391,7 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
  * @param {Event} ev The selection event from the SlickGrid.
  * @param {Object} evData The data for the selection event.
  */
-pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {  
+pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
   var idx = evData['rows'][0];
   var selected = this.dataView_.getItem(idx);
   var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);

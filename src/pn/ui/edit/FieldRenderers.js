@@ -8,12 +8,12 @@ goog.provide('pn.ui.edit.FieldRenderers');
 
 /**
  * @param {*} val The date (millis since 1970) to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!goog.ui.InputDatePicker} The date control.
  */
-pn.ui.edit.FieldRenderers.dateRenderer = 
+pn.ui.edit.FieldRenderers.dateRenderer =
     function(val, entity, parent, opt_search) {
   goog.asserts.assert(!goog.isDefAndNotNull(val) || goog.isNumber(val));
 
@@ -30,6 +30,7 @@ pn.ui.edit.FieldRenderers.dateRenderer =
   parent.labelInput_ = fieldLabelInput;
 
   var idp = new goog.ui.InputDatePicker(glb.dateFormat, glb.dateParser);
+  idp.getDatePicker().setShowWeekNum(false);
   idp.decorate(fieldLabelInput.getElement());
   if (dt) {
     idp.setDate(dt);
@@ -42,12 +43,12 @@ pn.ui.edit.FieldRenderers.dateRenderer =
 
 /**
  * @param {*} val The boolean to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.FieldRenderers.boolRenderer = 
+pn.ui.edit.FieldRenderers.boolRenderer =
     function(val, entity, parent, opt_search) {
   var inp = goog.dom.createDom('input', {'type': 'checkbox'});
   inp.defaultChecked = inp.checked = (val === true);
@@ -58,12 +59,12 @@ pn.ui.edit.FieldRenderers.boolRenderer =
 
 /**
  * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
  */
-pn.ui.edit.FieldRenderers.textAreaRenderer = 
+pn.ui.edit.FieldRenderers.textAreaRenderer =
     function(val, entity, parent, opt_search) {
   if (opt_search === true) {
     return pn.ui.edit.FieldRenderers.standardTextSearchField(parent);
@@ -74,14 +75,15 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
   return textarea;
 };
 
+
 /**
  * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
  */
-pn.ui.edit.FieldRenderers.hiddenTextField = 
+pn.ui.edit.FieldRenderers.hiddenTextField =
     function(val, entity, parent, opt_search) {
   goog.asserts.assert(!opt_search);
 
@@ -93,7 +95,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField =
 
 /**
  * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The readonly text field control.
@@ -110,9 +112,10 @@ pn.ui.edit.FieldRenderers.readOnlyTextField =
   return readonly;
 };
 
+
 /**
  * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The readonly text field control.
@@ -122,16 +125,17 @@ pn.ui.edit.FieldRenderers.readOnlyTextAreaField =
   var ta = pn.ui.edit.FieldRenderers.textAreaRenderer(
       val, entity, parent, opt_search);
   ta['readonly'] = 'readonly';
-  ta['disabled'] = 'disabled';  
+  ta['disabled'] = 'disabled';
   return ta;
 };
 
+
 /**
  * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed
+ * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @param {boolean=} opt_search If this field is being created in search mode.
- * @return {!Element|!goog.ui.LabelInput|!goog.ui.InputDatePicker} The readonly 
+ * @return {!Element|!goog.ui.LabelInput|!goog.ui.InputDatePicker} The readonly
  *    text field control.
  */
 pn.ui.edit.FieldRenderers.readOnlyDateField =
@@ -143,10 +147,10 @@ pn.ui.edit.FieldRenderers.readOnlyDateField =
   var txt = !date ? '' : pn.rcdb.Global.dateFormat.format(date);
   var li = new goog.ui.LabelInput(txt);
   li.render(parent);
-  li.setEnabled(false);    
+  li.setEnabled(false);
   li.getValue = function() { return date ? date.getTime() : 0; };
 
-  return li;  
+  return li;
 };
 
 

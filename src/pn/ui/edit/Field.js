@@ -26,17 +26,20 @@ pn.ui.edit.Field = function(id, name) {
       {pn.ui.edit.ComplexRenderer|
           function(*, Object, !Element, boolean=):!Element} */
   this.renderer = null;
-  
+
   /** @type {null|pn.ui.edit.ValidateInfo|
       function(pn.ui.edit.Field, *):string} */
   this.validator = null;
-  
-  /** @type {null|function(string, !(Element|goog.ui.Component), Event)} */
+
+  /** @type {null|function(string, !(Element|goog.ui.Component), Object)} */
   this.onchange = null;
-  
+
+  /** @type {null|function(!(Element|goog.ui.Component), Object)} */
+  this.oncreate = null;
+
   /** @type {null|function(!Array.<Object>, !Object.<Array>):!Array.<Object>} */
   this.sourceFilter = null;
-  
+
   /** @type {boolean} */
   this.showOnAdd = true;
 };

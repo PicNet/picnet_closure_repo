@@ -3,18 +3,20 @@ goog.provide('pn.ui.edit.FieldBuilder');
 
 goog.require('goog.date.Date');
 
+
 /**
- * @param {string} id The id of this label/field
- * @param {string} name The text for this label
- * @param {string=} opt_clazz An optional class name.  Will use 'field' if 
+ * @param {string} id The id of this label/field.
+ * @param {string} name The text for this label.
+ * @param {string=} opt_clazz An optional class name.  Will use 'field' if
  *    not specified.
- * @return {!Element}
+ * @return {!Element} The label element wrapped in a div.
  */
-pn.ui.edit.FieldBuilder.getFieldLabel = function (id, name, opt_clazz) {
-  var dom = goog.dom.createDom('div', { 'class' : opt_clazz || 'field' }, 
-  goog.dom.createDom('label', { 'for': id }, name));
+pn.ui.edit.FieldBuilder.getFieldLabel = function(id, name, opt_clazz) {
+  var dom = goog.dom.createDom('div', { 'class' : opt_clazz || 'field' },
+      goog.dom.createDom('label', { 'for': id }, name));
   return dom;
 };
+
 
 /**
  * @param {!(Element|goog.ui.Component)} inp The input field.
@@ -99,7 +101,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   if (spec.sourceFilter) { list = spec.sourceFilter(list, cache); }
 
   if (!list) throw new Error('Expected access to "' + entityType +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));  
+      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
 
   var opts = { 'id': spec.id };
   if (opt_search === true) {
@@ -108,20 +110,21 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   }
   var selTxt = 'Select ' + spec.name + ' ...';
   return pn.ui.edit.FieldBuilder.
-      createDropDownList(selTxt, list, textField, 'ID', id, opts);  
+      createDropDownList(selTxt, list, textField, 'ID', id, opts);
 };
 
+
 /**
- * @param {string} selectTxt The message to display in the first element of the 
- *    list
- * @param {!Array.<Object>} list The list of entities
- * @param {string} txtf The text field property name
- * @param {string} valf The value field property name
+ * @param {string} selectTxt The message to display in the first element of the
+ *    list.
+ * @param {!Array.<Object>} list The list of entities.
+ * @param {string} txtf The text field property name.
+ * @param {string} valf The value field property name.
  * @param {*} selValue The selected value in the valf field.
- * @param {!Object} opts The select list additional options
- * @return {!Element} The select box
+ * @param {!Object} opts The select list additional options.
+ * @return {!Element} The select box.
  */
-pn.ui.edit.FieldBuilder.createDropDownList = 
+pn.ui.edit.FieldBuilder.createDropDownList =
     function(selectTxt, list, txtf, valf, selValue, opts) {
   var select = goog.dom.createDom('select', opts);
   if (selectTxt) {
@@ -142,6 +145,7 @@ pn.ui.edit.FieldBuilder.createDropDownList =
   });
   return select;
 };
+
 
 /**
  * @private
@@ -177,36 +181,37 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
   goog.asserts.assert(entity['ID'],
       'Cannot create child entity table for entities that have not been saved');
   var parentId = entity['ID'];
-  var table = field.table || field.readOnlyTable;  
+  var table = field.table || field.readOnlyTable;
 
   var relationship = table.split('.');
   var parentField = relationship[1];
   var list = cache[relationship[0]];
   if (!list) throw new Error('Expected access to "' + relationship[0] +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(field));  
+      '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.rcdb.Global.getSpec(relationship[0]);  
+  var spec = pn.rcdb.Global.getSpec(relationship[0]);
   var g = pn.ui.edit.FieldBuilder.createGrid(spec, !field.table, data, cache);
   g.decorate(parent);
   return g;
 };
 
+
 /**
- * @param {!pn.rcdb.ui.specs.SpecsBase} spec The specs for the entities in 
+ * @param {!pn.rcdb.ui.specs.SpecsBase} spec The specs for the entities in
  *    this grid.
- * @param {boolean} readonly Wether this table is readonly
- * @param {!Array.<Object>} data The grid data
+ * @param {boolean} readonly Wether this table is readonly.
+ * @param {!Array.<Object>} data The grid data.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @return {!pn.ui.grid.Grid} The created grid
+ * @return {!pn.ui.grid.Grid} The created grid.
  */
-pn.ui.edit.FieldBuilder.createGrid = function (spec, readonly, data, cache) {
+pn.ui.edit.FieldBuilder.createGrid = function(spec, readonly, data, cache) {
   var width = goog.style.getSize(
       goog.dom.getElement('view-container')).width - 210;
   var cfg = spec.getGridConfig(width);
   cfg.readonly = readonly;
   var cols = spec.getGridColumns();
   var commands = spec.getGridCommands();
-  var grid = new pn.ui.grid.Grid(data, cols, commands, cfg, cache);  
+  var grid = new pn.ui.grid.Grid(data, cols, commands, cfg, cache);
   return grid;
 };

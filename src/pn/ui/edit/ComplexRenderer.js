@@ -56,7 +56,7 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
  * @param {Object} entity The entity being displayed.
  * @param {!Object.<Array>} cache The admin cache for entities related to the
  *    current entity.
- * @param {!pn.ui.SpecDisplayItem} spec The field spec
+ * @param {!pn.ui.SpecDisplayItem} spec The field spec.
  * @param {boolean=} opt_search If this field is being created in search mode.
  */
 pn.ui.edit.ComplexRenderer.prototype.initialise =

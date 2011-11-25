@@ -117,7 +117,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
     function(command, idx) {
   var button = this.buttons_[idx];
   this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
-    if (!command.onclick() || 
+    if ((command.onclick && !command.onclick()) ||
         (command.validate && !this.isValidForm())) { return; }
     this.fireCommandEvent(command.eventType, this.getCurrentFormData());
   });
