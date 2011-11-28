@@ -207,7 +207,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
  */
 pn.ui.edit.FieldBuilder.createGrid = function(spec, readonly, data, cache) {
   var width = goog.style.getSize(
-      goog.dom.getElement('view-container')).width - 210;
+      goog.dom.getElement('view-container')).width - 25;
   var cfg = spec.getGridConfig(width);
   cfg.readonly = readonly;
   var cols = spec.getGridColumns();

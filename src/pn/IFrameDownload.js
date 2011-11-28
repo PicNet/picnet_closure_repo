@@ -18,7 +18,7 @@ goog.provide('pn.IFrameDownload');
  *    callback.
  */
 pn.IFrameDownload = function(parent, downloadUrl, opt_data, opt_oncomplete) {
-  var formid = 'ifd_' + new Date().getTime();
+  var formid = 'ifd_' + goog.now();
   var frm = /** @type {!HTMLFormElement} */ (goog.dom.createDom('form',
       {'id': formid, 'method': 'POST', 'action': downloadUrl}));
   frm['enctype'] = frm['encoding'] = 'multipart/form-data';

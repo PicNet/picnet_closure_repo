@@ -78,7 +78,8 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   if (!this.commands_.length) return;
 
-  var div = goog.dom.createDom('div', {'class': 'commands-container'});
+  var div = goog.dom.getElementsByClass('commands-container')[0] ||
+      goog.dom.createDom('div', {'class': 'commands-container'});
   goog.dom.appendChild(element, div);
 
   this.decorateCommands_(div);

@@ -146,25 +146,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
   goog.dom.appendChild(parent, fieldset);
 
-  /*
-  // NOTE: This is only for generating the report
-  var isTableReport = false;
-  goog.array.forEach(this.fields_, function(f) {
-    if (isTableReport) {
-      console.log('<th>' + f.name + '</th>');
-    } else {
-      var rep = '${RcReportUtils.GetDisplay(Model.' + (f.source || f.id) + ')}';
-      console.log('<tr><th>' + f.name + '</th><td>' + rep + '</td></tr>');
-    }
-  });
-  if (isTableReport) {
-    goog.array.forEach(this.fields_, function(f) {
-      var rep = '${RcReportUtils.GetDisplay(Model.' + (f.source || f.id) + ')}';
-      console.log('<td>' + rep + '</td>');
-    });
-  }
-  */
-
   goog.array.forEach(this.fields_, function(f, idx) {
     // Do not do child tables on new entities
     var newEntity = !this.data_['ID'];

@@ -31,7 +31,7 @@ pn.data.DataDownloader = function(parent) {
  */
 pn.data.DataDownloader.prototype.exportData =
     function(exportUrl, exportData, opt_oncomplete) {
-  var formid = 'export_' + new Date().getTime();
+  var formid = 'export_' + goog.now();
   var exportform = /** @type {!HTMLFormElement} */ (goog.dom.createDom('form',
       {'id': formid, 'method': 'POST', 'action' : exportUrl}));
   exportform['enctype'] = exportform['encoding'] = 'multipart/form-data';

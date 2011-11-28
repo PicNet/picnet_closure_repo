@@ -56,7 +56,7 @@ pn.data.WebSQLRepository.prototype.db = function() {
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.init =
     function(types, callback, opt_handler) {
-  var start = new Date().getTime();
+  var start = goog.now();
   this.types = types;
   this.isInitialised(function(isInitialised) {
     if (isInitialised) return callback.call(opt_handler || this);
@@ -76,7 +76,7 @@ pn.data.WebSQLRepository.prototype.init =
       this.error('initialisation', [], err);
     }, this),
     goog.bind(function() {
-      this.log.fine('init took: ' + (new Date().getTime() - start) + 'ms');
+      this.log.fine('init took: ' + (goog.now() - start) + 'ms');
       callback.call(opt_handler || this);
     }, this));
   }, this);

@@ -216,7 +216,7 @@ pn.data.LocalDataProvider.prototype.setValidEntityIDPreSave_ =
  * @return {number} A random negative ID (guranteed unique).
  */
 pn.data.LocalDataProvider.getRandomNegativeID = function() {
-  return -(new Date().getTime() +
+  return -(goog.now() +
       pn.data.LocalDataProvider.prototype.localSaveEntityIndex_++);
 };
 

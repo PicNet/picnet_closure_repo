@@ -54,7 +54,7 @@ pn.data.GearsRepository.prototype.db = function() {
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.init =
     function(types, callback, opt_handler) {
-  var start = new Date().getTime();
+  var start = goog.now();
   this.types = types;
   this.isInitialised(function(isInitialised) {
     if (isInitialised) return callback.call(opt_handler || this);
@@ -70,7 +70,7 @@ pn.data.GearsRepository.prototype.init =
         '([TYPE] VARCHAR(50), ID INTEGER, value INTEGER)');
     this.db().execute('COMMIT');
 
-    this.log.fine('init took: ' + (new Date().getTime() - start) + 'ms');
+    this.log.fine('init took: ' + (goog.now() - start) + 'ms');
     callback.call(opt_handler || this);
   }, this);
 };

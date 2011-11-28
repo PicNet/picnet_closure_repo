@@ -236,11 +236,11 @@ pn.data.DataManager.prototype.updateClientWithLatestServerChangesImpl_ =
   if (lastupdate === 'undefined') lastupdate = '-1';
   this.remote_.getChangesSince(lastupdate, function(changes) {
     this.local_.reset(this.types_, function() {
-      var start = new Date().getTime();
+      var start = goog.now();
       this.updateLocalChanges_(initialRequest, changes, function() {
         this.deleteLocalEntities_(initialRequest, changes, function() {
           this.log('this.updateLocalChanges_ took: ' +
-              (new Date().getTime() - start) + 'ms');
+              (goog.now() - start) + 'ms');
           pn.data.DataManager.setLocalSettings(
               pn.data.DataManager.LAST_SYNC_TIME_, changes['ServerTime']);
           if (initialRequest) {
@@ -372,7 +372,7 @@ pn.data.DataManager.prototype.deleteLocalEntitiesImpl_ =
  */
 pn.data.DataManager.prototype.updateEntireInMemoryStore =
     function(callback, opt_handler) {
-  var start = new Date().getTime();
+  var start = goog.now();
 
   var alldata = {};
   this.local_.repository.getListsImpl(this.types_, alldata, function() {
@@ -381,7 +381,7 @@ pn.data.DataManager.prototype.updateEntireInMemoryStore =
           function() {}, this);
     }
     this.log('updateEntireInMemoryStore took: ' +
-        (new Date().getTime() - start) + 'ms');
+        (goog.now() - start) + 'ms');
     callback.call(opt_handler || this);
   }, this);
 };
