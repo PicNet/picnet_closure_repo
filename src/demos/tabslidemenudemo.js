@@ -4,6 +4,7 @@ goog.provide('pn.demo.tabslidemenudemo');
 goog.require('pn.ui.TabSlideMenu');
 goog.require('pn.ui.TabSlideMenuSettings');
 
+
 /**
  * @export
  */
@@ -31,4 +32,4 @@ pn.demo.tabslidemenudemo = function() {
 goog.exportSymbol('pn.demo.tabslidemenudemo',
     pn.demo.tabslidemenudemo);
 
-    
+
