@@ -82,16 +82,15 @@ pn.data.GearsRepository.prototype.saveList =
   var typepos = type.indexOf('|');
   this.db().execute('BEGIN');
   goog.array.forEach(list, function(item) {
-    var itemid = (typeof(item) === 'number' ? item : item.ID);
-    var itemstr = (typeof(item) !== 'number' ?
-        pn.Utils.serialiseJson(this.makeDateSafe(item)) : item);
+    var itemid = typeof(item) === 'number' ? item : item.ID;
+    var str = typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item;
 
     this.db().execute(typepos !== -1 ?
         'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
         '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
         '\', ?)' :
         'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
-        [itemid, itemstr]);
+        [itemid, str]);
   }, this);
   this.db().execute('COMMIT');
   callback.call(opt_handler || this, true);

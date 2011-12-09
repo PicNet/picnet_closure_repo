@@ -89,16 +89,15 @@ pn.data.WebSQLRepository.prototype.saveList =
   var typepos = type.indexOf('|');
   this.db().transaction(goog.bind(function(t) {
     goog.array.forEach(list, function(item) {
-      var itemid = (typeof(item) === 'number' ? item : item.ID);
-      var itemstr = (typeof(item) !== 'number' ?
-          pn.Utils.serialiseJson(this.makeDateSafe(item)) : item);
+      var itemid = typeof(item) === 'number' ? item : item.ID;
+      var str = typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item;
 
       t.executeSql(typepos !== -1 ?
           'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
           '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
           '\', ?)' :
           'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
-          [itemid, itemstr]);
+          [itemid, str]);
     }, this);
   }, this), goog.bind(function(tx, err) { this.error('savelist', [], err); },
       function() { callback.call(opt_handler || this, true); }, this));

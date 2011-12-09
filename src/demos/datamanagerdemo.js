@@ -14,11 +14,10 @@ pn.demo.datamanagerdemo = function() {
   var type = 'demoEntity';
   var types = [type];
   var currentId = 1;
-  var memrepo = new MockAjaxProvider(types);
-  var remoterepo = new MockAjaxProvider.RealServerAjax();
-  // TODO: Demo allow selection of options
-  // pn.data.DefaultRepositoryFactory.setRepository(rep);
-	var data = new pn.data.DataManager(memrepo, types);
+  var memrepo = new pn.MockAjaxProvider(types);
+  var remoterepo = new pn.MockAjaxProvider.RealServerAjax();
+  
+  var data = new pn.data.DataManager(memrepo, types);
   data.databaseName = 'picnetdemo';
 
   data.init(function() { data.clearEntireDatabase_(function() {
@@ -77,7 +76,7 @@ pn.demo.datamanagerdemo = function() {
             ),
             goog.dom.createDom('td', {}, e.ID.toString()),
             goog.dom.createDom('td', {}, e.Name),
-            goog.dom.createDom('td', {}, e.Date.toString())
+            goog.dom.createDom('td', {}, e.Date.toDateString())
             ));
         goog.events.listen(del, 'click', function() {
           data.deleteEntity(type, e.ID, function() {

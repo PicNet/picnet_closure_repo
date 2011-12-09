@@ -15,7 +15,8 @@ pn.demo.daterangepickerdemo = function() {
   from.setDate(now.getDate() - 10);
   var to = new Date();
   to.setDate(now.getDate() + 10);
-  drp.setAllowedDateRange(from, to);
+  // Required changes were not accepted into the closure library repo.
+  // drp.setAllowedDateRange(from, to);
   drp.render(document.getElementById('range_picker'));
 
   goog.events.listen(drp, 'change', updateLog);

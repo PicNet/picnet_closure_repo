@@ -5,7 +5,7 @@ goog.require('goog.net.XhrIo');
 goog.require('pn.data.IDataAjaxRequest');
 
 goog.provide('pn.MockAjaxProvider');
-
+goog.provide('pn.MockAjaxProvider.RealServerAjax');
 
 
 /**
@@ -13,7 +13,7 @@ goog.provide('pn.MockAjaxProvider');
  * @implements {pn.data.IDataAjaxRequest}
  * @param {!Array.<string>} types
  */
-function MockAjaxProvider(types) {
+pn.MockAjaxProvider = function(types) {
   this.log = goog.debug.Logger.getLogger('pn.data.MockAjaxProvider');
   this.log.setLevel(goog.debug.Logger.Level.FINEST);
 
@@ -22,7 +22,7 @@ function MockAjaxProvider(types) {
 
 
 /** @inheritDoc */
-MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
+pn.MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
   this.log.fine('MockAjaxProvider.makeAjaxRequest: ' + method);
   switch (method) {
     case 'SaveEntity':
@@ -60,7 +60,7 @@ MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, of
   }
 };
 
-MockAjaxProvider.prototype.getEntities = function(type, callback, handler) {
+pn.MockAjaxProvider.prototype.getEntities = function(type, callback, handler) {
   var list = this.memory.getList(type);
   if (callback) callback.call(handler, list);
   return list;
@@ -71,15 +71,15 @@ MockAjaxProvider.prototype.getEntities = function(type, callback, handler) {
 /**
  * @constructor
  */
-MockAjaxProvider.RealServerAjax = function() {
+pn.MockAjaxProvider.RealServerAjax = function() {
   this.url = 'http://localhost/';
 };
 
-MockAjaxProvider.RealServerAjax.prototype.getEntities = function(type, callback, handler) {
+pn.MockAjaxProvider.RealServerAjax.prototype.getEntities = function(type, callback, handler) {
   this.makeAjaxRequest('GetEntities', {type: type}, callback, null, handler);
 };
 
-MockAjaxProvider.RealServerAjax.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
+pn.MockAjaxProvider.RealServerAjax.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
   var datastr = goog.Uri.QueryData.createFromMap(data || {}).toString();
   var url = this.url + method + '/?' + datastr;
   goog.net.XhrIo.send(url, function(e) {

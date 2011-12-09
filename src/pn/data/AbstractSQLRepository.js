@@ -71,7 +71,7 @@ pn.data.AbstractSQLRepository.prototype.getList =
   this.execute('SELECT value FROM [' + type + ']', [], function(results) {
     var list = [];
     for (var i = 0; i < results.length; i++) {
-      list.push(this.recreateDates(pn.Utils.parseJson(results[i])));
+      list.push(pn.Utils.parseJson(results[i]));
     }
     callback.call(opt_handler || this, list);
   }, null, this);
@@ -105,8 +105,7 @@ pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
         goog.array.forEach(results, function(dr) {
           var tablename = dr[0];
           if (!(tablename in dict)) { dict[tablename] = []; }
-          var safeVal = this.recreateDates(pn.Utils.parseJson(dr[1]));
-          dict[tablename].push(safeVal);
+          dict[tablename].push(pn.Utils.parseJson(dr[1]));
         }, this);
         callback.call(opt_handler || this, dict);
       }, null, this);
@@ -166,8 +165,8 @@ pn.data.AbstractSQLRepository.prototype.getItem =
     function(type, id, callback, opt_handler) {
   this.execute('SELECT value FROM [' + type + '] WHERE ID = ?', [id],
       function(results) {
-        var e = results.length === 1 ?
-            this.recreateDates(pn.Utils.parseJson(results[0])) : null;
+        var e = /** @type {pn.data.IEntity} */
+            (results.length === 1 ? pn.Utils.parseJson(results[0]) : null);
         callback.call(opt_handler || this, e);
       }, null, this);
 };
@@ -207,15 +206,13 @@ pn.data.AbstractSQLRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
   var typepos = type.indexOf('|');
   var itemid = (typeof(item) === 'number' ? item : item.ID);
-  var itemstr = (typeof(item) !== 'number' ?
-      pn.Utils.serialiseJson(/** @type {Object} */
-      (this.makeDateSafe(item))) : item);
+  var str = (typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item);
   this.execute(typepos !== -1 ?
       'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
       '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
       '\', ?)' :
       'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
-      [itemid, itemstr], function() { callback.call(opt_handler || this, true)},
+      [itemid, str], function() { callback.call(opt_handler || this, true)},
       null, this);
 };
 

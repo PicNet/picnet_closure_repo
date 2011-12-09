@@ -51,8 +51,7 @@ pn.data.LocalStorageRepository.prototype.getList =
   var json = window['localStorage'][type];
   if (json === '{}') { json = null; }
   if (json) {
-    json = /** @type {Array} */ (this.recreateDates(
-        /** @type {Object} */ (pn.Utils.parseJson(json))));
+    json = /** @type {Array} */ (pn.Utils.parseJson(json));
   }
   callback.call(opt_handler || this, json || []);
 };
@@ -84,8 +83,8 @@ pn.data.LocalStorageRepository.prototype.getUnsyncLists =
   var dict = {};
   goog.array.forEach(this.types, function(type) {
     if (goog.isDefAndNotNull(window['localStorage'][typename + '|' + type]))
-      var list = this.recreateDates(pn.Utils.parseJson(
-          window['localStorage'][typename + '|' + type]));
+      var list = window['localStorage'][typename + '|' + type];
+    list = pn.Utils.parseJson(list);
     if (list) dict[type] = list;
   }, this);
   callback.call(opt_handler || this, dict);
@@ -107,8 +106,7 @@ pn.data.LocalStorageRepository.prototype.saveList =
     goog.array.forEach(list, function(e) {
       this.updateListWithItem(arr, e);
     }, this);
-    window['localStorage'][type] =
-        pn.Utils.serialiseJson(this.makeDateSafe(arr));
+    window['localStorage'][type] = pn.Utils.serialiseJson(arr);
     callback.call(opt_handler || this, true);
   }, this);
 };

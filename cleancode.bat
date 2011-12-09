@@ -1,2 +1,6 @@
-fixjsstyle --strict -e src\tests -r src\pn
-gjslint --strict -x src\demos\scripts.min.js -e src\tests -r src\pn
+set ARGS=--strict -r src\ ^
+-e tests,demos ^
+-x src\deps.js,src\pn\slick.grid.externs.js
+
+fixjsstyle %ARGS%
+gjslint %ARGS%

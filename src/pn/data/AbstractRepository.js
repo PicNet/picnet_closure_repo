@@ -139,33 +139,6 @@ pn.data.AbstractRepository.prototype.updateListWithItem =
 };
 
 
-/**
- * @protected
- * @param {Object} o The object to recreate dates on.
- * @return {Object|number} The new object (with valid dates).
- */
-pn.data.AbstractRepository.prototype.recreateDates = function(o) {
-  if (typeof o === 'string') throw 'strings not supported';
-
-  if (!o) return o;
-  if (o.length) {
-    return goog.array.map(/** @type {Array} */ (o), function(o1) {
-      return this.recreateDates(o1);
-    }, this);
-  }
-  else if (typeof(o) === 'number') return o;
-
-  for (var field in o) {
-    var val = o[field];
-    if (val && typeof (val) === 'string' && val.indexOf('\/Date(') >= 0) {
-      var time = val.replace(/\\\/Date\((\d+)\)\\\//g, '$1');
-      o[field] = new Date(parseInt(time, 10));
-    }
-  }
-  return o;
-};
-
-
 /** @inheritDoc */
 pn.data.AbstractRepository.prototype.disposeInternal = function() {
   pn.data.AbstractRepository.superClass_.disposeInternal.call(this);

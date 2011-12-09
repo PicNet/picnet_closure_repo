@@ -1,34 +1,29 @@
-c:\Python27\python.exe ../closure-library/closure/bin/calcdeps.py ^
-	-i requirements.js ^
-	-o deps ^
-	-d ../closure-library/closure/ ^
-	-p src/ ^
-	--output_file=deps.js ^
-  && ^
 c:\Python27\python.exe ^
-	..\closure-library\closure\bin\calcdeps.py ^
-	-i src/requirements.js ^
-  -i ../closure-library/closure/goog/deps.js ^
-	-p ../closure-library/closure/ ^
-	-p src/ ^
-  --output_file=src/demos/scripts.min.js ^
-	-c ../compiler.jar ^
-	-f "--compilation_level=ADVANCED_OPTIMIZATIONS" ^
-	-f "--debug=true" ^
-	-f "--process_closure_primitives=true" ^
-	-f "--manage_closure_dependencies=true" ^
-	-f "--warning_level=VERBOSE" ^
-	-f "--jscomp_warning=accessControls" ^
-	-f "--jscomp_warning=checkRegExp" ^
-	-f "--jscomp_warning=checkTypes" ^
-	-f "--jscomp_warning=checkVars" ^
-	-f "--jscomp_warning=deprecated" ^
-	-f "--jscomp_warning=fileoverviewTags" ^
-	-f "--jscomp_warning=invalidCasts" ^
-	-f "--jscomp_warning=missingProperties" ^
-	-f "--jscomp_warning=nonStandardJsDocs" ^
-	-f "--jscomp_warning=strictModuleDepCheck" ^
-	-f "--jscomp_warning=undefinedVars" ^
-	-f "--jscomp_warning=unknownDefines" ^
-	-o compiled
-	
+  U:\shared\lib\closure-library\closure\bin\build\depswriter.py ^
+  --root_with_prefix="src\ ../../../picnet_closure_repo/src" ^
+  --output_file=src\deps.js && ^
+c:\Python27\python.exe ^
+	U:\shared\lib\closure-library\closure\bin\build\closurebuilder.py ^
+  --namespace="pn.closure.repo.demoscripts" ^
+	--root=U:\shared\lib\closure-library\ ^
+	--root=src ^
+  --output_mode=compiled ^
+	--compiler_jar=U:\shared\lib\picnetcompiler.jar ^
+	--compiler_flags="--debug=true" ^
+	--compiler_flags="--process_closure_primitives=true" ^
+	--compiler_flags="--warning_level=VERBOSE" ^
+		--compiler_flags="--jscomp_warning=accessControls" ^
+	--compiler_flags="--jscomp_warning=checkRegExp" ^
+	--compiler_flags="--jscomp_warning=checkTypes" ^
+	--compiler_flags="--jscomp_warning=checkVars" ^
+	--compiler_flags="--jscomp_warning=deprecated" ^
+	--compiler_flags="--jscomp_warning=fileoverviewTags" ^
+	--compiler_flags="--jscomp_warning=invalidCasts" ^
+	--compiler_flags="--jscomp_warning=missingProperties" ^
+	--compiler_flags="--jscomp_warning=nonStandardJsDocs" ^
+	--compiler_flags="--jscomp_warning=strictModuleDepCheck" ^
+	--compiler_flags="--jscomp_warning=undefinedVars" ^
+	--compiler_flags="--jscomp_warning=unknownDefines" ^
+	--compiler_flags="--summary_detail_level=3" ^
+  --compiler_flags="--compilation_level=ADVANCED_OPTIMIZATIONS" ^
+  --output_file=src\demos\scripts.min.js
