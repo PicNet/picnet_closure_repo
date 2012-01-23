@@ -15,7 +15,8 @@ goog.provide('pn.ui.edit.FieldRenderers');
  */
 pn.ui.edit.FieldRenderers.dateRenderer =
     function(val, entity, parent, opt_search) {
-  goog.asserts.assert(!goog.isDefAndNotNull(val) || goog.isNumber(val));
+  goog.asserts.assert(!goog.isDefAndNotNull(val) ||
+      goog.isNumber(val) || opt_search);
 
   var dt = null;
   if (val) {

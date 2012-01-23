@@ -118,10 +118,21 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
     function(command, idx) {
   var button = this.buttons_[idx];
   this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
-    if ((command.onclick && !command.onclick()) ||
-        (command.validate && !this.isValidForm())) { return; }
+    if (!this.shouldFireCommandEvent(command)) { return; }
     this.fireCommandEvent(command.eventType, this.getCurrentFormData());
   });
+};
+
+/**
+ * @protected
+ * @param {pn.ui.edit.Command} command The command to determine 
+ *    wether to fire or not
+ */
+pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent = 
+    function(command) {
+  if (command.onclick && !command.onclick()) return false;
+  if (command.validate && !this.isValidForm()) return false;
+  return true;
 };
 
 
