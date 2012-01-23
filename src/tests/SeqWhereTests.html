@@ -1,0 +1,41 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq');
+
+var setUp = function() {};
+
+var testSimpleFiltering = function () {		
+  var source = new pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.where(function(x) { return x < 4; }); 
+  assertArrayEquals([1, 3, 2, 1], result.array); 
+};
+
+var testIndexBasedFiltering = function () {		
+  var source = new pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.where(function(x, i) { return i <= 2; }); 
+  assertArrayEquals([1, 3, 4], result.array); 
+};
+
+var testNullSeqThrowsError = function() {
+  try { 
+    new pn.seq(null); 
+    assertFail('Should not allow null sequence');
+  } catch (ex) {};
+};
+
+var testNullPredicateThrowsError = function() {
+  try { 
+    var source = new pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+    var result = source.where(null); 
+    assertFail('Should not allow null predicate');
+  } catch (ex) {};
+};
+    </script>    
+  </body>
+</html>

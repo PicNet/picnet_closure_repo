@@ -1,0 +1,105 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq');
+
+var testFirstWithEmptyThrowsError = function() {
+  try {
+    new pn.seq([]).first();
+    assertFail('Null sequence should throw an error');
+  } catch (ex) {};
+};
+var testLastWithEmptyThrowsError = function() {
+  try {
+    new pn.seq([]).last();
+    assertFail('Null sequence should throw an error');
+  } catch (ex) {};
+};
+var testSingleWithEmptyThrowsError = function() {
+  try {
+    new pn.seq([]).single();
+    assertFail('Null sequence should throw an error');
+  } catch (ex) {};
+};
+
+var testFirstOrNullWithEmptyReturnsNull = function() {
+  assertNull(new pn.seq([]).firstOrNull());    
+};
+var testLastOrNullWithEmptyReturnsNull = function() {
+  assertNull(new pn.seq([]).lastOrNull());    
+};
+var testSingleOrNullWithEmptyReturnsNull = function() {
+  assertNull(new pn.seq([]).singleOrNull());    
+};
+
+var testFirstWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).first());    
+};
+var testLastWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).last());    
+};
+var testSingleWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).single());    
+};
+var testFirsOrNulltWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).firstOrNull());    
+};
+var testLastOrNullWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).lastOrNull());    
+};
+var testSingleOrNullWithSingleElementAndNoPredicateReturnsSingle = function() {
+  assertEquals(1, new pn.seq([1]).singleOrNull());    
+};
+var testSingleWithPredicateReturnsSingleMatch = function() {
+  assertEquals(3, new pn.seq([1, 2, 3]).single(function(x) { return x > 2; }));    
+};
+var testSingleOrNullWithPredicateReturnsSingleMatch = function() {
+  assertEquals(3, new pn.seq([1, 2, 3]).singleOrNull(function(x) { return x > 2; }));    
+};
+
+var testFirstWithMultipleElementAndNoPredicateReturnsFirst = function() {
+  assertEquals(1, new pn.seq([1, 2, 3]).first());    
+};
+var testLastWithMultipleElementAndNoPredicateReturnsLast = function() {
+  assertEquals(3, new pn.seq([1, 2, 3]).last());    
+};
+var testSingleWithMultipleElementAndNoPredicateThrowsError = function() {
+  try { 
+    new pn.seq([1, 2, 3]).single();     
+    assertFail('Multiple matched');
+  } catch (ex) {};
+};
+
+var testFirstWithMultipleElementAndWithPredicateReturnsFirst = function() {
+  assertEquals(2, new pn.seq([1, 2, 3]).first(function(x) { return x > 1; }));     
+};
+var testLastWithMultipleElementAndWithPredicateReturnsLast = function() {
+  assertEquals(3, new pn.seq([1, 2, 3]).last(function(x) { return x > 1; }));       
+};
+var testSingleWithMultipleElementAndWithPredicateThrowsError = function() {
+  try { 
+    new pn.seq([1, 2, 3]).single(function(x) { return x > 1; });     
+    assertFail('Multiple matched');
+  } catch (ex) {};
+};
+var testFirstOrNullWithMultipleElementAndWithPredicateReturnsFirst = function() {
+  assertEquals(2, new pn.seq([1, 2, 3]).firstOrNull(function(x) { return x > 1; }));     
+};
+var testLastOrNullWithMultipleElementAndWithPredicateReturnsLast = function() {
+  assertEquals(3, new pn.seq([1, 2, 3]).lastOrNull(function(x) { return x > 1; }));       
+};
+var testSingleOrNullWithMultipleElementAndWithPredicateThrowsError = function() {
+  try { 
+    new pn.seq([1, 2, 3]).singleOrNull(function(x) { return x > 1; });     
+    assertFail('Multiple matched');
+  } catch (ex) {};
+};
+
+    </script>    
+  </body>
+</html>

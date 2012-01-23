@@ -1,0 +1,29 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq');
+
+var testDistinctRemovedNumericalDuplicates = function() {
+  var seq = new pn.seq([0, 1, 2, 3, 4, 5, 1, 2]);
+  var result = seq.distinct();
+  assertArrayEquals([0, 1, 2, 3, 4, 5], result.array);
+};
+
+var testDistinctRemovedNumericalDuplicatesWithComparer = function() {
+  var seq = new pn.seq([0, 1, 2, 3, 4, 5, 1, 2]);
+  var result = seq.distinct(function(a, b) {
+    // All numbers above 2 considered equal
+    a = a > 2 ? -1 : a;
+    b = b > 2 ? -1 : b;
+    return a === b;
+  });
+  assertArrayEquals([0, 1, 2, 3], result.array);
+};
+    </script>    
+  </body>
+</html>

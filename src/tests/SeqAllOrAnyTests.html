@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq');
+
+var testAnyWithNullPredicateReturnsFalseIfEmpty = function() {
+  assertFalse(new pn.seq([]).any());
+};
+
+var testAnyWithNullPredicateReturnsTrueIfNotEmpty = function() {
+  assertTrue(new pn.seq([0]).any());
+  assertTrue(new pn.seq([0, 1, 2]).any());
+};
+
+var testAnyWithPredicateReturnsFalseIfEmpty = function() {
+  assertFalse(new pn.seq([]).any(function(x) { return true; }));
+};
+
+var testAnyWithPredicateReturnsFalseIfNoneMatch = function() {
+  assertFalse(new pn.seq([1, 2]).any(function(x) { return x < 0; }));
+};
+
+var testAnyWithPredicateReturnsTrueIfOneOrMoreMatch = function() {
+  assertTrue(new pn.seq([1, 2]).any(function(x) { return x > 1; }));
+  assertTrue(new pn.seq([1, 2]).any(function(x) { return x > 0; }));
+};
+
+var testAllWithNullPredicateThrowsError = function() {
+  try {
+    new pn.seq([1, 2]).all(null);
+    assertFail('Should not allow null predicate');
+  } catch (ex) {};
+};
+
+var testAllWithPredicateReturnsTrueIfEmpty = function() {
+  assertTrue(new pn.seq([]).all(function(c) { return true; }));
+};
+
+var testAllWithPredicateReturnsFalseIfNotAllMatch = function() {
+  assertFalse(new pn.seq([1, 2, 3]).all(function(x) { return x > 2; }));
+};
+
+var testAllWithPredicateReturnsTrueIfAllMatch = function() {
+  assertTrue(new pn.seq([1, 2, 3]).all(function(x) { return x > 0; }));
+};
+    </script>    
+  </body>
+</html>
+
