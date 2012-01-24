@@ -6,47 +6,47 @@
     <script src="../deps.js"></script>
     <script>
 goog.require('goog.testing.jsunit');
-goog.require('pn.seq');
+goog.require('pn.seq.Seq');
 
 var testRangeStartRequiresPositiveOr0Number = function () {		
   try {
-    var seq = pn.seq.range(-1, 10);  
+    var seq = pn.seq.Seq.range(-1, 10);  
     assertFail('Should fail with negative start');
   } catch (ex) {};
 };
 
 var testRangeCountRequiresPositiveOr0Number = function () {		
   try {
-    var seq = pn.seq.range(0, -1);  
+    var seq = pn.seq.Seq.range(0, -1);  
     assertFail('Should fail with negative count');
   } catch (ex) {};
 };
 
 var testRepeatCountRequiresPositiveOr0Number = function () {		
   try {
-    var seq = pn.seq.repeat(null, -1);  
+    var seq = pn.seq.Seq.repeat(null, -1);  
     assertFail('Should fail with negative count');
   } catch (ex) {};
 };
 
 var testRangeEmpty = function () {		  
-  assertArrayEquals([], pn.seq.range(100, 0).array); 
+  assertArrayEquals([], pn.seq.Seq.range(100, 0).array); 
 };
 
 var testRange = function () {		  
-  assertArrayEquals([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], pn.seq.range(0, 10).array); 
+  assertArrayEquals([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], pn.seq.Seq.range(0, 10).array); 
 };
 
 var testRepeatEmpty = function () {		  
-  assertArrayEquals([], pn.seq.repeat(100, 0).array); 
+  assertArrayEquals([], pn.seq.Seq.repeat(100, 0).array); 
 };
 
 var testRepeat = function () {		  
-  assertArrayEquals([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], pn.seq.repeat(0, 10).array); 
+  assertArrayEquals([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], pn.seq.Seq.repeat(0, 10).array); 
 };
 
 var testEmpty = function () {		  
-  assertArrayEquals([], pn.seq.empty().array); 
+  assertArrayEquals([], pn.seq.Seq.empty().array); 
 };
     </script>    
   </body>

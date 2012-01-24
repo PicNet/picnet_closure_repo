@@ -1,16 +1,18 @@
 
-goog.provide('pn.seq');
+goog.provide('pn.seq.Seq');
+goog.provide('pn.seq.Lookup');
+goog.provide('pn.seq.Grouping');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
+goog.require('goog.structs.Map');
 
-goog.require('pn.seq2.lookup');
 
 /**
  * @constructor
  * @param {!Array.<*>} source The source array
  */
-pn.seq = function(source) {
+pn.seq.Seq = function(source) {
   goog.asserts.assert(goog.isDefAndNotNull(source));
   goog.asserts.assert(goog.isArrayLike(source));
   
@@ -24,42 +26,42 @@ pn.seq = function(source) {
 /** 
  * @private
  * @const
- * @type {!pn.seq}
+ * @type {!pn.seq.Seq}
  */
-pn.seq.EMPTY_ = new pn.seq([]);
+pn.seq.Seq.EMPTY_ = new pn.seq.Seq([]);
 
 /** 
  * Generates an empty sequence.
- * @return {!pn.seq} A singleton empty sequence.
+ * @return {!pn.seq.Seq} A singleton empty sequence.
  */
-pn.seq.empty = function() { return pn.seq.EMPTY_; };
+pn.seq.Seq.empty = function() { return pn.seq.Seq.EMPTY_; };
 
 /** 
  * Generates a sequence of integral numbers within a specified range
  * @param {number} start The value of the first integer in the sequence 
  * @param {number} count The number of sequential integers to generate
- * @return {!pn.seq} The created sequence.
+ * @return {!pn.seq.Seq} The created sequence.
  */
-pn.seq.range = function(start, count) {
+pn.seq.Seq.range = function(start, count) {
   goog.asserts.assert(start >= 0);
   goog.asserts.assert(count >= 0);  
   var arr = [],
       limit = start + count;  
   for (var i = start; i < limit; i++) { arr.push(i); }  
-  return new pn.seq(arr);
+  return new pn.seq.Seq(arr);
 };
 
 /** 
  * Generates a sequence that contains one repeated value
  * @param {*} element The value to be repeated 
  * @param {number} count The number of times to repeat the value in the generated sequence
- * @return {!pn.seq} The created sequence.
+ * @return {!pn.seq.Seq} The created sequence.
  */
-pn.seq.repeat = function(element, count) {  
+pn.seq.Seq.repeat = function(element, count) {  
   goog.asserts.assert(count >= 0);
   var arr = [];
   for (var i = 0; i < count; i++) { arr.push(element); }
-  return new pn.seq(arr);
+  return new pn.seq.Seq(arr);
 };
  
 /**
@@ -75,12 +77,12 @@ pn.seq.repeat = function(element, count) {
  *    index of the element being filtered.
  * @param {Object=} opt_obj The optional context object to use when calling the 
  *    predicate function
- * @return {!pn.seq} The filtered sequence.  Note: The input sequence is
+ * @return {!pn.seq.Seq} The filtered sequence.  Note: The input sequence is
  *    never modified.
  */
-pn.seq.prototype.where = function(predicate, opt_obj) {
+pn.seq.Seq.prototype.where = function(predicate, opt_obj) {
   goog.asserts.assert(goog.isDefAndNotNull(predicate));
-  return new pn.seq(goog.array.filter(this.array, predicate, opt_obj));
+  return new pn.seq.Seq(goog.array.filter(this.array, predicate, opt_obj));
 };
 
 /**
@@ -95,12 +97,12 @@ pn.seq.prototype.where = function(predicate, opt_obj) {
  *    index of the element being filtered.
  * @param {Object=} opt_obj The optional context object to use when calling the 
  *    predicate function
- * @return {!pn.seq} The modified sequence.  Note: The input sequence is
+ * @return {!pn.seq.Seq} The modified sequence.  Note: The input sequence is
  *    never modified. 
  */
-pn.seq.prototype.select = function(predicate, opt_obj) {
+pn.seq.Seq.prototype.select = function(predicate, opt_obj) {
   goog.asserts.assert(goog.isDefAndNotNull(predicate));
-  return new pn.seq(goog.array.map(this.array, predicate, opt_obj));
+  return new pn.seq.Seq(goog.array.map(this.array, predicate, opt_obj));
 };
 
 /** 
@@ -111,7 +113,7 @@ pn.seq.prototype.select = function(predicate, opt_obj) {
  *    predicate function
  * @return {!number} The length of the sequence.
  */
-pn.seq.prototype.count = function(opt_predicate, opt_obj) {
+pn.seq.Seq.prototype.count = function(opt_predicate, opt_obj) {
   if (!opt_predicate) return this.array.length;
   return this.where(opt_predicate, opt_obj).array.length;  
 };
@@ -119,10 +121,10 @@ pn.seq.prototype.count = function(opt_predicate, opt_obj) {
 
 /** 
  * Creates a new sequance by concatenating 2 or more sequences
- * @param {...(pn.seq|Array)} var_args The arrays or sequences to 
+ * @param {...(pn.seq.Seq|Array)} var_args The arrays or sequences to 
  *    concatenate.
  */
-pn.seq.prototype.concat = function(var_args) {
+pn.seq.Seq.prototype.concat = function(var_args) {
   goog.asserts.assert(arguments.length > 0);
   var arrays = [this.array];
   for (var i = 0, limit = arguments.length; i < limit; i++) {
@@ -130,11 +132,11 @@ pn.seq.prototype.concat = function(var_args) {
     if (goog.isArrayLike(arg)) arrays.push(arg);
     else if (arg.array) arrays.push(arg.array);
     else {
-      var err = 'Concat only supports elements of type pn.seq or an array.';
+      var err = 'Concat only supports elements of type pn.seq.Seq or an array.';
       throw new Error(err);
     }
   }    
-  return new pn.seq(goog.array.concat.apply(null, arrays));
+  return new pn.seq.Seq(goog.array.concat.apply(null, arrays));
 };
 
 /**
@@ -146,7 +148,7 @@ pn.seq.prototype.concat = function(var_args) {
  * @param {function(*, *):*} opt_resultSelector A transform function to apply 
  *    to each element of the intermediate sequence
  */
-pn.seq.prototype.selectMany = function(collectionSelector, opt_resultSelector) {
+pn.seq.Seq.prototype.selectMany = function(collectionSelector, opt_resultSelector) {
   goog.asserts.assert(collectionSelector);
   
   var arr = [];
@@ -160,7 +162,7 @@ pn.seq.prototype.selectMany = function(collectionSelector, opt_resultSelector) {
       arr.push(e);
     }
   }
-  return new pn.seq(arr);
+  return new pn.seq.Seq(arr);
 };
 
 /**
@@ -172,7 +174,7 @@ pn.seq.prototype.selectMany = function(collectionSelector, opt_resultSelector) {
  * @return {boolean} Whether any element of a sequence exists or satisfies 
  *    a condition
  */
-pn.seq.prototype.any = function(opt_predicate) {
+pn.seq.Seq.prototype.any = function(opt_predicate) {
   if (!opt_predicate) return this.array.length > 0;
   for (var i = 0, limit = this.array.length; i < limit; i++) {
     if (opt_predicate(this.array[i], i)) return true;
@@ -187,7 +189,7 @@ pn.seq.prototype.any = function(opt_predicate) {
  *    testing the sequence.  
  * @return {boolean} Whether all elements of a sequence satisfy a condition
  */
-pn.seq.prototype.all = function(predicate) {  
+pn.seq.Seq.prototype.all = function(predicate) {  
   goog.asserts.assert(predicate);
   for (var i = 0, limit = this.array.length; i < limit; i++) {
     if (!predicate(this.array[i], i)) return false;
@@ -201,7 +203,7 @@ pn.seq.prototype.all = function(predicate) {
  * @return {*} The first element in the list or the first element matching 
  *    the predicate
  */
-pn.seq.prototype.first = function(opt_predicate) {
+pn.seq.Seq.prototype.first = function(opt_predicate) {
   return this.firstImpl_(true, opt_predicate);
 };
 
@@ -211,7 +213,7 @@ pn.seq.prototype.first = function(opt_predicate) {
  * @return {*} The first element in the list or the first element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.firstOrNull = function(opt_predicate) {
+pn.seq.Seq.prototype.firstOrNull = function(opt_predicate) {
   return this.firstImpl_(false, opt_predicate);
 };
 
@@ -224,7 +226,7 @@ pn.seq.prototype.firstOrNull = function(opt_predicate) {
  * @return {*} The first element in the list or the first element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.firstImpl_ = function(throwOnNotMatch, opt_predicate) {
+pn.seq.Seq.prototype.firstImpl_ = function(throwOnNotMatch, opt_predicate) {
   if (this.array.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
@@ -245,7 +247,7 @@ pn.seq.prototype.firstImpl_ = function(throwOnNotMatch, opt_predicate) {
  * @return {*} The only element in the list or the first element matching 
  *    the predicate.
  */
-pn.seq.prototype.single = function(opt_predicate) {
+pn.seq.Seq.prototype.single = function(opt_predicate) {
   return this.singleImpl_(true, opt_predicate);
 };
 
@@ -255,7 +257,7 @@ pn.seq.prototype.single = function(opt_predicate) {
  * @return {*} The only element in the list or the first element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.singleOrNull = function(opt_predicate) {
+pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
   return this.singleImpl_(false, opt_predicate);
 };
 
@@ -268,7 +270,7 @@ pn.seq.prototype.singleOrNull = function(opt_predicate) {
  * @return {*} The only element in the list or the only element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.singleImpl_ = function(throwOnNotMatch, opt_predicate) {
+pn.seq.Seq.prototype.singleImpl_ = function(throwOnNotMatch, opt_predicate) {
   if (this.array.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
@@ -296,7 +298,7 @@ pn.seq.prototype.singleImpl_ = function(throwOnNotMatch, opt_predicate) {
  * @return {*} The last element in the list or the first element matching 
  *    the predicate. 
  */
-pn.seq.prototype.last = function(opt_predicate) {
+pn.seq.Seq.prototype.last = function(opt_predicate) {
   return this.lastImpl_(true, opt_predicate);
 };
 
@@ -306,7 +308,7 @@ pn.seq.prototype.last = function(opt_predicate) {
  * @return {*} The last element in the list or the first element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.lastOrNull = function(opt_predicate) {
+pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
   return this.lastImpl_(false, opt_predicate);
 };
 
@@ -319,7 +321,7 @@ pn.seq.prototype.lastOrNull = function(opt_predicate) {
  * @return {*} The last element in the list or the last element matching 
  *    the predicate. Null if no element is matched.
  */
-pn.seq.prototype.lastImpl_ = function(throwOnNotMatch, opt_predicate) {
+pn.seq.Seq.prototype.lastImpl_ = function(throwOnNotMatch, opt_predicate) {
   if (this.array.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
@@ -342,10 +344,10 @@ pn.seq.prototype.lastImpl_ = function(throwOnNotMatch, opt_predicate) {
  * @param {*=} opt_default The default value for a singleton collection if 
  *    source sequence is empty
  */
-pn.seq.prototype.defaultIfEmpty = function(opt_default) {
+pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
   if (this.array.length === 0) { 
     var val = opt_default === undefined ? null : opt_default;
-    return new pn.seq([val]); 
+    return new pn.seq.Seq([val]); 
   }
   return this;
 };
@@ -361,7 +363,7 @@ pn.seq.prototype.defaultIfEmpty = function(opt_default) {
  * @param {function(*):*=} opt_projection The optional projection to use on the
  *    final accumulated value
  */
-pn.seq.prototype.aggregate = function(seed, accum, opt_projection) {
+pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
   if (!goog.isDefAndNotNull(seed)) throw new Error('Seed is not specified');
   if (!goog.isDefAndNotNull(accum)) 
     throw new Error('Accumulattor is not specified');    
@@ -377,11 +379,11 @@ pn.seq.prototype.aggregate = function(seed, accum, opt_projection) {
  * @param {function(*, *):boolean=} opt_comparer The optional comparer to use
  *    when comparing items in the sequence.
  */
-pn.seq.prototype.distinct = function(opt_comparer) {
+pn.seq.Seq.prototype.distinct = function(opt_comparer) {
   var result = [];
   if (!opt_comparer) {
     goog.array.removeDuplicates(this.array, result);
-    return new pn.seq(result);
+    return new pn.seq.Seq(result);
   }      
   for (var i = 0, limit = this.array.length; i < limit; i++) {
     var e = this.array[i];
@@ -389,33 +391,33 @@ pn.seq.prototype.distinct = function(opt_comparer) {
       return opt_comparer(e2, e); 
     }) < 0) { result.push(e); }    
   }
-  return new pn.seq(result);
+  return new pn.seq.Seq(result);
 };
 
 /**
  * Produces the set union of two sequences.
  * 
- * @param {!pn.seq|!Array} second The second sequence
+ * @param {!pn.seq.Seq|!Array} second The second sequence
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
- * @return {!pn.seq} The union of the two sequences.
+ * @return {!pn.seq.Seq} The union of the two sequences.
  */
-pn.seq.prototype.union = function(second, opt_comparer) {  
+pn.seq.Seq.prototype.union = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   
   var first = this.array;
   if (second.array) second = second.array;
   var all = goog.array.concat(first, second);  
-  return new pn.seq(all).distinct(opt_comparer);
+  return new pn.seq.Seq(all).distinct(opt_comparer);
 };
 
 /**
  * Produces the set intersection of two sequences.
  * 
- * @param {!pn.seq|!Array} second The second sequence
+ * @param {!pn.seq.Seq|!Array} second The second sequence
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
- * @return {!pn.seq} The intersection of the two sequences.
+ * @return {!pn.seq.Seq} The intersection of the two sequences.
  */
-pn.seq.prototype.intersect = function(second, opt_comparer) {  
+pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   var result = [];
   for (var i = 0, limit = this.array.length; i < limit; i++) {
@@ -427,17 +429,17 @@ pn.seq.prototype.intersect = function(second, opt_comparer) {
     if (goog.array.findIndex(second, comparer) < 0) continue;
     result.push(e);
   }
-  return new pn.seq(result);
+  return new pn.seq.Seq(result);
 };
 
 /**
  * Produces the set difference of two sequences
  * 
- * @param {!pn.seq|!Array} second The second sequence
+ * @param {!pn.seq.Seq|!Array} second The second sequence
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
- * @return {!pn.seq} The difference of the two sequences.
+ * @return {!pn.seq.Seq} The difference of the two sequences.
  */
-pn.seq.prototype.except = function(second, opt_comparer) {  
+pn.seq.Seq.prototype.except = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   var result = [];
   for (var i = 0, limit = this.array.length; i < limit; i++) {
@@ -449,29 +451,29 @@ pn.seq.prototype.except = function(second, opt_comparer) {
     if (goog.array.findIndex(second, comparer) >= 0) continue;
     result.push(e);
   }
-  return new pn.seq(result);
+  return new pn.seq.Seq(result);
 };
 
 /**
- * Creates a pn.seq2.lookup given a keySelector
+ * Creates a pn.seq.Lookup given a keySelector
  * 
  * @param {!function(*):*} keySelector The key of each element in the seq
  * @param {function(*, *):*=} opt_elementSelector The optional element from 
  *    each element
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq2.lookup} The lookup
+ * @return {!pn.seq.Lookup} The lookup
  */
-pn.seq.prototype.toLookup = 
+pn.seq.Seq.prototype.toLookup = 
     function(keySelector, opt_elementSelector, opt_comparer) {
   if (!keySelector) throw new Error('keySelector is not specified');
-  var lu = new pn.seq2.lookup();
+  var lu = new pn.seq.Lookup();
   for (var i = 0, limit = this.array.length; i < limit; i++) {
     var e = this.array[i];    
     var key = keySelector(e);
-    var elem = opt_elementSelector ? opt_elementSelector(e, i) : e;
-    if (lu.containsKey(key, opt_comparer)) {      
+    var elem = opt_elementSelector ? opt_elementSelector(e, i) : e;    
+    if (lu.containsKey(key, opt_comparer)) {            
       lu.get(key, opt_comparer).array.push(elem);
-    } else { lu.set(key, new pn.seq([elem]), opt_comparer); }
+    } else { lu.set(key, new pn.seq.Seq([elem]), opt_comparer); }
   }
   lu.collapse();
   return lu;
@@ -480,21 +482,21 @@ pn.seq.prototype.toLookup =
 /**
  * Correlates the elements of two sequences based on matching keys
  *
- * @param {!pn.seq} inner The sequence to join to the first sequence
+ * @param {!pn.seq.Seq} inner The sequence to join to the first sequence
  * @param {!function(*):*} outKeySelect The key of each element in the 
  *    outer seq
  * @param {!function(*):*} inKeySelect The key of each element in the inner seq
  * @param {function(*, *):*} resultSelector The element from each element
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq} The joined sequence.
+ * @return {!pn.seq.Seq} The joined sequence.
  */
-pn.seq.prototype.join = 
+pn.seq.Seq.prototype.join = 
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
   if (!inner) throw new Error('inner is not specified');
   if (!outKeySelect) throw new Error('outKeySelect is not specified');
   if (!inKeySelect) throw new Error('inKeySelect is not specified');
   if (!resultSelector) throw new Error('resultSelector is not specified');
-  var lu = inner.toLookup(inKeySelect, opt_comparer); 
+  var lu = inner.toLookup(inKeySelect, null, opt_comparer); 
   var results = [];
   for (var i = 0, limit = this.array.length; i < limit; i++) 
   { 
@@ -505,7 +507,7 @@ pn.seq.prototype.join =
       results.push(resultSelector(outerElement, inner2.array[j]));        
     }      
   } 
-  return new pn.seq(results);
+  return new pn.seq.Seq(results);
 };
 
 /**
@@ -513,16 +515,170 @@ pn.seq.prototype.join =
  * 
  * @param {!function(*):*} keySelect The key of each element in the seq
  * @param {!function(*):*} elementSelect The element of each element in the seq.
- * @param {function(*, pn.seq):*=} opt_resultSelect The optional element 
+ * @param {function(*, pn.seq.Seq):*=} opt_resultSelect The optional element 
  *    from each element
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq} The joined sequence.
+ * @return {!pn.seq.Seq} The joined sequence.
  */
-pn.seq.prototype.groupBy = function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
+pn.seq.Seq.prototype.groupBy = 
+    function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
   if (!keySelect) throw new Error('keySelect is not specified');
   if (!elementSelect) throw new Error('elementSelect is not specified');  
-  var lu = inner.toLookup(keySelect, elementSelect, opt_comparer);  
-  return lu.select(function(group) {
+  var lu = this.toLookup(keySelect, elementSelect, opt_comparer);    
+  return lu.select(function(group) {    
     return opt_resultSelect ? opt_resultSelect(group.key, group) : group;
   });
 };
+
+/**
+ * Correlates the elements of two sequences based on key equality, and 
+ *    groups the results
+ *
+ * @param {!pn.seq.Seq} inner The sequence to join to the first sequence
+ * @param {!function(*):*} outKeySelect The key of each element in the 
+ *    outer seq
+ * @param {!function(*):*} inKeySelect The key of each element in the inner seq
+ * @param {function(*, *):*} resultSelector The element from each element
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
+ * @return {!pn.seq.Seq} The joined sequence.
+ */
+pn.seq.Seq.prototype.groupJoin = 
+    function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
+  // TODO: Validation is same as join() reuse?
+  if (!inner) throw new Error('inner is not specified');  
+  if (!outKeySelect) throw new Error('outKeySelect is not specified');
+  if (!inKeySelect) throw new Error('inKeySelect is not specified');
+  if (!resultSelector) throw new Error('resultSelector is not specified');
+  
+  var lu = inner.toLookup(inKeySelect, null, opt_comparer); 
+  var results = [];
+  for (var i = 0, limit = this.array.length; i < limit; i++) 
+  { 
+    var outerElement = this.array[i];
+    var key = outKeySelect(outerElement); 
+    results.push(resultSelector(outerElement, lu.get(key))); 
+  } 
+  return new pn.seq.Seq(results);
+};
+
+/**
+ * Takes entries in the sequence until the predicate return false.
+ *
+ * @param {function(*, number):boolean!} predicate The predicate
+ * @return {!pn.seq.Seq} The sequence
+ */
+pn.seq.Seq.prototype.takeWhile = function(predicate) {
+  if (!predicate) throw new Error('predicate is not specified');
+  var index = goog.array.findIndex(this.array, 
+    function(e, i) { return ! predicate(e, i); });    
+  if (index < 0) return this;  
+  return new pn.seq.Seq(this.array.slice(0, index));  
+};
+
+/**
+ * Skips entries in the sequence until the predicate return false.
+ *
+ * @param {function(*, number):boolean!} predicate The predicate
+ * @return {!pn.seq.Seq} The sequence
+ */
+pn.seq.Seq.prototype.skipWhile = function(predicate) {
+  if (!predicate) throw new Error('predicate is not specified');  
+  var index = goog.array.findIndex(this.array, 
+    function(e, i) { return !predicate(e, i); });
+  if (index < 0) return pn.seq.Seq.empty();    
+  return new pn.seq.Seq(this.array.slice(index));  
+};
+
+/**
+ * Takes entries in the sequence until the the count is reached.
+ *
+ * @param {number} count The number of items to take
+ * @return {!pn.seq.Seq} The sequence
+ */
+pn.seq.Seq.prototype.take = function(count) {
+  if (!goog.isNumber(count) || count < 0) 
+    throw new Error('count is not specified');
+  return new pn.seq.Seq(this.array.slice(0, count));  
+};
+
+/**
+ * Skips entries in the sequence until the the count is reached.
+ *
+ * @param {number} count The number of items to skip
+ * @return {!pn.seq.Seq} The sequence
+ */
+pn.seq.Seq.prototype.skip = function(count) {
+  if (!goog.isNumber(count) || count < 0) 
+    throw new Error('count is not specified');
+  return new pn.seq.Seq(this.array.slice(count));  
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LOOKUP
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @constructor
+ * @extends {pn.seq.Seq}
+ */
+pn.seq.Lookup = function() {
+  pn.seq.Seq.call(this, []);
+  this.map_ = new goog.structs.Map();
+};
+goog.inherits(pn.seq.Lookup, pn.seq.Seq);
+
+pn.seq.Lookup.prototype.containsKey = function(key, opt_comparer) {  
+  if (!opt_comparer) return this.map_.containsKey(key);
+  var keys = this.map_.getKeys();
+  return goog.array.findIndex(keys, function(k) {      
+    return opt_comparer(k, key); 
+  }) >= 0;
+};
+
+pn.seq.Lookup.prototype.getKeys = function() { return this.map_.getKeys(); };
+
+pn.seq.Lookup.prototype.get = function(key, opt_comparer) {  
+  key = opt_comparer ? this.getCompatibleKey_(key, opt_comparer) : key;
+  var val = this.map_.get(key);  
+  return val || pn.seq.Seq.empty();
+};
+
+pn.seq.Lookup.prototype.set = function(key, value, opt_comparer) {  
+  key = opt_comparer ? this.getCompatibleKey_(key, opt_comparer) : key;    
+  this.map_.set(key, value);  
+};
+
+pn.seq.Lookup.prototype.getCompatibleKey_ = function(key, comparer) {
+  var keys = this.map_.getKeys();
+  var idx = goog.array.findIndex(keys, function(k) {     
+    return comparer(k, key); 
+  });
+  return idx >= 0 ? keys[idx] : key;  
+};
+
+pn.seq.Lookup.prototype.collapse = function() {
+  var arr = [];  
+  var keys = this.getKeys();  
+  for (var i = 0, limit = keys.length; i < limit; i++) {
+    var key = keys[i];
+    var seq = this.get(key);
+    arr.push(new pn.seq.Grouping(key, seq));
+  }
+  this.array = arr;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// GROUPING
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @constructor
+ * @extends {pn.seq.Seq}
+ */
+pn.seq.Grouping = function(key, seq) {
+  pn.seq.Seq.call(this, seq.array);
+  
+  /** @type {*} */
+  this.key = key;
+};
+goog.inherits(pn.seq.Grouping, pn.seq.Seq);

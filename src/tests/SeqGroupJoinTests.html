@@ -10,7 +10,7 @@ goog.require('pn.seq.Seq');
 
 var testNullInnerThrowsError = function() {    
   try {
-    new pn.seq.Seq([5, 3, 7]).join(null, 
+    new pn.seq.Seq([5, 3, 7]).groupJoin(null, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -22,7 +22,7 @@ var testNullOuterSelectThrowsError = function() {
   var inner = new pn.seq.Seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    new pn.seq.Seq([5, 3, 7]).join(inner, 
+    new pn.seq.Seq([5, 3, 7]).groupJoin(inner, 
                          null, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -34,7 +34,7 @@ var testNullInnerSelectThrowsError = function() {
   var inner = new pn.seq.Seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    new pn.seq.Seq([5, 3, 7]).join(inner, 
+    new pn.seq.Seq([5, 3, 7]).groupJoin(inner, 
                          function(o) { return o; }, 
                          null, 
                          function(o, i) { return o + ':' + i; });                           
@@ -46,7 +46,7 @@ var testNullResultsSelectorThrowsError = function() {
   var inner = new pn.seq.Seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    new pn.seq.Seq([5, 3, 7]).join(inner, 
+    new pn.seq.Seq([5, 3, 7]).groupJoin(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          null);                           
@@ -54,16 +54,19 @@ var testNullResultsSelectorThrowsError = function() {
   } catch (ex) {};
 };
 
-var testDifferentSourceTypes = function() 
+var testSimpleGroupJoin = function() 
 { 
-  var outer = new pn.seq.Seq([5, 3, 7]); 
-  var inner = new pn.seq.Seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var outer = new pn.seq.Seq(["first", "second", "third"]); 
+  var inner = new pn.seq.Seq(["essence", "offer", "eating", "psalm"]); 
 
-  var query = outer.join(inner, 
-                         function(o) { return o; }, 
-                         function(i) { return i.length; }, 
-                         function(o, i) { return o + ':' + i; });                         
-  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query.array);  
+  var query = outer.groupJoin(inner, 
+    function(o) { return o[0]; }, 
+    function(i) { return i[1]; }, 
+    function(o, i) { 
+      console.log('o : ' + o + ' i : ' + i);
+      return o + ':' + i.array.join(';'); });                         
+                         
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.array); 
 };
 
     </script>    

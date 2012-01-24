@@ -1,4 +1,4 @@
 
 goog.provide('pn.demo.seqdemo');
 
-goog.require('pn.seq');
+goog.require('pn.seq.Seq');

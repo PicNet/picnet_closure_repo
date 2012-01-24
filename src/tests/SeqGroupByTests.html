@@ -6,33 +6,35 @@
     <script src="../deps.js"></script>
     <script>
 goog.require('goog.testing.jsunit');
-goog.require('pn.seq');
+goog.require('pn.seq.Seq');
 
 var testNullKeySelectThrowsError = function() {    
   try {
-    new pn.seq([5, 3, 7]).groupBy(null, function(o) { return o; });                           
+    new pn.seq.Seq([5, 3, 7]).groupBy(null, function(o) { return o; });                           
     assertFail('keySelect should not be null');
   } catch (ex) {};
 };
 
 var testNullElementSelectThrowsError = function() {    
   try {
-    new pn.seq([5, 3, 7]).groupBy(function(e) { return e; }, null);                           
+    new pn.seq.Seq([5, 3, 7]).groupBy(function(e) { return e; }, null);                           
     assertFail('elementSelect should not be null');
   } catch (ex) {};
 };
 
 var testGroupByWithoutResultSelect = function() {
-  var groups = new pn.seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
-    function(e) { return e < 5; },
-    function(e) { return e; });                           
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+    function(x) { return x < 5; },
+    function(e, prev) {       
+      return e; 
+    });                     
   assertEquals(2, groups.count());
   assertArrayEquals([1, 2, 3, 4], groups.first().array);
   assertArrayEquals([5, 6, 7, 8], groups.last().array);
 };
 
 var testGroupByWithResultSelect = function() {
-  var groups = new pn.seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
     function(e) { return e < 5; },
     function(e) { return e; },
     function(key, group) {
@@ -44,7 +46,7 @@ var testGroupByWithResultSelect = function() {
 };
 
 var testGroupByWithResultSelectAndComparer = function() {
-  var groups = new pn.seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
     function(e) { return e < 5; },
     function(e) { return e; },
     function(key, group) {

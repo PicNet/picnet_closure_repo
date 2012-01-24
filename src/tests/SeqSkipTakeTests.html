@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testSkipWithNullCountThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).skip(null);
+    assertFail('count should not be null');
+  } catch (ex) {};
+};
+var testTakeWithNullCountThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).take(null);
+    assertFail('count should not be null');
+  } catch (ex) {};
+};
+var testSkipWhileWithNullPredicateThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).skipWhile(null);
+    assertFail('predicate should not be null');
+  } catch (ex) {};
+};
+var testTakeWhileWithNullPredicateThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).takeWhile(null);
+    assertFail('predicate should not be null');
+  } catch (ex) {};
+};
+
+var testSkipWithZero = function() {
+  assertArrayEquals([1, 2, 3], new pn.seq.Seq([1, 2, 3]).skip(0).array);
+};
+
+var testTakeWithZero = function() {
+  assertArrayEquals([], new pn.seq.Seq([1, 2, 3]).take(0).array);
+};
+
+var testSkipSomeElements = function() {
+  assertArrayEquals([3], new pn.seq.Seq([1, 2, 3]).skip(2).array);
+};
+
+var testTakeSomeElements = function() {
+  assertArrayEquals([1, 2], new pn.seq.Seq([1, 2, 3]).take(2).array);
+};
+
+var testSkipWhileWithAlwaysTruePredicate = function() {
+  assertArrayEquals([], new pn.seq.Seq([1, 2, 3]).skipWhile(function() {return true;}).array);
+};
+var testTakeWhileWithAlwaysTruePredicate = function() {
+  assertArrayEquals([1, 2, 3], new pn.seq.Seq([1, 2, 3]).takeWhile(function() {return true;}).array);
+};
+
+var testSkipWhileSomeElements = function() {
+  assertArrayEquals([3], new pn.seq.Seq([1, 2, 3]).skipWhile(function(e, i) { return e < 3;}).array);
+};
+var testTakeWhileSomeElements = function() {
+  assertArrayEquals([1, 2], new pn.seq.Seq([1, 2, 3]).takeWhile(function(e, i) {return e < 3;}).array);
+};
+
+    </script>    
+  </body>
+</html>

@@ -6,21 +6,21 @@
     <script src="../deps.js"></script>
     <script>
 goog.require('goog.testing.jsunit');
-goog.require('pn.seq');
+goog.require('pn.seq.Seq');
 
 var testIfEmptySequenceResultHasOneNullItem = function() {
-  assertArrayEquals([null], new pn.seq([]).defaultIfEmpty().array);
+  assertArrayEquals([null], new pn.seq.Seq([]).defaultIfEmpty().array);
 };
 var testIfEmptyAndDefSpecifiedSequenceResultHasOneSpecifiedItem = function() {
-  assertArrayEquals([1], new pn.seq([]).defaultIfEmpty(1).array);
+  assertArrayEquals([1], new pn.seq.Seq([]).defaultIfEmpty(1).array);
 };
 var testIfNotEmptySequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertEquals(arr, new pn.seq(arr).defaultIfEmpty().array);
+  assertEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty().array);
 };
 var testIfNotEmptyAndDefSpecifiedSequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertEquals(arr, new pn.seq(arr).defaultIfEmpty(1).array);
+  assertEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty(1).array);
 };
     </script>    
   </body>
