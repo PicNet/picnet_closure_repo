@@ -4,6 +4,8 @@ goog.provide('pn.seq');
 goog.require('goog.array');
 goog.require('goog.asserts');
 
+goog.require('pn.seq2.lookup');
+
 /**
  * @constructor
  * @param {!Array.<*>} source The source array
@@ -380,7 +382,7 @@ pn.seq.prototype.distinct = function(opt_comparer) {
   if (!opt_comparer) {
     goog.array.removeDuplicates(this.array, result);
     return new pn.seq(result);
-  }    
+  }      
   for (var i = 0, limit = this.array.length; i < limit; i++) {
     var e = this.array[i];
     if (goog.array.findIndex(result, function(e2) { 
@@ -388,4 +390,139 @@ pn.seq.prototype.distinct = function(opt_comparer) {
     }) < 0) { result.push(e); }    
   }
   return new pn.seq(result);
+};
+
+/**
+ * Produces the set union of two sequences.
+ * 
+ * @param {!pn.seq|!Array} second The second sequence
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
+ * @return {!pn.seq} The union of the two sequences.
+ */
+pn.seq.prototype.union = function(second, opt_comparer) {  
+  if (!second) throw new Error('second is not specified');
+  
+  var first = this.array;
+  if (second.array) second = second.array;
+  var all = goog.array.concat(first, second);  
+  return new pn.seq(all).distinct(opt_comparer);
+};
+
+/**
+ * Produces the set intersection of two sequences.
+ * 
+ * @param {!pn.seq|!Array} second The second sequence
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
+ * @return {!pn.seq} The intersection of the two sequences.
+ */
+pn.seq.prototype.intersect = function(second, opt_comparer) {  
+  if (!second) throw new Error('second is not specified');
+  var result = [];
+  for (var i = 0, limit = this.array.length; i < limit; i++) {
+    var e = this.array[i];
+    var comparer = function(e2) { 
+      return (opt_comparer ? opt_comparer(e2, e) : e2 === e);  
+    };
+    if (goog.array.findIndex(result, comparer) >= 0) continue;
+    if (goog.array.findIndex(second, comparer) < 0) continue;
+    result.push(e);
+  }
+  return new pn.seq(result);
+};
+
+/**
+ * Produces the set difference of two sequences
+ * 
+ * @param {!pn.seq|!Array} second The second sequence
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer
+ * @return {!pn.seq} The difference of the two sequences.
+ */
+pn.seq.prototype.except = function(second, opt_comparer) {  
+  if (!second) throw new Error('second is not specified');
+  var result = [];
+  for (var i = 0, limit = this.array.length; i < limit; i++) {
+    var e = this.array[i];
+    var comparer = function(e2) {       
+      return (opt_comparer ? opt_comparer(e2, e) : e2 === e);  
+    };
+    if (goog.array.findIndex(result, comparer) >= 0) continue;
+    if (goog.array.findIndex(second, comparer) >= 0) continue;
+    result.push(e);
+  }
+  return new pn.seq(result);
+};
+
+/**
+ * Creates a pn.seq2.lookup given a keySelector
+ * 
+ * @param {!function(*):*} keySelector The key of each element in the seq
+ * @param {function(*, *):*=} opt_elementSelector The optional element from 
+ *    each element
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
+ * @return {!pn.seq2.lookup} The lookup
+ */
+pn.seq.prototype.toLookup = 
+    function(keySelector, opt_elementSelector, opt_comparer) {
+  if (!keySelector) throw new Error('keySelector is not specified');
+  var lu = new pn.seq2.lookup();
+  for (var i = 0, limit = this.array.length; i < limit; i++) {
+    var e = this.array[i];    
+    var key = keySelector(e);
+    var elem = opt_elementSelector ? opt_elementSelector(e, i) : e;
+    if (lu.containsKey(key, opt_comparer)) {      
+      lu.get(key, opt_comparer).array.push(elem);
+    } else { lu.set(key, new pn.seq([elem]), opt_comparer); }
+  }
+  lu.collapse();
+  return lu;
+};
+
+/**
+ * Correlates the elements of two sequences based on matching keys
+ *
+ * @param {!pn.seq} inner The sequence to join to the first sequence
+ * @param {!function(*):*} outKeySelect The key of each element in the 
+ *    outer seq
+ * @param {!function(*):*} inKeySelect The key of each element in the inner seq
+ * @param {function(*, *):*} resultSelector The element from each element
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
+ * @return {!pn.seq} The joined sequence.
+ */
+pn.seq.prototype.join = 
+    function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
+  if (!inner) throw new Error('inner is not specified');
+  if (!outKeySelect) throw new Error('outKeySelect is not specified');
+  if (!inKeySelect) throw new Error('inKeySelect is not specified');
+  if (!resultSelector) throw new Error('resultSelector is not specified');
+  var lu = inner.toLookup(inKeySelect, opt_comparer); 
+  var results = [];
+  for (var i = 0, limit = this.array.length; i < limit; i++) 
+  { 
+    var outerElement = this.array[i];
+    var key = outKeySelect(outerElement); 
+    var inner2 = lu.get(key);
+    for (var j = 0, jlimit = inner2.array.length; j < jlimit; j++) {
+      results.push(resultSelector(outerElement, inner2.array[j]));        
+    }      
+  } 
+  return new pn.seq(results);
+};
+
+/**
+ * Groups the elements of a sequence.
+ * 
+ * @param {!function(*):*} keySelect The key of each element in the seq
+ * @param {!function(*):*} elementSelect The element of each element in the seq.
+ * @param {function(*, pn.seq):*=} opt_resultSelect The optional element 
+ *    from each element
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
+ * @return {!pn.seq} The joined sequence.
+ */
+pn.seq.prototype.groupBy = function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
+  if (!keySelect) throw new Error('keySelect is not specified');
+  if (!elementSelect) throw new Error('elementSelect is not specified');  
+  var lu = inner.toLookup(keySelect, elementSelect, opt_comparer);  
+  return lu.select(function(group) {
+    return opt_resultSelect ? opt_resultSelect(group.key, group) : group;
+  });
 };

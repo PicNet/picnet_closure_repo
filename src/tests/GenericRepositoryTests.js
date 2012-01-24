@@ -2,7 +2,6 @@
 goog.require('goog.array');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.Logger');
-goog.require('pn.MockAjaxProvider');
 goog.require('pn.data.AbstractRepository');
 goog.require('pn.data.GearsRepository');
 goog.require('pn.data.IndexedDBRepository');

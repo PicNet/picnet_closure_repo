@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq');
+
+var testUnionSecondSequenceIsRequired = function() {
+  try {
+    new pn.seq([]).union();
+    assertFail('Null or undefined second sequence is not allowed');
+  } catch (ex) {};
+};
+var testIntersectSecondSequenceIsRequired = function() {
+  try {
+    new pn.seq([]).union();
+    assertFail('Null or undefined second sequence is not allowed');
+  } catch (ex) {};
+};
+var testExceptSecondSequenceIsRequired = function() {
+  try {
+    new pn.seq([]).union();
+    assertFail('Null or undefined second sequence is not allowed');
+  } catch (ex) {};
+};
+
+var testUnionWithoutComparer = function() {
+  var result = new pn.seq([1, 2, 3, 4, 5]).union([3, 4, 5, 6, 7]);
+  assertArrayEquals([1, 2, 3, 4, 5, 6, 7], result.array);
+};
+var testUnionWithComparer = function() {
+  var result = new pn.seq([1, 2, 3, 4, 5]).union([3, 4, 5, 6, 7], 
+    function(x, y) { // anything over 4 considered same
+      x = x > 4 ? -1 : x;
+      y = y > 4 ? -1 : y;
+      return x === y; 
+    });
+  assertArrayEquals([1, 2, 3, 4, 5], result.array);
+};
+
+var testIntersectionWithoutComparer = function() {
+  var result = new pn.seq([1, 2, 3, 4, 5]).intersect([3, 4, 5, 6, 7]);
+  assertArrayEquals([3, 4, 5], result.array);
+};
+var testIntersectionWithComparer = function() {
+  var result = new pn.seq([1, 2, 3, 4, 5]).intersect([3, 4, 5, 6, 7], 
+    function(x, y) { // anything over 3 considered same
+      x = x > 3 ? -1 : x;
+      y = y > 3 ? -1 : y;
+      return x === y; 
+    });
+  assertArrayEquals([3, 4], result.array);
+};
+
+var testExceptWithoutComparer = function() {
+  var result = new pn.seq([1, 1, 2, 3, 4, 5]).except([3, 4, 5, 6, 7]);
+  assertArrayEquals([1, 2], result.array);
+};
+var testExceptWithComparer = function() {
+  var result = new pn.seq([1, 1, 2, 3, 4, 5]).except([3, 4, 5, 6, 7], 
+    function(x, y) { // anything over 4 considered same
+      x = x > 4 ? -1 : x;
+      y = y > 4 ? -1 : y;
+      return x === y; 
+    });
+  assertArrayEquals([1, 2], result.array);
+};
+    </script>    
+  </body>
+</html>

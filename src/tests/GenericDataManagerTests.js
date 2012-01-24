@@ -36,7 +36,7 @@ var preTest = function(test) {
   asyncTestCase.waitForAsync();
 	if (!data) {
 		pn.data.DefaultRepositoryFactory.setRepository(rep);
-		data = new pn.data.DataManager(new MockAjaxProvider(types), types);
+		data = new pn.data.DataManager(new pn.MockAjaxProvider(types), types);
     data.databaseName = 'unittestdb';
 		data.init(function() { data.clearEntireDatabase_(test, this); }, this);
 	} else {

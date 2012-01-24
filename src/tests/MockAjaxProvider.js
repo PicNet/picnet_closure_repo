@@ -1,4 +1,4 @@
-﻿;
+﻿
 goog.require('goog.Uri.QueryData');
 goog.require('goog.net.XhrIo');
 
