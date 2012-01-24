@@ -123,12 +123,14 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
   });
 };
 
+
 /**
  * @protected
- * @param {pn.ui.edit.Command} command The command to determine 
- *    wether to fire or not
+ * @param {pn.ui.edit.Command} command The command to determine
+ *    wether to fire or not.
+ * @return {boolean} Wether the event should be fired.
  */
-pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent = 
+pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     function(command) {
   if (command.onclick && !command.onclick()) return false;
   if (command.validate && !this.isValidForm()) return false;
