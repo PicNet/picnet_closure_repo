@@ -13,13 +13,13 @@ var setUp = function() {};
 var testSimpleFiltering = function () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.where(function(x) { return x < 4; }); 
-  assertArrayEquals([1, 3, 2, 1], result.array); 
+  assertArrayEquals([1, 3, 2, 1], result.toArray()); 
 };
 
 var testIndexBasedFiltering = function () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.where(function(x, i) { return i <= 2; }); 
-  assertArrayEquals([1, 3, 4], result.array); 
+  assertArrayEquals([1, 3, 4], result.toArray()); 
 };
 
 var testNullSeqThrowsError = function() {

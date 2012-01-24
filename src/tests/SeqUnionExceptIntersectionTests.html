@@ -29,7 +29,7 @@ var testExceptSecondSequenceIsRequired = function() {
 
 var testUnionWithoutComparer = function() {
   var result = new pn.seq.Seq([1, 2, 3, 4, 5]).union([3, 4, 5, 6, 7]);
-  assertArrayEquals([1, 2, 3, 4, 5, 6, 7], result.array);
+  assertArrayEquals([1, 2, 3, 4, 5, 6, 7], result.toArray());
 };
 var testUnionWithComparer = function() {
   var result = new pn.seq.Seq([1, 2, 3, 4, 5]).union([3, 4, 5, 6, 7], 
@@ -38,12 +38,12 @@ var testUnionWithComparer = function() {
       y = y > 4 ? -1 : y;
       return x === y; 
     });
-  assertArrayEquals([1, 2, 3, 4, 5], result.array);
+  assertArrayEquals([1, 2, 3, 4, 5], result.toArray());
 };
 
 var testIntersectionWithoutComparer = function() {
   var result = new pn.seq.Seq([1, 2, 3, 4, 5]).intersect([3, 4, 5, 6, 7]);
-  assertArrayEquals([3, 4, 5], result.array);
+  assertArrayEquals([3, 4, 5], result.toArray());
 };
 var testIntersectionWithComparer = function() {
   var result = new pn.seq.Seq([1, 2, 3, 4, 5]).intersect([3, 4, 5, 6, 7], 
@@ -52,12 +52,12 @@ var testIntersectionWithComparer = function() {
       y = y > 3 ? -1 : y;
       return x === y; 
     });
-  assertArrayEquals([3, 4], result.array);
+  assertArrayEquals([3, 4], result.toArray());
 };
 
 var testExceptWithoutComparer = function() {
   var result = new pn.seq.Seq([1, 1, 2, 3, 4, 5]).except([3, 4, 5, 6, 7]);
-  assertArrayEquals([1, 2], result.array);
+  assertArrayEquals([1, 2], result.toArray());
 };
 var testExceptWithComparer = function() {
   var result = new pn.seq.Seq([1, 1, 2, 3, 4, 5]).except([3, 4, 5, 6, 7], 
@@ -66,7 +66,7 @@ var testExceptWithComparer = function() {
       y = y > 4 ? -1 : y;
       return x === y; 
     });
-  assertArrayEquals([1, 2], result.array);
+  assertArrayEquals([1, 2], result.toArray());
 };
     </script>    
   </body>

@@ -9,18 +9,18 @@ goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
 var testIfEmptySequenceResultHasOneNullItem = function() {
-  assertArrayEquals([null], new pn.seq.Seq([]).defaultIfEmpty().array);
+  assertArrayEquals([null], new pn.seq.Seq([]).defaultIfEmpty().toArray());
 };
 var testIfEmptyAndDefSpecifiedSequenceResultHasOneSpecifiedItem = function() {
-  assertArrayEquals([1], new pn.seq.Seq([]).defaultIfEmpty(1).array);
+  assertArrayEquals([1], new pn.seq.Seq([]).defaultIfEmpty(1).toArray());
 };
 var testIfNotEmptySequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty().array);
+  assertArrayEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty().toArray());
 };
 var testIfNotEmptyAndDefSpecifiedSequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty(1).array);
+  assertArrayEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty(1).toArray());
 };
     </script>    
   </body>

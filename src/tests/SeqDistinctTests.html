@@ -11,7 +11,7 @@ goog.require('pn.seq.Seq');
 var testDistinctRemovedNumericalDuplicates = function() {
   var seq = new pn.seq.Seq([0, 1, 2, 3, 4, 5, 1, 2]);
   var result = seq.distinct();
-  assertArrayEquals([0, 1, 2, 3, 4, 5], result.array);
+  assertArrayEquals([0, 1, 2, 3, 4, 5], result.toArray());
 };
 
 var testDistinctRemovedNumericalDuplicatesWithComparer = function() {
@@ -22,7 +22,7 @@ var testDistinctRemovedNumericalDuplicatesWithComparer = function() {
     b = b > 2 ? -1 : b;
     return a === b;
   });
-  assertArrayEquals([0, 1, 2, 3], result.array);
+  assertArrayEquals([0, 1, 2, 3], result.toArray());
 };
     </script>    
   </body>

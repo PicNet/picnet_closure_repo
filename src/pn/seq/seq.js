@@ -17,10 +17,10 @@ pn.seq.Seq = function(source) {
   goog.asserts.assert(goog.isArrayLike(source));
   
   /**
-   * @protected
+   * @private
    * @type {!Array.<*>}
    */
-  this.array = source;
+  this.array_ = source;
 }; 
 
 /** 
@@ -82,7 +82,7 @@ pn.seq.Seq.repeat = function(element, count) {
  */
 pn.seq.Seq.prototype.where = function(predicate, opt_obj) {
   goog.asserts.assert(goog.isDefAndNotNull(predicate));
-  return new pn.seq.Seq(goog.array.filter(this.array, predicate, opt_obj));
+  return new pn.seq.Seq(goog.array.filter(this.array_, predicate, opt_obj));
 };
 
 /**
@@ -102,7 +102,7 @@ pn.seq.Seq.prototype.where = function(predicate, opt_obj) {
  */
 pn.seq.Seq.prototype.select = function(predicate, opt_obj) {
   goog.asserts.assert(goog.isDefAndNotNull(predicate));
-  return new pn.seq.Seq(goog.array.map(this.array, predicate, opt_obj));
+  return new pn.seq.Seq(goog.array.map(this.array_, predicate, opt_obj));
 };
 
 /** 
@@ -114,8 +114,8 @@ pn.seq.Seq.prototype.select = function(predicate, opt_obj) {
  * @return {!number} The length of the sequence.
  */
 pn.seq.Seq.prototype.count = function(opt_predicate, opt_obj) {
-  if (!opt_predicate) return this.array.length;
-  return this.where(opt_predicate, opt_obj).array.length;  
+  if (!opt_predicate) return this.array_.length;
+  return this.where(opt_predicate, opt_obj).array_.length;  
 };
 
 
@@ -126,11 +126,11 @@ pn.seq.Seq.prototype.count = function(opt_predicate, opt_obj) {
  */
 pn.seq.Seq.prototype.concat = function(var_args) {
   goog.asserts.assert(arguments.length > 0);
-  var arrays = [this.array];
+  var arrays = [this.array_];
   for (var i = 0, limit = arguments.length; i < limit; i++) {
     var arg = arguments[i];
     if (goog.isArrayLike(arg)) arrays.push(arg);
-    else if (arg.array) arrays.push(arg.array);
+    else if (arg.array_) arrays.push(arg.array_);
     else {
       var err = 'Concat only supports elements of type pn.seq.Seq or an array.';
       throw new Error(err);
@@ -152,10 +152,10 @@ pn.seq.Seq.prototype.selectMany = function(collectionSelector, opt_resultSelecto
   goog.asserts.assert(collectionSelector);
   
   var arr = [];
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var elem = this.array[i];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var elem = this.array_[i];
     var earr = collectionSelector(elem, i);    
-    if (earr.array) earr = earr.array;    
+    if (earr.array_) earr = earr.array_;    
     for (var j = 0, elimit = earr.length; j < elimit; j++) {
       var e = earr[j];
       if (opt_resultSelector) e = opt_resultSelector(elem, e);
@@ -175,9 +175,9 @@ pn.seq.Seq.prototype.selectMany = function(collectionSelector, opt_resultSelecto
  *    a condition
  */
 pn.seq.Seq.prototype.any = function(opt_predicate) {
-  if (!opt_predicate) return this.array.length > 0;
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    if (opt_predicate(this.array[i], i)) return true;
+  if (!opt_predicate) return this.array_.length > 0;
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    if (opt_predicate(this.array_[i], i)) return true;
   }
   return false;
 };
@@ -191,8 +191,8 @@ pn.seq.Seq.prototype.any = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.all = function(predicate) {  
   goog.asserts.assert(predicate);
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    if (!predicate(this.array[i], i)) return false;
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    if (!predicate(this.array_[i], i)) return false;
   }
   return true;
 };
@@ -227,13 +227,13 @@ pn.seq.Seq.prototype.firstOrNull = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.firstImpl_ = function(throwOnNotMatch, opt_predicate) {
-  if (this.array.length === 0) {
+  if (this.array_.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
   }
-  if (!opt_predicate) return this.array[0];
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];
+  if (!opt_predicate) return this.array_[0];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
     if (opt_predicate(e, i)) return e;
   }
   if (throwOnNotMatch) 
@@ -271,17 +271,17 @@ pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.singleImpl_ = function(throwOnNotMatch, opt_predicate) {
-  if (this.array.length === 0) {
+  if (this.array_.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
   }
   if (!opt_predicate) {
-    if (this.array.length > 1) throw new Error('Multiple items match');
-    return this.array[0];
+    if (this.array_.length > 1) throw new Error('Multiple items match');
+    return this.array_[0];
   }
   var found = undefined;
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
     if (opt_predicate(e, i)) {
       if (found !== undefined) throw new Error('Multiple items match');
       return found = e;
@@ -322,14 +322,14 @@ pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.lastImpl_ = function(throwOnNotMatch, opt_predicate) {
-  if (this.array.length === 0) {
+  if (this.array_.length === 0) {
     if (throwOnNotMatch) throw new Error('Empty list not allowed');
     return null;
   }
-  if (!opt_predicate) return this.array[this.array.length - 1];
-  var start = this.array.length - 1;
+  if (!opt_predicate) return this.array_[this.array_.length - 1];
+  var start = this.array_.length - 1;
   for (var i = start; i >= 0; i--) {
-    var e = this.array[i];
+    var e = this.array_[i];
     if (opt_predicate(e, i)) return e;
   }
   if (throwOnNotMatch) 
@@ -345,7 +345,7 @@ pn.seq.Seq.prototype.lastImpl_ = function(throwOnNotMatch, opt_predicate) {
  *    source sequence is empty
  */
 pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
-  if (this.array.length === 0) { 
+  if (this.array_.length === 0) { 
     var val = opt_default === undefined ? null : opt_default;
     return new pn.seq.Seq([val]); 
   }
@@ -367,7 +367,7 @@ pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
   if (!goog.isDefAndNotNull(seed)) throw new Error('Seed is not specified');
   if (!goog.isDefAndNotNull(accum)) 
     throw new Error('Accumulattor is not specified');    
-  var reduced = goog.array.reduce(this.array, accum, seed);
+  var reduced = goog.array.reduce(this.array_, accum, seed);
   if (opt_projection) reduced = opt_projection(reduced);
   return reduced;
 };
@@ -382,11 +382,11 @@ pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
 pn.seq.Seq.prototype.distinct = function(opt_comparer) {
   var result = [];
   if (!opt_comparer) {
-    goog.array.removeDuplicates(this.array, result);
+    goog.array.removeDuplicates(this.array_, result);
     return new pn.seq.Seq(result);
   }      
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
     if (goog.array.findIndex(result, function(e2) { 
       return opt_comparer(e2, e); 
     }) < 0) { result.push(e); }    
@@ -404,8 +404,8 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
 pn.seq.Seq.prototype.union = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   
-  var first = this.array;
-  if (second.array) second = second.array;
+  var first = this.array_;
+  if (second.array_) second = second.array_;
   var all = goog.array.concat(first, second);  
   return new pn.seq.Seq(all).distinct(opt_comparer);
 };
@@ -420,8 +420,8 @@ pn.seq.Seq.prototype.union = function(second, opt_comparer) {
 pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   var result = [];
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
     var comparer = function(e2) { 
       return (opt_comparer ? opt_comparer(e2, e) : e2 === e);  
     };
@@ -442,8 +442,8 @@ pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
 pn.seq.Seq.prototype.except = function(second, opt_comparer) {  
   if (!second) throw new Error('second is not specified');
   var result = [];
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
     var comparer = function(e2) {       
       return (opt_comparer ? opt_comparer(e2, e) : e2 === e);  
     };
@@ -467,12 +467,12 @@ pn.seq.Seq.prototype.toLookup =
     function(keySelector, opt_elementSelector, opt_comparer) {
   if (!keySelector) throw new Error('keySelector is not specified');
   var lu = new pn.seq.Lookup();
-  for (var i = 0, limit = this.array.length; i < limit; i++) {
-    var e = this.array[i];    
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];    
     var key = keySelector(e);
     var elem = opt_elementSelector ? opt_elementSelector(e, i) : e;    
     if (lu.containsKey(key, opt_comparer)) {            
-      lu.get(key, opt_comparer).array.push(elem);
+      lu.get(key, opt_comparer).array_.push(elem);
     } else { lu.set(key, new pn.seq.Seq([elem]), opt_comparer); }
   }
   lu.collapse();
@@ -498,13 +498,13 @@ pn.seq.Seq.prototype.join =
   if (!resultSelector) throw new Error('resultSelector is not specified');
   var lu = inner.toLookup(inKeySelect, null, opt_comparer); 
   var results = [];
-  for (var i = 0, limit = this.array.length; i < limit; i++) 
+  for (var i = 0, limit = this.array_.length; i < limit; i++) 
   { 
-    var outerElement = this.array[i];
+    var outerElement = this.array_[i];
     var key = outKeySelect(outerElement); 
     var inner2 = lu.get(key);
-    for (var j = 0, jlimit = inner2.array.length; j < jlimit; j++) {
-      results.push(resultSelector(outerElement, inner2.array[j]));        
+    for (var j = 0, jlimit = inner2.array_.length; j < jlimit; j++) {
+      results.push(resultSelector(outerElement, inner2.array_[j]));        
     }      
   } 
   return new pn.seq.Seq(results);
@@ -552,9 +552,9 @@ pn.seq.Seq.prototype.groupJoin =
   
   var lu = inner.toLookup(inKeySelect, null, opt_comparer); 
   var results = [];
-  for (var i = 0, limit = this.array.length; i < limit; i++) 
+  for (var i = 0, limit = this.array_.length; i < limit; i++) 
   { 
-    var outerElement = this.array[i];
+    var outerElement = this.array_[i];
     var key = outKeySelect(outerElement); 
     results.push(resultSelector(outerElement, lu.get(key))); 
   } 
@@ -569,10 +569,10 @@ pn.seq.Seq.prototype.groupJoin =
  */
 pn.seq.Seq.prototype.takeWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is not specified');
-  var index = goog.array.findIndex(this.array, 
+  var index = goog.array.findIndex(this.array_, 
     function(e, i) { return ! predicate(e, i); });    
   if (index < 0) return this;  
-  return new pn.seq.Seq(this.array.slice(0, index));  
+  return new pn.seq.Seq(this.array_.slice(0, index));  
 };
 
 /**
@@ -583,10 +583,10 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
  */
 pn.seq.Seq.prototype.skipWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is not specified');  
-  var index = goog.array.findIndex(this.array, 
+  var index = goog.array.findIndex(this.array_, 
     function(e, i) { return !predicate(e, i); });
   if (index < 0) return pn.seq.Seq.empty();    
-  return new pn.seq.Seq(this.array.slice(index));  
+  return new pn.seq.Seq(this.array_.slice(index));  
 };
 
 /**
@@ -598,7 +598,7 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
 pn.seq.Seq.prototype.take = function(count) {
   if (!goog.isNumber(count) || count < 0) 
     throw new Error('count is not specified');
-  return new pn.seq.Seq(this.array.slice(0, count));  
+  return new pn.seq.Seq(this.array_.slice(0, count));  
 };
 
 /**
@@ -610,7 +610,108 @@ pn.seq.Seq.prototype.take = function(count) {
 pn.seq.Seq.prototype.skip = function(count) {
   if (!goog.isNumber(count) || count < 0) 
     throw new Error('count is not specified');
-  return new pn.seq.Seq(this.array.slice(count));  
+  return new pn.seq.Seq(this.array_.slice(count));  
+};
+
+/** @return {!Array.<*>} The sequence as an array */
+pn.seq.Seq.prototype.toArray = function() { 
+  return goog.array.clone(this.array_); 
+};
+
+/** 
+ * @param {function(*):*!} keySelector The key selector
+ * @param {function(*):*=} opt_elemSelector The optional element selector
+ * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
+ * @return {!goog.structs.Map} The sequence as a map 
+ */
+pn.seq.Seq.prototype.toMap = 
+    function(keySelector, opt_elemSelector, opt_comparer) {   
+  var lookup = this.toLookup(keySelector, opt_elemSelector, opt_comparer);
+  return lookup.getMap();
+};
+
+pn.seq.Seq.prototype.orderBy = function() { 
+  throw new Error('Not Implemented'); 
+}
+
+pn.seq.Seq.prototype.reverse = function() { 
+  var arr = goog.array.clone(this.array_);
+  arr.reverse();
+  return new pn.seq.Seq(arr);
+};
+
+pn.seq.Seq.prototype.sum = function(opt_selector) {
+  return this.aggregate(0, function(tot, curr) {
+    var i = opt_selector ? opt_selector(curr) : curr;
+    return tot + i;
+  });
+};
+
+pn.seq.Seq.prototype.average = function(opt_selector) {
+  var len = this.array_.length;
+  return len !== 0 ? this.sum(opt_selector) / len : 0;  
+};
+
+pn.seq.Seq.prototype.min = function(opt_selector) {
+  var min = undefined;
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
+    if (opt_selector) e = opt_selector(e);
+    if (min === undefined || e < min) min = e;
+  }    
+  return min;  
+};
+
+pn.seq.Seq.prototype.max = function(opt_selector) {
+  var max = undefined;
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    var e = this.array_[i];
+    if (opt_selector) e = opt_selector(e);
+    if (max === undefined || e > max) max = e;
+  }    
+  return max;  
+};
+
+pn.seq.Seq.prototype.elementAt = function(index) {
+  if (!goog.isNumber(index) || index < 0 || this.array_.length <= index) {
+    throw new Error('Index outside of bounds of sequence');  
+  }
+  return this.array_[index];
+};
+
+pn.seq.Seq.prototype.elementAtOrNull = function(index) {  
+  return this.array_.length <= index ? null: this.array_[index];
+};
+
+pn.seq.Seq.prototype.contains = function(value, opt_comparer) {    
+  var comparer = function(e2) { 
+    return (opt_comparer ? opt_comparer(e2, value) : e2 === value);  
+  };
+  return goog.array.indexOf(this.array_, comparer) >= 0;
+};
+
+pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
+  if (!second) throw new Error('second is not specified');
+  var limit = this.array_.length;
+  if (limit !== second.array_.length) { return false; }
+  for (var i = 0; i < limit; i++) {
+    var e1 = this.array_[i];
+    var e2 = second.array_[i];
+    if (!(opt_comparer ? opt_comparer(e1, e2) : e1 === e2)) return false;    
+  }
+  return true;
+};
+
+pn.seq.Seq.prototype.zip = function(second, resultSelector) {
+  if (!second) throw new Error('second is not specified');
+  if (!resultSelector) throw new Error('resultSelector is not specified');
+  
+  var limit = Math.min(this.array_.length, second.array_.length);
+  var results = [];
+  for (var i = 0; i < limit; i++) {
+    results.push(resultSelector(this.array_[i], second.array_[i]));
+  }
+  return new pn.seq.Seq(results);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -664,8 +765,10 @@ pn.seq.Lookup.prototype.collapse = function() {
     var seq = this.get(key);
     arr.push(new pn.seq.Grouping(key, seq));
   }
-  this.array = arr;
+  this.array_ = arr;
 };
+
+pn.seq.Lookup.prototype.getMap = function() { return this.map_; }
 
 ////////////////////////////////////////////////////////////////////////////////
 // GROUPING
@@ -676,7 +779,7 @@ pn.seq.Lookup.prototype.collapse = function() {
  * @extends {pn.seq.Seq}
  */
 pn.seq.Grouping = function(key, seq) {
-  pn.seq.Seq.call(this, seq.array);
+  pn.seq.Seq.call(this, seq.array_);
   
   /** @type {*} */
   this.key = key;

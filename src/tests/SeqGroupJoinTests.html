@@ -64,9 +64,9 @@ var testSimpleGroupJoin = function()
     function(i) { return i[1]; }, 
     function(o, i) { 
       console.log('o : ' + o + ' i : ' + i);
-      return o + ':' + i.array.join(';'); });                         
+      return o + ':' + i.toArray().join(';'); });                         
                          
-  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.array); 
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
 };
 
     </script>    

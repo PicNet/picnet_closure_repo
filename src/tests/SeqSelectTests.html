@@ -13,13 +13,13 @@ var setUp = function() {};
 var testSimpleSelect = function () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.select(function(x) { return x + 1; }); 
-  assertArrayEquals([2, 4, 5, 3, 9, 2], result.array); 
+  assertArrayEquals([2, 4, 5, 3, 9, 2], result.toArray()); 
 };
 
 var testIndexBasedSelect = function () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.select(function(x, i) { return x + i; }); 
-  assertArrayEquals([1, 4, 6, 5, 12, 6], result.array); 
+  assertArrayEquals([1, 4, 6, 5, 12, 6], result.toArray()); 
 };
 
 var testWhereSelect = function() {
@@ -27,7 +27,7 @@ var testWhereSelect = function() {
   var result = source.
       where(function(x, i) { return i <= 3; }).
       select(function(x, i) { return x + i; }); 
-  assertArrayEquals([1, 4, 6, 5], result.array); 
+  assertArrayEquals([1, 4, 6, 5], result.toArray()); 
 };
 
 var testSelectWhere = function() {
@@ -35,7 +35,7 @@ var testSelectWhere = function() {
   var result = source.      
       select(function(x, i) { return x + i; }).
       where(function(x, i) { return i <= 3; });
-  assertArrayEquals([1, 4, 6, 5], result.array); 
+  assertArrayEquals([1, 4, 6, 5], result.toArray()); 
 };
 
 var testNullPredicateThrowsError = function() {

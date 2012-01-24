@@ -29,19 +29,19 @@ var testConcatWithNullEmptyArgsThrowsError = function() {
 var testConcatConcatsArraysInArg = function() {
   var seq = new pn.seq.Seq([9]); 
   var result = seq.concat([0, 1, 2], [3, 4, 5]); 
-  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.array);
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.toArray());
 };
 
 var testConcatConcatsSequencesInArg = function() {
   var seq = new pn.seq.Seq([9]); 
   var result = seq.concat(new pn.seq.Seq([0, 1, 2]), new pn.seq.Seq([3, 4, 5])); 
-  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.array);
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.toArray());
 };
 
 var testConcatConcatsMixedInArg = function() {
   var seq = new pn.seq.Seq([]); 
   var result = seq.concat(new pn.seq.Seq([0, 1, 2]), [3, 4, 5]); 
-  assertArrayEquals([0, 1, 2, 3, 4, 5], result.array);
+  assertArrayEquals([0, 1, 2, 3, 4, 5], result.toArray());
 };
     </script>    
   </body>

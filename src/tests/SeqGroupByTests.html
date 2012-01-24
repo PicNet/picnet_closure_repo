@@ -29,8 +29,8 @@ var testGroupByWithoutResultSelect = function() {
       return e; 
     });                     
   assertEquals(2, groups.count());
-  assertArrayEquals([1, 2, 3, 4], groups.first().array);
-  assertArrayEquals([5, 6, 7, 8], groups.last().array);
+  assertArrayEquals([1, 2, 3, 4], groups.first().toArray());
+  assertArrayEquals([5, 6, 7, 8], groups.last().toArray());
 };
 
 var testGroupByWithResultSelect = function() {
@@ -41,8 +41,8 @@ var testGroupByWithResultSelect = function() {
       return group.select(function(e) { return key + ':' + e; });
     });                           
   assertEquals(2, groups.count());
-  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4], groups.first().array);
-  assertArrayEquals(['false:' + 5, 'false:' + 6, 'false:' + 7, 'false:' + 8], groups.last().array);
+  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4], groups.first().toArray());
+  assertArrayEquals(['false:' + 5, 'false:' + 6, 'false:' + 7, 'false:' + 8], groups.last().toArray());
 };
 
 var testGroupByWithResultSelectAndComparer = function() {
@@ -54,7 +54,7 @@ var testGroupByWithResultSelectAndComparer = function() {
     }, 
     function(k1, k2) { return true; });                           
   assertEquals(1, groups.count());
-  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4, 'true:' + 5, 'true:' + 6, 'true:' + 7, 'true:' + 8], groups.first().array);  
+  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4, 'true:' + 5, 'true:' + 6, 'true:' + 7, 'true:' + 8], groups.first().toArray());  
 };
     </script>    
   </body>
