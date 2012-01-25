@@ -723,7 +723,7 @@ pn.seq.Seq.prototype.reverse = function() {
  * Sums all elements in the sequence with an optional projection
  * @param {function(*):number=} opt_selector An optional projection for
  *    the aggregation.
- * @return {number} The aggregate amount.
+ * @return {*} The aggregate amount.
  */
 pn.seq.Seq.prototype.sum = function(opt_selector) {
   return this.aggregate(0, function(tot, curr) {
@@ -737,11 +737,11 @@ pn.seq.Seq.prototype.sum = function(opt_selector) {
  * Averages all elements in the sequence with an optional projection
  * @param {function(*):number=} opt_selector An optional projection for
  *    the aggregation.
- * @return {number} The aggregate amount.
+ * @return {*} The aggregate amount.
  */
 pn.seq.Seq.prototype.average = function(opt_selector) {
   var len = this.array_.length;
-  return len !== 0 ? this.sum(opt_selector) / len : 0;
+  return len !== 0 ? /** @type {number} */ (this.sum(opt_selector)) / len : 0;
 };
 
 
@@ -901,7 +901,17 @@ pn.seq.Seq.prototype.orderByImpl_ =
   return new pn.seq.OrderedSeq(this.array_, projComparer);
 };
 
-
+/**
+ * Runs an evaluator for every item in the sequence. This method is not in the
+ *  .Net LINQ library but it should be.
+ * @param {!function(*, number):undefined} evaluator The evaluator to run for 
+ *    each item in the sequence
+ */
+pn.seq.Seq.prototype.forEach = function(evaluator) {
+  for (var i = 0, limit = this.array_.length; i < limit; i++) {
+    evaluator(this.array_[i], i);
+  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // OrderedEnumerable
@@ -975,7 +985,6 @@ pn.seq.OrderedSeq.prototype.toArray = function() {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-
 // LOOKUP
 ////////////////////////////////////////////////////////////////////////////////
 

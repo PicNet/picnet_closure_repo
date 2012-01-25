@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>pn.seq.Seq</title>
+  <!-- DEBUG -->
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
+  <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+  <script src="../deps.js"></script>    
+  <script>goog.require('pn.seq.Seq');</script>
+  
+  <!-- COMPILED -->
+  <!-- <script src="scripts.min.js"></script> -->
+  <script>
+    var seq = new pn.seq.Seq([
+      { productID: 1, productName: "Chai", category: "Beverages", unitPrice: 18.000, unitsInStock: 39 }, 
+      { productID: 2, productName: "Chang", category: "Beverages", unitPrice: 19.000, unitsInStock: 17 }, 
+      { productID: 3, productName: "Aniseed Syrup", category: "Condiments", unitPrice: 10.000, unitsInStock: 13 }, 
+      { productID: 4, productName: "Chef Anton's Cajun Seasoning", category: "Condiments", unitPrice: 22.000, unitsInStock: 53 }, 
+      { productID: 5, productName: "Chef Anton's Gumbo Mix", category: "Condiments", unitPrice: 21.350, unitsInStock: 0 }, 
+      { productID: 6, productName: "Grandma's Boysenberry Spread", category: "Condiments", unitPrice: 25.000, unitsInStock: 120 }, 
+      { productID: 7, productName: "Uncle Bob's Organic Dried Pears", category: "Produce", unitPrice: 30.000, unitsInStock: 15 }, 
+      { productID: 8, productName: "Northwoods Cranberry Sauce", category: "Condiments", unitPrice: 40.000, unitsInStock: 6 }, 
+      { productID: 9, productName: "Mishi Kobe Niku", category: "Meat/Poultry", unitPrice: 97.000, unitsInStock: 29 }, 
+      { productID: 10, productName: "Ikura", category: "Seafood", unitPrice: 31.000, unitsInStock: 31 }, 
+      { productID: 11, productName: "Queso Cabrales", category: "Dairy Products", unitPrice: 21.000, unitsInStock: 22 }, 
+      { productID: 12, productName: "Queso Manchego La Pastora", category: "Dairy Products", unitPrice: 38.000, unitsInStock: 86 }, 
+      { productID: 13, productName: "Konbu", category: "Seafood", unitPrice: 6.000, unitsInStock: 24 }, 
+      { productID: 14, productName: "Tofu", category: "Produce", unitPrice: 23.250, unitsInStock: 35 }, 
+      { productID: 15, productName: "Genen Shouyu", category: "Condiments", unitPrice: 15.500, unitsInStock: 39 }, 
+      { productID: 16, productName: "Pavlova", category: "Confections", unitPrice: 17.450, unitsInStock: 29 }, 
+      { productID: 17, productName: "Alice Mutton", category: "Meat/Poultry", unitPrice: 39.000, unitsInStock: 0 }, 
+      { productID: 18, productName: "Carnarvon Tigers", category: "Seafood", unitPrice: 62.500, unitsInStock: 42 }, 
+      { productID: 19, productName: "Teatime Chocolate Biscuits", category: "Confections", unitPrice: 9.200, unitsInStock: 25 }, 
+      { productID: 20, productName: "Sir Rodney's Marmalade", category: "Confections", unitPrice: 81.000, unitsInStock: 40 }, 
+      { productID: 21, productName: "Sir Rodney's Scones", category: "Confections", unitPrice: 10.000, unitsInStock: 3 }, 
+      { productID: 22, productName: "Gustaf's Knäckebröd", category: "Grains/Cereals", unitPrice: 21.000, unitsInStock: 104 }, 
+      { productID: 23, productName: "Tunnbröd", category: "Grains/Cereals", unitPrice: 9.000, unitsInStock: 61 }, 
+      { productID: 24, productName: "Guaraná Fantástica", category: "Beverages", unitPrice: 4.500, unitsInStock: 20 }, 
+      { productID: 25, productName: "NuNuCa Nuß-Nougat-Creme", category: "Confections", unitPrice: 14.000, unitsInStock: 76 }, 
+      { productID: 26, productName: "Gumbär Gummibärchen", category: "Confections", unitPrice: 31.230, unitsInStock: 15 }, 
+      { productID: 27, productName: "Schoggi Schokolade", category: "Confections", unitPrice: 43.900, unitsInStock: 49 }, 
+      { productID: 28, productName: "Rössle Sauerkraut", category: "Produce", unitPrice: 45.600, unitsInStock: 26 }, 
+      { productID: 29, productName: "Thüringer Rostbratwurst", category: "Meat/Poultry", unitPrice: 123.790, unitsInStock: 0 }, 
+      { productID: 30, productName: "Nord-Ost Matjeshering", category: "Seafood", unitPrice: 25.890, unitsInStock: 10 }, 
+      { productID: 31, productName: "Gorgonzola Telino", category: "Dairy Products", unitPrice: 12.500, unitsInStock: 0 }, 
+      { productID: 32, productName: "Mascarpone Fabioli", category: "Dairy Products", unitPrice: 32.000, unitsInStock: 9 }, 
+      { productID: 33, productName: "Geitost", category: "Dairy Products", unitPrice: 2.500, unitsInStock: 112 }, 
+      { productID: 34, productName: "Sasquatch Ale", category: "Beverages", unitPrice: 14.000, unitsInStock: 111 }, 
+      { productID: 35, productName: "Steeleye Stout", category: "Beverages", unitPrice: 18.000, unitsInStock: 20 }, 
+      { productID: 36, productName: "Inlagd Sill", category: "Seafood", unitPrice: 19.000, unitsInStock: 112 }, 
+      { productID: 37, productName: "Gravad lax", category: "Seafood", unitPrice: 26.000, unitsInStock: 11 }, 
+      { productID: 38, productName: "Côte de Blaye", category: "Beverages", unitPrice: 263.500, unitsInStock: 17 }, 
+      { productID: 39, productName: "Chartreuse verte", category: "Beverages", unitPrice: 18.000, unitsInStock: 69 }, 
+      { productID: 40, productName: "Boston Crab Meat", category: "Seafood", unitPrice: 18.400, unitsInStock: 123 }, 
+      { productID: 41, productName: "Jack's New England Clam Chowder", category: "Seafood", unitPrice: 9.650, unitsInStock: 85 }, 
+      { productID: 42, productName: "Singaporean Hokkien Fried Mee", category: "Grains/Cereals", unitPrice: 14.000, unitsInStock: 26 }, 
+      { productID: 43, productName: "Ipoh Coffee", category: "Beverages", unitPrice: 46.000, unitsInStock: 17 }, 
+      { productID: 44, productName: "Gula Malacca", category: "Condiments", unitPrice: 19.450, unitsInStock: 27 }, 
+      { productID: 45, productName: "Rogede sild", category: "Seafood", unitPrice: 9.500, unitsInStock: 5 }, 
+      { productID: 46, productName: "Spegesild", category: "Seafood", unitPrice: 12.000, unitsInStock: 95 }, 
+      { productID: 47, productName: "Zaanse koeken", category: "Confections", unitPrice: 9.500, unitsInStock: 36 }, 
+      { productID: 48, productName: "Chocolade", category: "Confections", unitPrice: 12.750, unitsInStock: 15 }, 
+      { productID: 49, productName: "Maxilaku", category: "Confections", unitPrice: 20.000, unitsInStock: 10 }, 
+      { productID: 50, productName: "Valkoinen suklaa", category: "Confections", unitPrice: 16.250, unitsInStock: 65 }, 
+      { productID: 51, productName: "Manjimup Dried Apples", category: "Produce", unitPrice: 53.000, unitsInStock: 20 }, 
+      { productID: 52, productName: "Filo Mix", category: "Grains/Cereals", unitPrice: 7.000, unitsInStock: 38 }, 
+      { productID: 53, productName: "Perth Pasties", category: "Meat/Poultry", unitPrice: 32.800, unitsInStock: 0 }, 
+      { productID: 54, productName: "Tourtière", category: "Meat/Poultry", unitPrice: 7.450, unitsInStock: 21 }, 
+      { productID: 55, productName: "Pâté chinois", category: "Meat/Poultry", unitPrice: 24.000, unitsInStock: 115 }, 
+      { productID: 56, productName: "Gnocchi di nonna Alice", category: "Grains/Cereals", unitPrice: 38.000, unitsInStock: 21 }, 
+      { productID: 57, productName: "Ravioli Angelo", category: "Grains/Cereals", unitPrice: 19.500, unitsInStock: 36 }, 
+      { productID: 58, productName: "Escargots de Bourgogne", category: "Seafood", unitPrice: 13.250, unitsInStock: 62 }, 
+      { productID: 59, productName: "Raclette Courdavault", category: "Dairy Products", unitPrice: 55.000, unitsInStock: 79 }, 
+      { productID: 60, productName: "Camembert Pierrot", category: "Dairy Products", unitPrice: 34.000, unitsInStock: 19 }, 
+      { productID: 61, productName: "Sirop d'érable", category: "Condiments", unitPrice: 28.500, unitsInStock: 113 }, 
+      { productID: 62, productName: "Tarte au sucre", category: "Confections", unitPrice: 49.300, unitsInStock: 17 }, 
+      { productID: 63, productName: "Vegie-spread", category: "Condiments", unitPrice: 43.900, unitsInStock: 24 }, 
+      { productID: 64, productName: "Wimmers gute Semmelknödel", category: "Grains/Cereals", unitPrice: 33.250, unitsInStock: 22 }, 
+      { productID: 65, productName: "Louisiana Fiery Hot Pepper Sauce", category: "Condiments", unitPrice: 21.050, unitsInStock: 76 }, 
+      { productID: 66, productName: "Louisiana Hot Spiced Okra", category: "Condiments", unitPrice: 17.000, unitsInStock: 4 }, 
+      { productID: 67, productName: "Laughing Lumberjack Lager", category: "Beverages", unitPrice: 14.000, unitsInStock: 52 }, 
+      { productID: 68, productName: "Scottish Longbreads", category: "Confections", unitPrice: 12.500, unitsInStock: 6 }, 
+      { productID: 69, productName: "Gudbrandsdalsost", category: "Dairy Products", unitPrice: 36.000, unitsInStock: 26 }, 
+      { productID: 70, productName: "Outback Lager", category: "Beverages", unitPrice: 15.000, unitsInStock: 15 }, 
+      { productID: 71, productName: "Flotemysost", category: "Dairy Products", unitPrice: 21.500, unitsInStock: 26 }, 
+      { productID: 72, productName: "Mozzarella di Giovanni", category: "Dairy Products", unitPrice: 34.800, unitsInStock: 14 }, 
+      { productID: 73, productName: "Röd Kaviar", category: "Seafood", unitPrice: 15.000, unitsInStock: 101 }, 
+      { productID: 74, productName: "Longlife Tofu", category: "Produce", unitPrice: 10.000, unitsInStock: 4 }, 
+      { productID: 75, productName: "Rhönbräu Klosterbier", category: "Beverages", unitPrice: 7.750, unitsInStock: 125 }, 
+      { productID: 76, productName: "Lakkalikööri", category: "Beverages", unitPrice: 18.000, unitsInStock: 57 }, 
+      { productID: 77, productName: "Original Frankfurter grüne Soße", category: "Condiments", unitPrice: 13.000, unitsInStock: 32 } 
+    ]);
+  </script>
+  <link rel="stylesheet" href="css/demo.css">    
+</head>
+<body>
+  <h1>pn.seq.Seq</h1>
+  <p>
+    The pn.seq.Seq class is an implementation of the .Net LINQ framework in JavaScript and its implementation
+    was heavily influenced by <a href='http://edulinq.googlecode.com/hg/posts/index.html'>Jon 
+    Skeets excellent study of the .Net LINQ framework</a>.
+  </p><p>
+    <h2>LINQ Explorer</h2>
+    There is a sequence in memory loaded.  This sequence is as follows:
+    <br/>
+    <code>
+    var seq = new pn.seq.Seq([<br/>
+<script>
+  document.write(seq.take(5).select(function(p) {
+    return '&nbsp;&nbsp;&nbsp;&nbsp;{ productID: ' + p.productID + ', productName: "' + p.productName + '", category: "' + p.category + '", unitPrice: ' + p.unitPrice + ', unitsInStock: ' + p.unitsInStock + ' },';
+  }).toArray().join('<br/>'));
+</script>
+    ...
+    ]);        
+    </code>
+    <h3>Interacive Shell</h3>    
+    <textarea id='shell' rows=10 cols=90>
+seq.
+    where(function(p) { return p.category === 'Beverages'; }).
+    orderBy(function(p) { return p.productName; }).
+    take(10);
+    </textarea>
+    <br/>
+    <a id='run' href='#'>Run</a>    
+    <br/>
+    <h3>Results</h3>
+    <div id='results'>
+    </div>
+    <br/>
+    <h3>Available Commands</h3>
+    <div id='avail-commands'>
+      The full LINQ library is available.  For a great source of samples see
+      <a href='http://code.msdn.microsoft.com/101-LINQ-Samples-3fb9811b'>MSDN's 101 LINQ Samples</a>.  And have a 
+      look at the tests (Starting with 'Seq') in <a href='../tests/'>this directory</a> for more details.
+    </div>    
+   </p>  
+   <script>
+   $('#run').click(go);
+     
+   go();
+   
+   function go() {   
+    var txt = $('#shell').val();    
+    eval('var result = ' + txt);    
+    showResults(result);
+    return false;
+   };
+      
+   function showResults(res) {
+    var div = $('#results');
+    var html = '<table border="1">';
+    for (var n in res.first()) { html += '<th>' + n + '</th>'; } 
+    res.forEach(function(row) {
+      html += '<tr>';
+      for (var n in row) {
+        html += '<td>' + row[n] + '</td>';
+      } 
+      html += '</tr>';
+    });
+    html += '</table>';
+    div.html(html);
+   };
+   </script>
+</body>
+</html>
