@@ -99,7 +99,8 @@
   <p>
     The pn.seq.Seq class is an implementation of the .Net LINQ framework in JavaScript and its implementation
     was heavily influenced by <a href='http://edulinq.googlecode.com/hg/posts/index.html'>Jon 
-    Skeets excellent study of the .Net LINQ framework</a>.
+    Skeets excellent study of the .Net LINQ framework</a>.  Note: this implementation does not use deferred execution
+    so it is not as performant as it could be.
   </p><p>
     <h2>LINQ Explorer</h2>
     There is a sequence in memory loaded.  This sequence is as follows:
@@ -136,31 +137,44 @@ seq.
     </div>    
    </p>  
    <script>
-   $('#run').click(go);
-     
-   go();
-   
-   function go() {   
-    var txt = $('#shell').val();    
-    eval('var result = ' + txt);    
-    showResults(result);
-    return false;
-   };
-      
-   function showResults(res) {
-    var div = $('#results');
-    var html = '<table border="1">';
-    for (var n in res.first()) { html += '<th>' + n + '</th>'; } 
-    res.forEach(function(row) {
-      html += '<tr>';
-      for (var n in row) {
-        html += '<td>' + row[n] + '</td>';
-      } 
-      html += '</tr>';
-    });
-    html += '</table>';
-    div.html(html);
-   };
+$('#run').click(go); 
+init();
+function init() {
+  var html = '<ul>';
+  var dat = seq;
+  var functions = goog.object.getKeys(dat);  
+  for (var i = 0; i < functions.length; i++) {      
+    var name = functions[i];
+    if (name.indexOf('_') < 0) 
+      html += '<li>' + functions[i] + '</li>'
+  };
+  html += '</ul>';  
+  $('#avail-commands').html($('#avail-commands').html() + html);
+
+  go();
+};
+
+function go() {   
+  var txt = $('#shell').val();    
+  eval('var result = ' + txt);    
+  showResults(result);
+  return false;
+};
+  
+function showResults(res) {
+  var div = $('#results');
+  var html = '<table border="1">';
+  for (var n in res.first()) { html += '<th>' + n + '</th>'; } 
+  res.forEach(function(row) {
+    html += '<tr>';
+    for (var n in row) {
+      html += '<td>' + row[n] + '</td>';
+    } 
+    html += '</tr>';
+  });
+  html += '</table>';
+  div.html(html);
+};
    </script>
 </body>
 </html>
