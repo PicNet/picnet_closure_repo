@@ -13,10 +13,18 @@ var testContainsReturnsFalseWhenSeqDoesNotContain = function() {
   assertFalse(new pn.seq.Seq([1, 2, 3]).contains(4));  
   assertFalse(new pn.seq.Seq([1, 2, 3]).contains('1'));  
 };
+
 var testContainsReturnsTrueWhenContains = function() {
   assertTrue(new pn.seq.Seq([1, 2, 3]).contains(1));  
   assertTrue(new pn.seq.Seq([1, 2, 3]).contains(2));  
   assertTrue(new pn.seq.Seq([1, 2, 3]).contains(3));  
+};
+
+var testMultipleContains = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertTrue(seq.contains(1));  
+  assertTrue(seq.contains(2));  
+  assertTrue(seq.contains(3));  
 };
 
 var testContainsReturnsFalseWhenSeqDoesNotContainWithComparer = function() {

@@ -11,13 +11,24 @@ goog.require('pn.seq.Seq');
 var testIfEmptySequenceResultHasOneNullItem = function() {
   assertArrayEquals([null], new pn.seq.Seq([]).defaultIfEmpty().toArray());
 };
+
 var testIfEmptyAndDefSpecifiedSequenceResultHasOneSpecifiedItem = function() {
   assertArrayEquals([1], new pn.seq.Seq([]).defaultIfEmpty(1).toArray());
 };
+
 var testIfNotEmptySequenceResultIsSame = function() {
   var arr = [1, 2, 3];
   assertArrayEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty().toArray());
 };
+
+var testMultipleIfNotEmptySequences = function() {
+  var arr = [1, 2, 3];
+  var seq = new pn.seq.Seq(arr);
+  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
+  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
+};
+
+
 var testIfNotEmptyAndDefSpecifiedSequenceResultIsSame = function() {
   var arr = [1, 2, 3];
   assertArrayEquals(arr, new pn.seq.Seq(arr).defaultIfEmpty(1).toArray());

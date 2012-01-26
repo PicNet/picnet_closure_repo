@@ -8,6 +8,18 @@
 goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
+var testMultipleSkips = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertArrayEquals([3], seq.skip(2).toArray());
+  assertArrayEquals([3], seq.skip(2).toArray());
+};
+
+var testMultipleTakes = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertArrayEquals([1, 2], seq.take(2).toArray());
+  assertArrayEquals([1, 2], seq.take(2).toArray());
+};
+
 var testSkipWithNullCountThrowsError = function() {    
   try {
     new pn.seq.Seq([5, 3, 7]).skip(null);

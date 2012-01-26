@@ -26,8 +26,9 @@ var testAnyWithPredicateReturnsFalseIfNoneMatch = function() {
 };
 
 var testAnyWithPredicateReturnsTrueIfOneOrMoreMatch = function() {
-  assertTrue(new pn.seq.Seq([1, 2]).any(function(x) { return x > 1; }));
-  assertTrue(new pn.seq.Seq([1, 2]).any(function(x) { return x > 0; }));
+  var seq = new pn.seq.Seq([1, 2]);            
+  assertTrue(seq.any(function(x) { return x > 1; }));
+  assertTrue(seq.any(function(x) { return x > 0; }));
 };
 
 var testAllWithNullPredicateThrowsError = function() {
@@ -47,6 +48,12 @@ var testAllWithPredicateReturnsFalseIfNotAllMatch = function() {
 
 var testAllWithPredicateReturnsTrueIfAllMatch = function() {
   assertTrue(new pn.seq.Seq([1, 2, 3]).all(function(x) { return x > 0; }));
+};
+
+var testMultipleAlls = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertTrue(seq.all(function(x) { return x > 0; }));
+  assertTrue(seq.all(function(x) { return x > 0; }));
 };
     </script>    
   </body>

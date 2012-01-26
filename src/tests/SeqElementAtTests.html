@@ -28,6 +28,13 @@ var testElementAtWithInnerIndexReturnsExpected = function() {
   assertEquals(3, new pn.seq.Seq([1, 2, 3]).elementAt(2));  
 };
 
+var testMultipleElementAts = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertEquals(1, seq.elementAt(0));  
+  assertEquals(2, seq.elementAt(1));  
+  assertEquals(3, seq.elementAt(2));  
+};
+
 var testElementAtOrNullWithLessThan0ReturnsNull = function() {
   assertNull(new pn.seq.Seq([1, 2, 3]).elementAtOrNull(-1));
 };

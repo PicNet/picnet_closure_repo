@@ -12,30 +12,42 @@ var testOrderByThrowsWhenKeySelectorIsNull = function() {
   try { new pn.seq.Seq([]).orderBy(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testOrderByDescendingThrowsWhenKeySelectorIsNull = function() {
   try { new pn.seq.Seq([]).orderByDescending(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testThenByThrowsWhenKeySelectorIsNull = function() {
   try { new pn.seq.OrderedSeq([], function() {}).thenBy(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testThenByDescendingThrowsWhenKeySelectorIsNull = function() {
   try { new pn.seq.OrderedSeq([], function() {}).thenByDescending(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testOrderedSeqThrowsIfSourceIsNull = function() {
   try { new pn.seq.OrderedSeq(null, function() {}).thenByDescending(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testOrderedSeqThrowsIfComparerIsNull = function() {
   try { new pn.seq.OrderedSeq([], null).thenByDescending(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
+
 var testOrderBySortsAndReturnsOrderedSeq = function() {
   var seq = new pn.seq.Seq([2, 6, 8,2, 3, 8, 5, 2]).orderBy(function(x) { return x; }); 
   assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
   assertTrue(!!seq.thenBy);
+};
+
+var testMultipleOrderBys = function() {
+  var seq = new pn.seq.Seq([2, 6, 8,2, 3, 8, 5, 2]); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }).toArray());
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }).toArray());  
 };
 
 var testOrderByWithComparerSortsAndReturnsOrderedSeq = function() {
@@ -64,6 +76,16 @@ var testThenBySortsAndReturnsOrderedSeq = function() {
       thenBy(function(x) { return -x; }); 
   assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
   assertTrue(!!seq.thenBy);
+};
+
+var testMultipleThenBySorts = function() {
+  var seq = new pn.seq.Seq([2, 6, 8,2, 3, 8, 5, 2]);
+  var result = seq.orderBy(function(x) { return x; }).
+      thenBy(function(x) { return -x; }); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result.toArray());  
+  result = seq.orderBy(function(x) { return x; }).
+      thenBy(function(x) { return -x; }); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result.toArray());
 };
 
 var testThenByWithComparerSortsAndReturnsOrderedSeq = function() {

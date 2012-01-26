@@ -69,6 +69,29 @@ var testSimpleGroupJoin = function()
   assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
 };
 
+var testMultipleGroupJoins = function() 
+{ 
+  var outer = new pn.seq.Seq(["first", "second", "third"]); 
+  var inner = new pn.seq.Seq(["essence", "offer", "eating", "psalm"]); 
+
+  var query = outer.groupJoin(inner, 
+    function(o) { return o[0]; }, 
+    function(i) { return i[1]; }, 
+    function(o, i) { 
+      console.log('o : ' + o + ' i : ' + i);
+      return o + ':' + i.toArray().join(';'); });                         
+                         
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
+  query = outer.groupJoin(inner, 
+    function(o) { return o[0]; }, 
+    function(i) { return i[1]; }, 
+    function(o, i) { 
+      console.log('o : ' + o + ' i : ' + i);
+      return o + ':' + i.toArray().join(';'); });                         
+                         
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
+};
+
     </script>    
   </body>
 </html>

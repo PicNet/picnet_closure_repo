@@ -21,12 +21,24 @@ var testMinWithoutProjection = function() {
   assertEquals(1, new pn.seq.Seq([1, 2, 3]).min());  
 };
 
+var testMultipleMins = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertEquals(1, seq.min());  
+  assertEquals(1, seq.min());  
+};
+
 var testMinWithProjection = function() {
   assertEquals(1, new pn.seq.Seq(arr).min(function(v) { return v.value; }));  
 };
 
 var testMaxWithoutProjection = function() {
   assertEquals(3, new pn.seq.Seq([1, 2, 3]).max());  
+};
+
+var testMultipleMaxs = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertEquals(3, seq.max());  
+  assertEquals(3, seq.max());  
 };
 
 var testMaxWithProjection = function() {

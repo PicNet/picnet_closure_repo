@@ -12,7 +12,19 @@ var setUp = function() {};
 
 var testSimpleSelectMany = function () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
-  var result = source.selectMany(function(x, i) { 
+  var result = source.selectMany(function(x, i) {   
+    return pn.seq.Seq.repeat(x, i);
+  }).toArray(); 
+  assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
+};
+
+var testMultipleSelectMany = function () {		
+  var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.selectMany(function(x, i) {   
+    return pn.seq.Seq.repeat(x, i);
+  }).toArray(); 
+  assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
+  result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
   }).toArray(); 
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
@@ -20,7 +32,7 @@ var testSimpleSelectMany = function () {
 
 var testWithSelector = function  () {		
   var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
-  var result = source.selectMany(function(x, i) { 
+  var result = source.selectMany(function(x, i) {     
     return pn.seq.Seq.repeat(x, i);
   }, function(x, x2) {
     return x2 + x;

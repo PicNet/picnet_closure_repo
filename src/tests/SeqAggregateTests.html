@@ -16,6 +16,18 @@ var testSimpleAggregation = function() {
   assertEquals(14, agg);
 };
 
+var testMultipleAggregations = function() {
+  var seq = new pn.seq.Seq([-1, 1, 2, 3, 4, 5]);
+  var agg = seq.aggregate(0, function(current, value) {    
+    return value + current;
+  });
+  assertEquals(14, agg);
+  agg = seq.aggregate(0, function(current, value) {    
+    return value + current;
+  });
+  assertEquals(14, agg);
+};
+
 var testSimpleAggregationWithNonZeroSeed = function() {
   var seq = new pn.seq.Seq([-1, 1, 2, 3, 4, 5]);
   var agg = seq.aggregate(10, function(current, value) {
@@ -29,7 +41,7 @@ var testWithFinalProjection = function() {
   var agg = seq.aggregate(10, function(current, value) {
     return value + current;
   }, function(x) { return x * 2; });
-  assertEquals(48, agg);
+  assertEquals(38, agg);
 };
 
 var testSeedCannotBeNull = function() {
