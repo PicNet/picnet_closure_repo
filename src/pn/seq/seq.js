@@ -309,11 +309,8 @@ pn.seq.Seq.prototype.all = function(predicate) {
  *    the predicate.
  */
 pn.seq.Seq.prototype.first = function(opt_predicate) {    
-  if (!opt_predicate) { return this.iter_().next(); }
-  var idx = 0;
-  return goog.iter.filter(this.iter_(), function(e) { 
-    return opt_predicate(e, idx); 
-  }, this).next();
+  if (!opt_predicate) { return this.iter_().next(); }  
+  return this.where(opt_predicate).next();
 };
 
 

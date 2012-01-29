@@ -8,7 +8,13 @@
   <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
   <script src="../deps.js"></script>    
   <script>goog.require('pn.seq.Seq');</script>
-  
+  <style>
+    #samples li { 
+      color:blue;
+      text-decoration:underline;
+      cursor:pointer;
+    }
+  </style>
   <!-- COMPILED -->
   <!-- <script src="scripts.min.js"></script> -->
   <script>
@@ -115,25 +121,39 @@
     ]);        
     </code>
     <h3>Interacive Shell</h3>    
-    <textarea id='shell' rows=10 cols=90>
-seq.
-    where(function(p) { return p.category === 'Beverages'; }).
-    orderBy(function(p) { return p.productName; }).
-    take(10);
-    </textarea>
+    <textarea id='shell' rows=10 cols=90></textarea>
     <br/>
     <a id='run' href='#'>Run</a>    
     <br/>
-    <h3>Results</h3>
-    <div id='results'>
-    </div>
-    <br/>
+    <table border='1'>
+      <tr><td width="400px" valign="top">
+        <h3>Results</h3>
+        <div id='results'></div>
+        <br/>        
+      </td><td valign="top">
+        <h3>Other Samples</h3>
+        <ul id='samples'>
+          <li id='default'>Default Example</li>
+          <li id='where'>Where</li>
+          <li id='select'>Select</li>          
+          <li id='orderby'>Order By</li>          
+          <li id='distinct'>Distinct</li>
+          <li id='forEach'>For Each</li>
+          <li id='takeSkip'>Take, Skip</li>          
+          <li id='anyAllSingleFirstLast'>Any, All, Single, First, Last</li>                    
+          <li id='sumAvgMinMax'>Sum, Average, Min, Max</li>
+          <li id='unionInterceptExcept'>Union, Intercept, Except</li>
+          <li id='groupby'>Group By</li>                    
+          <li id='zip'>Zip</li>                    
+        </ul>
+      </tr></td>
+    </table> 
     <h3>Available Commands</h3>
     <div id='avail-commands'>
       The full LINQ library is available.  For a great source of samples see
       <a href='http://code.msdn.microsoft.com/101-LINQ-Samples-3fb9811b'>MSDN's 101 LINQ Samples</a>.  And have a 
       look at the tests (Starting with 'Seq') in <a href='../tests/'>this directory</a> for more details.
-    </div>    
+    </div>     
    </p>  
    <script>
 $('#run').click(go); 
@@ -149,12 +169,15 @@ function init() {
   };
   html += '</ul>';  
   $('#avail-commands').html($('#avail-commands').html() + html);
-
-  go();
+  $('#samples li').click(function() {
+    setExample($(this).attr('id'));
+  });  
+  setExample('default');
 };
 
 function go() {   
   var txt = $('#shell').val();    
+  console.log(txt);
   eval('var result = ' + txt);    
   showResults(result);
   return false;
@@ -163,16 +186,80 @@ function go() {
 function showResults(res) {
   var div = $('#results');
   var html = '<table border="1">';
-  for (var n in res.first()) { html += '<th>' + n + '</th>'; } 
-  res.forEach(function(row) {
-    html += '<tr>';
-    for (var n in row) {
-      html += '<td>' + row[n] + '</td>';
-    } 
-    html += '</tr>';
-  });
+  if (res && res.any()) {
+    if (typeof(res.first()) === 'object') {    
+      for (var n in res.first()) {   
+        html += '<th>' + n + '</th>'; 
+      } 
+    } else {     
+      html += '<th>Value</th>';  
+    }
+    res.forEach(function(row) {
+      html += '<tr>';
+      if (typeof(row) === 'object') {    
+        for (var n in row) {
+          html += '<td>' + row[n] + '</td>';
+        } 
+      } else {
+        html += '<td>' + row + '</td>';
+      }
+      html += '</tr>';
+    });
+  }
   html += '</table>';
   div.html(html);
+};
+
+function setExample(sample) {  
+  $('#shell').val(getSampleCode(sample)); 
+  go();
+};
+
+function getSampleCode(sample) {
+  switch (sample) {
+    case 'default': return 'seq.\n' +
+'     where(function(p) { return p.category === "Beverages"; }).\n' +
+'     orderBy(function(p) { return p.productName; }).\n' +
+'     take(10);';
+    case 'where': return 'seq.\n' +
+'     where(function(p) { return p.productName.indexOf("Sir") >= 0; });';
+    case 'select': return 'seq.\n' +
+'     where(function(p) { return p.productName.indexOf("Sir") >= 0; }).\n' +
+'     select(function(p) { return p.productName + ": $" + p.unitPrice; });';
+    case 'orderby': return 'seq.\n' +
+'     where(function(p) { return p.productName.indexOf("Sir") >= 0; }).\n' +
+'     orderBy(function(p) { return p.unitPrice; });';
+    case 'distinct': return 'seq.\n' +
+'     select(function(p) { return p.category; }).\n' +
+'     distinct().\n' +
+'     select(function(c) { return {Category: c}; });';
+    case 'forEach': return 'seq.\n' +
+'     take(2).\n' +
+'     forEach(function(p) { alert("Product: " + p.productName); });';
+    case 'takeSkip': return 'seq.\n' +
+'     where(function(p) { return p.category === "Beverages"; }).\n' +
+'     skip(3).take(2);';
+    case 'anyAllSingleFirstLast': return 'new pn.seq.Seq([{\n'+
+'     All: seq.all(function(p) { return p > 10; }), \n' + 
+'     Any: seq.any(function(p) { return p > 100; }), \n' +
+'     Single: seq.single(function(p) { return p.productName === "Camembert Pierrot" }), \n' +
+'     First: seq.first().productName,\n' +
+'     Last: seq.last().productName}]);';
+    case 'sumAvgMinMax': return 'new pn.seq.Seq([{\n' +
+'     Sum: seq.sum(function(p) { return p.unitPrice; }), \n' + 
+'     Avg: seq.average(function(p) { return p.unitPrice; }), \n' +
+'     Min: seq.min(function(p) { return p.unitPrice; }), \n' +
+'     Max: seq.max(function(p) { return p.unitPrice; })}]);';
+    case 'unionInterceptExcept': return 'new pn.seq.Seq([{\n'+
+'     Union: seq.take(10).union(seq.skip(20).take(10)).count(),\n' +
+'     Intersect: seq.take(10).intersect(seq.skip(5).take(10)).count(),\n' +
+'     Except: seq.take(10).except(seq.skip(7).take(10)).count()}]);';
+    case 'groupby': return 'seq.groupBy(function(p) { return p.category; }, function(p) { return p; }).\n' +
+'     select(function(group) { return {Category: group.key, Items: group.count()}; });';    
+    case 'zip': return 'seq.zip(seq.reverse(), function(a, b) { \n' +
+'       return {ProductA: a.productName, ProductB: b.productName}; \n' +
+'     }).take(10)';
+  }            
 };
    </script>
 </body>
