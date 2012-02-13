@@ -85,6 +85,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
+   * @type {Element}
+   */
+  this.noData_ = null;
+
+  /**
+   * @private
    * @type {Slick.Data.DataView}
    */
   this.dataView_ = null;
@@ -123,7 +129,7 @@ pn.ui.grid.Grid.prototype.filter = function(filter) {
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;
   this.dataView_.refresh();
-  this.slick_.render();
+  this.slick_.render();  
 };
 
 
@@ -159,7 +165,12 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     'class': 'grid-container',
     'style': 'width:' + this.cfg_.width + 'px;height:' + height
   });
+  this.noData_ = goog.dom.createDom('div', {
+    'class':'grid-no-data',
+    'style': 'display:none'
+  }, 'No matches found.');
   goog.dom.appendChild(element, div);
+  goog.dom.appendChild(element, this.noData_);
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(div, this.dataView_,
@@ -270,6 +281,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   }
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
+    console.dir(this.slick_.getColumns());
     this.dataView_.sort(function(a, b) {
       var x = a[args['sortCol']['field']],
           y = b[args['sortCol']['field']];
@@ -285,6 +297,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
     this.slick_.render();
+    goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
 
