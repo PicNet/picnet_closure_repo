@@ -812,7 +812,7 @@ Slick.Grid.prototype.unregisterPlugin = function(plugin) {};
 
 
 /**
- * @return {*}
+ * @return {Array}
  */
 Slick.Grid.prototype.getColumns = function() {};
 
