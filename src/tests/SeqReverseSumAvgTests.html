@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var arr = [
+  {key:0, value:1}, 
+  {key:0, value:2},
+  {key:0, value:3},
+  {key:0, value:4},
+  {key:1, value:5},
+  {key:1, value:6},
+  {key:1, value:7}];
+  
+var testReverse = function() {
+  assertArrayEquals([3, 2, 1], new pn.seq.Seq([1, 2, 3]).reverse().toArray());  
+};
+
+var testMultipleReversii = function() {
+  var seq = new pn.seq.Seq([1, 2, 3])
+  assertArrayEquals([3, 2, 1], seq.reverse().toArray());  
+  assertArrayEquals([3, 2, 1], seq.reverse().toArray());  
+};
+
+var testSumWithoutProjection = function() {
+  assertEquals(6, new pn.seq.Seq([1, 2, 3]).sum());  
+};
+
+var testMultipleSums = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertEquals(6, seq.sum());  
+  assertEquals(6, seq.sum());  
+};
+
+var testSumWithProjection = function() {
+  assertEquals(28, new pn.seq.Seq(arr).sum(function(v) { return v.value; }));  
+};
+
+var testAvgWithoutProjection = function() {
+  assertEquals(2, new pn.seq.Seq([1, 2, 3]).average());  
+};
+
+var testAvgWithProjection = function() {
+  assertEquals(4, new pn.seq.Seq(arr).average(function(v) { return v.value; }));  
+};
+
+var testMultipleAvarages = function() {
+  var seq = new pn.seq.Seq(arr);
+  assertEquals(4, seq.average(function(v) { return v.value; }));  
+  assertEquals(4, seq.average(function(v) { return v.value; }));  
+};
+    </script>    
+  </body>
+</html>

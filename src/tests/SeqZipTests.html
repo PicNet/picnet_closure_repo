@@ -1,0 +1,43 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testNullSecondThrows = function() {
+  try {
+    new pn.seq.Seq([1, 2, 3]).zip(null, function(x, y) { return x; });
+    assertFails('Should fail');   
+  } catch (ex) {}
+};
+
+var testNullResultsSelectorThrows = function() {
+  try {
+    new pn.seq.Seq([1, 2, 3]).zip(new pn.seq.Seq([]), null);
+    assertFails('Should fail');   
+  } catch (ex) {}
+};
+
+var testZipReturnsSmallestOf2SequnceSize = function() {
+  assertArrayEquals([2], new pn.seq.Seq([1, 2, 3]).zip(new pn.seq.Seq([1]), function(x, y) { return x + y; }).toArray());  
+  assertArrayEquals([4], new pn.seq.Seq([2]).zip(new pn.seq.Seq([2, 6, 8]), function(x, y) { return x + y; }).toArray());  
+};
+
+var testZipReturnsExpectedWithLargerLists = function() {
+  assertArrayEquals(['12', '24', '38'], new pn.seq.Seq([1, 2, 3]).zip(new pn.seq.Seq([2, 4, 8]), function(x, y) { return '' + x + y; }).toArray());    
+};
+
+var testMultipleZips = function() {
+  var seq1 = new pn.seq.Seq([1, 2, 3]);
+  var seq2 = new pn.seq.Seq([2, 4, 8])
+  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }).toArray());    
+  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }).toArray());    
+};
+
+    </script>    
+  </body>
+</html>

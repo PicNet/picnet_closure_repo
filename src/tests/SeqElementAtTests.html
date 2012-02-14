@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testElementAtWithLessThan0Throws = function() {
+  try {
+    new pn.seq.Seq([1, 2, 3]).elementAt(-1);
+    assertFails('Should fail');
+  } catch(ex) {}
+};
+
+var testElementAtWithGreaterThanSeqIndexThrows = function() {
+  try {
+    new pn.seq.Seq([1, 2, 3]).elementAt(3);
+    assertFails('Should fail');
+  } catch(ex) {}
+};
+
+var testElementAtWithInnerIndexReturnsExpected = function() {
+  assertEquals(1, new pn.seq.Seq([1, 2, 3]).elementAt(0));  
+  assertEquals(2, new pn.seq.Seq([1, 2, 3]).elementAt(1));  
+  assertEquals(3, new pn.seq.Seq([1, 2, 3]).elementAt(2));  
+};
+
+var testMultipleElementAts = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertEquals(1, seq.elementAt(0));  
+  assertEquals(2, seq.elementAt(1));  
+  assertEquals(3, seq.elementAt(2));  
+};
+
+var testElementAtOrNullWithLessThan0ReturnsNull = function() {
+  assertNull(new pn.seq.Seq([1, 2, 3]).elementAtOrNull(-1));
+};
+
+var testElementAtOrNullWithGreaterThanSeqIndexReturnsNull = function() {
+  assertNull(new pn.seq.Seq([1, 2, 3]).elementAtOrNull(3));
+};
+
+var testElementAtOrNullWithInnerIndexReturnsExpected = function() {
+  assertEquals(1, new pn.seq.Seq([1, 2, 3]).elementAtOrNull(0));  
+  assertEquals(2, new pn.seq.Seq([1, 2, 3]).elementAtOrNull(1));  
+  assertEquals(3, new pn.seq.Seq([1, 2, 3]).elementAtOrNull(2));  
+};
+
+    </script>    
+  </body>
+</html>

@@ -1,0 +1,80 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testMultipleSkips = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertArrayEquals([3], seq.skip(2).toArray());
+  assertArrayEquals([3], seq.skip(2).toArray());
+};
+
+var testMultipleTakes = function() {
+  var seq = new pn.seq.Seq([1, 2, 3]);
+  assertArrayEquals([1, 2], seq.take(2).toArray());
+  assertArrayEquals([1, 2], seq.take(2).toArray());
+};
+
+var testSkipWithNullCountThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).skip(null);
+    assertFail('count should not be null');
+  } catch (ex) {};
+};
+var testTakeWithNullCountThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).take(null);
+    assertFail('count should not be null');
+  } catch (ex) {};
+};
+var testSkipWhileWithNullPredicateThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).skipWhile(null);
+    assertFail('predicate should not be null');
+  } catch (ex) {};
+};
+var testTakeWhileWithNullPredicateThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).takeWhile(null);
+    assertFail('predicate should not be null');
+  } catch (ex) {};
+};
+
+var testSkipWithZero = function() {
+  assertArrayEquals([1, 2, 3], new pn.seq.Seq([1, 2, 3]).skip(0).toArray());
+};
+
+var testTakeWithZero = function() {
+  assertArrayEquals([], new pn.seq.Seq([1, 2, 3]).take(0).toArray());
+};
+
+var testSkipSomeElements = function() {
+  assertArrayEquals([3], new pn.seq.Seq([1, 2, 3]).skip(2).toArray());
+};
+
+var testTakeSomeElements = function() {
+  assertArrayEquals([1, 2], new pn.seq.Seq([1, 2, 3]).take(2).toArray());
+};
+
+var testSkipWhileWithAlwaysTruePredicate = function() {
+  assertArrayEquals([], new pn.seq.Seq([1, 2, 3]).skipWhile(function() {return true;}).toArray());
+};
+var testTakeWhileWithAlwaysTruePredicate = function() {
+  assertArrayEquals([1, 2, 3], new pn.seq.Seq([1, 2, 3]).takeWhile(function() {return true;}).toArray());
+};
+
+var testSkipWhileSomeElements = function() {
+  assertArrayEquals([3], new pn.seq.Seq([1, 2, 3]).skipWhile(function(e, i) { return e < 3;}).toArray());
+};
+var testTakeWhileSomeElements = function() {
+  assertArrayEquals([1, 2], new pn.seq.Seq([1, 2, 3]).takeWhile(function(e, i) {return e < 3;}).toArray());
+};
+
+    </script>    
+  </body>
+</html>

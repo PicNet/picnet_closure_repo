@@ -1,0 +1,89 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var arr = [
+  {key:0, value:1}, 
+  {key:0, value:2},
+  {key:0, value:3},
+  {key:0, value:4},
+  {key:1, value:5},
+  {key:1, value:6},
+  {key:1, value:7}];
+  
+var testToLookupRequiresKeySelector = function() {
+  try {
+    new pn.seq.Seq([]).toLookup();
+    assertFail('keySelector should be required');
+  } catch (ex) {};
+};
+
+var testToLookupWithoutElementSelector = function() {
+  var lu = new pn.seq.Seq(arr).toLookup(function(o) { return o.key; });
+  var keys = lu.getKeys();
+  assertEquals(2, keys.length);
+  var ret = lu.get(keys[0]);  
+  var arr1 = ret.select(function(o) { return o.value; }).toArray();
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  
+  assertArrayEquals([1, 2, 3, 4], arr1);
+  assertArrayEquals([5, 6, 7], arr2);
+};
+
+var testMultipleToLookups = function() {
+  var seq = new pn.seq.Seq(arr);
+  var lu = seq.toLookup(function(o) { return o.key; });
+  var keys = lu.getKeys();
+  assertEquals(2, keys.length);
+  var ret = lu.get(keys[0]);  
+  var arr1 = ret.select(function(o) { return o.value; }).toArray();
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  
+  assertArrayEquals([1, 2, 3, 4], arr1);
+  assertArrayEquals([5, 6, 7], arr2);
+  
+  lu = seq.toLookup(function(o) { return o.key; });
+  var keys = lu.getKeys();
+  assertEquals(2, keys.length);
+  var ret = lu.get(keys[0]);  
+  var arr1 = ret.select(function(o) { return o.value; }).toArray();
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  
+  assertArrayEquals([1, 2, 3, 4], arr1);
+  assertArrayEquals([5, 6, 7], arr2);
+};
+
+var testToLookupWithElementSelector = function() {
+  var lu = new pn.seq.Seq(arr).toLookup(
+      function(o) { return o.key; }, 
+      function(o) { return o.value; });
+  var keys = lu.getKeys();
+  assertEquals(2, keys.length);
+  var arr1 = lu.get(keys[0]).toArray();
+  var arr2 = lu.get(keys[1]).toArray();
+  
+  assertArrayEquals([1, 2, 3, 4], arr1);
+  assertArrayEquals([5, 6, 7], arr2);
+};
+
+var testToLookupWithElementSelectorAndComparer = function() {
+  var lu = new pn.seq.Seq(arr).toLookup(
+      function(o) { return o.key; }, 
+      function(o) { return o.value; }, 
+      function(a, b) { return a !== null && b !== null; });
+      
+  var keys = lu.getKeys();
+  assertEquals(1, keys.length);
+  var arr1 = lu.get(keys[0]).toArray();  
+  
+  assertArrayEquals([1, 2, 3, 4, 5, 6, 7], arr1);  
+};
+    </script>    
+  </body>
+</html>

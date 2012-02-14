@@ -1,0 +1,53 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var setUp = function() {};
+
+var testSimpleCount = function () {		
+  var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.count(); 
+  assertEquals(6, result); 
+};
+
+var testMultipleCounts = function () {		
+  var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]);   
+  assertEquals(6, source.count()); 
+  assertEquals(6, source.count()); 
+};
+
+var testSimpleFilteredCount = function () {		
+  var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.count(function(x) { return x < 4; }); 
+  assertEquals(4, result); 
+};
+
+var testIndexBasedFilteredCount = function () {		
+  var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.count(function(x, i) { return i <= 2; }); 
+  assertEquals(3, result); 
+};
+
+var testNullSeqThrowsError = function() {
+  try { 
+    new pn.seq.Seq(null); 
+    assertFail('Should not allow null sequence');
+  } catch (ex) {};
+};
+
+var testNullPredicateThrowsError = function() {
+  try { 
+    var source = new pn.seq.Seq([ 1, 3, 4, 2, 8, 1 ]); 
+    var result = source.where(null); 
+    assertFail('Should not allow null predicate');
+  } catch (ex) {};
+};
+    </script>    
+  </body>
+</html>

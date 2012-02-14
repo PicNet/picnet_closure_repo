@@ -19,9 +19,9 @@ var setUpPage = function() {
 var setUp = function() {      
   var ajax;  
   if (!useRealServer) {
-    ajax = new MockAjaxProvider(types);
+    ajax = new pn.MockAjaxProvider(types);
   } else {
-    ajax = new MockAjaxProvider.RealServerAjax();
+    ajax = new pn.MockAjaxProvider.RealServerAjax();
     ajax.url = 'http://127.0.0.1:8124/';              
   }
   provider = new pn.data.RemoteDataProvider(ajax, types);	    

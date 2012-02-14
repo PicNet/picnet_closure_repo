@@ -1,0 +1,80 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testNullKeySelectThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).groupBy(null, function(o) { return o; });                           
+    assertFail('keySelect should not be null');
+  } catch (ex) {};
+};
+
+var testNullElementSelectThrowsError = function() {    
+  try {
+    new pn.seq.Seq([5, 3, 7]).groupBy(function(e) { return e; }, null);                           
+    assertFail('elementSelect should not be null');
+  } catch (ex) {};
+};
+
+var testGroupByWithoutResultSelect = function() {
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+    function(x) { return x < 5; },
+    function(e, prev) {       
+      return e; 
+    });                         
+  assertEquals('First Time', 2, groups.count());      
+  assertEquals('Second Time', 2, groups.count());    
+  assertArrayEquals([1, 2, 3, 4], groups.first().toArray());  
+  assertArrayEquals([5, 6, 7, 8], groups.last().toArray());
+};
+
+var testMultipleGroupBys = function() {
+  var seq = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]);
+  var groups = seq.groupBy(
+    function(x) { return x < 5; },
+    function(e, prev) {       
+      return e; 
+    });                           
+  assertArrayEquals([1, 2, 3, 4], groups.first().toArray());  
+  assertArrayEquals([5, 6, 7, 8], groups.last().toArray());
+  groups = seq.groupBy(
+    function(x) { return x < 5; },
+    function(e, prev) {       
+      return e; 
+    });                           
+  assertArrayEquals([1, 2, 3, 4], groups.first().toArray());  
+  assertArrayEquals([5, 6, 7, 8], groups.last().toArray());
+};
+
+var testGroupByWithResultSelect = function() {
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+    function(e) { return e < 5; },
+    function(e) { return e; },
+    function(key, group) {
+      return group.select(function(e) { return key + ':' + e; });
+    });                  
+  assertEquals(2, groups.count());    
+  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4], groups.first().toArray());  
+  assertArrayEquals(['false:' + 5, 'false:' + 6, 'false:' + 7, 'false:' + 8], groups.last().toArray());    
+};
+
+var testGroupByWithResultSelectAndComparer = function() {
+  var groups = new pn.seq.Seq([1, 2, 3, 4, 5, 6, 7, 8]).groupBy(
+    function(e) { return e < 5; },
+    function(e) { return e; },
+    function(key, group) {
+      return group.select(function(e) { return key + ':' + e; });
+    }, 
+    function(k1, k2) { return true; });                           
+  assertEquals(1, groups.count());
+  assertArrayEquals(['true:' + 1, 'true:' + 2, 'true:' + 3, 'true:' + 4, 'true:' + 5, 'true:' + 6, 'true:' + 7, 'true:' + 8], groups.first().toArray());  
+};
+    </script>    
+  </body>
+</html>

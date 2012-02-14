@@ -1,0 +1,28 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testForEach = function() {
+  var seq = new pn.seq.Seq([1, 2, 3, 4]);
+  var count = 0;
+  seq.forEach(function(x, i) {count += x; })
+  assertEquals(10, count);  
+};
+
+var testMultipleForEach = function() {
+  var seq = new pn.seq.Seq([1, 2, 3, 4]);
+  var count = 0;
+  seq.forEach(function(x, i) {count += x; })
+  assertEquals(10, count);  
+  seq.forEach(function(x, i) {count += x; })
+  assertEquals(20, count);  
+};
+    </script>    
+  </body>
+</html>

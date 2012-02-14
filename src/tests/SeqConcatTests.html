@@ -1,0 +1,62 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var setUp = function() {};
+
+var testConcatWithNullArgsThrowsError = function() {
+  try { 
+    var seq = new pn.seq.Seq([]); 
+    seq.concat(null);
+    assertFail('Should not allow null args');
+  } catch (ex) {};
+};
+
+var testConcatWithNullEmptyArgsThrowsError = function() {
+  try { 
+    var seq = new pn.seq.Seq([]); 
+    seq.concat([]);
+    assertFail('Should not allow empty args');
+  } catch (ex) {};
+};
+
+var testConcatConcatsArraysInArg = function() {
+  var seq = new pn.seq.Seq([9]); 
+  var result = seq.concat([0, 1, 2], [3, 4, 5]); 
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.toArray());
+};
+
+var testMultipleConcats = function() {
+  var seq = new pn.seq.Seq([9]);   
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], seq.concat([0, 1, 2], [3, 4, 5]).toArray());
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], seq.concat([0, 1, 2], [3, 4, 5]).toArray());
+};
+
+var testConcatConcatsSequencesInArg = function() {
+  var seq = new pn.seq.Seq([9]); 
+  var result = seq.concat(new pn.seq.Seq([0, 1, 2]), new pn.seq.Seq([3, 4, 5])); 
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], result.toArray());
+};
+
+var testMultipleCallsToConcat = function() {
+  var seq1 = new pn.seq.Seq([9]); 
+  var seq2 = new pn.seq.Seq([0, 1, 2]);
+  var seq3 = new pn.seq.Seq([3, 4, 5]);  
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], seq1.concat(seq2, seq3).toArray());
+  assertArrayEquals([9, 0, 1, 2, 3, 4, 5], seq1.concat(seq2, seq3).toArray());
+};
+
+var testConcatConcatsMixedInArg = function() {
+  var seq = new pn.seq.Seq([]); 
+  var result = seq.concat(new pn.seq.Seq([0, 1, 2]), [3, 4, 5]); 
+  assertArrayEquals([0, 1, 2, 3, 4, 5], result.toArray());
+};
+    </script>    
+  </body>
+</html>
