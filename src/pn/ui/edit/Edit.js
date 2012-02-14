@@ -265,15 +265,6 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
 
 
 /** @inheritDoc */
-pn.ui.edit.Edit.prototype.shouldFireCommandEvent = function(command) {
-  if (command.onclick && !command.onclick(this.getCurrentFormData()))
-    return false;
-  if (command.validate && !this.isValidForm()) return false;
-  return true;
-};
-
-
-/** @inheritDoc */
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(eventType, data) {
   var event = new goog.events.Event(eventType, this);
   event.data = data;
