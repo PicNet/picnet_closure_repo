@@ -2,6 +2,7 @@
 goog.provide('pn.ui.edit.FieldBuilder');
 
 goog.require('goog.date.Date');
+goog.require('goog.string');
 
 
 /**
@@ -139,7 +140,8 @@ pn.ui.edit.FieldBuilder.createDropDownList =
     goog.asserts.assert(txt !== undefined);
     options.push(goog.dom.createDom('option', opts, txt));
   });
-  goog.array.sortObjectsByKey(options, 'innerHTML');
+  goog.array.sortObjectsByKey(options, 'innerHTML',
+      goog.string.caseInsensitiveCompare);
   goog.array.forEach(options, function(o) {
     goog.dom.appendChild(select, o);
   });

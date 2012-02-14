@@ -21,6 +21,7 @@ pn.ui.edit.FieldRenderers.dateRenderer =
   var dt = null;
   if (val) {
     dt = new goog.date.Date();
+
     dt.setTime(/** @type {number} */ (val));
     if (dt.getFullYear() <= 1970) dt = null;
   }
@@ -35,7 +36,6 @@ pn.ui.edit.FieldRenderers.dateRenderer =
   idp.decorate(fieldLabelInput.getElement());
   if (dt) {
     idp.setDate(dt);
-
   }
 
   return idp;

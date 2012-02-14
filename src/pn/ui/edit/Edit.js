@@ -111,7 +111,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
  * Resets the dirty state of the current view
  */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
-  delete this.data_;
+  this.data_ = this.getCurrentFormData();
 };
 
 
@@ -128,7 +128,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   var div = goog.dom.createDom('div', opts);
   goog.dom.appendChild(element, div);
 
-  pn.rcdb.ui.RcEdit.superClass_.decorateInternal.call(this, div);
+  pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
   this.decorateFields_(div);
 
   goog.style.showElement(div, true);
@@ -263,13 +263,15 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   });
 };
 
+
 /** @inheritDoc */
-pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent = 
-    function(command) {
-  if (command.onclick && !command.onclick(this.getCurrentFormData())) return false;
+pn.ui.edit.Edit.prototype.shouldFireCommandEvent = function(command) {
+  if (command.onclick && !command.onclick(this.getCurrentFormData()))
+    return false;
   if (command.validate && !this.isValidForm()) return false;
   return true;
 };
+
 
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(eventType, data) {

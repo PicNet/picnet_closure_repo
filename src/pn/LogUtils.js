@@ -35,7 +35,7 @@ pn.LogUtils.initialise = function() {
 /**
  * @param {string} name The name of the logger to create.
  * @param {boolean=} opt_exclusive Wether to turn off all other loggers.
- * @return {goog.debug.Logger} The logger create with the specified name.
+ * @return {!goog.debug.Logger} The logger create with the specified name.
  */
 pn.LogUtils.getLogger = function(name, opt_exclusive) {
   if (pn.LogUtils.OFF_ || pn.LogUtils.isExclusive_) {
@@ -57,7 +57,7 @@ pn.LogUtils.getLogger = function(name, opt_exclusive) {
  * @private
  * @param {string} name The name of the logger.
  * @param {goog.debug.Logger.Level} level The level to allow logging at.
- * @return {goog.debug.Logger} The logger created.
+ * @return {!goog.debug.Logger} The logger created.
  */
 pn.LogUtils.getLoggerImpl_ = function(name, level) {
   var log = goog.debug.Logger.getLogger(name);

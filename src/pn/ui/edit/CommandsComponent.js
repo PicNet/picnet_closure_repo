@@ -66,7 +66,7 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 
 /**
  * @protected
- * @return {Object} The current form data (Read from input controls).
+ * @return {!Object} The current form data (Read from input controls).
  */
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
 
@@ -76,11 +76,23 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
   goog.asserts.assert(element);
 
   this.setElementInternal(element);
+  this.addCommandsPanel(element, 'commands-container');
+};
+
+
+/**
+ * @protected
+ * @param {!Element} parent The parent for this commands panel.
+ * @param {string} className The name of the css class for this control.
+ */
+pn.ui.edit.CommandsComponent.prototype.addCommandsPanel =
+    function(parent, className) {
+  goog.asserts.assert(parent);
   if (!this.commands_.length) return;
 
-  var div = goog.dom.getElementsByClass('commands-container')[0] ||
-      goog.dom.createDom('div', {'class': 'commands-container'});
-  goog.dom.appendChild(element, div);
+  var div = goog.dom.getElementsByClass(className)[0] ||
+      goog.dom.createDom('div', {'class': className});
+  goog.dom.appendChild(parent, div);
 
   this.decorateCommands_(div);
 };
@@ -93,8 +105,8 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
     var button = new goog.ui.Button(c.name);
-    button.enableClassName(
-        goog.string.removeAll(c.name.toLowerCase(), ''), true);
+    var className = goog.string.removeAll(c.name.toLowerCase(), '');
+    button.enableClassName(className, true);
     button.render(parent);
     this.buttons_.push(button);
   }, this);
@@ -112,23 +124,29 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 /**
  * @private
  * @param {pn.ui.edit.Command} command The command to attach events to.
- * @param {number} idx The index of the specified command.
  */
 pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
-    function(command, idx) {
-  var button = this.buttons_[idx];
-  this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
-    if (!this.shouldFireCommandEvent(command)) { return; }
-    this.fireCommandEvent(command.eventType, this.getCurrentFormData());
+    function(command) {
+  var expClassName = goog.string.removeAll(command.name.toLowerCase(), '');
+  var buttons = goog.array.filter(this.buttons_, function(b) {
+    return b.getExtraClassNames().indexOf(expClassName) >= 0;
   });
+  goog.array.forEach(buttons, function(button) {
+    this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
+      if (!this.shouldFireCommandEvent(command)) { return; }
+      this.fireCommandEvent(command.eventType, this.getCurrentFormData());
+    });
+  }, this);
 };
+
 
 /**
  * @protected
- * @param {pn.ui.edit.Command} command The command to determine 
- *    wether to fire or not
+ * @param {pn.ui.edit.Command} command The command to determine
+ *    wether to fire or not.
+ * @return {boolean} Whether to fire Command Event.
  */
-pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent = 
+pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     function(command) {
   if (command.onclick && !command.onclick()) return false;
   if (command.validate && !this.isValidForm()) return false;
