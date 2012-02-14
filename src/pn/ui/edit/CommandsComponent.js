@@ -41,7 +41,7 @@ pn.ui.edit.CommandsComponent = function(commands) {
    * @type {!Array.<pn.ui.edit.Command>}
    */
   this.commands_ = commands;
-  
+
   /**
    * @private
    * @type {!Array.<goog.ui.Button>}
@@ -148,7 +148,8 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
  */
 pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     function(command) {
-  if (command.onclick && !command.onclick(this.getCurrentFormData())) return false;
+  if (command.onclick && !command.onclick(this.getCurrentFormData()))
+    return false;
   if (command.validate && !this.isValidForm()) return false;
   return true;
 };

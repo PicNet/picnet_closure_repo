@@ -6,8 +6,8 @@ goog.provide('pn.seq.Seq');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('goog.structs.Map');
 goog.require('goog.iter.Iterator');
+goog.require('goog.structs.Map');
 goog.require('pn.seq.CompoundComparer');
 goog.require('pn.seq.ProjectionComparer');
 goog.require('pn.seq.ReverseComparer');
@@ -15,28 +15,30 @@ goog.require('pn.seq.ReverseComparer');
 
 
 /**
- * @constructor 
+ * @constructor
  * @param {!goog.iter.Iterable|!pn.seq.Seq} source The source iterable or array.
  */
 pn.seq.Seq = function(source) {
-  goog.asserts.assert(goog.isDefAndNotNull(source));    
+  goog.asserts.assert(goog.isDefAndNotNull(source));
 
   /**
-   * @private   
+   * @private
    * @type {!goog.iter.Iterable}
    */
-  this.source_ = source.source_ || source;  
+  this.source_ = source.source_ || source;
 };
 
-/** 
- * @private 
- * @param {!goog.iter.Iterable} item The iterable to convert to an iterator
+
+/**
+ * @private
+ * @param {!goog.iter.Iterable} item The iterable to convert to an iterator.
  * @return {!goog.iter.Iterator}
  */
 pn.seq.Seq.toIterator_ = function(item) {
   if (item.iter_) return item.iter_();
   return goog.iter.toIterator(item);
 };
+
 
 /**
  * @private
@@ -84,16 +86,16 @@ pn.seq.Seq.empty = function() { return pn.seq.Seq.EMPTY_; };
 pn.seq.Seq.range = function(start, count) {
   goog.asserts.assert(start >= 0);
   goog.asserts.assert(count >= 0);
-  
+
   var idx = 0;
   var newIter = new goog.iter.Iterator;
   newIter.next = function() {
-    while (true) {      
-      if (idx++ >= count) throw goog.iter.StopIteration;      
+    while (true) {
+      if (idx++ >= count) throw goog.iter.StopIteration;
       return start + (idx - 1);
     }
   };
-  return new pn.seq.Seq(newIter);  
+  return new pn.seq.Seq(newIter);
 };
 
 
@@ -106,17 +108,18 @@ pn.seq.Seq.range = function(start, count) {
  */
 pn.seq.Seq.repeat = function(element, count) {
   goog.asserts.assert(count >= 0);
-  
+
   var idx = 0;
   var newIter = new goog.iter.Iterator;
   newIter.next = function() {
-    while (true) {      
-      if (idx++ >= count) throw goog.iter.StopIteration;      
+    while (true) {
+      if (idx++ >= count) throw goog.iter.StopIteration;
       return element;
     }
   };
-  return new pn.seq.Seq(newIter);  
+  return new pn.seq.Seq(newIter);
 };
+
 
 /**
  * The where clause is used in a query expression to specify which elements
@@ -133,19 +136,19 @@ pn.seq.Seq.repeat = function(element, count) {
  *    never modified.
  */
 pn.seq.Seq.prototype.where = function(predicate) {
-  if (!predicate) throw new Error('predicate is required and was not provided');    
+  if (!predicate) throw new Error('predicate is required and was not provided');
   var idx = 0;
   var arr = [];
   var iter = this.iter_();
   while (true) {
     try {
       var e = iter.next();
-      if (predicate(e, idx++)) arr.push(e);      
+      if (predicate(e, idx++)) arr.push(e);
     } catch (ex) {
-      if (ex !== goog.iter.StopIteration) { throw ex; }      
-      return new pn.seq.Seq(arr);    
+      if (ex !== goog.iter.StopIteration) { throw ex; }
+      return new pn.seq.Seq(arr);
     }
-  }    
+  }
 };
 
 
@@ -161,19 +164,19 @@ pn.seq.Seq.prototype.where = function(predicate) {
  * @return {!pn.seq.Seq} The modified sequence.  Note: The input sequence is
  *    never modified.
  */
-pn.seq.Seq.prototype.select = function(mutator) {  
+pn.seq.Seq.prototype.select = function(mutator) {
   if (!mutator) throw new Error('mutator is required and was not provided');
   var idx = 0;
   var arr = [];
   var iter = this.iter_();
   while (true) {
     try {
-      arr.push(mutator(iter.next(), idx++));      
+      arr.push(mutator(iter.next(), idx++));
     } catch (ex) {
-      if (ex !== goog.iter.StopIteration) { throw ex; }      
-      return new pn.seq.Seq(arr);    
+      if (ex !== goog.iter.StopIteration) { throw ex; }
+      return new pn.seq.Seq(arr);
     }
-  }    
+  }
 };
 
 
@@ -185,19 +188,19 @@ pn.seq.Seq.prototype.select = function(mutator) {
  * @return {!number} The length of the sequence.
  */
 pn.seq.Seq.prototype.count = function(opt_predicate) {
-  var iter = opt_predicate ? 
-    this.where(opt_predicate).iter_() : 
-    this.iter_();
+  var iter = opt_predicate ?
+      this.where(opt_predicate).iter_() :
+      this.iter_();
   var count = 0;
   while (true) {
     try {
       iter.next();
-      count++;      
+      count++;
     } catch (ex) {
-      if (ex !== goog.iter.StopIteration) { throw ex; }      
+      if (ex !== goog.iter.StopIteration) { throw ex; }
       return count;
     }
-  }    
+  }
 };
 
 
@@ -208,7 +211,7 @@ pn.seq.Seq.prototype.count = function(opt_predicate) {
  * @return {!pn.seq.Seq} The concatenated sequences as one sequence.
  */
 pn.seq.Seq.prototype.concat = function(var_args) {
-  var iters = goog.array.clone(arguments);  
+  var iters = goog.array.clone(arguments);
   var idx = 0;
   var curr = this.iter_();
   var newIter = new goog.iter.Iterator;
@@ -217,14 +220,14 @@ pn.seq.Seq.prototype.concat = function(var_args) {
       try {
         return curr.next();
       } catch (ex) {
-        if (ex !== goog.iter.StopIteration) { throw ex; }      
+        if (ex !== goog.iter.StopIteration) { throw ex; }
         curr = iters[idx++];
         if (!curr) throw goog.iter.StopIteration;
         if (curr.source_) { curr = curr.iter_(); }
-        if (!curr.next) { curr = pn.seq.Seq.toIterator_(curr); }        
+        if (!curr.next) { curr = pn.seq.Seq.toIterator_(curr); }
       }
-    } 
-   };
+    }
+  };
   return new pn.seq.Seq(newIter);
 };
 
@@ -242,24 +245,24 @@ pn.seq.Seq.prototype.concat = function(var_args) {
 pn.seq.Seq.prototype.selectMany =
     function(collectionSelector, opt_resultSelector) {
   goog.asserts.assert(collectionSelector);
-  
+
   var idx = 0;
   var newIter = new goog.iter.Iterator;
-  var thisiter = this.iter_();  
-  var elem = thisiter.next();  
+  var thisiter = this.iter_();
+  var elem = thisiter.next();
   var currIter = pn.seq.Seq.toIterator_(collectionSelector(elem, idx++));
   newIter.next = function() {
-    while (true) {      
-      try {        
+    while (true) {
+      try {
         var next = currIter.next();
-        return opt_resultSelector ? opt_resultSelector(elem, next) : next;      
+        return opt_resultSelector ? opt_resultSelector(elem, next) : next;
       } catch (ex) {
-        if (ex !== goog.iter.StopIteration) { throw ex; }    
+        if (ex !== goog.iter.StopIteration) { throw ex; }
         elem = thisiter.next();
-        currIter = pn.seq.Seq.toIterator_(collectionSelector(elem, idx++));        
+        currIter = pn.seq.Seq.toIterator_(collectionSelector(elem, idx++));
       }
     }
-  };      
+  };
   return new pn.seq.Seq(newIter);
 };
 
@@ -273,19 +276,19 @@ pn.seq.Seq.prototype.selectMany =
  * @return {boolean} Whether any element of a sequence exists or satisfies
  *    a condition.
  */
-pn.seq.Seq.prototype.any = function(opt_predicate) {  
+pn.seq.Seq.prototype.any = function(opt_predicate) {
   var idx = 0;
   if (!opt_predicate) {
-    try { this.iter_().next(); } 
+    try { this.iter_().next(); }
     catch (ex) {
       if (ex !== goog.iter.StopIteration) { throw ex; }
       return false;
-    } 
+    }
     return true;
   }
-  return goog.iter.some(this.iter_(), function(e) { 
-    return opt_predicate(e, idx++); 
-  }, this);  
+  return goog.iter.some(this.iter_(), function(e) {
+    return opt_predicate(e, idx++);
+  }, this);
 };
 
 
@@ -297,8 +300,8 @@ pn.seq.Seq.prototype.any = function(opt_predicate) {
  * @return {boolean} Whether all elements of a sequence satisfy a condition.
  */
 pn.seq.Seq.prototype.all = function(predicate) {
-  if (!predicate) throw new Error('predicate is required and was not provided');  
-  return goog.iter.every(this.iter_(), predicate, this);   
+  if (!predicate) throw new Error('predicate is required and was not provided');
+  return goog.iter.every(this.iter_(), predicate, this);
 };
 
 
@@ -308,8 +311,8 @@ pn.seq.Seq.prototype.all = function(predicate) {
  * @return {*} The first element in the list or the first element matching
  *    the predicate.
  */
-pn.seq.Seq.prototype.first = function(opt_predicate) {    
-  if (!opt_predicate) { return this.iter_().next(); }  
+pn.seq.Seq.prototype.first = function(opt_predicate) {
+  if (!opt_predicate) { return this.iter_().next(); }
   return this.where(opt_predicate).next();
 };
 
@@ -335,21 +338,21 @@ pn.seq.Seq.prototype.firstOrNull = function(opt_predicate) {
  * @return {*} The only element in the list or the first element matching
  *    the predicate.
  */
-pn.seq.Seq.prototype.single = function(opt_predicate) {  
+pn.seq.Seq.prototype.single = function(opt_predicate) {
   var check = function(iter) {
     var s = iter.next();
-    try { iter.next();  } catch (ex) {
+    try { iter.next(); } catch (ex) {
       if (ex !== goog.iter.StopIteration) { throw ex; }
       return s;
     }
     throw new Error('More than one value matched');
   };
   var idx = 0;
-  return opt_predicate ? 
+  return opt_predicate ?
       check(goog.iter.filter(this.iter_(), function(e) {
-        return opt_predicate(e, idx++); 
-      }, this)) : 
-      check(this.iter_());    
+        return opt_predicate(e, idx++);
+      }, this)) :
+      check(this.iter_());
 };
 
 
@@ -360,12 +363,13 @@ pn.seq.Seq.prototype.single = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
-  try { return this.single(opt_predicate); } 
+  try { return this.single(opt_predicate); }
   catch (ex) {
-    if (ex !== goog.iter.StopIteration) { throw ex; }       
+    if (ex !== goog.iter.StopIteration) { throw ex; }
     return null;
   }
 };
+
 
 /**
  * @param {function(*,number=):boolean=}  opt_predicate The optional predicate
@@ -378,24 +382,24 @@ pn.seq.Seq.prototype.last = function(opt_predicate) {
     var hasValue = false;
     var val;
     while (true) {
-      try { 
-        val = iter.next(); 
+      try {
+        val = iter.next();
         hasValue = true;
-      } 
+      }
       catch (ex) {
-        if (ex !== goog.iter.StopIteration) { throw ex; }       
+        if (ex !== goog.iter.StopIteration) { throw ex; }
         break;
       }
     }
     if (!hasValue) throw new Error('Could not find any matching elements');
     return val;
-  };  
+  };
   var idx = 0;
-  return opt_predicate ? 
-      check(goog.iter.filter(this.iter_(), function(e) { 
-        return opt_predicate(e, idx++); 
-      }, this)) : 
-      check(this.iter_());    
+  return opt_predicate ?
+      check(goog.iter.filter(this.iter_(), function(e) {
+        return opt_predicate(e, idx++);
+      }, this)) :
+      check(this.iter_());
 };
 
 
@@ -409,15 +413,16 @@ pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
   try {
     return this.last(opt_predicate);
   } catch (ex) {
-    if (ex.message !== 'Could not find any matching elements') { throw ex; }       
+    if (ex.message !== 'Could not find any matching elements') { throw ex; }
     return null;
   }
 };
 
+
 /**
  * Returns the elements of the list, or a default valued singleton collection
  *    if the sequence is empty
- * 
+ *
  * @param {*=} opt_default The default value for a singleton collection if
  *    source sequence is empty.
  * @return {!pn.seq.Seq} The modified sequence.
@@ -427,9 +432,9 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
     this.iter_().next();
     return this;
   } catch (ex) {
-    if (ex !== goog.iter.StopIteration) throw ex;    
+    if (ex !== goog.iter.StopIteration) throw ex;
     return new pn.seq.Seq([(opt_default === undefined ? null : opt_default)]);
-  }   
+  }
 };
 
 
@@ -448,11 +453,11 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
 pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
   if (!goog.isDefAndNotNull(seed)) throw new Error('Seed is required and was not provided');
   if (!goog.isDefAndNotNull(accum))
-    throw new Error('Accumulattor is required and was not provided');  
-  return goog.iter.reduce(this.iter_(), function(acc, x) {    
+    throw new Error('Accumulattor is required and was not provided');
+  return goog.iter.reduce(this.iter_(), function(acc, x) {
     x = opt_projection ? opt_projection(x) : x;
     return accum(acc, x);
-  }, seed);  
+  }, seed);
 };
 
 
@@ -462,24 +467,24 @@ pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
  *
  * @param {function(*, *):boolean=} opt_comparer The optional comparer to use
  *    when comparing items in the sequence.
- * @return {!pn.seq.Seq} The modified sequence. 
+ * @return {!pn.seq.Seq} The modified sequence.
  */
-pn.seq.Seq.prototype.distinct = function(opt_comparer) {  
-  var done = [];  
-  var newIter = new goog.iter.Iterator;  
-  var thisiter = this.iter_();     
+pn.seq.Seq.prototype.distinct = function(opt_comparer) {
+  var done = [];
+  var newIter = new goog.iter.Iterator;
+  var thisiter = this.iter_();
   newIter.next = function() {
-    while (true) {                  
+    while (true) {
       var element = thisiter.next();
       var comparer = opt_comparer || pn.seq.Seq.defaultEquality_;
-      if (goog.array.findIndex(done, function(e) { 
-        return comparer(e, element);        
+      if (goog.array.findIndex(done, function(e) {
+        return comparer(e, element);
       }) >= 0) continue;
       done.push(element);
       return element;
     }
   };
-  return new pn.seq.Seq(newIter);  
+  return new pn.seq.Seq(newIter);
 };
 
 
@@ -491,10 +496,10 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
  * @return {!pn.seq.Seq} The union of the two sequences.
  */
 pn.seq.Seq.prototype.union = function(second, opt_comparer) {
-  if (!second) throw new Error('second is required and was not provided');  
+  if (!second) throw new Error('second is required and was not provided');
   second = pn.seq.Seq.toIterator_(second);
-  var all = this.concat(second);  
-  return new pn.seq.Seq(all).distinct(opt_comparer);  
+  var all = this.concat(second);
+  return new pn.seq.Seq(all).distinct(opt_comparer);
 };
 
 
@@ -507,34 +512,34 @@ pn.seq.Seq.prototype.union = function(second, opt_comparer) {
  */
 pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
   if (!second) throw new Error('second is required and was not provided');
-  var secondarr = /** @type {!goog.array.ArrayLike} */ 
-      (goog.isArrayLike(second) ? 
-      second : 
-      goog.isArrayLike(second.source_) ? 
+  var secondarr = /** @type {!goog.array.ArrayLike} */
+      (goog.isArrayLike(second) ?
+      second :
+      goog.isArrayLike(second.source_) ?
           second.source_ :
-          new pn.seq.Seq(second).toArray());        
-  var done = [];  
-  
-  var newIter = new goog.iter.Iterator;  
-  var thisiter = this.iter_();  
+          new pn.seq.Seq(second).toArray());
+  var done = [];
+
+  var newIter = new goog.iter.Iterator;
+  var thisiter = this.iter_();
   newIter.next = function() {
-    while (true) {                  
+    while (true) {
       var element = thisiter.next();
       var comparer = opt_comparer || pn.seq.Seq.defaultEquality_;
-      var idx = goog.array.findIndex(done, function(e) { 
-        return comparer(e, element);        
+      var idx = goog.array.findIndex(done, function(e) {
+        return comparer(e, element);
       });
-      if (idx >= 0) continue;      
-      if (goog.array.removeIf(secondarr, function(e) { 
-        return comparer(e, element);        
+      if (idx >= 0) continue;
+      if (goog.array.removeIf(secondarr, function(e) {
+        return comparer(e, element);
       })) {
         delete secondarr[idx];
         done.push(element);
         return element;
-      }           
+      }
     }
   };
-  return new pn.seq.Seq(newIter);  
+  return new pn.seq.Seq(newIter);
 };
 
 
@@ -547,28 +552,28 @@ pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
  */
 pn.seq.Seq.prototype.except = function(second, opt_comparer) {
   if (!second) throw new Error('second is required and was not provided');
-  var secondarr = /** @type {!goog.array.ArrayLike} */ 
-      (goog.isArrayLike(second) ? 
-      second : 
-      goog.isArrayLike(second.source_) ? 
+  var secondarr = /** @type {!goog.array.ArrayLike} */
+      (goog.isArrayLike(second) ?
+      second :
+      goog.isArrayLike(second.source_) ?
           second.source_ :
-          new pn.seq.Seq(second).toArray());               
-  
-  var newIter = new goog.iter.Iterator;  
-  var thisiter = this.iter_();  
+          new pn.seq.Seq(second).toArray());
+
+  var newIter = new goog.iter.Iterator;
+  var thisiter = this.iter_();
   newIter.next = function() {
-    while (true) {                  
+    while (true) {
       var element = thisiter.next();
       var comparer = opt_comparer || pn.seq.Seq.defaultEquality_;
-      var idx = goog.array.findIndex(secondarr, function(e) { 
-        return comparer(e, element);        
+      var idx = goog.array.findIndex(secondarr, function(e) {
+        return comparer(e, element);
       });
-      if (idx >= 0) continue;      
-      secondarr.push(element);      
-      return element;      
+      if (idx >= 0) continue;
+      secondarr.push(element);
+      return element;
     }
   };
-  return new pn.seq.Seq(newIter);  
+  return new pn.seq.Seq(newIter);
 };
 
 
@@ -583,8 +588,8 @@ pn.seq.Seq.prototype.except = function(second, opt_comparer) {
  */
 pn.seq.Seq.prototype.toLookup =
     function(keySelector, opt_elementSelector, opt_comparer) {
-  if (!keySelector) throw new Error('keySelector is required and was not provided');    
-  return new pn.seq.Lookup(this.source_, keySelector, opt_elementSelector, opt_comparer);      
+  if (!keySelector) throw new Error('keySelector is required and was not provided');
+  return new pn.seq.Lookup(this.source_, keySelector, opt_elementSelector, opt_comparer);
 };
 
 
@@ -602,15 +607,15 @@ pn.seq.Seq.prototype.toLookup =
 pn.seq.Seq.prototype.join =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
   this.joinValidate_(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
-   
+
   var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
-  var results = [];  
-  this.forEach(function(outerElement) {       
-    var key = outKeySelect(outerElement);    
-    lu.get(key).forEach(function(innerElement) {           
+  var results = [];
+  this.forEach(function(outerElement) {
+    var key = outKeySelect(outerElement);
+    lu.get(key).forEach(function(innerElement) {
       results.push(resultSelector(outerElement, innerElement));
     });
-  });  
+  });
   return new pn.seq.Seq(results);
 };
 
@@ -628,11 +633,11 @@ pn.seq.Seq.prototype.join =
 pn.seq.Seq.prototype.groupBy =
     function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
   if (!keySelect) throw new Error('keySelect is required and was not provided');
-  if (!elementSelect) throw new Error('elementSelect is required and was not provided');  
-  var lu = this.toLookup(keySelect, elementSelect, opt_comparer);    
+  if (!elementSelect) throw new Error('elementSelect is required and was not provided');
+  var lu = this.toLookup(keySelect, elementSelect, opt_comparer);
   var seq = lu.select(function(group) {
     return opt_resultSelect ? opt_resultSelect(group.key, group) : group;
-  });    
+  });
   return seq;
 };
 
@@ -652,16 +657,17 @@ pn.seq.Seq.prototype.groupBy =
 pn.seq.Seq.prototype.groupJoin =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
   this.joinValidate_(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
-  
+
   var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
   var results = [];
-  
-  this.forEach(function(outerElement) {  
+
+  this.forEach(function(outerElement) {
     var key = outKeySelect(outerElement);
     results.push(resultSelector(outerElement, lu.get(key)));
   });
   return new pn.seq.Seq(results);
 };
+
 
 /**
  * @param {!pn.seq.Seq} inner The sequence to join to the first sequence.
@@ -671,7 +677,7 @@ pn.seq.Seq.prototype.groupJoin =
  * @param {function(*, *):*} resultSelector The element from each element.
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
  */
-pn.seq.Seq.prototype.joinValidate_ = 
+pn.seq.Seq.prototype.joinValidate_ =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
   if (!inner) throw new Error('inner is required and was not provided');
   if (!outKeySelect) throw new Error('outKeySelect is required and was not provided');
@@ -688,11 +694,11 @@ pn.seq.Seq.prototype.joinValidate_ =
  */
 pn.seq.Seq.prototype.takeWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is required and was not provided');
-  var idx = 0;  
-  var iter = goog.iter.takeWhile(this.iter_(), function(e) { 
+  var idx = 0;
+  var iter = goog.iter.takeWhile(this.iter_(), function(e) {
     return predicate(e, idx++);
-  });  
-  return new pn.seq.Seq(iter);  
+  });
+  return new pn.seq.Seq(iter);
 };
 
 
@@ -705,10 +711,10 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
 pn.seq.Seq.prototype.skipWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is required and was not provided');
   var idx = 0;
-  var iter = goog.iter.dropWhile(this.iter_(), function(e) { 
-    return predicate(e, idx++); 
+  var iter = goog.iter.dropWhile(this.iter_(), function(e) {
+    return predicate(e, idx++);
   });
-  return new pn.seq.Seq(iter); 
+  return new pn.seq.Seq(iter);
 };
 
 
@@ -720,8 +726,8 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
  */
 pn.seq.Seq.prototype.take = function(count) {
   if (!goog.isNumber(count) || count < 0)
-    throw new Error('count is required and was not provided');  
-  return this.takeWhile(function(e, idx) { return idx < count; });  
+    throw new Error('count is required and was not provided');
+  return this.takeWhile(function(e, idx) { return idx < count; });
 };
 
 
@@ -740,7 +746,7 @@ pn.seq.Seq.prototype.skip = function(count) {
 
 /** @return {!Array.<*>} The sequence as an array. */
 pn.seq.Seq.prototype.toArray = function() {
-  return goog.iter.toArray(this.iter_());  
+  return goog.iter.toArray(this.iter_());
 };
 
 
@@ -762,15 +768,15 @@ pn.seq.Seq.prototype.toMap =
  * @return {!pn.seq.Seq} The reversed sequence.
  */
 pn.seq.Seq.prototype.reverse = function() {
-  var newIter = new goog.iter.Iterator;  
-  var revIter;    
+  var newIter = new goog.iter.Iterator;
+  var revIter;
   newIter.next = goog.bind(function() {
     if (!revIter) {
       var arr = this.toArray();
       arr.reverse();
       revIter = pn.seq.Seq.toIterator_(arr);
-    }    
-    return revIter.next();    
+    }
+    return revIter.next();
   }, this);
   return new pn.seq.Seq(newIter);
 };
@@ -797,7 +803,7 @@ pn.seq.Seq.prototype.sum = function(opt_selector) {
  * @return {number} The aggregate amount.
  */
 pn.seq.Seq.prototype.average = function(opt_selector) {
-  var acumm = {sum:0,count:0};
+  var acumm = {sum: 0, count: 0};
   this.aggregate(acumm, function(tot, curr) {
     var sum = opt_selector ? opt_selector(curr) : curr;
     acumm.count++;
@@ -824,7 +830,7 @@ pn.seq.Seq.prototype.min = function(opt_selector) {
       var num = /** @type {number} */ (iter.next());
       if (opt_selector) num = opt_selector(num, idx);
       if (idx === 1 || num < min) min = num;
-    }  
+    }
   } catch (ex) {
     if (ex !== goog.iter.StopIteration) throw ex;
     return min;
@@ -844,16 +850,16 @@ pn.seq.Seq.prototype.max = function(opt_selector) {
   var idx = 0;
   var iter = this.iter_();
   try {
-    while (true) {    
+    while (true) {
       var num = /** @type {number} */ (iter.next());
       idx++;
       if (opt_selector) num = opt_selector(num, idx);
-      if (max === 1 || num > max) max = num;    
+      if (max === 1 || num > max) max = num;
     }
   } catch (ex) {
     if (ex !== goog.iter.StopIteration) throw ex;
     return max;
-  } 
+  }
 };
 
 
@@ -864,12 +870,12 @@ pn.seq.Seq.prototype.max = function(opt_selector) {
  * @return {*} The element at the given index.
  */
 pn.seq.Seq.prototype.elementAt = function(index) {
-  var idx = 0;  
+  var idx = 0;
   var iter = this.iter_();
-  while (true) {    
+  while (true) {
     var e = iter.next();
-    if (index === idx++) return e;    
-  }  
+    if (index === idx++) return e;
+  }
 };
 
 
@@ -902,12 +908,12 @@ pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
         pn.seq.Seq.defaultEquality_(e, value);
   };
   var iter = this.iter_();
-  try {    
+  try {
     while (true) { if (comparer(iter.next())) { return true; } }
   } catch (ex) {
     if (ex !== goog.iter.StopIteration) throw ex;
     return false;
-  } 
+  }
 };
 
 
@@ -920,7 +926,7 @@ pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
  * @return {boolean} Wether the sequences are equal.
  */
 pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
-  if (!second) throw new Error('second is required and was not provided');  
+  if (!second) throw new Error('second is required and was not provided');
   var compare = opt_comparer || pn.seq.Seq.defaultEquality_;
   // Copied from goog.iter.equals but replacing the comparisons
   var iterable1 = this.iter_();
@@ -962,7 +968,7 @@ pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
         }
       }
     }
-  }  
+  }
   return false;
 };
 
@@ -977,14 +983,14 @@ pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
 pn.seq.Seq.prototype.zip = function(second, resultSelector) {
   if (!second) throw new Error('second is required and was not provided');
   if (!resultSelector) throw new Error('resultSelector is required and was not provided');
-  
+
   var newIter = new goog.iter.Iterator;
   var iter = this.iter_();
-  var iter2 = pn.seq.Seq.toIterator_(second);  
-  newIter.next = function() {    
-    return resultSelector(iter.next(), iter2.next());    
+  var iter2 = pn.seq.Seq.toIterator_(second);
+  newIter.next = function() {
+    return resultSelector(iter.next(), iter2.next());
   };
-  return new pn.seq.Seq(newIter);    
+  return new pn.seq.Seq(newIter);
 };
 
 
@@ -1020,29 +1026,33 @@ pn.seq.Seq.prototype.orderByImpl_ =
   if (!keySelector) throw new Error('keySelector is required and was not provided');
   var comparer = opt_comparer || pn.seq.Seq.defaultComparer_;
   var projComparer = new pn.seq.ProjectionComparer(keySelector, comparer);
-  if (descending) projComparer = new pn.seq.ReverseComparer(projComparer);  
+  if (descending) projComparer = new pn.seq.ReverseComparer(projComparer);
   return new pn.seq.OrderedSeq(this.iter_(), projComparer);
 };
+
 
 /**
  * Runs an evaluator for every item in the sequence. This method is not in the
  *  .Net LINQ library but it should be.
- * @param {!function(*, number):undefined} evaluator The evaluator to run for 
- *    each item in the sequence
+ * @param {!function(*, number):undefined} evaluator The evaluator to run for
+ *    each item in the sequence.
  */
 pn.seq.Seq.prototype.forEach = function(evaluator) {
-  var idx = 0;    
-  goog.iter.forEach(this.iter_(), function(e) { evaluator(e, idx++); }, this);    
+  var idx = 0;
+  goog.iter.forEach(this.iter_(), function(e) { evaluator(e, idx++); }, this);
 };
 
-/** 
+
+/**
  * Gets a fresh iterator from the sequence source
  * @private
  * @return {!goog.iter.Iterator}
  */
-pn.seq.Seq.prototype.iter_ = function() {     
-  return goog.iter.toIterator(this.source_);  
+pn.seq.Seq.prototype.iter_ = function() {
+  return goog.iter.toIterator(this.source_);
 };
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // OrderedEnumerable
@@ -1055,14 +1065,14 @@ pn.seq.Seq.prototype.iter_ = function() {
  */
 pn.seq.OrderedSeq = function(source, comparer) {
   if (!source) throw new Error('source is required and was not provided');
-  pn.seq.Seq.call(this, source);  
+  pn.seq.Seq.call(this, source);
 
   /**
    * @private
    * @type {goog.iter.Iterator}
    */
   this.orderedIterator_ = null;
-  
+
   /**
    * @private
    * @type {!pn.seq.IComparer}
@@ -1112,9 +1122,10 @@ pn.seq.OrderedSeq.prototype.appendComparer_ =
   return new pn.seq.OrderedSeq(this.iter_(), secondComparer);
 };
 
+
 /** @inheritDoc */
 pn.seq.OrderedSeq.prototype.toArray = function() {
-  var arr = goog.iter.toArray(this.iter_());  
+  var arr = goog.iter.toArray(this.iter_());
   var comparer = goog.bind(this.comparer_.compare, this.comparer_);
   goog.array.sort(arr, comparer);
   return arr;
@@ -1124,10 +1135,12 @@ pn.seq.OrderedSeq.prototype.toArray = function() {
 // LOOKUP
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
 /**
  * @constructor
  * @extends {pn.seq.Seq}
- * @param {!goog.iter.Iterable} iter The iterable source
+ * @param {!goog.iter.Iterable} iter The iterable source.
  * @param {!function(*):*} keySelector The key of each element in the seq.
  * @param {function(*):*=} opt_elementSelector The optional element from
  *    each element.
@@ -1135,47 +1148,49 @@ pn.seq.OrderedSeq.prototype.toArray = function() {
  */
 pn.seq.Lookup = function(iter, keySelector, opt_elementSelector, opt_comparer) {
   if (!iter) throw new Error('iter is required and was not provided');
-  if (!keySelector) throw new Error('keySelector is required and was not provided');  
+  if (!keySelector) throw new Error('keySelector is required and was not provided');
   pn.seq.Seq.call(this, iter);
-  
+
   this.keySelector_ = keySelector;
   this.elemSelector_ = opt_elementSelector || function(e) { return e; };
-  this.comparer_ = opt_comparer || pn.seq.Seq.defaultEquality_;  
+  this.comparer_ = opt_comparer || pn.seq.Seq.defaultEquality_;
   this.lookupIterator_ = null;
-    
+
   // Perhaps lookup should extend Map?
-  this.map_ = new goog.structs.Map();      
+  this.map_ = new goog.structs.Map();
   this.keys_ = [];
-  
+
   this.init_();
 };
 goog.inherits(pn.seq.Lookup, pn.seq.Seq);
 
+
 /** @private */
-pn.seq.Lookup.prototype.init_ = function() {  
-  var idx = 0;  
+pn.seq.Lookup.prototype.init_ = function() {
+  var idx = 0;
   try {
     var iter = this.iter_();
     while (true) {
-      var e = iter.next();      
+      var e = iter.next();
       var key = this.keySelector_(e);
       var elem = this.elemSelector_(e, idx++);
-      this.set(key, elem);      
+      this.set(key, elem);
     }
   } catch (ex) {
     if (ex !== goog.iter.StopIteration) throw ex;
     this.collapse_();
-  };  
+  }
 };
 
-/** 
+
+/**
  * Collapses the seqence. I.e. Sets the internal source_ property
  * @private
  */
-pn.seq.Lookup.prototype.collapse_ = function() {  
-  var arr = [];  
-  for (var i = 0, limit = this.keys_.length; i < limit; i++) {  
-    var key = this.keys_[i];    
+pn.seq.Lookup.prototype.collapse_ = function() {
+  var arr = [];
+  for (var i = 0, limit = this.keys_.length; i < limit; i++) {
+    var key = this.keys_[i];
     var arr2 = /** @type {!goog.iter.Iterable} */ (this.map_.get(key));
     var seq = new pn.seq.Seq(arr2);
     this.map_.set(key, seq);
@@ -1184,24 +1199,27 @@ pn.seq.Lookup.prototype.collapse_ = function() {
   this.source_ = arr;
 };
 
+
 /**
- * @param {*} key The key to find. 
+ * @param {*} key The key to find.
  * @return {boolean} Wether the lookup contains the given key.
  */
-pn.seq.Lookup.prototype.containsKey = function(key) {    
+pn.seq.Lookup.prototype.containsKey = function(key) {
   return this.indexOfKey_(key) >= 0;
 };
 
+
 /**
  * @private
- * @param {*} key The key to find. 
- * @return {number} The index of the key
+ * @param {*} key The key to find.
+ * @return {number} The index of the key.
  */
-pn.seq.Lookup.prototype.indexOfKey_ = function(key) {    
+pn.seq.Lookup.prototype.indexOfKey_ = function(key) {
   return goog.array.findIndex(this.keys_, function(k) {
     return this.comparer_(k, key);
   }, this);
 };
+
 
 /**
  * @return {!Array.<*>} The array of keys the lookup contains.
@@ -1210,28 +1228,28 @@ pn.seq.Lookup.prototype.getKeys = function() { return goog.array.clone(this.keys
 
 
 /**
- * @param {*} key The key to find. 
+ * @param {*} key The key to find.
  * @return {!pn.seq.Seq} The sequence in the specified key (empty if key
  *    not found).
  */
 pn.seq.Lookup.prototype.get = function(key) {
-  var kidx = this.indexOfKey_(key);  
-  if (kidx < 0) return pn.seq.Seq.empty();  
-  return /** @type {!pn.seq.Seq} */ (this.map_.get(this.keys_[kidx]));  
+  var kidx = this.indexOfKey_(key);
+  if (kidx < 0) return pn.seq.Seq.empty();
+  return /** @type {!pn.seq.Seq} */ (this.map_.get(this.keys_[kidx]));
 };
 
 
 /**
  * @param {*} key The key to find.
- * @param {!pn.seq.Seq} value The sequence to set in the specified key. 
+ * @param {!pn.seq.Seq} value The sequence to set in the specified key.
  */
-pn.seq.Lookup.prototype.set = function(key, value) {  
-  var kidx = this.indexOfKey_(key);  
-  if (kidx >= 0) {        
-    var arr = this.map_.get(this.keys_[kidx]);    
-    arr.push(value);    
+pn.seq.Lookup.prototype.set = function(key, value) {
+  var kidx = this.indexOfKey_(key);
+  if (kidx >= 0) {
+    var arr = this.map_.get(this.keys_[kidx]);
+    arr.push(value);
     return;
-  }   
+  }
   this.keys_.push(key);
   this.map_.set(key, [value]);
 };
@@ -1239,13 +1257,13 @@ pn.seq.Lookup.prototype.set = function(key, value) {
 
 /**
  * @private
- * @param {*} key The key to find. 
+ * @param {*} key The key to find.
  * @return {*} The first key that matches the comparer.
  */
-pn.seq.Lookup.prototype.getCompatibleExistingKey_ = function(key) {    
-  var idx = goog.array.findIndex(this.keys_, function(k) {    
+pn.seq.Lookup.prototype.getCompatibleExistingKey_ = function(key) {
+  var idx = goog.array.findIndex(this.keys_, function(k) {
     return this.comparer_(k, key);
-  }, this);    
+  }, this);
   return idx >= 0 ? this.keys_[idx] : key;
 };
 

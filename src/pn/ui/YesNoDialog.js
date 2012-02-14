@@ -6,10 +6,11 @@ goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('goog.ui.Dialog.EventType');
 
 
+
 /**
  * @constructor
- * @param {!string} title The title of this dialog
- * @param {!string} content The content of this dialog
+ * @param {!string} title The title of this dialog.
+ * @param {!string} content The content of this dialog.
  */
 pn.ui.YesNoDialog = function(title, content) {
 
@@ -23,12 +24,12 @@ pn.ui.YesNoDialog = function(title, content) {
    * @private
    * @type {!string}
    */
-  this.content_ = content;  
+  this.content_ = content;
 };
 
 
 /**
- * @param {function(boolean):undefined} callback The callback 
+ * @param {function(boolean):undefined} callback The callback.
  */
 pn.ui.YesNoDialog.prototype.show = function(callback) {
   goog.asserts.assert(callback);

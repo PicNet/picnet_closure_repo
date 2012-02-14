@@ -46,8 +46,8 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(uniqueColIds, 
-    function (acc, f) { return acc + f;  }, ''));  
+  this.hash_ = /** @type {string} */ (goog.array.reduce(uniqueColIds,
+      function(acc, f) { return acc + f; }, ''));
 
   /**
    * @private
@@ -143,7 +143,7 @@ pn.ui.grid.Grid.prototype.filter = function(filter) {
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;
   this.dataView_.refresh();
-  this.slick_.render();  
+  this.slick_.render();
 };
 
 
@@ -180,7 +180,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     'style': 'width:' + this.cfg_.width + 'px;height:' + height
   });
   this.noData_ = goog.dom.createDom('div', {
-    'class':'grid-no-data',
+    'class': 'grid-no-data',
     'style': 'display:none'
   }, 'No matches found.');
   goog.dom.appendChild(element, div);
@@ -201,10 +201,11 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.style.showElement(div, true);
 };
 
+
 /**
  * @private
- * @param {!Array.<pn.ui.grid.Column>} cols The unsorted columns
- * @return {!Array.<pn.ui.grid.Column>} The sorted columns with savewd widths
+ * @param {!Array.<pn.ui.grid.Column>} cols The unsorted columns.
+ * @return {!Array.<pn.ui.grid.Column>} The sorted columns with savewd widths.
  */
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   if (!window.localStorage[this.hash_]) return cols;
@@ -213,23 +214,27 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   var widths = data.widths;
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var colidx = goog.array.findIndex(cols, function(c) { return c.id === id; });
+    var colidx = goog.array.findIndex(cols, function(c) {
+      return c.id === id;
+    });
     var col = cols[colidx];
     delete cols[colidx];
     col.width = widths[idx];
     ordered.push(col);
-  });  
+  });
   // Add remaining columns (if any)
-  goog.array.forEach(cols, ordered.push); 
+  goog.array.forEach(cols, ordered.push);
   return ordered;
 };
 
+
 /** @private */
-pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {  
+pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   if (!window.localStorage[this.hash_]) return;
   var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
   if (data.sort) { this.slick_.setSortColumn(data.sort.colid, data.sort.asc); }
 };
+
 
 /**
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
@@ -324,7 +329,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     }, this);
   }
   // Sorting
-  this.slick_.onSort.subscribe(goog.bind(function(e, args) {        
+  this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.sort_ = {
       colid: args['sortAsc'],
       asc: args['sortCol']['id']
@@ -344,7 +349,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Filtering
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
-    this.slick_.render();    
+    this.slick_.render();
     goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
@@ -402,6 +407,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   this.resizeFiltersRow_();
 };
 
+
 /** @private */
 pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
@@ -412,6 +418,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   };
   window.localStorage[this.hash_] = goog.json.serialize(data);
 };
+
 
 /** @private */
 pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
