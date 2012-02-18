@@ -25,7 +25,8 @@ pn.ui.edit.Command = function(name, eventType, opt_allowOnAdd, opt_validate) {
   this.allowOnAdd = opt_allowOnAdd === true;
   /** @type {boolean} */
   this.validate = opt_validate === true;
-  /** @type {null|function():boolean} Wether to continue with the command. */
+  /** @type {null|function(Object=):boolean}
+    Wether to conti with the command. */
   this.onclick = null;
   /** @type {null|function(string,Object):undefined} The command handler. */
   this.handler = null;

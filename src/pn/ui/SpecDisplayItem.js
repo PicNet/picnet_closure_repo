@@ -24,4 +24,6 @@ pn.ui.SpecDisplayItem = function(id, name) {
   this.table = '';
   /** @type {string} */
   this.readOnlyTable = '';
+  /** @type {!Array} */
+  this.additionalCahceTypes = [];
 };

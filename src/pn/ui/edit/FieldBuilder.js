@@ -2,6 +2,7 @@
 goog.provide('pn.ui.edit.FieldBuilder');
 
 goog.require('goog.date.Date');
+goog.require('goog.string');
 
 
 /**
@@ -95,6 +96,9 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   }
   var entityType = relationship[
       relationship.length === 1 ? 0 : relationship.length - 2];
+  if (goog.string.endsWith(entityType, 'Entities')) {
+    entityType = goog.string.remove(entityType, 'Entities');
+  }
   var textField = relationship.length === 1 ?
       entityType + 'Name' : relationship[relationship.length - 1];
   var list = cache[entityType];
@@ -131,15 +135,16 @@ pn.ui.edit.FieldBuilder.createDropDownList =
     goog.dom.appendChild(select, goog.dom.createDom('option',
         {'value': '0' }, selectTxt));
   }
-  var options = [];
+  var options = [];  
   goog.array.forEach(list, function(e) {
     opts = {'value': e[valf]};
     if (selValue && e[valf] === selValue) { opts['selected'] = 'selected'; }
     var txt = e[txtf] ? e[txtf].toString() : null;
     goog.asserts.assert(txt !== undefined);
-    options.push(goog.dom.createDom('option', opts, txt));
+    if (txt) options.push(goog.dom.createDom('option', opts, txt));
   });
-  goog.array.sortObjectsByKey(options, 'innerHTML');
+  goog.array.sortObjectsByKey(options, 'innerHTML',
+      goog.string.caseInsensitiveCompare);
   goog.array.forEach(options, function(o) {
     goog.dom.appendChild(select, o);
   });

@@ -43,6 +43,14 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
+   * @const
+   * @type {string}
+   */
+  this.hash_ = /** @type {string} */ (goog.array.reduce(uniqueColIds, 
+    function (acc, f) { return acc + f;  }, ''));  
+
+  /**
+   * @private
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.LogUtils.getLogger('pn.ui.grid.Grid');
@@ -57,7 +65,7 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
-  this.cols_ = cols;
+  this.cols_ = this.getColumnsWithInitialState_(cols);
 
   /**
    * @private
@@ -82,6 +90,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Slick.Grid}
    */
   this.slick_ = null;
+
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.noData_ = null;
 
   /**
    * @private
@@ -112,6 +126,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Object.<string>}
    */
   this.quickFilters_ = {};
+
+  /**
+   * @private
+   * @type {Object}
+   */
+  this.sort_ = null;
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
@@ -123,7 +143,7 @@ pn.ui.grid.Grid.prototype.filter = function(filter) {
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;
   this.dataView_.refresh();
-  this.slick_.render();
+  this.slick_.render();  
 };
 
 
@@ -159,7 +179,12 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     'class': 'grid-container',
     'style': 'width:' + this.cfg_.width + 'px;height:' + height
   });
+  this.noData_ = goog.dom.createDom('div', {
+    'class':'grid-no-data',
+    'style': 'display:none'
+  }, 'No matches found.');
   goog.dom.appendChild(element, div);
+  goog.dom.appendChild(element, this.noData_);
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(div, this.dataView_,
@@ -171,10 +196,40 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
         return c.toSlick(c.renderer);
       }, this),
       this.cfg_.toSlick());
-
+  this.setGridInitialSortState_();
+  goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(div, true);
 };
 
+/**
+ * @private
+ * @param {!Array.<pn.ui.grid.Column>} cols The unsorted columns
+ * @return {!Array.<pn.ui.grid.Column>} The sorted columns with savewd widths
+ */
+pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
+  if (!window.localStorage[this.hash_]) return cols;
+  var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
+  var ids = data.ids;
+  var widths = data.widths;
+  var ordered = [];
+  goog.array.forEach(ids, function(id, idx) {
+    var colidx = goog.array.findIndex(cols, function(c) { return c.id === id; });
+    var col = cols[colidx];
+    delete cols[colidx];
+    col.width = widths[idx];
+    ordered.push(col);
+  });  
+  // Add remaining columns (if any)
+  goog.array.forEach(cols, ordered.push); 
+  return ordered;
+};
+
+/** @private */
+pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {  
+  if (!window.localStorage[this.hash_]) return;
+  var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
+  if (data.sort) { this.slick_.setSortColumn(data.sort.colid, data.sort.asc); }
+};
 
 /**
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
@@ -269,12 +324,17 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     }, this);
   }
   // Sorting
-  this.slick_.onSort.subscribe(goog.bind(function(e, args) {
+  this.slick_.onSort.subscribe(goog.bind(function(e, args) {        
+    this.sort_ = {
+      colid: args['sortAsc'],
+      asc: args['sortCol']['id']
+    };
     this.dataView_.sort(function(a, b) {
       var x = a[args['sortCol']['field']],
           y = b[args['sortCol']['field']];
       return (x === y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
+    this.saveGridState_();
   }, this));
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
@@ -284,7 +344,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Filtering
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
-    this.slick_.render();
+    this.slick_.render();    
+    goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
 
@@ -296,7 +357,10 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
   // Quick Filters
   if (this.cfg_.enableQuickFilters) {
-    var rfr = goog.bind(this.resizeFiltersRow_, this);
+    var rfr = goog.bind(function() {
+      this.resizeFiltersRow_();
+      this.saveGridState_();
+    }, this);
     this.slick_.onColumnsReordered.subscribe(rfr);
     this.slick_.onColumnsResized.subscribe(rfr);
     this.initFiltersRow_();
@@ -338,6 +402,16 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   this.resizeFiltersRow_();
 };
 
+/** @private */
+pn.ui.grid.Grid.prototype.saveGridState_ = function() {
+  var columns = this.slick_.getColumns();
+  var data = {
+    ids: goog.array.map(columns, function(c) { return c.id; }),
+    widths: goog.array.map(columns, function(c) { return c.width; }),
+    sort: this.sort_
+  };
+  window.localStorage[this.hash_] = goog.json.serialize(data);
+};
 
 /** @private */
 pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
