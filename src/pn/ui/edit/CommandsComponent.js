@@ -148,9 +148,9 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
  */
 pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     function(command) {
-  if (command.onclick && !command.onclick(this.getCurrentFormData()))
+  if (command.onclick && !command.onclick(this.getCurrentFormData())) {
     return false;
-  if (command.validate && !this.isValidForm()) return false;
+  } if (command.validate && !this.isValidForm()) { return false; }
   return true;
 };
 

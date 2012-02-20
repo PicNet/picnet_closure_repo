@@ -2,8 +2,7 @@
 // Please do not edit.
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/datamanagerdemo.js', ['pn.demo.datamanagerdemo'], ['pn.MockAjaxProvider', 'pn.data.DataManager', 'pn.data.LocalStorageRepository']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/daterangepickerdemo.js', ['pn.demo.daterangepickerdemo'], ['pn.ui.DateRangePicker']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/demoscripts.js', ['pn.closure.repo.demoscripts'], ['pn.demo.datamanagerdemo', 'pn.demo.daterangepickerdemo', 'pn.demo.seqdemo', 'pn.demo.tabslidemenudemo']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/seqdemo.js', ['pn.demo.seqdemo'], ['pn.seq.Seq']);
+goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/demoscripts.js', ['pn.closure.repo.demoscripts'], ['pn.demo.datamanagerdemo', 'pn.demo.daterangepickerdemo', 'pn.demo.tabslidemenudemo']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/demos/tabslidemenudemo.js', ['pn.demo.tabslidemenudemo'], ['pn.ui.TabSlideMenu', 'pn.ui.TabSlideMenuSettings']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/LogUtils.js', ['pn.LogUtils'], ['goog.debug', 'goog.debug.Console', 'goog.debug.LogManager', 'goog.debug.Logger', 'goog.object']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/Utils.js', ['pn.Utils'], ['goog.array', 'goog.dom', 'goog.json', 'goog.string']);
@@ -24,12 +23,6 @@ goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/data/Loca
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/data/RemoteDataProvider.js', ['pn.data.IDataAjaxRequest', 'pn.data.RemoteDataProvider'], ['goog.Disposable', 'goog.array', 'goog.object', 'pn.Utils', 'pn.data.IDataProvider', 'pn.data.IEntity', 'pn.data.TransactionResult']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/data/TransactionResult.js', ['pn.data.TransactionResult'], []);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/data/WebSQLRepository.js', ['pn.data.WebSQLRepository'], ['goog.array', 'goog.debug', 'pn.Utils', 'pn.data.AbstractSQLRepository']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/CompoundComparer.js', ['pn.seq.CompoundComparer'], ['pn.seq.IComparer']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/IComparer.js', ['pn.seq.IComparer'], []);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/ProjectionComparer.js', ['pn.seq.ProjectionComparer'], ['pn.seq.IComparer']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/ReverseComparer.js', ['pn.seq.ReverseComparer'], ['pn.seq.IComparer']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/seq.js', ['pn.seq.Grouping', 'pn.seq.Lookup', 'pn.seq.OrderedSeq', 'pn.seq.Seq'], ['goog.array', 'goog.asserts', 'goog.iter.Iterator', 'goog.structs.Map', 'pn.seq.CompoundComparer', 'pn.seq.ProjectionComparer', 'pn.seq.ReverseComparer']);
-goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/seq/seq.newiter.js', ['pn.seq.Grouping.tmp', 'pn.seq.Iterable.tmp', 'pn.seq.Lookup.tmp', 'pn.seq.OrderedSeq.tmp', 'pn.seq.Seq.tmp'], ['goog.array', 'goog.asserts', 'goog.iter.Iterator', 'goog.structs.Map', 'pn.seq.CompoundComparer', 'pn.seq.ProjectionComparer', 'pn.seq.ReverseComparer']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/ui/DateRangePicker.js', ['pn.ui.DateRangePicker'], ['goog.array', 'goog.date.Date', 'goog.dom', 'goog.dom.DomHelper', 'goog.events.Event', 'goog.events.EventType', 'goog.i18n.DateTimeFormat', 'goog.positioning.AnchoredPosition', 'goog.positioning.Corner', 'goog.style', 'goog.ui.Component', 'goog.ui.DatePicker', 'goog.ui.DatePicker.Events', 'goog.ui.Popup', 'goog.ui.PopupBase.EventType']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/ui/FileUpload.js', ['pn.ui.FileUpload', 'pn.ui.FileUpload.EventType'], ['goog.array', 'goog.dom', 'goog.events', 'goog.events.Event', 'goog.events.EventHandler', 'goog.events.EventType', 'goog.net.EventType', 'goog.net.IframeIo', 'goog.ui.Component']);
 goog.addDependency('../../../../../projects/picnet_closure_repo/src/pn/ui/SpecDisplayItem.js', ['pn.ui.SpecDisplayItem'], []);
