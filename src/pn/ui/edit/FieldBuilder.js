@@ -2,19 +2,24 @@
 goog.provide('pn.ui.edit.FieldBuilder');
 
 goog.require('goog.date.Date');
+goog.require('goog.events.EventHandler');
 goog.require('goog.string');
+goog.require('goog.ui.ComboBox');
+goog.require('goog.ui.ComboBoxItem');
 
 
 /**
  * @param {string} id The id of this label/field.
- * @param {string} name The text for this label.
+ * @param {string=} opt_name The text for this label. The id is used
+ *  if ommitted.
  * @param {string=} opt_clazz An optional class name.  Will use 'field' if
  *    not specified.
  * @return {!Element} The label element wrapped in a div.
  */
-pn.ui.edit.FieldBuilder.getFieldLabel = function(id, name, opt_clazz) {
+pn.ui.edit.FieldBuilder.getFieldLabel = function(id, opt_name, opt_clazz) {
+  goog.asserts.assert(id);
   var dom = goog.dom.createDom('div', { 'class' : opt_clazz || 'field' },
-      goog.dom.createDom('label', { 'for': id }, name));
+      goog.dom.createDom('label', { 'for': id }, opt_name || id));
   return dom;
 };
 
@@ -149,6 +154,26 @@ pn.ui.edit.FieldBuilder.createDropDownList =
     goog.dom.appendChild(select, o);
   });
   return select;
+};
+
+
+/**
+ * @param {string} selectTxt The message to display in the first element of the
+ *    list.
+ * @param {!Array.<Object>} list The list of entities.
+ * @param {string} txtf The text field property name.
+ * @return {goog.ui.ComboBox} The select box.
+ */
+pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
+  goog.array.sortObjectsByKey(list, txtf,
+      goog.string.caseInsensitiveCompare);
+  var cb = new goog.ui.ComboBox();
+  cb.setUseDropdownArrow(true);
+  if (selectTxt) { cb.setDefaultText(selectTxt); }
+  goog.array.forEach(list, function(e) {
+    cb.addItem(new goog.ui.ComboBoxItem(e[txtf]));
+  });
+  return cb;
 };
 
 

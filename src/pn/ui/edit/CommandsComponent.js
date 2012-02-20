@@ -91,7 +91,7 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel =
   if (!this.commands_.length) return;
 
   var div = goog.dom.getElementsByClass(className)[0] ||
-      goog.dom.createDom('div', {'class': className});
+      goog.dom.createDom('div', className);
   goog.dom.appendChild(parent, div);
 
   this.decorateCommands_(div);
@@ -129,7 +129,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
     function(command) {
   var expClassName = goog.string.removeAll(command.name.toLowerCase(), '');
   var buttons = goog.array.filter(this.buttons_, function(b) {
-    return b.getExtraClassNames().indexOf(expClassName) >= 0;
+    return goog.array.indexOf(b.getExtraClassNames(), expClassName) >= 0;
   });
   goog.array.forEach(buttons, function(button) {
     this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {

@@ -36,6 +36,8 @@ pn.ui.grid.Column = function(id, name) {
   this.isParentFormatter = false;
   /** @type {null|function(number,number,Object,Object,Object):string} */
   this.renderer = null;
+  /** @type {boolean} */
+  this.total = false;
 };
 goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 

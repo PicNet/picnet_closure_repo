@@ -143,7 +143,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var fieldset = goog.dom.createDom('fieldset', {'class': 'fields'});
+  var fieldset = goog.dom.createDom('fieldset', 'fields');
   goog.dom.appendChild(parent, fieldset);
 
   goog.array.forEach(this.fields_, function(f, idx) {
@@ -218,9 +218,17 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    var error = pn.ui.edit.FieldValidator.validateFieldValue(
-        f, pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]));
-    if (error) errors.push(error);
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    var error;
+    if (f.renderer && f.renderer.validate) {
+      error = f.renderer.validate();
+      if (goog.isArrayLike(error)) {
+        errors = goog.array.concat(errors, error);
+      }
+    } else {
+      error = pn.ui.edit.FieldValidator.validateFieldValue(f, val);
+      if (error) errors.push(error);
+    }
   }, this);
   return errors;
 };

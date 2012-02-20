@@ -8,7 +8,6 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
-
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
@@ -30,7 +29,7 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  */
 pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
   goog.asserts.assert(list);
-  goog.asserts.assert(cols);
+  goog.asserts.assert(cols && cols.length);
 
   var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
   goog.array.removeDuplicates(uniqueColIds);
@@ -61,11 +60,19 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    */
   this.list_ = list;
 
+
   /**
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
   this.cols_ = this.getColumnsWithInitialState_(cols);
+
+  /**
+   * @private
+   * @type {!Array.<pn.ui.grid.Column>}
+   */
+  this.totalColumns_ =
+      goog.array.filter(this.cols_, function(c) { return c.total; });
 
   /**
    * @private
@@ -96,6 +103,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Element}
    */
   this.noData_ = null;
+
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.gridContainer_ = null;
 
   /**
    * @private
@@ -132,6 +145,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Object}
    */
   this.sort_ = null;
+
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.totalsLegend_ = null;
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
@@ -175,30 +194,36 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     }, this);
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
-  var div = goog.dom.createDom('div', {
-    'class': 'grid-container',
-    'style': 'width:' + this.cfg_.width + 'px;height:' + height
-  });
-  this.noData_ = goog.dom.createDom('div', {
-    'class': 'grid-no-data',
-    'style': 'display:none'
-  }, 'No matches found.');
-  goog.dom.appendChild(element, div);
-  goog.dom.appendChild(element, this.noData_);
+
+  var parent = goog.dom.createDom('div', 'grid-parent',
+      this.noData_ = goog.dom.createDom('div', {
+        'class': 'grid-no-data',
+        'style': 'display:none'
+      }, 'No matches found.'),
+      this.gridContainer_ = goog.dom.createDom('div', {
+        'class': 'grid-container',
+        'style': 'width:' + this.cfg_.width + 'px;height:' + height
+      })
+      );
+  goog.dom.appendChild(element, parent);
 
   this.dataView_ = new Slick.Data.DataView();
-  this.slick_ = new Slick.Grid(div, this.dataView_,
+  this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       goog.array.map(this.cols_, function(c) {
         if (!c.renderer && c.source) {
           c.isParentFormatter = true;
           c.renderer = goog.bind(this.parentColumnFormatter_, this);
         }
         return c.toSlick(c.renderer);
-      }, this),
-      this.cfg_.toSlick());
+      }, this), this.cfg_.toSlick());
+  if (this.totalColumns_.length) {
+    this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
+    goog.dom.appendChild(element, this.totalsLegend_);
+  }
+
   this.setGridInitialSortState_();
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
-  goog.style.showElement(div, true);
+  goog.style.showElement(this.gridContainer_, true);
 };
 
 
@@ -342,6 +367,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.saveGridState_();
   }, this));
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
+
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
   }, this));
@@ -350,6 +376,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
     this.slick_.render();
+    this.updateTotals_();
     goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
@@ -370,6 +397,32 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.slick_.onColumnsResized.subscribe(rfr);
     this.initFiltersRow_();
   }
+};
+
+
+/** @private */
+pn.ui.grid.Grid.prototype.updateTotals_ = function() {
+  if (!this.totalColumns_.length) return;
+  var items = this.dataView_.getItems();
+  var total = goog.array.reduce(items,
+      function(acc, item) {
+        goog.array.forEach(this.totalColumns_, function(c) {
+          if (acc[c.id] === undefined) acc[c.id] = 0;
+          acc[c.id] += item[c.id];
+        }, this);
+        return acc;
+      }, {}, this);
+  var html = [];
+  for (var field in total) {
+    var spec = goog.array.find(this.totalColumns_, function(c) {
+      return c.id === field;
+    });
+    var val = total[field];
+    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }
+    html.push('Total ' + spec.name + ': ' + val || '0');
+  }
+  this.totalsLegend_.innerHTML = '<ul><li>' +
+      html.join('</li><li>') + '</li>';
 };
 
 
@@ -494,12 +547,14 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.dataView_);
   goog.dispose(this.eh_);
   goog.dispose(this.log_);
+  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;
   delete this.dataView_;
   delete this.cfg_;
   delete this.log_;
+  delete this.totalsLegend_;
 };
 
 

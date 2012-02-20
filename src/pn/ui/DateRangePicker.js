@@ -135,16 +135,16 @@ pn.ui.DateRangePicker.prototype.enterDocument = function() {
 
   var el = this.getElement();
 
-  this.label_ = goog.dom.createDom('div', {'class':
-        goog.getCssName('picnet-daterangepicker-label')}, 'Select Date Range');
+  this.label_ = goog.dom.createDom('div',
+      goog.getCssName('picnet-daterangepicker-label'), 'Select Date Range');
   goog.dom.appendChild(el, this.label_);
 
-  this.popupButton_ = goog.dom.createDom('div', {'class':
-        goog.getCssName('picnet-daterangepicker-button')}, 'V');
+  this.popupButton_ = goog.dom.createDom('div',
+      goog.getCssName('picnet-daterangepicker-button'), 'V');
   goog.dom.appendChild(el, this.popupButton_);
 
-  this.clearRangeButton_ = goog.dom.createDom('div', {'class':
-        goog.getCssName('picnet-daterangepicker-clearbutton')}, 'X');
+  this.clearRangeButton_ = goog.dom.createDom('div',
+      goog.getCssName('picnet-daterangepicker-clearbutton'), 'X');
   goog.dom.appendChild(el, this.clearRangeButton_);
 
   goog.dom.appendChild(el, goog.dom.createDom('br'));
@@ -156,19 +156,19 @@ pn.ui.DateRangePicker.prototype.enterDocument = function() {
   goog.style.showElement(this.popupConent_, false);
 
   var fromContainer = goog.dom.createDom('div',
-      {'class': goog.getCssName('picnet-daterangepicker-fromto-cont')});
+      goog.getCssName('picnet-daterangepicker-fromto-cont'));
   goog.dom.appendChild(this.popupConent_, fromContainer);
   var fromLabel = goog.dom.createDom('div',
-      {'class': goog.getCssName('picnet-daterangepicker-fromto-label')},
+      goog.getCssName('picnet-daterangepicker-fromto-label'),
       'From:');
   goog.dom.appendChild(fromContainer, fromLabel);
   this.datePickerFrom_.decorate(fromContainer);
 
   var toContainer = goog.dom.createDom('div',
-      {'class': goog.getCssName('picnet-daterangepicker-fromto-cont')});
+      goog.getCssName('picnet-daterangepicker-fromto-cont'));
   goog.dom.appendChild(this.popupConent_, toContainer);
   var toLabel = goog.dom.createDom('div',
-      {'class': goog.getCssName('picnet-daterangepicker-fromto-label')}, 'To:');
+      goog.getCssName('picnet-daterangepicker-fromto-label'), 'To:');
   goog.dom.appendChild(toContainer, toLabel);
   this.datePickerTo_.decorate(toContainer);
 

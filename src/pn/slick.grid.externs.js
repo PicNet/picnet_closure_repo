@@ -1160,7 +1160,7 @@ Slick.Data.DataView.prototype.getPagingInfo = function() {};
 
 
 /**
- * @return {*}
+ * @return {!Array}
  */
 Slick.Data.DataView.prototype.getItems = function() {};
 

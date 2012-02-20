@@ -49,7 +49,7 @@ pn.ui.grid.ExportCommand.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  this.select_ = goog.dom.createDom('select', {'class': 'export-select'},
+  this.select_ = goog.dom.createDom('select', 'export-select',
       goog.dom.createDom('option', {'value': '0'}, 'Export Data...'),
       goog.dom.createDom('option', {'value': 'csv'}, 'CSV'),
       goog.dom.createDom('option', {'value': 'txt'}, 'TXT'),
