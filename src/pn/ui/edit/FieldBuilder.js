@@ -135,7 +135,7 @@ pn.ui.edit.FieldBuilder.createDropDownList =
     goog.dom.appendChild(select, goog.dom.createDom('option',
         {'value': '0' }, selectTxt));
   }
-  var options = [];  
+  var options = [];
   goog.array.forEach(list, function(e) {
     opts = {'value': e[valf]};
     if (selValue && e[valf] === selValue) { opts['selected'] = 'selected'; }
