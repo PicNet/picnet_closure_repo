@@ -12,10 +12,7 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(field, value) {
       typeof(field.renderer) === 'object') { // ComplexRenderer
     field.validator = goog.bind(field.renderer.validate, field.renderer);
   }
-  if (!field.validator) {
-    return '';
-  }
-
+  if (!field.validator) { return ''; }
   if (field.validator.validateField) {
     field.validator =
         goog.bind(field.validator.validateField, field.validator);

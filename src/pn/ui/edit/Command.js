@@ -21,9 +21,9 @@ pn.ui.edit.Command = function(name, eventType, opt_validate) {
   this.eventType = eventType;
   /** @type {boolean} */
   this.validate = opt_validate === true;
-  /** @type {null|function(Object=):boolean}
-    Wether to conti with the command. */
-  this.onclick = null;
+  /** @type {null|function(Object=):boolean} Wether to 
+    continue with the command. */
+  this.preclick = null;
   /** @type {null|function(string,Object):undefined} The command handler. */
-  this.handler = null;
+  this.click = null;
 };
