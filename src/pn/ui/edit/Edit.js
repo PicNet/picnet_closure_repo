@@ -151,9 +151,12 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var fieldset = goog.dom.createDom('fieldset', 'fields');
+  var fieldset = goog.dom.createDom('fieldset', 'fields'),
+      focusSet = false;
+
   this.disposables_.push(fieldset);
-  goog.dom.appendChild(parent, fieldset);
+  goog.dom.appendChild(parent, fieldset);  
+
   goog.array.forEach(this.fields_, function(f, idx) {
     // Do not do child tables on new entities
     var newEntity = !this.data_['ID'];
@@ -187,9 +190,9 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     this.inputs_[f.id] = input;
     this.attachOnChangeListenerIfRequired_(f, input);
 
-    if (idx === 0) { goog.Timer.callOnce(function() {
-      if (input.focus) input.focus();
-    }, 0); }
+    if (!focusSet && input.focus && input.id) { 
+      focusSet = true; 
+      goog.Timer.callOnce(input.focus, 0, input); }
   }, this);
 };
 
