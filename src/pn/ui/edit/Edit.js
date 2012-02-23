@@ -192,7 +192,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
     if (!focusSet && input.focus && input.id) { 
       focusSet = true; 
-      goog.Timer.callOnce(input.focus, 0, input); }
+      goog.Timer.callOnce(goog.bind(input.focus, input), 0); }
   }, this);
 };
 

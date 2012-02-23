@@ -11,7 +11,7 @@ goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
-
+goog.require('goog.net.cookies');
 
 
 /**
@@ -219,9 +219,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   if (this.totalColumns_.length) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
     goog.dom.appendChild(element, this.totalsLegend_);
-  }
-
-  this.setGridInitialSortState_();
+  }  
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
 };
@@ -233,8 +231,9 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
  * @return {!Array.<pn.ui.grid.Column>} The sorted columns with savewd widths.
  */
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
-  if (!window.localStorage[this.hash_]) return cols;
-  var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
+  var state = goog.net.cookies.get(this.hash_);
+  if (!state) return cols;
+  var data = goog.json.unsafeParse(state);
   var ids = data['ids'];
   var widths = data['widths'];
   var ordered = [];
@@ -251,17 +250,6 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   goog.array.forEach(cols, ordered.push);
   return ordered;
 };
-
-
-/** @private */
-pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
-  if (!window.localStorage[this.hash_]) return;
-  var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
-  if (data['sort']) {
-    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
-  }
-};
-
 
 /**
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
@@ -358,8 +346,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.sort_ = {
-      'colid': args['sortAsc'],
-      'asc': args['sortCol']['id']
+      'colid': args['sortCol']['id'],
+      'asc': args['sortAsc']
     };
     this.dataView_.sort(function(a, b) {
       var x = a[args['sortCol']['field']],
@@ -397,9 +385,24 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     }, this);
     this.slick_.onColumnsReordered.subscribe(rfr);
     this.slick_.onColumnsResized.subscribe(rfr);
-    this.initFiltersRow_();
+    this.initFiltersRow_();    
+  }
+
+  this.setGridInitialSortState_();
+};
+
+
+/** @private */
+pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
+  var state = goog.net.cookies.get(this.hash_);
+  if (!state) return;
+  var data = goog.json.unsafeParse(state);
+  if (data['sort']) {
+    this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
+    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
   }
 };
+
 
 
 /** @private */
@@ -473,7 +476,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c.width; }),
     'sort': this.sort_
   };
-  window.localStorage[this.hash_] = goog.json.serialize(data);
+  goog.net.cookies.set(this.hash_, goog.json.serialize(data));
 };
 
 
