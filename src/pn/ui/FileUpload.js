@@ -60,7 +60,14 @@ pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
    * @private
    * @type {goog.net.IframeIo}
    */
-  var io_ = null;
+  this.io_ = null;
+
+  /**
+   * @private
+   * @type {!Array.<!Element>}
+   */
+  this.formFields_ = [];
+
   /**
    * @private
    * @type {Object.<string, string>|function():Object.<string, string>|
@@ -114,9 +121,8 @@ pn.ui.FileUpload.prototype.enterDocument = function() {
 /** @inheritDoc */
 pn.ui.FileUpload.prototype.exitDocument = function() {
   pn.ui.FileUpload.superClass_.exitDocument.call(this);
-  this.eh_.removeAll();
 
-  goog.dispose(this.eh_);
+  this.eh_.removeAll();
 };
 
 
@@ -124,11 +130,11 @@ pn.ui.FileUpload.prototype.exitDocument = function() {
  * @private
  */
 pn.ui.FileUpload.prototype.doUpload_ = function() {
-  this.io_ = new goog.net.IframeIo();
-  this.eh_.listen(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
-
   if (this.validateData_ &&
       !this.validateData_.call(this, this.fileInput_.value)) return;
+
+  this.io_ = new goog.net.IframeIo();
+  this.eh_.listen(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
 
   if (this.getData_) {
     var data = typeof (this.getData_) === 'object' ?
@@ -145,35 +151,43 @@ pn.ui.FileUpload.prototype.doUpload_ = function() {
  * @param {Object.<string, string>} data The data to set in the upload form.
  */
 pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
+  this.formFields_ = [];
   goog.array.forEach(this.uploadform_.childNodes, function(c) {
     if (c.getAttribute('type') === 'file') return;
     goog.dom.removeNode(c);
+    goog.dispose(c);
   });
   for (var i in data) {
-    goog.dom.appendChild(this.uploadform_,
-        goog.dom.createDom('input',
-        {'type': 'hidden', 'id': i, 'name': i, 'value': data[i]}));
+    var child = goog.dom.createDom('input',
+        {'type': 'hidden', 'id': i, 'name': i, 'value': data[i]});
+    goog.dom.appendChild(this.uploadform_, child);
+    this.formFields_.push(child);
   }
 };
 
 
 /**
  * @private
- * @param {goog.events.Event} e The oncomplete event.
  */
-pn.ui.FileUpload.prototype.onComplete_ = function(e) {
+pn.ui.FileUpload.prototype.onComplete_ = function() {
+  this.fileInput_.disabled = false;
+  this.eh_.unlisten(this.io_, null);  
+
   var et = this.io_.isSuccess() ?
       pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :
       pn.ui.FileUpload.EventType.UPLOAD_ERROR;
+    
   var event = new goog.events.Event(et, this);
   event.io = this.io_;
   event.data = this.io_.isSuccess() ?
       this.io_.getResponseHtml() :
       this.io_.getLastError();
 
-  this.dispatchEvent(event);
-  this.fileInput_.disabled = false;
   goog.dispose(this.io_);
+  goog.array.forEach(this.formFields_, goog.dispose);
+  this.formFields_ = [];
+
+  this.dispatchEvent(event);
 };
 
 
@@ -181,6 +195,13 @@ pn.ui.FileUpload.prototype.onComplete_ = function(e) {
 pn.ui.FileUpload.prototype.disposeInternal = function() {
   pn.ui.FileUpload.superClass_.disposeInternal.call(this);
 
+  goog.array.forEach(this.formFields_, goog.dispose);
+  goog.dispose(this.eh_);
+  goog.dispose(this.fileInput_);
+  goog.dispose(this.uploadform_);
+
+  delete this.formFields_;
+  delete this.eh_;
   delete this.fileInput_;
   delete this.uploadform_;
   delete this.getData_;

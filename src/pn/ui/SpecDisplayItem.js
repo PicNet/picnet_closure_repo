@@ -20,10 +20,18 @@ pn.ui.SpecDisplayItem = function(id, name) {
   this.name = name;
   /** @type {string} */
   this.source = '';
-  /** @type {string} */
-  this.table = '';
-  /** @type {string} */
-  this.readOnlyTable = '';
   /** @type {!Array} */
   this.additionalCahceTypes = [];
+  /** @type {string} */
+  this.tableType = '';
+  /** @type {string} */
+  this.tableSpec = '';
+  /** @type {string} */
+  this.tableParentField = '';
+  /** @type {boolean} */
+  this.tableReadOnly = false;
+  /** @type {string} */
+  this.tableChileEntityType = '';
+  /** @type {string} */
+  this.tableChileEntityID = '';
 };

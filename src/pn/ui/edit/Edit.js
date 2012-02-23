@@ -65,6 +65,11 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    */
   this.cache_ = cache;
 
+  /**
+   * @private
+   * @type {!Array}
+   */
+  this.disposables_ = [];
 
   /**
    * @private
@@ -86,7 +91,6 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
  */
 pn.ui.edit.Edit.prototype.isDirty = function() {
   if (!this.data_) return false;
-
   var current = this.getCurrentFormData();
   for (var field in current) {
     var curr = current[field];
@@ -99,7 +103,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 
     if (curr !== orig) {
       this.log_.info('Found dirty field: [' + field + '] ' +
-          'original\n[' + orig + '] current\n[' + curr + ']');
+          'original [' + orig + '] now [' + curr + ']');
       return true;
     }
   }
@@ -124,8 +128,12 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  var opts = {'class': 'details-container', 'style': 'display:none'};
+  var opts = {
+    'class': 'details-container ' + this.cfg_.type,
+    'style': 'display:none'
+  };
   var div = goog.dom.createDom('div', opts);
+  this.disposables_.push(div);
   goog.dom.appendChild(element, div);
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
@@ -144,17 +152,19 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fr = pn.ui.edit.FieldRenderers;
 
   var fieldset = goog.dom.createDom('fieldset', 'fields');
+  this.disposables_.push(fieldset);
   goog.dom.appendChild(parent, fieldset);
-
   goog.array.forEach(this.fields_, function(f, idx) {
     // Do not do child tables on new entities
     var newEntity = !this.data_['ID'];
-    var isChildTable = f.table || f.readOnlyTable;
+    var isChildTable = f.tableType;
     if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
     var fieldParent = fieldset;
     if (!f.renderer || f.renderer.showLabel !== false) {
-      fieldParent = fb.getFieldLabel(f.id, f.name, f.className);
+      var required = f.validator && f.validator.required;
+      fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
+      this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
       }
@@ -162,6 +172,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
+    this.disposables_.push(input);
     if (f.oncreate) {
       f.oncreate(input, this.data_);
     }
@@ -265,7 +276,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
     return f.id.indexOf('.') < 0 &&
-        !f.table && !f.readOnlyTable &&
+        !f.tableType &&
         (f.showOnAdd || !newEntity) &&
         f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField;
   });
@@ -295,27 +306,27 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  * @param {pn.ui.edit.Field} field The field to attach events to.
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
-  var table = field.table || field.readOnlyTable;
+  var table = field.tableType;
   if (!table) return;
-  var readonly = !field.table;
+  var readonly = field.tableReadOnly;
 
-  var relationship = table.split('.');
   var grid = this.inputs_[field.id];
   if (readonly) return;
 
+  var spec = pn.rcdb.Global.getSpec(field.tableSpec);
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;
-    e.entityType = relationship[0];
-    e.parentField = relationship[1];
+    e.entityType = field.tableType;
+    e.parentField = field.tableParentField;
     this.dispatchEvent(e);
   });
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ROW_SELECTED, function(ev) {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
-    e.entity = ev.selected;
+    e.entityId = ev.selected['ID'];
     e.parent = this.data_;
-    e.entityType = relationship[0];
-    e.parentField = relationship[1];
+    e.entityType = spec.type;
+    e.parentField = field.tableParentField;
     this.dispatchEvent(e);
   });
 };
@@ -327,8 +338,12 @@ pn.ui.edit.Edit.prototype.disposeInternal = function() {
 
   goog.dispose(this.log_);
   goog.object.forEach(this.inputs_, goog.dispose);
-
+  goog.array.forEach(this.disposables_, goog.dispose);
+  goog.array.forEach(this.fields_, function(f) {
+    if (f.renderer) goog.dispose(f.renderer);
+  });
   delete this.inputs_;
+  delete this.disposables_;
   delete this.fields_;
   delete this.cfg_;
   delete this.log_;

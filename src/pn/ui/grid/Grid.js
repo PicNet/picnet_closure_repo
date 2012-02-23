@@ -195,7 +195,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
 
-  var parent = goog.dom.createDom('div', 'grid-parent',
+  var parent = goog.dom.createDom('div', 'grid-parent ' + this.cfg_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
         'style': 'display:none'
@@ -235,8 +235,8 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   if (!window.localStorage[this.hash_]) return cols;
   var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
-  var ids = data.ids;
-  var widths = data.widths;
+  var ids = data['ids'];
+  var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
     var colidx = goog.array.findIndex(cols, function(c) {
@@ -257,7 +257,9 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
 pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   if (!window.localStorage[this.hash_]) return;
   var data = goog.json.unsafeParse(window.localStorage[this.hash_]);
-  if (data.sort) { this.slick_.setSortColumn(data.sort.colid, data.sort.asc); }
+  if (data['sort']) {
+    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
+  }
 };
 
 
@@ -356,8 +358,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
     this.sort_ = {
-      colid: args['sortAsc'],
-      asc: args['sortCol']['id']
+      'colid': args['sortAsc'],
+      'asc': args['sortCol']['id']
     };
     this.dataView_.sort(function(a, b) {
       var x = a[args['sortCol']['field']],
@@ -408,7 +410,8 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       function(acc, item) {
         goog.array.forEach(this.totalColumns_, function(c) {
           if (acc[c.id] === undefined) acc[c.id] = 0;
-          acc[c.id] += item[c.id];
+          var itemVal = item[c.id];
+          if (itemVal) acc[c.id] += itemVal;
         }, this);
         return acc;
       }, {}, this);
@@ -419,6 +422,7 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
     });
     var val = total[field];
     if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }
+    else { val = parseInt(val, 10); }
     html.push('Total ' + spec.name + ': ' + val || '0');
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
@@ -465,9 +469,9 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
 pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
   var data = {
-    ids: goog.array.map(columns, function(c) { return c.id; }),
-    widths: goog.array.map(columns, function(c) { return c.width; }),
-    sort: this.sort_
+    'ids': goog.array.map(columns, function(c) { return c.id; }),
+    'widths': goog.array.map(columns, function(c) { return c.width; }),
+    'sort': this.sort_
   };
   window.localStorage[this.hash_] = goog.json.serialize(data);
 };
@@ -545,8 +549,11 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   if (this.slick_) this.slick_.destroy();
   goog.dispose(this.slick_);
   goog.dispose(this.dataView_);
+  this.eh_.removeAll();
   goog.dispose(this.eh_);
   goog.dispose(this.log_);
+  goog.dispose(this.noData_);
+  goog.dispose(this.gridContainer_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   delete this.quickFilters_;
   delete this.eh_;
@@ -555,6 +562,18 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.cfg_;
   delete this.log_;
   delete this.totalsLegend_;
+  delete this.list_;
+  delete this.cols_;
+  delete this.totalColumns_;
+  delete this.cfg_;
+  delete this.cache_;
+  delete this.commands_;
+  delete this.slick_;
+  delete this.noData_;
+  delete this.gridContainer_;
+  delete this.selectionHandler_;
+  delete this.currentFilter_;
+  delete this.sort_;
 };
 
 

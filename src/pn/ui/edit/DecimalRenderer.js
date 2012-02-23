@@ -51,4 +51,6 @@ pn.ui.edit.DecimalRenderer.prototype.disposeInternal =
     function() {
   pn.ui.edit.DecimalRenderer.superClass_.disposeInternal.call(this);
   goog.dispose(this.input_);
+
+  delete this.input_;
 };

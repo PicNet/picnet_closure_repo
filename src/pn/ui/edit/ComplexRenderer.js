@@ -47,6 +47,12 @@ pn.ui.edit.ComplexRenderer = function() {
    * @type {boolean}
    */
   this.showLabel = true;
+
+  /**
+   * @protected
+   * @type {goog.events.EventHandler}
+   */
+  this.eh = null;
 };
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
@@ -64,6 +70,7 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
   goog.asserts.assert(cache);
   goog.asserts.assert(spec);
 
+  this.eh = new goog.events.EventHandler(this);
   this.val = val;
   this.entity = entity;
   this.cache = cache;
@@ -89,4 +96,18 @@ pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
 pn.ui.edit.ComplexRenderer.prototype.createDom =
     function() {
   this.decorateInternal(this.dom_.createElement('div'));
+};
+
+
+/** @inheritDoc */
+pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
+  pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
+
+  this.eh.removeAll();
+  goog.dispose(this.eh);
+  delete this.eh;
+  delete this.val;
+  delete this.entity;
+  delete this.cache;
+  delete this.spec;
 };

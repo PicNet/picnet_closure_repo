@@ -175,9 +175,12 @@ pn.ui.edit.CommandsComponent.prototype.exitDocument = function() {
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 
+  this.eh.removeAll();
   goog.dispose(this.eh);
   goog.array.forEach(this.buttons_, goog.dispose);
   goog.object.forEach(this.commands_, goog.dispose);
 
   delete this.eh;
+  delete this.buttons_;
+  delete this.commands_;
 };

@@ -10,16 +10,21 @@ goog.require('goog.ui.ComboBoxItem');
 
 /**
  * @param {string} id The id of this label/field.
+ * @param {boolean} required Whether this field is required.
  * @param {string=} opt_name The text for this label. The id is used
  *  if ommitted.
  * @param {string=} opt_clazz An optional class name.  Will use 'field' if
  *    not specified.
  * @return {!Element} The label element wrapped in a div.
  */
-pn.ui.edit.FieldBuilder.getFieldLabel = function(id, opt_name, opt_clazz) {
+pn.ui.edit.FieldBuilder.getFieldLabel =
+    function(id, required, opt_name, opt_clazz) {
   goog.asserts.assert(id);
-  var dom = goog.dom.createDom('div', { 'class' : opt_clazz || 'field' },
-      goog.dom.createDom('label', { 'for': id }, opt_name || id));
+  var clazz = (opt_clazz || 'field') + (required ? ' required' : '');
+  var dom = goog.dom.createDom('div', clazz,
+      goog.dom.createDom('label', {
+        'for': id
+      }, opt_name || id));
   return dom;
 };
 
@@ -71,10 +76,10 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     } else {
       elem = field.renderer(val, entity, parent, opt_search);
     }
-  } else if (field.source) {
+  } else if (field.source && !field.tableType) {
     elem = fb.createParentEntitySelect(field, val, cache, opt_search);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
-  } else if (field.table || field.readOnlyTable) {
+  } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
   } else {
     elem = goog.dom.createDom('input',
@@ -208,20 +213,21 @@ pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
 pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
     function(field, parent, entity, cache) {
   goog.asserts.assert(entity);
-  goog.asserts.assert(entity['ID'],
-      'Cannot create child entity table for entities that have not been saved');
-  var parentId = entity['ID'];
-  var table = field.table || field.readOnlyTable;
+  goog.asserts.assert(field.tableType);
+  goog.asserts.assert(entity['ID'], 'Entity not saved.');
 
-  var relationship = table.split('.');
-  var parentField = relationship[1];
-  var list = cache[relationship[0]];
-  if (!list) throw new Error('Expected access to "' + relationship[0] +
+  var parentId = entity['ID'];
+
+  var parentField = field.tableParentField;
+  var list = cache[field.tableType];
+  if (!list) list = cache[goog.string.remove(field['id'], 'Entities')];
+  if (!list) throw new Error('Expected access to "' + field.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.rcdb.Global.getSpec(relationship[0]);
-  var g = pn.ui.edit.FieldBuilder.createGrid(spec, !field.table, data, cache);
+  var spec = pn.rcdb.Global.getSpec(field.tableSpec);
+  var g = pn.ui.edit.FieldBuilder.createGrid(
+      spec, field.tableReadOnly, data, cache);
   g.decorate(parent);
   return g;
 };

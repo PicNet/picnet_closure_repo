@@ -82,5 +82,9 @@ pn.ui.grid.Command.prototype.exitDocument = function() {
 /** @inheritDoc */
 pn.ui.grid.Command.prototype.disposeInternal = function() {
   goog.dispose(this.commandElement_);
+  this.eh_.removeAll();
   goog.dispose(this.eh_);
+
+  delete this.commandElement_;
+  delete this.eh_;
 };
