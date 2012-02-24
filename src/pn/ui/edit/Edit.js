@@ -155,7 +155,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       focusSet = false;
 
   this.disposables_.push(fieldset);
-  goog.dom.appendChild(parent, fieldset);  
+  goog.dom.appendChild(parent, fieldset);
 
   goog.array.forEach(this.fields_, function(f, idx) {
     // Do not do child tables on new entities
@@ -190,8 +190,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     this.inputs_[f.id] = input;
     this.attachOnChangeListenerIfRequired_(f, input);
 
-    if (!focusSet && input.focus && input.id) { 
-      focusSet = true; 
+    if (!focusSet && input.focus && input.id) {
+      focusSet = true;
       goog.Timer.callOnce(goog.bind(input.focus, input), 0); }
   }, this);
 };

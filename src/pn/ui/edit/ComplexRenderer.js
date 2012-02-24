@@ -27,12 +27,6 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {boolean}
-   */
-  this.inSearchFilter = false;
-
-  /**
-   * @protected
    * @type {!Object.<!Array>}
    */
   this.cache = {};
@@ -63,10 +57,9 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
  * @param {!Object.<Array>} cache The admin cache for entities related to the
  *    current entity.
  * @param {!pn.ui.SpecDisplayItem} spec The field spec.
- * @param {boolean=} opt_search If this field is being created in search mode.
  */
 pn.ui.edit.ComplexRenderer.prototype.initialise =
-    function(val, entity, cache, spec, opt_search) {
+    function(val, entity, cache, spec) {
   goog.asserts.assert(cache);
   goog.asserts.assert(spec);
 
@@ -75,7 +68,6 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
   this.entity = entity;
   this.cache = cache;
   this.spec = spec;
-  this.inSearchFilter = opt_search === true;
 };
 
 

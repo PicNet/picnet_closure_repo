@@ -5,13 +5,14 @@ goog.provide('pn.ui.grid.Grid.EventType');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
+goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
-goog.require('goog.net.cookies');
+
 
 
 /**
@@ -219,7 +220,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   if (this.totalColumns_.length) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
     goog.dom.appendChild(element, this.totalsLegend_);
-  }  
+  }
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
 };
@@ -250,6 +251,7 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   goog.array.forEach(cols, ordered.push);
   return ordered;
 };
+
 
 /**
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
@@ -385,7 +387,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     }, this);
     this.slick_.onColumnsReordered.subscribe(rfr);
     this.slick_.onColumnsResized.subscribe(rfr);
-    this.initFiltersRow_();    
+    this.initFiltersRow_();
   }
 
   this.setGridInitialSortState_();
@@ -402,7 +404,6 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
     this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
   }
 };
-
 
 
 /** @private */

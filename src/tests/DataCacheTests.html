@@ -1,0 +1,121 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="TestHead.js"></script>
+        <script>
+goog.require('pn.data.MemCache');
+
+goog.require('goog.testing.MockClock');
+
+var data = [1, 2, 3], 
+    type = 'TestType',
+    cache, 
+    pub, 
+    clock, 
+    checkForExpiredClosure;
+
+var setUp = function()
+{
+  setInterval = function(cb) { checkForExpiredClosure = cb;};
+  cache = new pn.data.MemCache();    
+  pn.rcdb.Global = { pub: function(topic) {
+    fail('Did not expect any events, received: ' + topic);
+  }};
+  clock = new goog.testing.MockClock();
+};
+
+var tearDown = function() {
+  clock.uninstall();
+  goog.dispose(clock);
+};
+
+var test_periodic_invalidation_of_cache = function() {
+  var updateTime = function(minutes) {
+    clock.tick(minutes * 60 * 1000);
+    checkForExpiredClosure();
+  };
+
+  clock.install();    
+  
+  cache.updateList(type, data);
+
+  // Check that < MAX_CACHE_AGE_MINUTES_ is still in cache
+  updateTime(pn.data.MemCache.MAX_CACHE_AGE_MINUTES_ - 1);
+  assertEquals(data, cache.cache_[type]);
+  
+  // Check that > MAX_CACHE_AGE_MINUTES_ is invalidated
+  updateTime(1.01); 
+  assertTrue(!cache.cache_[type]);  
+};
+
+var test_explicit_invalidation_of_cache = function() {
+  cache.updateList(type, data);
+  assertEquals(data, cache.cache_[type]);
+  cache.invalidateCache(type);
+  assertTrue(!cache.cache_[type]);  
+};
+
+var test_updateList_ignores_rc_types_and_formula_materials = function() {
+  cache.updateList('Rc', data);
+  assertTrue(!cache.cache_['Rc']);  
+  cache.updateList('FormulaMaterial', data);
+  assertTrue(!cache.cache_['FormulaMaterial']);  
+};
+
+var test_updateList_updates_the_list = function() {
+  cache.updateList(type, data);
+  assertEquals(data, cache.cache_[type]);    
+
+  var data2 = [4, 5, 6];
+  cache.updateList(type, data2);
+  assertEquals(data2, cache.cache_[type]);    
+};
+
+var test_getCachedLists_returns_expected_object = function() {
+  var data2 = [4, 5, 6];
+  var type2 = type + '2';
+  cache.updateList(type, data);
+  cache.updateList(type2, data2);  
+  asyncTestCase.waitForAsync();
+
+  cache.getCachedLists([type, type2], function(result) {
+    asyncTestCase.continueTesting();
+    assertTrue(goog.array.equals(data, result[type]));
+    assertTrue(goog.array.equals(data2, result[type2]));
+  });
+};
+
+var test_getCachedLists_hits_the_data_loader_appropriatelly = function() {
+  var data2 = [4, 5, 6];
+  var data3 = [7, 8, 9];
+  var type2 = type + '2';
+  var type3 = type + '3';
+
+  cache.updateList(type, data);
+  cache.updateList(type2, data2);  
+
+  registerPubSubListener('load-entity-lists', function(types, cb) {
+    assertTrue(goog.array.equals([type3], types));
+
+    var loaded = {};
+    loaded[type3] = data3;
+    cb(loaded);
+  });  
+
+  cache.getCachedLists([type, type2, type3], function(result) {    
+    asyncTestCase.continueTesting();
+
+    assertTrue(goog.array.equals(data, result[type]));
+    assertTrue(goog.array.equals(data2, result[type2]));
+    assertTrue(goog.array.equals(data3, result[type3]));
+  });
+};
+
+
+
+var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
+asyncTestCase.stepTimeout = 10000;
+				</script>
+    </body>
+</html>

@@ -71,7 +71,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
     if (typeof (field.renderer) === 'object') {
       elem = field.renderer;
-      field.renderer.initialise(val, entity, cache, field, opt_search);
+      field.renderer.initialise(val, entity, cache, field);
       elem.render(parent);
     } else {
       elem = field.renderer(val, entity, parent, opt_search);
