@@ -7,6 +7,8 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('goog.date.Date');
+
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.ComplexRenderer');
@@ -45,7 +47,7 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    * @private
    * @type {!Object}
    */
-  this.data_ = data;
+  this.data_ = data;  
 
   /**
    * @private
@@ -82,9 +84,28 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.LogUtils.getLogger('pn.ui.edit.Edit');
+
+  this.normaliseDateOnlyFields_(data);
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
+/**
+ * This is required so that fields with date only (no time) renderers don't 
+ *    throw 'dirty' checks when nothing has changed (just time is lost)
+ * @private
+ * @param {!Object} data The entity to normalize.  
+ */
+pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
+  goog.array.forEach(this.getEditableFields_(), function(f) {
+    if (f.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) return;
+    var date = data[f.id];
+    if (!date) return;
+    var dt = new goog.date.Date();
+    dt.setTime(/** @type {number} */ (date));    
+    var trimmed = new goog.date.Date(dt.getYear(), dt.getMonth(), dt.getDate());
+    data[f.id] = trimmed.getTime();
+  }, this);
+};
 
 /**
  * @return {boolean} Wether the current edit screen is dirty.
@@ -281,7 +302,8 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
     return f.id.indexOf('.') < 0 &&
         !f.tableType &&
         (f.showOnAdd || !newEntity) &&
-        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField;
+        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField &&
+        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyDateField;
   });
 };
 
