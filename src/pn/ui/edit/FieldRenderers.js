@@ -3,6 +3,7 @@ goog.require('goog.date.Date');
 goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
 
+goog.require('pn.Utils');
 goog.provide('pn.ui.edit.FieldRenderers');
 
 
@@ -25,13 +26,13 @@ pn.ui.edit.FieldRenderers.dateRenderer =
     dt.setTime(/** @type {number} */ (val));
     if (dt.getFullYear() <= 1970) dt = null;
   }
-  var glb = pn.rcdb.Global;
 
   var fieldLabelInput = new goog.ui.LabelInput('DD/MMM/YYYY');
   fieldLabelInput.render(parent);
   parent.labelInput_ = fieldLabelInput;
 
-  var idp = new goog.ui.InputDatePicker(glb.dateFormat, glb.dateParser);
+  var idp = new goog.ui.InputDatePicker(
+      pn.Utils.dateFormat, pn.Utils.dateParser);
   idp.getDatePicker().setShowWeekNum(false);
   idp.decorate(fieldLabelInput.getElement());
   if (dt) {
@@ -145,7 +146,7 @@ pn.ui.edit.FieldRenderers.readOnlyDateField =
     return pn.ui.edit.FieldRenderers.dateRenderer(val, entity, parent, true);
   }
   var date = !val ? null : new Date(val);
-  var txt = !date ? '' : pn.rcdb.Global.dateFormat.format(date);
+  var txt = !date ? '' : pn.Utils.dateFormat.format(date);
   var li = new goog.ui.LabelInput(txt);
   li.render(parent);
   li.setEnabled(false);

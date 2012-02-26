@@ -1,10 +1,29 @@
 ﻿;
 goog.require('goog.array');
 goog.require('goog.dom');
+goog.require('goog.i18n.DateTimeFormat');
+goog.require('goog.i18n.DateTimeParse');
 goog.require('goog.json');
 goog.require('goog.string');
 
 goog.provide('pn.Utils');
+
+
+/**
+ * @private
+ * @type {string}
+ */
+pn.Utils.datePattern_ = "dd'/'MMM'/'yyyy";
+
+
+/** @type {!goog.i18n.DateTimeFormat} */
+pn.Utils.dateFormat =
+    new goog.i18n.DateTimeFormat(pn.Utils.datePattern_);
+
+
+/** @type {!goog.i18n.DateTimeParse} */
+pn.Utils.dateParser =
+    new goog.i18n.DateTimeParse(pn.Utils.datePattern_);
 
 
 /**

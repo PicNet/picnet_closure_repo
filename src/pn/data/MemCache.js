@@ -5,14 +5,16 @@ goog.require('goog.net.XhrManager');
 
 goog.require('pn.LogUtils');
 
+
+
 /**
  * @constructor
  * @extends {goog.Disposable}
  * @param {number} maxAgeMinutes The maximum age of entities in the MemCache
  *    before they are considered stale and invalidated.
- * @param {function(!Array.<string>,function(Object.<!Array>):undefined} 
- *    onDataLoadRequired The callback to load the data from a data 
- *    source (when not in the cache)
+ * @param {function(!Array.<string>,function(Object.<!Array>)):undefined}
+ *    onDataLoadRequired The callback to load the data from a data
+ *    source (when not in the cache).
  */
 pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
   goog.Disposable.call(this);
@@ -29,7 +31,7 @@ pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
   /**
    * @private
    * @const
-   * @type {function(!Array.<string>,function(Object.<!Array>):undefined}
+   * @type {function(!Array.<string>,function(Object.<!Array>)):undefined}
    */
   this.onDataLoadRequired_ = onDataLoadRequired;
 
@@ -64,10 +66,10 @@ pn.data.MemCache.prototype.invalidateCache = function(type) {
  * @param {Array} lst The loaded list from the server.
  */
 pn.data.MemCache.prototype.updateList = function(type, lst) {
-  goog.asserts.assert(type);  
-  goog.asserts.assert(lst);  
+  goog.asserts.assert(type);
+  goog.asserts.assert(lst);
 
-  if (type === 'Rc') return;  
+  if (type === 'Rc') return;
   this.cache_[type] = lst;
   this.cache_[type].lastUpdate = goog.now();
 };
@@ -103,12 +105,12 @@ pn.data.MemCache.prototype.getCachedLists =
     return;
   }
   this.onDataLoadRequired_(unloaded, goog.bind(function(loaded) {
-    for (var type in loaded) { 
+    for (var type in loaded) {
       var arr = loaded[type];
-      this.updateList(type, cached[type] = arr); 
+      this.updateList(type, cached[type] = arr);
     }
     cb(cached);
-  }, this));    
+  }, this));
 };
 
 

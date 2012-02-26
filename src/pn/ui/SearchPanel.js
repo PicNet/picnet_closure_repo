@@ -125,6 +125,10 @@ pn.ui.SearchPanel = function(filters, cache) {
 goog.inherits(pn.ui.SearchPanel, goog.ui.Component);
 
 
+/** @type {string} */
+pn.ui.SearchPanel.SEARCH = 'search';
+
+
 /** @inheritDoc */
 pn.ui.SearchPanel.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
@@ -254,7 +258,9 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     }
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
-  pn.rcdb.Global.pub(pn.rcdb.MediatorEvent.FILTER_LIST, filters);
+  var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
+  event.filters = filters;
+  this.dispatchEvent(event);
 };
 
 

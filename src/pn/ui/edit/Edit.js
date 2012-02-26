@@ -339,7 +339,6 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
   var grid = this.inputs_[field.id];
   if (readonly) return;
 
-  var spec = pn.rcdb.Global.getSpec(field.tableSpec);
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;
@@ -351,7 +350,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
     e.entityId = ev.selected['ID'];
     e.parent = this.data_;
-    e.entityType = spec.type;
+    e.entityType = field.tableType;
     e.parentField = field.tableParentField;
     this.dispatchEvent(e);
   });

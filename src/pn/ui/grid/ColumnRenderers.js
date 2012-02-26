@@ -16,5 +16,5 @@ goog.require('pn.ui.SpecDisplayItem');
 pn.ui.grid.ColumnRenderers.dateRenderer =
     function(row, cell, value, columnDef, dataContext) {
   if (value && value.getFullYear() <= 1970) { value = null; }
-  return value ? pn.rcdb.Global.dateFormat.format(value) : '';
+  return value ? pn.Utils.dateFormat.format(value) : '';
 };

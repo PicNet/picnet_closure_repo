@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.grid.Column');
 
+goog.require('pn.Utils');
 goog.require('pn.ui.SpecDisplayItem');
 
 
@@ -83,7 +84,7 @@ pn.ui.grid.Column.dateRenderer =
   var date = null;
   if (value) { date = new Date(value); }
   if (date && date.getFullYear() <= 1970) { date = null; }
-  return date ? pn.rcdb.Global.dateFormat.format(date) : '';
+  return date ? pn.Utils.dateFormat.format(date) : '';
 };
 
 
