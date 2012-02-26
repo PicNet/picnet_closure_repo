@@ -4,17 +4,17 @@ goog.provide('pn.data.MemCache');
 goog.require('goog.net.XhrManager');
 
 goog.require('pn.LogUtils');
-goog.require('pn.rcdb.MediatorEvent');
-
-
 
 /**
  * @constructor
  * @extends {goog.Disposable}
  * @param {number} maxAgeMinutes The maximum age of entities in the MemCache
  *    before they are considered stale and invalidated.
+ * @param {function(!Array.<string>,function(Object.<!Array>):undefined} 
+ *    onDataLoadRequired The callback to load the data from a data 
+ *    source (when not in the cache)
  */
-pn.data.MemCache = function(maxAgeMinutes) {
+pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
   goog.Disposable.call(this);
 
   goog.asserts.assert(maxAgeMinutes > 0);
@@ -25,6 +25,13 @@ pn.data.MemCache = function(maxAgeMinutes) {
    * @type {number}
    */
   this.maxAgeMinutes_ = maxAgeMinutes;
+
+  /**
+   * @private
+   * @const
+   * @type {function(!Array.<string>,function(Object.<!Array>):undefined}
+   */
+  this.onDataLoadRequired_ = onDataLoadRequired;
 
   /**
    * @private
@@ -57,8 +64,10 @@ pn.data.MemCache.prototype.invalidateCache = function(type) {
  * @param {Array} lst The loaded list from the server.
  */
 pn.data.MemCache.prototype.updateList = function(type, lst) {
-  if (type === 'Rc') return;
+  goog.asserts.assert(type);  
+  goog.asserts.assert(lst);  
 
+  if (type === 'Rc') return;  
   this.cache_[type] = lst;
   this.cache_[type].lastUpdate = goog.now();
 };
@@ -93,13 +102,13 @@ pn.data.MemCache.prototype.getCachedLists =
     cb(cached);
     return;
   }
-  pn.rcdb.Global.pub(pn.rcdb.MediatorEvent.LOAD_ENTITY_LISTS, unloaded,
-      goog.bind(function(loaded) {
-        for (var type in loaded) {
-          this.updateList(type, cached[type] = loaded[type]);
-        }
-        cb(cached);
-      }, this), false, opt_parentField, opt_parentId);
+  this.onDataLoadRequired_(unloaded, goog.bind(function(loaded) {
+    for (var type in loaded) { 
+      var arr = loaded[type];
+      this.updateList(type, cached[type] = arr); 
+    }
+    cb(cached);
+  }, this));    
 };
 
 
@@ -108,7 +117,8 @@ pn.data.MemCache.prototype.invalidateCache_ = function() {
   var now = goog.now();
   var max = now - (this.maxAgeMinutes_ * 60 * 1000);
   for (var type in this.cache_) {
-    if (this.cache_[type].lastUpdate < max) {
+    var arr = this.cache_[type];
+    if (arr && arr.lastUpdate < max) {
       this.log_.info('invalidating ' + type + ' from the client cache');
       delete this.cache_[type];
     }
