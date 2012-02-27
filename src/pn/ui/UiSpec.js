@@ -2,13 +2,12 @@
 goog.provide('pn.ui.UiSpec');
 
 goog.require('pn.ui.edit.Command');
-goog.require('pn.ui.edit.Edit');
+goog.require('pn.ui.edit.Edit.EventType');
 goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Command');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.ExportCommand');
-goog.require('pn.ui.grid.Grid');
 goog.require('pn.ui.grid.Grid.EventType');
 
 

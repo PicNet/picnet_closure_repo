@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.ui.edit.Edit');
+goog.provide('pn.ui.edit.Edit.EventType');
 
 goog.require('goog.date.Date');
 goog.require('goog.dom');

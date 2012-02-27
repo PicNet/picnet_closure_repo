@@ -6,6 +6,7 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
+goog.require('pn.ui.UiSpecsRegister');
 
 
 /**
