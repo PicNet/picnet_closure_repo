@@ -73,11 +73,11 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 /**
  * @param {pn.ui.edit.Field} field The field config to validate.
  * @param {*} val The object value to validate.
- * @param {Object=} opt_entity The entity being validated
- * @param {Array.<Object>=} opt_all All entities of this type
+ * @param {Object=} opt_entity The entity being validated.
+ * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = 
+pn.ui.edit.ValidateInfo.prototype.validateField =
     function(field, val, opt_entity, opt_all) {
   return this.validateItem(
       field.id, field.name, !!field.source, val, opt_entity, opt_all);
@@ -85,15 +85,15 @@ pn.ui.edit.ValidateInfo.prototype.validateField =
 
 
 /**
- * @param {string} id The id of this field
+ * @param {string} id The id of this field.
  * @param {string} name The name of the field.
  * @param {boolean} isParent Wether this field is a parent field.
  * @param {*} val The object value to validate.
- * @param {Object=} opt_entity The entity being validated
- * @param {Array.<Object>=} opt_all All entities of this type
+ * @param {Object=} opt_entity The entity being validated.
+ * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateItem = 
+pn.ui.edit.ValidateInfo.prototype.validateItem =
     function(id, name, isParent, val, opt_entity, opt_all) {
   if (!goog.isDefAndNotNull(val) || !val.length || (isParent && val === '0')) {
     return this.required ? name + ' is required.' : '';
@@ -119,10 +119,7 @@ pn.ui.edit.ValidateInfo.prototype.validateItem =
     if (!opt_all) throw new Error('Expected entities list to be provided');
     if (!opt_entity) throw new Error('Expected entity to be provided');
     var hasDuplicate = goog.array.findIndex(opt_all, function(e) {
-      console.log('val: ' + val + ' e[id]: ' + e[id] + ' opt_entity[ID]: ' + opt_entity['ID'] + ' e[ID]: ' + e['ID']);
-      if (e[id] === val && opt_entity['ID'] !== e['ID']) {
-        return true;
-      }
+      return e[id] === val && opt_entity['ID'] !== e['ID'];
     }) >= 0;
     if (hasDuplicate) return name + ' must be unique';
   }
