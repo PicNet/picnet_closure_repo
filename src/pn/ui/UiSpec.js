@@ -165,17 +165,19 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
 
 
 /**
+ * @param {string} type The type we are querying as this will also be related
+ *    for duplicate checking.
  * @param {!Array.<!pn.ui.SpecDisplayItem>} items The fields or columns to
  *    parse for required related entities.
  * @return {!Array.<string>} The list of types required for related displays.
  */
-pn.ui.UiSpec.getRelatedTypes = function(items) {
+pn.ui.UiSpec.getRelatedTypes = function(type, items) {
   var types = [];
+  if (type && type !== 'Rc') types.push(type);
   goog.array.forEach(items, function(i) {
-    if (i.additionalCahceTypes.length) {
-      goog.array.forEach(i.additionalCahceTypes, function(type) {
-        types.push(type);
-      });
+    var additional = i.additionalCahceTypes;
+    if (additional.length) {
+      goog.array.forEach(additional, function(at) { types.push(at); });
     }
     if (i.source) {
       var steps = i.source.split('.');
@@ -188,11 +190,11 @@ pn.ui.UiSpec.getRelatedTypes = function(items) {
       }
     }
     else if (i.tableType) {
-      types.push(i.tableType);
       var spec = pn.ui.UiSpecsRegister.INSTANCE.get(i.tableSpec);
       var cols = spec.getGridColumns();
+      var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
       types = goog.array.concat(types,
-          pn.ui.UiSpec.getRelatedTypes(cols));
+          related);
     }
   });
   goog.array.removeDuplicates(types);
