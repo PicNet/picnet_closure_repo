@@ -122,6 +122,9 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 
 
 /**
+ * TODO: There is some very strange behaviour going on with this.  This is
+ *    duplicate code with EditHandler.enterDocument.  Why 2 ways of handling
+ *    commands/buttons?
  * @private
  * @param {pn.ui.edit.Command} command The command to attach events to.
  */
@@ -134,7 +137,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
   goog.array.forEach(buttons, function(button) {
     this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
       if (!this.shouldFireCommandEvent(command)) { return; }
-      this.fireCommandEvent(command.eventType, this.getCurrentFormData());
+      this.fireCommandEvent(command, this.getCurrentFormData());
     });
   }, this);
 };
@@ -157,7 +160,7 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 
 /**
  * @protected
- * @param {string} eventType The event type to fire.
+ * @param {pn.ui.edit.Command} command The command to fire.
  * @param {Object} data The current form data.
  */
 pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;

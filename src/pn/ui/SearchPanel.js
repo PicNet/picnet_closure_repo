@@ -125,6 +125,10 @@ pn.ui.SearchPanel = function(filters, cache) {
 goog.inherits(pn.ui.SearchPanel, goog.ui.Component);
 
 
+/** @type {string} */
+pn.ui.SearchPanel.SEARCH = 'search';
+
+
 /** @inheritDoc */
 pn.ui.SearchPanel.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
@@ -254,7 +258,9 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     }
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
-  pn.rcdb.Global.pub(pn.rcdb.MediatorEvent.FILTER_LIST, filters);
+  var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
+  event.filters = filters;
+  this.dispatchEvent(event);
 };
 
 
@@ -278,7 +284,7 @@ pn.ui.SearchPanel.prototype.filterSelected_ = function() {
   if (!val) return;
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var spec = pn.rcdb.Global.getSpec(specid);
+  var spec = pn.ui.UiSpecsRegister.INSTANCE.get(specid);
   var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
       spec.getSearchFields(), function(f) {
         return f.id === fieldId;
@@ -294,7 +300,7 @@ pn.ui.SearchPanel.prototype.filterSelected_ = function() {
 
 /**
  * @private
- * @param {!pn.rcdb.ui.specs.SpecsBase} spec The spec (tab) of the selected
+ * @param {!pn.ui.UiSpec} spec The spec (tab) of the selected
  *    filter.
  * @param {pn.ui.edit.Field} f The field to add to the search.
  * @param {!Element} option The select option element representing this option.

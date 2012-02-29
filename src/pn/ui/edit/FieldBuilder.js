@@ -6,6 +6,7 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
+goog.require('pn.ui.UiSpecsRegister');
 
 
 /**
@@ -225,7 +226,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.rcdb.Global.getSpec(field.tableSpec);
+  var spec = pn.ui.UiSpecsRegister.INSTANCE.get(field.tableSpec);
   var g = pn.ui.edit.FieldBuilder.createGrid(
       spec, field.tableReadOnly, data, cache);
   g.decorate(parent);
@@ -234,7 +235,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
 
 
 /**
- * @param {!pn.rcdb.ui.specs.SpecsBase} spec The specs for the entities in
+ * @param {!pn.ui.UiSpec} spec The specs for the entities in
  *    this grid.
  * @param {boolean} readonly Wether this table is readonly.
  * @param {!Array.<Object>} data The grid data.

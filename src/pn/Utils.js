@@ -2,13 +2,14 @@
 goog.require('goog.asserts');
 goog.require('goog.array');
 goog.require('goog.dom');
+goog.require('goog.i18n.DateTimeFormat');
+goog.require('goog.i18n.DateTimeParse');
 goog.require('goog.json');
 goog.require('goog.string');
 
 goog.provide('pn.Utils');
 
 /**
- * @protected
  * @param {string} id The element ID.
  * @return {!Element} the element with the specified ID.
  */
@@ -18,6 +19,23 @@ goog.provide('pn.Utils');
   if (!e) throw new Error('Could not find the DOM element with ID: ' + id);
   return /** @type {!Element} */ (e);
  };
+
+/**
+ * @private
+ * @type {string}
+ */
+pn.Utils.datePattern_ = "dd'/'MMM'/'yyyy";
+
+
+/** @type {!goog.i18n.DateTimeFormat} */
+pn.Utils.dateFormat =
+    new goog.i18n.DateTimeFormat(pn.Utils.datePattern_);
+
+
+/** @type {!goog.i18n.DateTimeParse} */
+pn.Utils.dateParser =
+    new goog.i18n.DateTimeParse(pn.Utils.datePattern_);
+
 
 /**
  * @param {!Object|undefined} o The object to test for array'ness'.

@@ -52,7 +52,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
   goog.asserts.assert(entity);
   goog.asserts.assert(filters);
 
-  this.dbg_(goog.debug.expose(filters));
+  this.dbg_('filterEntity: ' + goog.debug.expose(filters));
 
   for (var id in filters) {
     if (!this.filterEntityImpl_(filters[id], entity, id)) {

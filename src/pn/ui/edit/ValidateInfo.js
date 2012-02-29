@@ -21,6 +21,8 @@ pn.ui.edit.ValidateInfo = function() {
   this.maxNumber;
   /** @type {boolean} */
   this.isNumber = false;
+  /** @type {boolean} */
+  this.unique = false;
 };
 
 
@@ -71,20 +73,28 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 /**
  * @param {pn.ui.edit.Field} field The field config to validate.
  * @param {*} val The object value to validate.
+ * @param {Object=} opt_entity The entity being validated.
+ * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
-  return this.validateItem(field.name, !!field.source, val);
+pn.ui.edit.ValidateInfo.prototype.validateField =
+    function(field, val, opt_entity, opt_all) {
+  return this.validateItem(
+      field.id, field.name, !!field.source, val, opt_entity, opt_all);
 };
 
 
 /**
+ * @param {string} id The id of this field.
  * @param {string} name The name of the field.
  * @param {boolean} isParent Wether this field is a parent field.
  * @param {*} val The object value to validate.
+ * @param {Object=} opt_entity The entity being validated.
+ * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateItem = function(name, isParent, val) {
+pn.ui.edit.ValidateInfo.prototype.validateItem =
+    function(id, name, isParent, val, opt_entity, opt_all) {
   if (!goog.isDefAndNotNull(val) || !val.length || (isParent && val === '0')) {
     return this.required ? name + ' is required.' : '';
   }
@@ -104,6 +114,14 @@ pn.ui.edit.ValidateInfo.prototype.validateItem = function(name, isParent, val) {
       return name + ' must be between ' + this.minNumber + ' - ' +
           this.maxNumber + '.';
     }
+  }
+  if (val && this.unique) {
+    if (!opt_all) throw new Error('Expected entities list to be provided');
+    if (!opt_entity) throw new Error('Expected entity to be provided');
+    var hasDuplicate = goog.array.findIndex(opt_all, function(e) {
+      return e[id] === val && opt_entity['ID'] !== e['ID'];
+    }) >= 0;
+    if (hasDuplicate) return name + ' must be unique';
   }
   return '';
 };
