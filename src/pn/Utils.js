@@ -1,4 +1,5 @@
-﻿;
+﻿
+goog.require('goog.asserts');
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.json');
@@ -6,6 +7,17 @@ goog.require('goog.string');
 
 goog.provide('pn.Utils');
 
+/**
+ * @protected
+ * @param {string} id The element ID.
+ * @return {!Element} the element with the specified ID.
+ */
+ pn.Utils.getElement = function(id) {
+  goog.asserts.assert(id);
+  var e = goog.dom.getElement(id);
+  if (!e) throw new Error('Could not find the DOM element with ID: ' + id);
+  return /** @type {!Element} */ (e);
+ };
 
 /**
  * @param {!Object|undefined} o The object to test for array'ness'.
