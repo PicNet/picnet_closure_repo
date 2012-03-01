@@ -118,7 +118,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   for (var field in current) {
     var curr = current[field];
     var orig = this.data_[field];
-    if ((curr === '0' || !curr) && !orig) continue;
+    if ((curr === '0' || !curr) && (orig === '0' || !orig)) continue;
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
     // differenctly adding a keycode 13,10 rather than just 10
     curr = curr ? goog.string.canonicalizeNewlines(curr.toString()) : '';
