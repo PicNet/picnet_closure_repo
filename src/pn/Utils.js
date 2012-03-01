@@ -1,4 +1,5 @@
-﻿;
+﻿
+goog.require('goog.asserts');
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.i18n.DateTimeFormat');
@@ -8,6 +9,16 @@ goog.require('goog.string');
 
 goog.provide('pn.Utils');
 
+/**
+ * @param {string} id The element ID.
+ * @return {!Element} the element with the specified ID.
+ */
+ pn.Utils.getElement = function(id) {
+  goog.asserts.assert(id);
+  var e = goog.dom.getElement(id);
+  if (!e) throw new Error('Could not find the DOM element with ID: ' + id);
+  return /** @type {!Element} */ (e);
+ };
 
 /**
  * @private
