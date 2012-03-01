@@ -71,10 +71,10 @@ pn.ui.UiSpec.prototype.getGridConfig = function(width) {
 
 /**
  * @param {!Object} entity The entity being displayed.
- * @param {!Object.<!Array.<Object>>} cache The current entities cache.
+ * @param {!Object.<!Array.<Object>>=} opt_cache The current entities cache.
  * @return {!Array.<pn.ui.edit.Command>} The edit commands.
  */
-pn.ui.UiSpec.prototype.getEditCommands = function(entity, cache) {
+pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
   var eventType = pn.ui.edit.Edit.EventType;
   var del = new pn.ui.edit.Command('Delete', eventType.DELETE);
   del.preclick = function() {

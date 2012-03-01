@@ -1,6 +1,7 @@
 ﻿;
 goog.require('goog.debug');
 goog.require('goog.debug.Console');
+goog.require('goog.debug.FancyWindow');
 goog.require('goog.debug.LogManager');
 goog.require('goog.debug.Logger');
 goog.require('goog.object');
@@ -28,6 +29,10 @@ pn.LogUtils.isExclusive_ = false;
  */
 pn.LogUtils.initialise = function() {
   new goog.debug.Console().setCapturing(true);
+  // var ie7window = new goog.debug.FancyWindow('IE7 Logger');
+  // ie7window.setEnabled(true);
+  // ie7window.init();
+
   goog.debug.LogManager.getRoot().setLevel(goog.debug.Logger.Level.OFF);
 };
 
