@@ -122,7 +122,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
     // differenctly adding a keycode 13,10 rather than just 10
     curr = curr ? goog.string.canonicalizeNewlines(curr.toString()) : '';
-    orig = orig ? orig.toString() : '';
+    orig = orig ? goog.string.canonicalizeNewlines(orig.toString()) : '';
 
     if (curr !== orig) {
       this.log_.info('Found dirty field: [' + field + '] ' +
