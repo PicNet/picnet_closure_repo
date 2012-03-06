@@ -2,8 +2,14 @@
 <html>
     <head></head>
     <body>
-        <script src="TestHead.js"></script>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+goog.require('goog.testing.AsyncTestCase');
+        </script>
         <script>
+
 goog.require('pn.data.MemCache');
 
 goog.require('goog.testing.MockClock');
@@ -18,7 +24,7 @@ var data = [1, 2, 3],
 var setUp = function()
 {
   setInterval = function(cb) { checkForExpiredClosure = cb;};
-  cache = new pn.data.MemCache();    
+  cache = new pn.data.MemCache(5, function() { console.log('data load required'); });    
   pn.rcdb.Global = { pub: function(topic) {
     fail('Did not expect any events, received: ' + topic);
   }};

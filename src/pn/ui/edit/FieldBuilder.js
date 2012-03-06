@@ -226,7 +226,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.ui.UiSpecsRegister.INSTANCE.get(field.tableSpec);
+  var spec = pn.ui.UiSpecsRegister.get(field.tableSpec || field.tableType);
   var g = pn.ui.edit.FieldBuilder.createGrid(
       spec, field.tableReadOnly, data, cache);
   g.decorate(parent);
@@ -243,8 +243,8 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
  * @return {!pn.ui.grid.Grid} The created grid.
  */
 pn.ui.edit.FieldBuilder.createGrid = function(spec, readonly, data, cache) {
-  var width = goog.style.getSize(
-      goog.dom.getElement('view-container')).width - 25;
+  var viewContainer = pn.Utils.getElement('view-container');
+  var width = goog.style.getSize(viewContainer).width - 25;
   var cfg = spec.getGridConfig(width);
   cfg.readonly = readonly;
   var cols = spec.getGridColumns();

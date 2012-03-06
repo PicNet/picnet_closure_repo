@@ -53,8 +53,7 @@ pn.ui.UiSpec.prototype.getSearchFields = function() {
 
 /** @param {boolean} isNew If Add or Edit.
  * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. */
-pn.ui.UiSpec.prototype.getEditFields = function(isNew) {
-  return []; };
+pn.ui.UiSpec.prototype.getEditFields = function(isNew) { return []; };
 
 
 /**
@@ -107,30 +106,44 @@ pn.ui.UiSpec.prototype.getEditConfig = function() {
 /**
  * @protected
  * @param {string} field The field in the data representing this column.
- * @param {string} caption The header caption for this column.
+ * @param {string=} opt_caption The optional header caption for this field.
+ *    If omitted the the field id will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
  * @return {pn.ui.grid.Column} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn =
-    function(field, caption, opt_props) {
+    function(field, opt_caption, opt_props) {
   return /** @type {pn.ui.grid.Column} */ (this.createDisplayItem_(
-      field, caption, pn.ui.grid.Column, opt_props));
+      field, this.caption_(field, opt_caption), pn.ui.grid.Column, opt_props));
 };
 
 
 /**
  * @protected
  * @param {string} field The id representing this field.
- * @param {string} caption The header caption for this field.
+ * @param {string=} opt_caption The optional header caption for this field.
+ *    If omitted the the field id will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this field.
  * @return {pn.ui.edit.Field} The field created.
  */
 pn.ui.UiSpec.prototype.createField =
-    function(field, caption, opt_props) {
+    function(field, opt_caption, opt_props) {
   return /** @type {pn.ui.edit.Field} */ (this.createDisplayItem_(
-      field, caption, pn.ui.edit.Field, opt_props));
+      field, this.caption_(field, opt_caption), pn.ui.edit.Field, opt_props));
+};
+
+/**
+ * @private
+ * @param {string} id The id representing this field or column.
+ * @param {string=} opt_caption The optional header caption for this field.
+ *    If omitted the the field id will be used (parsing cammel casing).
+ * @return {string} The caption of this field or column.
+ */
+
+pn.ui.UiSpec.prototype.caption_ = function(id, opt_caption) {
+  return opt_caption || id.replace(/([A-Z])/g, ' $1');
 };
 
 
@@ -164,6 +177,12 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
 };
 
 
+/** @return {!Array.<string>} The list of types related to this entity. */
+pn.ui.UiSpec.prototype.getRelatedTypes = function() {
+  return pn.ui.UiSpec.getRelatedTypes(this.type, this.getEditFields(false));
+};
+
+
 /**
  * @param {string} type The type we are querying as this will also be related
  *    for duplicate checking.
@@ -173,7 +192,8 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
  */
 pn.ui.UiSpec.getRelatedTypes = function(type, items) {
   var types = [];
-  if (type && type !== 'Rc') types.push(type);
+  if (type && type.indexOf(' ') < 0) { types.push(type); }
+
   goog.array.forEach(items, function(i) {
     var additional = i.additionalCahceTypes;
     if (additional.length) {
@@ -190,7 +210,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
       }
     }
     else if (i.tableType) {
-      var spec = pn.ui.UiSpecsRegister.INSTANCE.get(i.tableSpec);
+      var spec = pn.ui.UiSpecsRegister.get(i.tableSpec || i.tableType);
       var cols = spec.getGridColumns();
       var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
       types = goog.array.concat(types,

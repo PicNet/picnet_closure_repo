@@ -82,8 +82,8 @@ pn.ui.TabSlideMenu = function(element, args) {
 pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
   this.settings_.tabHandle = args.tabHandle;
   this.settings_.toggleButton = args.toggleButton || '.open-close-tab';
-  this.settings_.toggleButton = goog.dom.getElement(
-      this.settings_.toggleButton);
+  this.settings_.toggleButton =
+      pn.Utils.getElement(this.settings_.toggleButton);
 
   this.settings_.speed = args.speed || 300;
   this.settings_.action = args.action || 'click';

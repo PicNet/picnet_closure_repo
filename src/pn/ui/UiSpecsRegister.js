@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.ui.UiSpecsRegister');
+goog.provide('pn.ui.UiSpecsRegisterImpl');
 
 goog.require('goog.asserts');
 goog.require('goog.object');
@@ -10,7 +11,7 @@ goog.require('goog.object');
  * @constructor
  * @extends {goog.Disposable}
  */
-pn.ui.UiSpecsRegister = function() {
+pn.ui.UiSpecsRegisterImpl = function() {
   goog.Disposable.call(this);
 
   /**
@@ -19,17 +20,13 @@ pn.ui.UiSpecsRegister = function() {
    */
   this.map_ = {};
 };
-goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
-
-
-/** @type {!pn.ui.UiSpecsRegister} */
-pn.ui.UiSpecsRegister.INSTANCE = new pn.ui.UiSpecsRegister();
+goog.inherits(pn.ui.UiSpecsRegisterImpl, goog.Disposable);
 
 
 /**
  * @param {pn.ui.UiSpec} impl The specs implementation.
  */
-pn.ui.UiSpecsRegister.prototype.add = function(impl) {
+pn.ui.UiSpecsRegisterImpl.prototype.add = function(impl) {
   goog.asserts.assert(impl);
   this.map_[impl.id] = impl;
 };
@@ -39,7 +36,7 @@ pn.ui.UiSpecsRegister.prototype.add = function(impl) {
  * @param {string} id The id of 'UiSpec' required.
  * @return {!pn.ui.UiSpec} The SpecBase specified by the 'id' arg.
  */
-pn.ui.UiSpecsRegister.prototype.get = function(id) {
+pn.ui.UiSpecsRegisterImpl.prototype.get = function(id) {
   goog.asserts.assert(this.map_[id],
       'ID "' + id + ' was not found in the UiSpec register.');
   return this.map_[id];
@@ -49,15 +46,19 @@ pn.ui.UiSpecsRegister.prototype.get = function(id) {
 /**
  * @return {!Object.<pn.ui.UiSpec>} All the registered specs.
  */
-pn.ui.UiSpecsRegister.prototype.all = function() {
+pn.ui.UiSpecsRegisterImpl.prototype.all = function() {
   return this.map_;
 };
 
 
 /** @inheritDoc */
-pn.ui.UiSpecsRegister.prototype.disposeInternal = function() {
-  pn.ui.UiSpecsRegister.superClass_.disposeInternal.call(this);
+pn.ui.UiSpecsRegisterImpl.prototype.disposeInternal = function() {
+  pn.ui.UiSpecsRegisterImpl.superClass_.disposeInternal.call(this);
 
   goog.object.forEach(this.map_, goog.dispose);
   delete this.map_;
 };
+
+
+/** @type {!pn.ui.UiSpecsRegisterImpl} */
+pn.ui.UiSpecsRegister = new pn.ui.UiSpecsRegisterImpl();
