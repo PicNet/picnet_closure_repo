@@ -114,11 +114,8 @@ pn.Router.prototype.navigateImpl = function(path, opt_ignoreHistory) {
   this.log_.fine(msg);
 
   var route = this.routes_[to];
-  if (!route) {
-    var msg = 'Navigation token [' + path + '] not supported';
-    // Exception is being swallowed by the goog.History framework 
-    // so alert it. window['alert'](msg);
-    throw new Error(msg);
+  if (!route) {    
+    throw new Error('Navigation token [' + path + '] not supported');
   }
 
   if (!ignore) { this.historyStack_.push(path); }

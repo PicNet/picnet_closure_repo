@@ -160,11 +160,15 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(element, div);
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
+  if (this.cfg_.template) {
+    var templateDiv = goog.dom.createDom('div');
+    templateDiv.innerHTML = this.cfg_.template(this.data_);
+    goog.dom.appendChild(div, templateDiv);
+  }
   this.decorateFields_(div);
 
   goog.style.showElement(div, true);
 };
-
 
 /**
  * @private
@@ -174,20 +178,23 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var fieldset = goog.dom.createDom('fieldset', 'fields'),
-      focusSet = false;
+  var useTemplate = !!this.cfg_.template,      
+      focusSet = false,      
+      fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
+      newEntity = !this.data_['ID'];
 
-  this.disposables_.push(fieldset);
-  goog.dom.appendChild(parent, fieldset);
+  if (fieldset) {
+    this.disposables_.push(fieldset);
+    goog.dom.appendChild(parent, fieldset);
+  }
 
-  goog.array.forEach(this.fields_, function(f, idx) {
-    // Do not do child tables on new entities
-    var newEntity = !this.data_['ID'];
+  goog.array.forEach(this.fields_, function(f) {
+    // Do not do child tables on new entities    
     var isChildTable = f.tableType;
     if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
-    var fieldParent = fieldset;
-    if (!f.renderer || f.renderer.showLabel !== false) {
+    var fieldParent = useTemplate ? pn.Utils.getElement(f.id) : fieldset;
+    if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       var required = f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
       this.disposables_.push(fieldParent);
@@ -199,9 +206,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
     this.disposables_.push(input);
-    if (f.oncreate) {
-      f.oncreate(input, this.data_);
-    }
+    if (f.oncreate) { f.oncreate(input, this.data_); }
+
     // If displaying data from a parent (and not a parent selector) then
     // disable the field as its obviousle there as a reference.  See:
     // FormulaMaterial for an example.
