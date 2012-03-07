@@ -22,24 +22,32 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  *
  * @constructor
  * @extends {goog.ui.Component}
+ * @param {!pn.ui.UiSpec} spec The specs for the entities in
+ *    this grid.
  * @param {!Array} list The entities to display.
- * @param {!Array.<pn.ui.grid.Column>} cols The columns to display.
- * @param {!Array.<goog.ui.Component>} commands The commands supported.
- * @param {!pn.ui.grid.Config} cfg The grid configuration.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {number} width The width of this grid
  */
-pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
+pn.ui.grid.Grid = function(spec, list, cache, width) {
+  goog.asserts.assert(spec);
   goog.asserts.assert(list);
-  goog.asserts.assert(cols && cols.length);
+  goog.asserts.assert(cache);
+  
+  goog.ui.Component.call(this);
+  
+  /**
+   * @private
+   * @type {!pn.ui.UiSpec}
+   */
+  this.spec_ = spec;
 
-  var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
+  var cols = this.spec_.getGridColumns();
+  var uniqueColIds = goog.array.map(cols, function(c) { 
+    return c.id; 
+  });
   goog.array.removeDuplicates(uniqueColIds);
   goog.asserts.assert(cols.length === uniqueColIds.length,
-      'All column IDs should be unique. Grid type: ' + cfg.type);
-  goog.asserts.assert(cfg);
-  goog.asserts.assert(cache);
-
-  goog.ui.Component.call(this);
+      'All column IDs should be unique. Grid type: ' + this.spec_.id);  
 
   /**
    * @private
@@ -66,20 +74,20 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(cols);
+  this.cols_ = this.getColumnsWithInitialState_(this.spec_.getGridColumns());      
+
+  /**
+   * @private
+   * @type {!pn.ui.grid.Config}
+   */
+  this.cfg_ = this.spec_.getGridConfig(width);
 
   /**
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
   this.totalColumns_ =
-      goog.array.filter(this.cols_, function(c) { return c.total; });
-
-  /**
-   * @private
-   * @type {!pn.ui.grid.Config}
-   */
-  this.cfg_ = cfg;
+      goog.array.filter(this.cols_, function(c) { return c.total; });    
 
   /**
    * @private
@@ -91,7 +99,7 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @private
    * @type {!Array.<goog.ui.Component>}
    */
-  this.commands_ = commands;
+  this.commands_ = this.spec_.getGridCommands();
 
   /**
    * @private
@@ -559,6 +567,9 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
+  goog.dispose(this.spec_);
+
+  delete this.spec_;
   delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;

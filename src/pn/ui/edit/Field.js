@@ -42,5 +42,8 @@ pn.ui.edit.Field = function(id, name) {
 
   /** @type {boolean} */
   this.showOnAdd = true;
+
+  /** @type {*} */
+  this.defaultValue = undefined;
 };
 goog.inherits(pn.ui.edit.Field, pn.ui.SpecDisplayItem);

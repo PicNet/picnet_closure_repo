@@ -16,7 +16,7 @@ pn.ui.UiSpecsRegisterImpl = function() {
 
   /**
    * @private
-   * @type {!Object.<!pn.ui.UiSpec>}
+   * @type {!Object.<!function(new:pn.ui.UiSpec)>}
    */
   this.map_ = {};
 };
@@ -24,11 +24,13 @@ goog.inherits(pn.ui.UiSpecsRegisterImpl, goog.Disposable);
 
 
 /**
- * @param {pn.ui.UiSpec} impl The specs implementation.
+ * @param {!function(new:pn.ui.UiSpec)} impl The specs implementation.
  */
 pn.ui.UiSpecsRegisterImpl.prototype.add = function(impl) {
   goog.asserts.assert(impl);
-  this.map_[impl.id] = impl;
+  var tmp = new impl();
+  this.map_[tmp.id] = impl;
+  goog.dispose(tmp);
 };
 
 
@@ -39,12 +41,12 @@ pn.ui.UiSpecsRegisterImpl.prototype.add = function(impl) {
 pn.ui.UiSpecsRegisterImpl.prototype.get = function(id) {
   goog.asserts.assert(this.map_[id],
       'ID "' + id + ' was not found in the UiSpec register.');
-  return this.map_[id];
+  return new this.map_[id]();
 };
 
 
 /**
- * @return {!Object.<pn.ui.UiSpec>} All the registered specs.
+ * @return {!Object.<!function(new:pn.ui.UiSpec)>} All the registered specs.
  */
 pn.ui.UiSpecsRegisterImpl.prototype.all = function() {
   return this.map_;

@@ -293,6 +293,8 @@ pn.ui.SearchPanel.prototype.filterSelected_ = function() {
       ' in the searcheable fields of the ' + spec.id + ' spec');
   this.select_.selectedIndex = 0;
   this.addFieldToTheFiltersSearch_(spec, field, option);
+  goog.dispose(spec);
+
   goog.style.showElement(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
 };
@@ -326,7 +328,7 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     goog.dom.appendChild(dom, input);
   } else {
     input = pn.ui.edit.FieldBuilder.createAndAttach(
-        f, dom, null, this.cache_, true);
+        f, dom, {}, this.cache_, true);
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 

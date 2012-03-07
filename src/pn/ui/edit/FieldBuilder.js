@@ -58,7 +58,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 /**
  * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {Object} entity The entity being displayed.
+ * @param {!Object} entity The entity being displayed.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element|!goog.ui.Component} The created dom element.
@@ -66,7 +66,11 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache, opt_search) {
   var fb = pn.ui.edit.FieldBuilder;
-  var val = entity ? entity[field.dataColumn] : '';
+  var val = !!entity['ID'] ? 
+    entity[field.dataColumn] :
+    field.defaultValue ? 
+        field.defaultValue : 
+        '';
   var elem;
   if (field.renderer) {
     if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
@@ -227,8 +231,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
   var spec = pn.ui.UiSpecsRegister.get(field.tableSpec || field.tableType);
-  var g = pn.ui.edit.FieldBuilder.createGrid(
-      spec, field.tableReadOnly, data, cache);
+  var g = pn.ui.edit.FieldBuilder.createGrid(spec, data, cache);
   g.decorate(parent);
   return g;
 };
@@ -237,18 +240,14 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
 /**
  * @param {!pn.ui.UiSpec} spec The specs for the entities in
  *    this grid.
- * @param {boolean} readonly Wether this table is readonly.
  * @param {!Array.<Object>} data The grid data.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @return {!pn.ui.grid.Grid} The created grid.
  */
-pn.ui.edit.FieldBuilder.createGrid = function(spec, readonly, data, cache) {
+pn.ui.edit.FieldBuilder.createGrid = function(spec, data, cache) {  
+  // TODO: This is so dodgy, find a better way of working out width
   var viewContainer = pn.Utils.getElement('view-container');
   var width = goog.style.getSize(viewContainer).width - 25;
-  var cfg = spec.getGridConfig(width);
-  cfg.readonly = readonly;
-  var cols = spec.getGridColumns();
-  var commands = spec.getGridCommands();
-  var grid = new pn.ui.grid.Grid(data, cols, commands, cfg, cache);
+  var grid = new pn.ui.grid.Grid(spec, data, cache, width);
   return grid;
 };

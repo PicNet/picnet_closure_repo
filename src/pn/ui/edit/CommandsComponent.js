@@ -22,11 +22,13 @@ goog.require('pn.ui.grid.Grid');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!Array.<pn.ui.edit.Command>} commands The commands to show in the
- *    edit page.
+ * @param {!pn.ui.UiSpec} spec The specifications for this edit.
+ * @param {!Object} entity The entity being edited
+ * @param {!Object.<Array>} cache The entities cache to use for
+ *    related entities.
  */
-pn.ui.edit.CommandsComponent = function(commands) {
-  goog.asserts.assert(commands);
+pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
+  goog.asserts.assert(spec);
 
   goog.ui.Component.call(this);
 
@@ -35,12 +37,18 @@ pn.ui.edit.CommandsComponent = function(commands) {
    * @type {!goog.events.EventHandler}
    */
   this.eh = new goog.events.EventHandler(this);
+  
+  /**
+   * @protected
+   * @type {!pn.ui.UiSpec}
+   */
+  this.spec = spec;
 
   /**
    * @private
    * @type {!Array.<pn.ui.edit.Command>}
    */
-  this.commands_ = commands;
+  this.commands_ = spec.getEditCommands(entity, cache);
 
   /**
    * @private
@@ -182,8 +190,10 @@ pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   goog.dispose(this.eh);
   goog.array.forEach(this.buttons_, goog.dispose);
   goog.object.forEach(this.commands_, goog.dispose);
+  goog.dispose(this.spec);
 
   delete this.eh;
   delete this.buttons_;
   delete this.commands_;
+  delete this.spec;
 };

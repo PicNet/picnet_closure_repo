@@ -1,6 +1,9 @@
 ﻿;
 goog.provide('pn.ui.UiSpec');
 
+goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventType');
+
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.Edit.EventType');
 goog.require('pn.ui.edit.Field');
@@ -14,12 +17,15 @@ goog.require('pn.ui.grid.Grid.EventType');
 
 /**
  * @constructor
+ * @extends {goog.Disposable}
  * @param {string} id The unique identifier for this spec.
  * @param {string=} opt_type The type representing this spec.
  * @param {string=} opt_name The display name of this type.
  */
 pn.ui.UiSpec = function(id, opt_type, opt_name) {
   goog.asserts.assert(id);
+  
+  goog.Disposable.call(this);
 
   /** @type {string} */
   this.id = id;
@@ -38,8 +44,35 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
    * @type {boolean}
    */
   this.allowClone = true;
-};
 
+  /**
+   * @protected
+   * @type {!Object} The entity being edited.  This is set in the
+   *  initEdit method and unset in the dispose method.
+   */
+  this.entity = {};
+
+  /**
+   * @protected
+   * @type {!Object.<Array>} The cache with all related entities.  This is 
+   *    set in the  initEdit method and unset in the dispose method.
+   */
+  this.cache = {};
+ 
+  /**
+   * @protected
+   * @type {!Object.<Element|goog.ui.Component>} The fields map in the UI.  
+   *    This is set in the  initEdit method and unset in the dispose method.
+   */
+  this.fields = {}; 
+
+  /**
+   * @protected
+   * @type {!goog.events.EventHandler}
+   */
+  this.eh = new goog.events.EventHandler(this); 
+};
+goog.inherits(pn.ui.UiSpec, goog.Disposable);
 
 /** @return {!Array.<pn.ui.grid.Column>} The columns to display. */
 pn.ui.UiSpec.prototype.getGridColumns = function() { return []; };
@@ -51,10 +84,11 @@ pn.ui.UiSpec.prototype.getSearchFields = function() {
 };
 
 
-/** @param {boolean} isNew If Add or Edit.
- * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. */
+/** 
+ * @param {boolean} isNew If Add or Edit.
+ * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. 
+ */
 pn.ui.UiSpec.prototype.getEditFields = function(isNew) { return []; };
-
 
 /**
  * Gets a default grid config with the specified width
@@ -106,66 +140,65 @@ pn.ui.UiSpec.prototype.getEditConfig = function() {
 /**
  * @protected
  * @param {string} field The field in the data representing this column.
- * @param {string=} opt_caption The optional header caption for this field.
- *    If omitted the the field id will be used (parsing cammel casing).
+ * @param {(string|Object)=} opt_captionOrProps The optional header caption for 
+ *    this field or the properties map. If caption is omitted the the field id 
+ *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
  * @return {pn.ui.grid.Column} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn =
-    function(field, opt_caption, opt_props) {
+    function(field, opt_captionOrProps, opt_props) {
   return /** @type {pn.ui.grid.Column} */ (this.createDisplayItem_(
-      field, this.caption_(field, opt_caption), pn.ui.grid.Column, opt_props));
+      field, pn.ui.grid.Column, opt_captionOrProps, opt_props));
 };
 
 
 /**
  * @protected
  * @param {string} field The id representing this field.
- * @param {string=} opt_caption The optional header caption for this field.
- *    If omitted the the field id will be used (parsing cammel casing).
+ * @param {(string|Object)=} opt_captionOrProps The optional header caption for 
+ *    this field or the properties map. If caption is omitted the the field id 
+ *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this field.
  * @return {pn.ui.edit.Field} The field created.
  */
 pn.ui.UiSpec.prototype.createField =
-    function(field, opt_caption, opt_props) {
+    function(field, opt_captionOrProps, opt_props) {  
   return /** @type {pn.ui.edit.Field} */ (this.createDisplayItem_(
-      field, this.caption_(field, opt_caption), pn.ui.edit.Field, opt_props));
+      field, pn.ui.edit.Field, opt_captionOrProps, opt_props));
 };
 
 /**
  * @private
- * @param {string} id The id representing this field or column.
- * @param {string=} opt_caption The optional header caption for this field.
- *    If omitted the the field id will be used (parsing cammel casing).
- * @return {string} The caption of this field or column.
- */
-
-pn.ui.UiSpec.prototype.caption_ = function(id, opt_caption) {
-  return opt_caption || id.replace(/([A-Z])/g, ' $1');
-};
-
-
-/**
- * @private
- * @param {string} field The field in the data representing this column.
- * @param {string} caption The header caption for this column.
+ * @param {string} field The field in the data representing this column. 
  * @param {function(new:pn.ui.SpecDisplayItem,string,string)} typeConst The
  *    constructor for the display item we are creating.  Expects a
  *    constructor with the 'field' and 'caption' params.
+ * @param {(string|Object)=} opt_captionOrProps The optional header caption for 
+ *    this field or the properties map. If caption is omitted the the field id 
+ *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
  * @return {pn.ui.SpecDisplayItem} The created column.
  */
 pn.ui.UiSpec.prototype.createDisplayItem_ =
-    function(field, caption, typeConst, opt_props) {
+    function(field, typeConst, opt_captionOrProps, opt_props) {
   goog.asserts.assert(field);
-  goog.asserts.assert(caption);
-  opt_props = opt_props || {};
+  goog.asserts.assert(typeConst);
+
+  if (goog.isObject(opt_captionOrProps) && opt_props) {
+    throw new Error('Cannot specify both opt_captionOrProps and opt_props ' +
+      'as properties object');
+  }
+  var caption = this.getCaption_(field, opt_captionOrProps);
+  var props = goog.isObject(opt_captionOrProps) ? 
+    opt_captionOrProps : 
+    (opt_props || {});
 
   var di = new typeConst(field, caption);
-  goog.object.extend(di, opt_props);
+  goog.object.extend(di, props);
 
   var dataCol = di.dataColumn;
   if (!di.source && dataCol !== this.type.split('-')[0] + 'ID' &&
@@ -176,6 +209,25 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
   return di;
 };
 
+/**
+ * @private
+ * @param {string} id The id representing this field or column.
+ * @param {(string|Object)=} opt_caption The optional header caption for 
+ *    this field. If caption is omitted the the field id 
+ *    will be used (parsing cammel casing).
+ * @return {string} The caption of this field or column.
+ */
+
+pn.ui.UiSpec.prototype.getCaption_ = function(id, opt_caption) {
+  if (opt_caption && goog.isString(opt_caption)) 
+    return /** @type {string} */ (opt_caption);  
+
+  var caption = id.split('.').pop();
+  if (caption !== 'ID' && goog.string.endsWith(caption, 'ID')) {
+    caption = caption.substring(0, caption.length - 2);
+  }
+  return caption.replace(/([A-Z])/g, ' $1');
+};
 
 /** @return {!Array.<string>} The list of types related to this entity. */
 pn.ui.UiSpec.prototype.getRelatedTypes = function() {
@@ -211,12 +263,47 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
     }
     else if (i.tableType) {
       var spec = pn.ui.UiSpecsRegister.get(i.tableSpec || i.tableType);
-      var cols = spec.getGridColumns();
+      var cols = spec.getGridColumns();      
       var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
-      types = goog.array.concat(types,
-          related);
+      types = goog.array.concat(types, related);
+      goog.dispose(spec);
     }
   });
   goog.array.removeDuplicates(types);
   return types;
+};
+
+/**
+ * Called after an Edit.js is created.  This is only used to initialise
+ * the values related to the entity being edited. To attach events, etc 
+ * override the documentEntered method.
+ *
+ * @param {!Object} entity The entity that was just decorated
+ * @param {!Object.<Array>} cache The cache with all related entities
+ * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI
+ */
+pn.ui.UiSpec.prototype.initEdit = function(entity, cache, fields) {
+  this.entity = entity;
+  this.cache = cache;
+  this.fields = fields;
+};
+
+/**
+ * Override this method to add events to any fields or do any custom UI
+ * processing.  At this stage you will have access to this.entity, this.cache
+ * and this.fields.
+ */
+pn.ui.UiSpec.prototype.documentEntered = function() {};
+
+/** @inheritDoc */
+pn.ui.UiSpec.prototype.disposeInternal = function() {
+  pn.ui.UiSpec.superClass_.disposeInternal.call(this);
+
+  this.eh.removeAll();
+  goog.dispose(this.eh);
+  
+  delete this.eh;
+  delete this.entity;
+  delete this.cache;
+  delete this.fields;  
 };

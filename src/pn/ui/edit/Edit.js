@@ -25,23 +25,16 @@ goog.require('pn.ui.grid.Grid');
 /**
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
+ * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} data The data object to edit, null for new entity.
- * @param {!Array.<pn.ui.edit.Command>} commands The commands to show in the
- *    edit page.
- * @param {!Array.<pn.ui.edit.Field>} fields The field specs to show in the
- *    edit page.
- * @param {!pn.ui.edit.Config} cfg Global options for this control.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
-
+pn.ui.edit.Edit = function(spec, data, cache) {
+  goog.asserts.assert(spec);
   goog.asserts.assert(data);
-  goog.asserts.assert(commands);
-  goog.asserts.assert(fields);
-  goog.asserts.assert(cfg);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, commands);
+  pn.ui.edit.CommandsComponent.call(this, spec, data, cache);
 
   /**
    * @private
@@ -49,23 +42,24 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    */
   this.data_ = data;
 
-  /**
-   * @private
-   * @type {!Array.<pn.ui.edit.Field>}
-   */
-  this.fields_ = fields;
-
-  /**
-   * @private
-   * @type {!pn.ui.edit.Config}
-   */
-  this.cfg_ = cfg;
-
+  
   /**
    * @private
    * @type {!Object.<!Array>}
    */
   this.cache_ = cache;
+
+  /**
+   * @private
+   * @type {!Array.<pn.ui.edit.Field>}
+   */
+  this.fields_ = this.spec.getEditFields(!this.data_['ID']);
+
+  /**
+   * @private
+   * @type {!pn.ui.edit.Config}
+   */
+  this.cfg_ = this.spec.getEditConfig();
 
   /**
    * @private
@@ -165,14 +159,15 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
     templateDiv.innerHTML = this.cfg_.template(this.data_);
     goog.dom.appendChild(div, templateDiv);
   }
-  this.decorateFields_(div);
-
+  var fields = this.decorateFields_(div);
+  this.spec.initEdit(this.data_, this.cache_, fields);
   goog.style.showElement(div, true);
 };
 
 /**
  * @private
  * @param {!Element} parent The parent element to attach the fields to.
+ * @return {!Object.<Element|goog.ui.Component>} The fields created
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
@@ -181,7 +176,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var useTemplate = !!this.cfg_.template,      
       focusSet = false,      
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
-      newEntity = !this.data_['ID'];
+      newEntity = !this.data_['ID'],
+      fields = {};
 
   if (fieldset) {
     this.disposables_.push(fieldset);
@@ -205,6 +201,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
+    fields[f.id] = input;
     this.disposables_.push(input);
     if (f.oncreate) { f.oncreate(input, this.data_); }
 
@@ -225,6 +222,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         try { input.focus(); } catch (ex) {}
       }, 1); }
   }, this);
+
+  return fields;
 };
 
 
@@ -334,6 +333,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
+  this.spec.documentEntered();
 };
 
 
