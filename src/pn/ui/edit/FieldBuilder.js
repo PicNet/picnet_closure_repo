@@ -66,14 +66,19 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache, opt_search) {
   var fb = pn.ui.edit.FieldBuilder;
-  var val = !!entity['ID'] ?
-      entity[field.dataColumn] :
-      field.defaultValue ?
-      field.defaultValue :
-      '';
+  var useDefault = !entity['ID'] && field.defaultValue;
+  var val = useDefault ? field.defaultValue : entity[field.dataColumn];
+  if (useDefault && field.source) {       
+    val = goog.array.find(cache[field.source], function(e) {
+      return e[field.source + 'Name'] === val;
+    })['ID'];
+  }  
+
   var elem;
   if (field.renderer) {
-    if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
+    if (field.source) { 
+      val = fb.getValueFromSourceTable_(field, val, cache); 
+    } 
     if (typeof (field.renderer) === 'object') {
       elem = field.renderer;
       field.renderer.initialise(val, entity, cache, field);

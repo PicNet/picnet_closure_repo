@@ -11,14 +11,10 @@ goog.provide('pn.ui.edit.FieldRenderers');
  * @param {*} val The date (millis since 1970) to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!goog.ui.InputDatePicker} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer =
-    function(val, entity, parent, opt_search) {
-  goog.asserts.assert(!goog.isDefAndNotNull(val) ||
-      goog.isNumber(val) || opt_search);
-
+    function(val, entity, parent) {
   var dt = null;
   if (val) {
     dt = new goog.date.Date();
@@ -44,14 +40,53 @@ pn.ui.edit.FieldRenderers.dateRenderer =
 
 
 /**
+ * @param {number} val The time number represented by hhmm format.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @return {!Element} The date control.
+ */
+pn.ui.edit.FieldRenderers.timeRenderer =
+    function(val, entity, parent) {
+  val = val || 0;
+  var hours = Math.floor(val / 100);
+  var minutes = Math.floor(val % 100);
+  var hourPick = goog.dom.createDom('select', 'time-picker-hours');
+  var minitesPick = goog.dom.createDom('select', 'time-picker-minutes');
+
+  for (var h = 0; h < 24; h++) {
+    var displayHr = (h % 12) + 1;
+    var hr = goog.string.padNumber(displayHr, 2) + (h < 12 ? ' AM' : ' PM');
+    var opt = goog.dom.createDom('option',
+        {'value': h, 'selected': hours === h }, hr);
+    if (hours === h) opt['selected'] = 'selected';
+    goog.dom.appendChild(hourPick, opt);
+  }
+
+  for (var m = 0; m < 60; m += 5) {
+    var opt = goog.dom.createDom('option',
+        {'value': m, 'selected': minutes === m }, goog.string.padNumber(m, 2));
+    goog.dom.appendChild(minitesPick, opt);
+  }
+
+  var elem = goog.dom.createDom('div', 'time-picker',
+      hourPick, ':', minitesPick);
+
+  goog.dom.appendChild(parent, elem);
+  elem.getValue = function() {
+    return hourPick.value * 100 + minitesPick.value;
+  };
+  return elem;
+};
+
+
+/**
  * @param {*} val The boolean to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.FieldRenderers.boolRenderer =
-    function(val, entity, parent, opt_search) {
+    function(val, entity, parent) {
   var inp = goog.dom.createDom('input', {'type': 'checkbox'});
   inp.defaultChecked = inp.checked = (val === true);
   goog.dom.appendChild(parent, inp);
@@ -82,12 +117,10 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.hiddenTextField =
-    function(val, entity, parent, opt_search) {
-  goog.asserts.assert(!opt_search);
+    function(val, entity, parent) {
 
   var inp = goog.dom.createDom('input', {'type': 'hidden', 'value': val || ''});
   goog.dom.appendChild(parent, inp);
@@ -136,15 +169,11 @@ pn.ui.edit.FieldRenderers.readOnlyTextAreaField =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element|!goog.ui.LabelInput|!goog.ui.InputDatePicker} The readonly
  *    text field control.
  */
 pn.ui.edit.FieldRenderers.readOnlyDateField =
-    function(val, entity, parent, opt_search) {
-  if (opt_search === true) {
-    return pn.ui.edit.FieldRenderers.dateRenderer(val, entity, parent, true);
-  }
+    function(val, entity, parent) {
   var date = !val ? null : new Date(val);
   var txt = !date ? '' : pn.Utils.dateFormat.format(date);
   var li = new goog.ui.LabelInput(txt);
