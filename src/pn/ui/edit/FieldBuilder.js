@@ -68,17 +68,17 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   var fb = pn.ui.edit.FieldBuilder;
   var useDefault = !entity['ID'] && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataColumn];
-  if (useDefault && field.source) {       
+  if (useDefault && field.source) {
     val = goog.array.find(cache[field.source], function(e) {
       return e[field.source + 'Name'] === val;
     })['ID'];
-  }  
+  }
 
   var elem;
   if (field.renderer) {
-    if (field.source) { 
-      val = fb.getValueFromSourceTable_(field, val, cache); 
-    } 
+    if (field.source) {
+      val = fb.getValueFromSourceTable_(field, val, cache);
+    }
     if (typeof (field.renderer) === 'object') {
       elem = field.renderer;
       field.renderer.initialise(val, entity, cache, field);
@@ -231,7 +231,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.ui.UiSpecsRegister.get(field.tableSpec || field.tableType);
+  var spec = pn.ui.UiSpecsRegister.get(field.tableSpec);
   var g = pn.ui.edit.FieldBuilder.createGrid(spec, data, cache);
   g.decorate(parent);
   return g;

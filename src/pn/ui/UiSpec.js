@@ -158,7 +158,7 @@ pn.ui.UiSpec.prototype.createColumn =
 
 /**
  * @protected
- * @param {string} field The id representing this field.
+ * @param {string} id The id representing this field.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
  *    this field or the properties map. If caption is omitted the the field id
  *    will be used (parsing cammel casing).
@@ -167,9 +167,21 @@ pn.ui.UiSpec.prototype.createColumn =
  * @return {pn.ui.edit.Field} The field created.
  */
 pn.ui.UiSpec.prototype.createField =
-    function(field, opt_captionOrProps, opt_props) {
-  return /** @type {pn.ui.edit.Field} */ (this.createDisplayItem_(
-      field, pn.ui.edit.Field, opt_captionOrProps, opt_props));
+    function(id, opt_captionOrProps, opt_props) {
+  var field = /** @type {pn.ui.edit.Field} */ (this.createDisplayItem_(
+      id, pn.ui.edit.Field, opt_captionOrProps, opt_props));
+  // TODO: Add all of the post create massaging here not in FieldBuilder, etc
+  if (goog.string.endsWith(id, 'Entities') && !field.tableType) {
+    field.tableType = id.replace('Entities', '');
+  }
+  if (field.tableType && !field.tableSpec) {
+    field.tableSpec = field.tableType;
+  }
+  if (field.tableType && !field.tableParentField) {
+    throw new Error('Field: ' + id + ' has a table field but did ' +
+        'not specify the "tableParentField" property.');
+  }
+  return field;
 };
 
 
@@ -265,7 +277,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
       }
     }
     else if (i.tableType) {
-      var spec = pn.ui.UiSpecsRegister.get(i.tableSpec || i.tableType);
+      var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);
       var cols = spec.getGridColumns();
       var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
       types = goog.array.concat(types, related);
