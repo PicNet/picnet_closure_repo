@@ -92,8 +92,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
   } else {
-    elem = goog.dom.createDom('input',
-        { 'id': field.id, 'type': 'text', 'value': val || '' });
+    elem = goog.dom.createDom('input', { 'type': 'text', 'value': val || '' });
     goog.dom.appendChild(parent, elem);
   }
   return elem;
@@ -123,7 +122,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
 
-  var opts = { 'id': spec.id };
+  var opts = {};
   if (opt_search === true) {
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
