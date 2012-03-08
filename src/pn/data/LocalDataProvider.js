@@ -132,7 +132,7 @@ pn.data.LocalDataProvider.prototype.saveEntitiesImpl_ =
     if (!success) {
       callback.call(opt_handler || this, [{Errors: 'Unknown Error'}]);
       return;
-    }    
+    }
     this.saveEntitiesImpl_(types, data, callback, opt_handler);
   }, this);
 };

@@ -73,7 +73,7 @@ pn.data.WebSQLRepository.prototype.init =
           '([TYPE], ID))');
       this.log.fine('init took: ' + (goog.now() - start) + 'ms');
       callback.call(opt_handler || this);
-    }, this),    
+    }, this),
     goog.bind(function(tx, err) {
       this.error('initialisation', [], err);
     }, this));
@@ -94,11 +94,11 @@ pn.data.WebSQLRepository.prototype.saveList =
           '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
           '\', ?)' :
           'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
-          [itemid, str]);      
+          [itemid, str]);
     }, this);
-    callback.call(opt_handler || this, true); 
-  }, this), goog.bind(function(tx, err) { 
-    this.error('savelist', [], err); 
+    callback.call(opt_handler || this, true);
+  }, this), goog.bind(function(tx, err) {
+    this.error('savelist', [], err);
   }));
 };
 

@@ -23,7 +23,7 @@ goog.require('pn.ui.grid.Grid');
  * @constructor
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
- * @param {!Object} entity The entity being edited
+ * @param {!Object} entity The entity being edited.
  * @param {!Object.<Array>} cache The entities cache to use for
  *    related entities.
  */
@@ -37,7 +37,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    * @type {!goog.events.EventHandler}
    */
   this.eh = new goog.events.EventHandler(this);
-  
+
   /**
    * @protected
    * @type {!pn.ui.UiSpec}

@@ -26,15 +26,15 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  *    this grid.
  * @param {!Array} list The entities to display.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {number} width The width of this grid
+ * @param {number} width The width of this grid.
  */
 pn.ui.grid.Grid = function(spec, list, cache, width) {
   goog.asserts.assert(spec);
   goog.asserts.assert(list);
   goog.asserts.assert(cache);
-  
+
   goog.ui.Component.call(this);
-  
+
   /**
    * @private
    * @type {!pn.ui.UiSpec}
@@ -42,12 +42,12 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
   this.spec_ = spec;
 
   var cols = this.spec_.getGridColumns();
-  var uniqueColIds = goog.array.map(cols, function(c) { 
-    return c.id; 
+  var uniqueColIds = goog.array.map(cols, function(c) {
+    return c.id;
   });
   goog.array.removeDuplicates(uniqueColIds);
   goog.asserts.assert(cols.length === uniqueColIds.length,
-      'All column IDs should be unique. Grid type: ' + this.spec_.id);  
+      'All column IDs should be unique. Grid type: ' + this.spec_.id);
 
   /**
    * @private
@@ -74,7 +74,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(this.spec_.getGridColumns());      
+  this.cols_ = this.getColumnsWithInitialState_(this.spec_.getGridColumns());
 
   /**
    * @private
@@ -87,7 +87,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    * @type {!Array.<pn.ui.grid.Column>}
    */
   this.totalColumns_ =
-      goog.array.filter(this.cols_, function(c) { return c.total; });    
+      goog.array.filter(this.cols_, function(c) { return c.total; });
 
   /**
    * @private

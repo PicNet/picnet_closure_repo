@@ -15,7 +15,7 @@ goog.provide('pn.ui.edit.FieldRenderers');
  * @return {!goog.ui.InputDatePicker} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer =
-    function(val, entity, parent, opt_search) {  
+    function(val, entity, parent, opt_search) {
   goog.asserts.assert(!goog.isDefAndNotNull(val) ||
       goog.isNumber(val) || opt_search);
 

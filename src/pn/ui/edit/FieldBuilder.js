@@ -66,11 +66,11 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache, opt_search) {
   var fb = pn.ui.edit.FieldBuilder;
-  var val = !!entity['ID'] ? 
-    entity[field.dataColumn] :
-    field.defaultValue ? 
-        field.defaultValue : 
-        '';
+  var val = !!entity['ID'] ?
+      entity[field.dataColumn] :
+      field.defaultValue ?
+      field.defaultValue :
+      '';
   var elem;
   if (field.renderer) {
     if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
@@ -105,17 +105,13 @@ pn.ui.edit.FieldBuilder.createAndAttach =
  */
 pn.ui.edit.FieldBuilder.createParentEntitySelect =
     function(spec, id, cache, opt_search) {
-  var relationship = spec.source.split('.');
-  if (relationship.length > 2 && id > 0) {
-    throw new Error('Can only have embedded parent lists when in filter mode');
-  }
-  var entityType = relationship[
-      relationship.length === 1 ? 0 : relationship.length - 2];
+  var steps = spec.source.split('.');
+  var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
   if (goog.string.endsWith(entityType, 'Entities')) {
     entityType = goog.string.remove(entityType, 'Entities');
   }
-  var textField = relationship.length === 1 ?
-      entityType + 'Name' : relationship[relationship.length - 1];
+  var textField = steps.length === 1 ?
+      entityType + 'Name' : steps[steps.length - 1];
   var list = cache[entityType];
   if (spec.sourceFilter) { list = spec.sourceFilter(list, cache); }
 
@@ -244,7 +240,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @return {!pn.ui.grid.Grid} The created grid.
  */
-pn.ui.edit.FieldBuilder.createGrid = function(spec, data, cache) {  
+pn.ui.edit.FieldBuilder.createGrid = function(spec, data, cache) {
   // TODO: This is so dodgy, find a better way of working out width
   var viewContainer = pn.Utils.getElement('view-container');
   var width = goog.style.getSize(viewContainer).width - 25;

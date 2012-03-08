@@ -42,7 +42,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    */
   this.data_ = data;
 
-  
+
   /**
    * @private
    * @type {!Object.<!Array>}
@@ -164,17 +164,18 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   goog.style.showElement(div, true);
 };
 
+
 /**
  * @private
  * @param {!Element} parent The parent element to attach the fields to.
- * @return {!Object.<Element|goog.ui.Component>} The fields created
+ * @return {!Object.<Element|goog.ui.Component>} The fields created.
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var useTemplate = !!this.cfg_.template,      
-      focusSet = false,      
+  var useTemplate = !!this.cfg_.template,
+      focusSet = false,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
       newEntity = !this.data_['ID'],
       fields = {};
@@ -185,7 +186,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   }
 
   goog.array.forEach(this.fields_, function(f) {
-    // Do not do child tables on new entities    
+    // Do not do child tables on new entities
     var isChildTable = f.tableType;
     if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
