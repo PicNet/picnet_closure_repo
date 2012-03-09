@@ -35,7 +35,8 @@ pn.ui.grid.Column = function(id, name) {
   this.behavior = '';
   /** @type {boolean} */
   this.isParentFormatter = false;
-  /** @type {null|function(number,number,Object,Object,Object):string} */
+  /** @type {null|function(
+      !Object,!Object.<!Array>,*,!pn.ui.grid.Column):string} */
   this.renderer = null;
   /** @type {boolean} */
   this.total = false;
@@ -67,37 +68,4 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     source: this.source
   });
   return col;
-};
-
-
-/**
- * @param {number} row The row index.
- * @param {number} cell The cell index in the specified row.
- * @param {Date} value The date value displayed in the cell.
- * @param {Object} columnDef The column specifications, i.e.
- *    Column.toSlick result.
- * @param {Object} dataContext The data item displayed in this row.
- * @return {string} The html value to display in this cell;.
- */
-pn.ui.grid.Column.dateRenderer =
-    function(row, cell, value, columnDef, dataContext) {
-  var date = null;
-  if (value) { date = new Date(value); }
-  if (date && date.getFullYear() <= 1970) { date = null; }
-  return date ? pn.Utils.dateFormat.format(date) : '';
-};
-
-
-/**
- * @param {number} row The row index.
- * @param {number} cell The cell index in the specified row.
- * @param {boolean} value The date value displayed in the cell.
- * @param {Object} columnDef The column specifications, i.e.
- *    Column.toSlick result.
- * @param {Object} dataContext The data item displayed in this row.
- * @return {string} The html value to display in this cell;.
- */
-pn.ui.grid.Column.yesNoBoolRenderer =
-    function(row, cell, value, columnDef, dataContext) {
-  return value === true ? 'Y' : 'N';
 };

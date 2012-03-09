@@ -9,6 +9,7 @@ goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('pn.data.EntityUtils');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
@@ -221,7 +222,13 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       goog.array.map(this.cols_, function(c) {
         if (!c.renderer && c.source) {
           c.isParentFormatter = true;
-          c.renderer = goog.bind(this.parentColumnFormatter_, this);
+          c.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
+        }
+        if (c.renderer) {
+          var orig = c.renderer;
+          c.renderer = goog.bind(function(row, cell, value, col, entity) {
+            return orig(entity, this.cache_, value, col);
+          }, this);
         }
         return c.toSlick(c.renderer);
       }, this), this.cfg_.toSlick());
@@ -274,69 +281,13 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
-      var dat = rowData[cc.dataColumn];
-      var txt = cc.renderer ? cc.renderer(row, col, dat, cc, rowData) : dat;
+      var val = rowData[cc.dataColumn];
+      var txt = cc.renderer ? cc.renderer(rowData, this.cache_, val, cc) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
   }
   return gridData;
-};
-
-
-/**
- * @private
- * @param {number} row The row index.
- * @param {number} cell The cell index.
- * @param {Object} value The raw cell value.
- * @param {pn.ui.grid.Column} col The Slick column config object.
- * @param {Object} dataContext entity data being displayed in this row.
- * @return {string} The html to render for this field.
- */
-pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
-    function(row, cell, value, col, dataContext) {
-  value = dataContext[col.dataColumn];
-  if (!value) return '';
-  return this.getCachedEntityName_(col, value);
-};
-
-
-/**
- * @private
- * @param {pn.ui.grid.Column} col The Slick column config object.
- * @param {number} id The id of the entitiy in the list.
- * @return {string} The entities name.
- */
-pn.ui.grid.Grid.prototype.getCachedEntityName_ = function(col, id) {
-  var steps = col.source.split('.');
-  var entity = this.getTargetEntity_(goog.array.clone(steps), id);
-  if (!entity) return '';
-
-  var name = steps.length > 1 ? steps[steps.length - 1] : (steps[0] + 'Name');
-  return entity[name];
-};
-
-
-/**
- * @private
- * @param {!Array.<string>} steps The steps (path) to the entity.
- * @param {number} id The id of the entitiy in the list.
- * @return {Object} The matched entity.
- */
-pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
-  if (id <= 0) return null;
-  var type = steps[0];
-  goog.asserts.assert(this.cache_[type], 'Type: ' + type +
-      ' not found in cache');
-  var entity = /** @type {Object} */
-      (goog.array.find(this.cache_[type],
-      function(e) { return e['ID'] === id; }, this));
-  if (steps.length > 2) {
-    var id2 = entity[steps[1] + 'ID'];
-    steps.shift();
-    return this.getTargetEntity_(steps, id2);
-  }
-  return entity;
 };
 
 
@@ -522,9 +473,10 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
               function(col) { return col.id === columnId; }));
       var val = item[spec.dataColumn];
       if (spec.isParentFormatter) {
-        val = val ? this.getCachedEntityName_(spec, val) : '';
+        val = val ?
+            pn.data.EntityUtils.getEntityName(this.cache_, spec.id, val) : '';
       } else if (spec.renderer) {
-        val = spec.renderer(0, 0, val, spec, item);
+        val = spec.renderer(item, this.cache_, val, spec);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
