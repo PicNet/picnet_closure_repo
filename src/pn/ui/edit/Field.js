@@ -43,6 +43,9 @@ pn.ui.edit.Field = function(id, name) {
   /** @type {boolean} */
   this.showOnAdd = true;
 
+  /** @type {boolean} */
+  this.readonly = false;
+
   /** @type {*} */
   this.defaultValue = undefined;
 };

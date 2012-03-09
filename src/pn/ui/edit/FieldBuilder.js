@@ -87,7 +87,9 @@ pn.ui.edit.FieldBuilder.createAndAttach =
       elem = field.renderer(val, entity, parent, opt_search);
     }
   } else if (field.source && !field.tableType) {
-    elem = fb.createParentEntitySelect(field, val, cache, opt_search);
+    elem = field.readonly ?
+        fb.createReadOnlyParentEntitySelect(field, val, cache, opt_search) :
+        fb.createParentEntitySelect(field, val, cache, opt_search);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
@@ -130,6 +132,34 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   var selTxt = 'Select ' + spec.name + ' ...';
   return pn.ui.edit.FieldBuilder.
       createDropDownList(selTxt, list, textField, 'ID', id, opts);
+};
+
+
+/**
+ * @param {!pn.ui.SpecDisplayItem} spec The field/column to create a
+ *    dom tree for.
+ * @param {number} id The ID of the current child entity (this).
+ * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {boolean=} opt_search If this field is being created in search mode.
+ * @return {!Element} The created dom element.
+ */
+pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
+    function(spec, id, cache, opt_search) {
+  if (opt_search) {
+    return pn.ui.edit.FieldBuilder.
+        createParentEntitySelect.apply(null, arguments);
+  }
+  var steps = spec.source.split('.');
+  var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
+  if (goog.string.endsWith(entityType, 'Entities')) {
+    entityType = goog.string.remove(entityType, 'Entities');
+  }
+  var textField = steps.length === 1 ?
+      entityType + 'Name' : steps[steps.length - 1];
+  var entity = goog.array.find(cache[entityType], function(e) {
+    return e['ID'] === id;
+  });
+  return goog.dom.createDom('div', 'field', entity ? entity[textField] : '');
 };
 
 
