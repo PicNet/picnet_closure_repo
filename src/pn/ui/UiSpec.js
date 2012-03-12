@@ -3,7 +3,7 @@ goog.provide('pn.ui.UiSpec');
 
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
-
+goog.require('goog.style');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.Edit.EventType');
 goog.require('pn.ui.edit.Field');
@@ -311,6 +311,42 @@ pn.ui.UiSpec.prototype.initEdit = function(entity, cache, fields) {
  * and this.fields.
  */
 pn.ui.UiSpec.prototype.documentEntered = function() {};
+
+
+/**
+ * @param {string} id The id of the field (and its label) to check
+ *    for visibility.
+ * @return {boolean} visible Wether the specified field element is currently
+ *    visible.
+ */
+pn.ui.UiSpec.prototype.isShown = function(id) {
+  return goog.style.isElementShown(this.getFieldContainer_(id));
+};
+
+
+/**
+ * @param {string} id The id of the field (and its label) to show/hide.
+ * @param {boolean} visible Wether to show or hide the element.
+ */
+pn.ui.UiSpec.prototype.showElement = function(id, visible) {
+  goog.style.showElement(this.getFieldContainer_(id), visible);
+};
+
+
+/**
+ * @private
+ * @param {string} id The id of the element to get the container for.
+ * @return {!Element} The parent container of the speicified field id.
+ */
+pn.ui.UiSpec.prototype.getFieldContainer_ = function(id) {
+  goog.asserts.assert(this.fields);
+  goog.asserts.assert(this.fields[id]);
+
+  var el = this.fields[id];
+  var element = el.getElement ? el.getElement() : el;
+  while (element.id !== id) { element = element.parentNode; }
+  return /** @type {!Element} */ (element);
+};
 
 
 /** @inheritDoc */

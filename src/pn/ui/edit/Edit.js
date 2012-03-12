@@ -145,11 +145,7 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  var opts = {
-    'class': 'details-container ' + this.cfg_.type,
-    'style': 'display:none'
-  };
-  var div = goog.dom.createDom('div', opts);
+  var div = goog.dom.createDom('div', 'details-container ' + this.cfg_.type);
   this.disposables_.push(div);
   goog.dom.appendChild(element, div);
 
@@ -161,7 +157,6 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   }
   var fields = this.decorateFields_(div);
   this.spec.initEdit(this.data_, this.cache_, fields);
-  goog.style.showElement(div, true);
 };
 
 
@@ -263,7 +258,10 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    if (!this.spec.isShown(f.id)) return;
+
+    var input = this.inputs_[f.id];
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(input);
     var error;
     if (f.renderer && f.renderer.validate) {
       error = f.renderer.validate();

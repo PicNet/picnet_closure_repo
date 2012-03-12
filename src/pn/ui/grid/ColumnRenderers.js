@@ -6,7 +6,6 @@ goog.require('pn.data.EntityUtils');
 goog.require('pn.ui.SpecDisplayItem');
 
 
-
 /**
  * @param {!Object} entity The entity in the current row.
  * @param {!Object.<!Array>} cache An in memory database with required entities.
@@ -106,5 +105,5 @@ pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
       return child[type + 'Name'];
     });
   }
-  return names.join('');
+  return names.join(', ');
 };

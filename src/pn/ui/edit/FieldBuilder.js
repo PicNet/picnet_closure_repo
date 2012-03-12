@@ -22,7 +22,7 @@ pn.ui.edit.FieldBuilder.getFieldLabel =
     function(id, required, opt_name, opt_clazz) {
   goog.asserts.assert(id);
   var clazz = (opt_clazz || 'field') + (required ? ' required' : '');
-  var dom = goog.dom.createDom('div', clazz,
+  var dom = goog.dom.createDom('div', {'id': id, 'class': clazz},
       goog.dom.createDom('label', {
         'for': id
       }, opt_name || id));
