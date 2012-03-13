@@ -13,7 +13,7 @@ pn.ui.grid.Config = function(type) {
   /** @type {boolean} */
   this.readonly = false;
   /** @type {boolean} */
-  this.allowAdd = true;
+  this.allowEdit = true;
   /** @type {boolean} */
   this.enableColumnReorder = false;
   /** @type {boolean} */

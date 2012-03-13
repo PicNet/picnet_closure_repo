@@ -98,7 +98,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
 
   /**
    * @private
-   * @type {!Array.<goog.ui.Component>}
+   * @type {!Array.<pn.ui.grid.Command>}
    */
   this.commands_ = this.spec_.getGridCommands();
 
@@ -296,10 +296,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
   // Selecting
-  if (!this.cfg_.readonly) {
-    this.slick_.setSelectionModel(new Slick.RowSelectionModel());
-    this.selectionHandler_ = goog.bind(this.handleSelection_, this);
-    this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
+  if (!this.cfg_.readonly && this.commands_.length) {
+    if (this.cfg_.allowEdit) {
+      this.slick_.setSelectionModel(new Slick.RowSelectionModel());
+      this.selectionHandler_ = goog.bind(this.handleSelection_, this);
+      this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
+    }
     goog.array.forEach(this.commands_, function(c) {
       this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
     }, this);

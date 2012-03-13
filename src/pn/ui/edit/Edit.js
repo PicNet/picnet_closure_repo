@@ -342,12 +342,9 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
   var table = field.tableType;
-  if (!table) return;
-  var readonly = field.tableReadOnly;
+  if (!table || field.tableReadOnly) return;
 
-  var grid = this.inputs_[field.id];
-  if (readonly) return;
-
+  var grid = this.inputs_[field.id];  
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;
