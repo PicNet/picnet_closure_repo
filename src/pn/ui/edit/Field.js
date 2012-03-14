@@ -25,7 +25,7 @@ pn.ui.edit.Field = function(id, name) {
   /** @type
       {pn.ui.edit.ComplexRenderer|
           function(*, Object, !Element, boolean=):
-              !(Element|goog.ui.Component)} */
+              !(Element|goog.ui.Component|Text)} */
   this.renderer = null;
 
   /** @type {null|pn.ui.edit.ValidateInfo|

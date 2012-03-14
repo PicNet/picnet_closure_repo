@@ -80,6 +80,20 @@ pn.ui.edit.FieldRenderers.timeRenderer =
 
 
 /**
+ * @param {*} val The text to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @return {!Text} The readonly
+ *    text field control.
+ */
+pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
+  goog.asserts.assertNumber(val);
+  var display = pn.Utils.centsToDisplayString(/** @type {number} */ (val));
+  return goog.dom.createTextNode(display);
+};
+
+
+/**
  * @param {*} val The boolean to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
@@ -98,14 +112,10 @@ pn.ui.edit.FieldRenderers.boolRenderer =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.textAreaRenderer =
-    function(val, entity, parent, opt_search) {
-  if (opt_search === true) {
-    return pn.ui.edit.FieldRenderers.standardTextSearchField(parent);
-  }
+    function(val, entity, parent) {
   var textarea = goog.dom.createDom('textarea',
       {'rows': '5', 'value': val || ''});
   goog.dom.appendChild(parent, textarea);
@@ -132,14 +142,10 @@ pn.ui.edit.FieldRenderers.hiddenTextField =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.FieldRenderers.readOnlyTextField =
-    function(val, entity, parent, opt_search) {
-  if (opt_search === true) {
-    return pn.ui.edit.FieldRenderers.standardTextSearchField(parent);
-  }
+    function(val, entity, parent) {
   var readonly = goog.dom.createDom('input',
       {'type': 'text', 'readonly': 'readonly',
         'disabled': 'disabled', 'value': val || ''});
@@ -152,13 +158,11 @@ pn.ui.edit.FieldRenderers.readOnlyTextField =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.FieldRenderers.readOnlyTextAreaField =
-    function(val, entity, parent, opt_search) {
-  var ta = pn.ui.edit.FieldRenderers.textAreaRenderer(
-      val, entity, parent, opt_search);
+    function(val, entity, parent) {
+  var ta = pn.ui.edit.FieldRenderers.textAreaRenderer(val, entity, parent);
   ta['readonly'] = 'readonly';
   ta['disabled'] = 'disabled';
   return ta;
@@ -169,7 +173,7 @@ pn.ui.edit.FieldRenderers.readOnlyTextAreaField =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @return {!Element|!goog.ui.LabelInput|!goog.ui.InputDatePicker} The readonly
+ * @return {!goog.ui.LabelInput} The readonly
  *    text field control.
  */
 pn.ui.edit.FieldRenderers.readOnlyDateField =
@@ -186,10 +190,13 @@ pn.ui.edit.FieldRenderers.readOnlyDateField =
 
 
 /**
- * @param {!Element} parent The parent to attach this search input control to.
+ * @param {*} val The text to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
  * @return {!Element} The text field control for search inputs.
  */
-pn.ui.edit.FieldRenderers.standardTextSearchField = function(parent) {
+pn.ui.edit.FieldRenderers.standardTextSearchField =
+    function(val, entity, parent) {
   var txt = goog.dom.createDom('input', {'type': 'text'});
   goog.dom.appendChild(parent, txt);
   return txt;

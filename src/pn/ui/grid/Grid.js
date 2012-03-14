@@ -226,7 +226,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
         }
         if (c.renderer) {
           var orig = c.renderer;
-          c.renderer = goog.bind(function(row, cell, value, col, entity) {            
+          c.renderer = goog.bind(function(row, cell, value, col, entity) {
             goog.asserts.assert(entity);
             goog.asserts.assert(this.cache_);
 
@@ -490,10 +490,10 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
       var val = item[spec.dataColumn];
       if (spec.isParentFormatter) {
         val = val ?
-            pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) : 
+            pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) :
             '';
-      } else if (spec.renderer) {                
-        val = spec.renderer(0, 0, val, spec, item);
+      } else if (spec.renderer) {
+        val = spec.renderer(item, this.cache_, val, spec);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {

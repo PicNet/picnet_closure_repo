@@ -65,10 +65,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
-  goog.asserts.assert(goog.isNumber(val));
-  var dollars = Math.floor(val / 100);
-  var cents = Math.floor(val % 100);
-  return '$' + dollars + '.' + goog.string.padNumber(cents, 2);
+  return pn.Utils.centsToDisplayString(val);
 };
 
 

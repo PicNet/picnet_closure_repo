@@ -313,6 +313,8 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   goog.asserts.assert(f);
   goog.asserts.assert(option);
 
+  var FieldBuilder = pn.ui.edit.FieldBuilder;
+  var FieldRenderers = pn.ui.edit.FieldRenderers;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
   var name = spec.name + ' - ' + f.name;
   var lbl = goog.dom.createDom('label', { 'for': f.id }, name);
@@ -321,14 +323,15 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
       remove);
   goog.dom.appendChild(this.filtersPanel_, dom);
   var input;
-  if (f.renderer === pn.ui.edit.FieldRenderers.readOnlyTextField &&
-      f.id !== 'ID') {
-    input = pn.ui.edit.FieldBuilder.createParentEntitySelect(
-        f, -1, this.cache_, true);
+  var parent =
+      (f.renderer === FieldRenderers.readOnlyTextField && f.id !== 'ID') ||
+      (!f.renderer && f.source);
+  if (parent) {
+    input = FieldBuilder.createSearchParentFilter(f, -1, this.cache_);
     goog.dom.appendChild(dom, input);
   } else {
-    input = pn.ui.edit.FieldBuilder.createAndAttach(
-        f, dom, {}, this.cache_, true);
+    var srchFld = this.getSearchAppropriateFieldSpec_(f);
+    input = FieldBuilder.createAndAttach(srchFld, dom, {}, this.cache_);
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 
@@ -341,6 +344,29 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     goog.style.showElement(option, true);
     this.doSearch_();
   });
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.edit.Field} field The field to make appropriate for searching.
+ * @return {!pn.ui.edit.Field} The search appropriate field.
+ */
+pn.ui.SearchPanel.prototype.getSearchAppropriateFieldSpec_ = function(field) {
+  if (!field.renderer) return field;
+  var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
+  var fr = pn.ui.edit.FieldRenderers;
+  if (field.renderer === fr.centsRenderer ||
+      field.renderer === fr.timeRenderer ||
+      field.renderer === fr.textAreaRenderer ||
+      field.renderer === fr.hiddenTextField ||
+      field.renderer === fr.readOnlyTextField ||
+      field.renderer === fr.readOnlyTextAreaField) {
+    sf.renderer = fr.standardTextSearchField;
+  } else if (field.renderer === fr.readOnlyDateField) {
+    sf.renderer = fr.dateRenderer;
+  }
+  return sf;
 };
 
 

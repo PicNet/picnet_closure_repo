@@ -74,6 +74,18 @@ pn.Utils.parseJson = function(json) {
 
 
 /**
+ * @param {number} cents The cents to display as a dollar/cents string.
+ * @return {string} The dollar / cents string.
+ */
+pn.Utils.centsToDisplayString = function(cents) {
+  goog.asserts.assert(goog.isNumber(cents));
+  var actualDollars = Math.floor(cents / 100);
+  var actualCents = Math.floor(cents % 100);
+  return '$' + actualDollars + '.' + goog.string.padNumber(actualCents, 2);
+};
+
+
+/**
  * @param {Object} o The object to serialise to JSON.
  * @return {string} The string (json) representation of the specified object.
  */
