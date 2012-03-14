@@ -24,9 +24,37 @@ pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(entity, cache, val) {
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.dateRenderer = function(entity, cache, val) {
+  return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
+      entity, cache, val, pn.Utils.dateFormat);
+};
+
+
+/**
+ * @param {!Object} entity The entity in the current row.
+ * @param {!Object.<!Array>} cache An in memory database with required entities.
+ * @param {number|Date|goog.date.Date} val The value currently in this cell.
+ * @return {string} The html value to display in this cell;.
+ */
+pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(entity, cache, val) {
+  return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
+      entity, cache, val, pn.Utils.dateTimeFormat);
+};
+
+
+/**
+ * @private
+ * @param {!Object} entity The entity in the current row.
+ * @param {!Object.<!Array>} cache An in memory database with required entities.
+ * @param {number|Date|goog.date.Date} val The value currently in this cell.
+ * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
+ *    this time/date value;.
+ * @return {string} The html value to display in this cell;.
+ */
+pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
+    function(entity, cache, val, formatter) {
   if (val && goog.isNumber(val)) val = new Date(val);
   if (val && val.getFullYear() <= 1970) { val = null; }
-  return val ? pn.Utils.dateFormat.format(/** @type {Date} */ (val)) : '';
+  return val ? formatter.format(/** @type {Date} */ (val)) : '';
 };
 
 

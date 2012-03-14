@@ -28,6 +28,10 @@ pn.ui.grid.Config = function(type) {
   this.enableQuickFilters = true;
   /** @type {number} */
   this.width = 0;
+  /** @type {string} */
+  this.defaultSortColumn = '';
+  /** @type {boolean} */
+  this.defaultSortAscending = true;
 };
 
 

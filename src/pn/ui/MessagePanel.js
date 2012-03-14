@@ -31,6 +31,12 @@ pn.ui.MessagePanel = function(panel) {
    * @type {number}
    */
   this.showMessageTimer_ = 0;
+
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.LogUtils.getLogger('pn.ui.MessagePanel');
 };
 goog.inherits(pn.ui.MessagePanel, goog.Disposable);
 
@@ -55,6 +61,9 @@ pn.ui.MessagePanel.prototype.showError = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showErrors = function(list) {
+  goog.asserts.assert(list.length);
+  goog.asserts.assert(goog.isString(list[0]));
+
   this.showMessage_('<ul><li>' + list.join('</li><li>') +
       '</li></ul>', 'error');
 };
@@ -72,6 +81,9 @@ pn.ui.MessagePanel.prototype.showMessage = function(message) {
  * @param {Array.<string>} list The message list to display.
  */
 pn.ui.MessagePanel.prototype.showMessages = function(list) {
+  goog.asserts.assert(list.length);
+  goog.asserts.assert(goog.isString(list[0]));
+
   this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', 'info');
 };
 
@@ -82,6 +94,7 @@ pn.ui.MessagePanel.prototype.showMessages = function(list) {
  * @param {string=} opt_clazz The class to use on the panel.
  */
 pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
+  this.log_.finest('showMessage message[' + message + ']');
   if (this.showMessageTimer_) { goog.Timer.clear(this.showMessageTimer_); }
   this.panel_.innerHTML = message;
   var newClass = this.originalClass_;
@@ -95,4 +108,16 @@ pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
       this.showMessage_('');
     }, 3000, this);
   }
+};
+
+
+/** @inheritDoc */
+pn.ui.MessagePanel.prototype.disposeInternal = function() {
+  pn.ui.MessagePanel.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.panel_);
+  goog.dispose(this.log_);
+
+  delete this.panel_;
+  delete this.log_;
 };

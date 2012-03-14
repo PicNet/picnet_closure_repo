@@ -271,7 +271,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
           f, val, this.data_, this.cache_[this.cfg_.type]);
-      if (error) errors.push(error);
+      if (error) { errors.push(error); }
     }
   }, this);
   return errors;
@@ -342,9 +342,9 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
   var table = field.tableType;
-  if (!table || field.tableReadOnly) return;
+  if (!table || field.readonly) return;
 
-  var grid = this.inputs_[field.id];  
+  var grid = this.inputs_[field.id];
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;

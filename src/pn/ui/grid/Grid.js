@@ -360,9 +360,18 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   var state = goog.net.cookies.get(this.hash_);
   if (!state) return;
   var data = goog.json.unsafeParse(state);
+  var col = null,
+      asc = true;
   if (data['sort']) {
-    this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
-    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
+    col = data['sort']['colid'];
+    asc = data['sort']['asc'];
+  } else if (this.cfg_.defaultSortColumn) {
+    col = this.cfg_.defaultSortColumn;
+    col = this.cfg_.defaultSortAscending;
+  }
+  if (col) {
+    this.dataView_.fastSort(col, asc);
+    this.slick_.setSortColumn(col, asc);
   }
 };
 

@@ -11,7 +11,7 @@ goog.provide('pn.ui.edit.FieldRenderers');
  * @param {*} val The date (millis since 1970) to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @return {!goog.ui.InputDatePicker} The date control.
+ * @return {!goog.ui.Component} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer =
     function(val, entity, parent) {
@@ -40,16 +40,16 @@ pn.ui.edit.FieldRenderers.dateRenderer =
 
 
 /**
- * @param {number} val The time number represented by hhmm format.
+ * @param {*} val The time number represented by hhmm format.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
  * @return {!Element} The date control.
  */
 pn.ui.edit.FieldRenderers.timeRenderer =
     function(val, entity, parent) {
-  val = val || 0;
-  var hours = Math.floor(val / 100);
-  var minutes = Math.floor(val % 100);
+  var num = parseInt(val || 0, 10);
+  var hours = Math.floor(num / 100);
+  var minutes = Math.floor(num % 100);
   var hourPick = goog.dom.createDom('select', 'time-picker-hours');
   var minitesPick = goog.dom.createDom('select', 'time-picker-minutes');
 

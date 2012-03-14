@@ -262,7 +262,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
   if (type && type.indexOf(' ') < 0) { types.push(type); }
 
   goog.array.forEach(items, function(i) {
-    var additional = i.additionalCahceTypes;
+    var additional = i.additionalCacheTypes;
     if (additional.length) {
       goog.array.forEach(additional, function(at) { types.push(at); });
     }
