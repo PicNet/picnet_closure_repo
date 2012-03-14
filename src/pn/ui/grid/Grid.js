@@ -33,6 +33,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
   goog.asserts.assert(spec);
   goog.asserts.assert(list);
   goog.asserts.assert(cache);
+  goog.asserts.assert(width > 0);
 
   goog.ui.Component.call(this);
 
