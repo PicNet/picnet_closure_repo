@@ -115,6 +115,7 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer =
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
     function(entity, cache, val, col, parentField, opt_childType) {
+  goog.asserts.assert(entity);
   goog.asserts.assert(goog.string.endsWith(col.id, 'Entities'));
 
   var type = goog.string.remove(col.id, 'Entities');

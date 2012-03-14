@@ -226,7 +226,10 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
         }
         if (c.renderer) {
           var orig = c.renderer;
-          c.renderer = goog.bind(function(row, cell, value, col, entity) {
+          c.renderer = goog.bind(function(row, cell, value, col, entity) {            
+            goog.asserts.assert(entity);
+            goog.asserts.assert(this.cache_);
+
             return orig(entity, this.cache_, value, col);
           }, this);
         }
@@ -476,6 +479,8 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
  * @return {boolean} Wether the item meets the quick filters.
  */
 pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
+  goog.asserts.assert(item);
+
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
       var filterVal = this.quickFilters_[columnId];
@@ -485,9 +490,10 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
       var val = item[spec.dataColumn];
       if (spec.isParentFormatter) {
         val = val ?
-            pn.data.EntityUtils.getEntityName(this.cache_, spec.id, val) : '';
-      } else if (spec.renderer) {
-        val = spec.renderer(item, this.cache_, val, spec);
+            pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) : 
+            '';
+      } else if (spec.renderer) {                
+        val = spec.renderer(0, 0, val, spec, item);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
