@@ -26,7 +26,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.Router');
+  this.log_ = pn.LogUtils.getLogger('pn.Router', true);
 
   /**
    * @private
@@ -61,7 +61,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
 
   var historyEvent = goog.history.EventType.NAVIGATE;
   this.eh_.listen(this.history_, historyEvent, function(e) {
-    this.navigateImpl_(e.token, false);
+    this.navigateImpl_(e.token);
   });
   this.history_.setEnabled(true);
 };
@@ -73,23 +73,22 @@ pn.Router.prototype.back = function() {
   this.historyStack_.pop(); // Ignore current page
   var to = this.historyStack_.pop();
   this.log_.fine('back: ' + to);
-  this.navigateImpl_(to, false);
+  this.navigateImpl_(to);
 };
 
 
 /**
  * @param {!string} path The full route path to navigate to.
- * @param {boolean=} opt_ignoreHistory Wether to ignore this event from the
- *    history.
+ * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.Router.prototype.navigate = function(path, opt_ignoreHistory) {
+pn.Router.prototype.navigate = function(path, opt_add) {
   goog.asserts.assert(path);
-  var ignore = goog.isDefAndNotNull(opt_ignoreHistory) && opt_ignoreHistory;
-  if (!ignore) {
+  var add = opt_add !== false;
+  if (add) {
     this.log_.fine('path: ' + path + ' added to history stack');
     this.history_.setToken(path);
   } else {
-    this.navigateImpl_(path, true);
+    this.navigateImpl_(path);
   }
 };
 
@@ -97,10 +96,9 @@ pn.Router.prototype.navigate = function(path, opt_ignoreHistory) {
 /**
  * @private
  * @param {!string} path The full route path to navigate to.
- * @param {boolean=} opt_ignoreHistory Wether to ignore this event from the
- *    history.
+ * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.Router.prototype.navigateImpl_ = function(path, opt_ignoreHistory) {
+pn.Router.prototype.navigateImpl_ = function(path, opt_add) {
   if (!path) {
     this.log_.fine('navigateImpl empty path going to defaultRoute');
     this.history_.setToken(this.defaultRoute_);
@@ -109,9 +107,9 @@ pn.Router.prototype.navigateImpl_ = function(path, opt_ignoreHistory) {
 
   var tokens = path.split('/');
   var to = tokens.splice(0, 1)[0] || this.defaultRoute_;
-  var ignore = goog.isDefAndNotNull(opt_ignoreHistory) && opt_ignoreHistory;
+  var add = opt_add !== false;
 
-  var msg = 'navigateImpl path: ' + path + ' to: ' + to + ' ignore: ' + ignore;
+  var msg = 'navigateImpl path: ' + path + ' to: ' + to + ' add: ' + add;
   this.log_.fine(msg);
 
   var route = this.routes_[to];
@@ -119,7 +117,7 @@ pn.Router.prototype.navigateImpl_ = function(path, opt_ignoreHistory) {
     throw new Error('Navigation token [' + path + '] not supported');
   }
 
-  if (!ignore) { this.historyStack_.push(path); }
+  if (add) { this.historyStack_.push(path); }
   route.apply(this, tokens);
 };
 
