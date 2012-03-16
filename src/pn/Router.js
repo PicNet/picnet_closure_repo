@@ -71,9 +71,10 @@ goog.inherits(pn.Router, goog.Disposable);
 /** Goes back to last history state */
 pn.Router.prototype.back = function() {
   this.historyStack_.pop(); // Ignore current page
-  var to = this.historyStack_.pop();
+  var to = this.historyStack_.pop() || this.defaultRoute_;
   this.log_.fine('back: ' + to);
-  this.navigateImpl_(to);
+  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+  this.history_.setToken(to);
 };
 
 
@@ -86,6 +87,7 @@ pn.Router.prototype.navigate = function(path, opt_add) {
   var add = opt_add !== false;
   if (add) {
     this.log_.fine('path: ' + path + ' added to history stack');
+    // This will trigger a NAVIGATE event which will inturn call navigateImpl_
     this.history_.setToken(path);
   } else {
     this.navigateImpl_(path);
@@ -104,7 +106,6 @@ pn.Router.prototype.navigateImpl_ = function(path, opt_add) {
     this.history_.setToken(this.defaultRoute_);
     return;
   }
-
   var tokens = path.split('/');
   var to = tokens.splice(0, 1)[0] || this.defaultRoute_;
   var add = opt_add !== false;
