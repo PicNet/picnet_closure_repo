@@ -11,7 +11,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
-goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.edit.FieldBuilder');

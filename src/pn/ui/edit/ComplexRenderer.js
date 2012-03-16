@@ -95,8 +95,11 @@ pn.ui.edit.ComplexRenderer.prototype.createDom =
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
 
-  this.eh.removeAll();
-  goog.dispose(this.eh);
+  if (this.eh) {
+    this.eh.removeAll();
+    goog.dispose(this.eh);
+  }
+
   delete this.eh;
   delete this.val;
   delete this.entity;
