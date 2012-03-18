@@ -89,6 +89,12 @@ pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
 goog.inherits(pn.ui.FileUpload, goog.ui.Component);
 
 
+/**
+ * @type {string}
+ * @const
+ */
+pn.ui.FileUpload.UPLOAD_START = 'upload-start';
+
 /** @inheritDoc */
 pn.ui.FileUpload.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
@@ -132,6 +138,9 @@ pn.ui.FileUpload.prototype.exitDocument = function() {
 pn.ui.FileUpload.prototype.doUpload_ = function() {
   if (this.validateData_ &&
       !this.validateData_.call(this, this.fileInput_.value)) return;
+  
+  var e = new goog.events.Event(pn.ui.FileUpload.UPLOAD_START, this);
+  this.dispatchEvent(e);
 
   this.io_ = new goog.net.IframeIo();
   this.eh_.listen(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
