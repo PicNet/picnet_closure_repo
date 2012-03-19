@@ -225,16 +225,10 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
           c.isParentFormatter = true;
           c.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
         }
-        if (c.renderer) {
-          var orig = c.renderer;
-          c.renderer = goog.bind(function(row, cell, value, col, entity) {
-            goog.asserts.assert(entity);
-            goog.asserts.assert(this.cache_);
-
-            return orig(entity, this.cache_, value, col);
-          }, this);
-        }
-        return c.toSlick(c.renderer);
+        return c.toSlick(!c.renderer ? null :
+            goog.bind(function(row, cell, value, col, item) {
+              return c.renderer(item, this.cache_, value, col);
+            }, this));
       }, this), this.cfg_.toSlick());
   if (this.totalColumns_.length) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
@@ -286,7 +280,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
       var val = rowData[cc.dataColumn];
-      var txt = cc.renderer ? cc.renderer(rowData, this.cache_, val, cc) : val;
+      var txt = cc.renderer ? cc.renderer({}, this.cache_, val, cc) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -399,7 +393,9 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       return c.id === field;
     });
     var val = total[field];
-    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }
+    if (spec.renderer) {
+      val = spec.renderer({}, this.cache_, val, spec);
+    }
     else { val = parseInt(val, 10); }
     html.push('Total ' + spec.name + ': ' + val || '0');
   }
@@ -476,11 +472,11 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
 
 /**
  * @private
- * @param {!Object} item the row data item.
+ * @param {!Object} entity the row data item.
  * @return {boolean} Wether the item meets the quick filters.
  */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
-  goog.asserts.assert(item);
+pn.ui.grid.Grid.prototype.quickFilter_ = function(entity) {
+  goog.asserts.assert(entity);
 
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
@@ -488,13 +484,13 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
       var spec = /** @type {pn.ui.grid.Column} */
           (goog.array.find(this.cols_,
               function(col) { return col.id === columnId; }));
-      var val = item[spec.dataColumn];
+      var val = entity[spec.dataColumn];
       if (spec.isParentFormatter) {
         val = val ?
             pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) :
             '';
       } else if (spec.renderer) {
-        val = spec.renderer(item, this.cache_, val, spec);
+        val = spec.renderer(entity, this.cache_, val, spec);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {

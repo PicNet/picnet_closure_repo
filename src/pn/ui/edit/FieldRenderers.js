@@ -47,35 +47,26 @@ pn.ui.edit.FieldRenderers.dateRenderer =
  */
 pn.ui.edit.FieldRenderers.timeRenderer =
     function(val, entity, parent) {
-  var num = parseInt(val || 0, 10);
-  var hours = Math.floor(num / 100);
-  var minutes = Math.floor(num % 100);
-  var hourPick = goog.dom.createDom('select', 'time-picker-hours');
-  var minitesPick = goog.dom.createDom('select', 'time-picker-minutes');
+  var picker = goog.dom.createDom('select', {
+    'class': 'time-picker'
+  });
 
-  for (var h = 0; h < 24; h++) {
-    var displayHr = (h % 12) + 1;
-    var hr = goog.string.padNumber(displayHr, 2) + (h < 12 ? ' AM' : ' PM');
-    var opt = goog.dom.createDom('option',
-        {'value': h, 'selected': hours === h }, hr);
-    if (hours === h) opt['selected'] = 'selected';
-    goog.dom.appendChild(hourPick, opt);
+  for (var h = 5; h < 22; h++) {
+    var displayHr = goog.string.padNumber((h % 12) + 1, 2);
+    var amPm = h < 12 ? ' AM' : 'PM';
+    for (var m = 0; m < 60; m += 15) {
+      var value = h * 60 + m;
+      var opt = goog.dom.createDom('option',
+          {'value': value },
+          displayHr + ':' +
+          goog.string.padNumber(m, 2) +
+          amPm);
+      goog.dom.appendChild(picker, opt);
+    }
   }
-
-  for (var m = 0; m < 60; m += 5) {
-    var opt = goog.dom.createDom('option',
-        {'value': m, 'selected': minutes === m }, goog.string.padNumber(m, 2));
-    goog.dom.appendChild(minitesPick, opt);
-  }
-
-  var elem = goog.dom.createDom('div', 'time-picker',
-      hourPick, ':', minitesPick);
-
-  goog.dom.appendChild(parent, elem);
-  elem.getValue = function() {
-    return hourPick.value * 100 + minitesPick.value;
-  };
-  return elem;
+  picker.value = val;
+  goog.dom.appendChild(parent, picker);
+  return picker;
 };
 
 
