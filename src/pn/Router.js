@@ -26,7 +26,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.Router', true);
+  this.log_ = pn.LogUtils.getLogger('pn.Router', false);
 
   /**
    * @private
