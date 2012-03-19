@@ -150,8 +150,9 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
   if (this.cfg_.template) {
-    var templateDiv = goog.dom.createDom('div');
-    templateDiv.innerHTML = this.cfg_.template(this.data_);
+    var html = this.cfg_.template(this.data_);
+    var templateDiv = goog.dom.htmlToDocumentFragment(html);
+    this.disposables_.push(templateDiv);
     goog.dom.appendChild(div, templateDiv);
   }
   var fields = this.decorateFields_(div);
