@@ -23,5 +23,9 @@ pn.ui.edit.FieldValidator.validateFieldValue =
   var func = /** @type {
       function(pn.ui.edit.Field,*,Object=,Array.<Object>=):string} */
       (field.validator);
-  return func(field, value, entity, all);
+  var error = func(field, value, entity, all);
+  if (error && !goog.isString(error)) {
+    throw new Error('Validator [' + field.id + '] returned a non string error');
+  }
+  return error;
 };

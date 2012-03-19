@@ -17,4 +17,7 @@ pn.ui.edit.Config = function(type) {
 
   /** @type {string} */
   this.saveEvent = '';
+
+  /** @type {null|function(?):string} */
+  this.template = null;
 };

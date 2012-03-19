@@ -123,6 +123,7 @@ pn.data.DataManager.setLocalSettings = function(key, value) {
 pn.data.DataManager.prototype.init = function(callback, opt_handler) {
   var rep =
       pn.data.DefaultRepositoryFactory.getRepository(this.databaseName);
+
   this.local_ = new pn.data.LocalDataProvider(rep);
   rep.isInitialised(function(isinit) {
     if (!isinit && !this.isonline_) {

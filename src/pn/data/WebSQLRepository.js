@@ -71,13 +71,11 @@ pn.data.WebSQLRepository.prototype.init =
       t.executeSql('CREATE TABLE IF NOT EXISTS [DeletedIDs] ' +
           '([TYPE] VARCHAR(30), ID INTEGER, value INTEGER, PRIMARY KEY ' +
           '([TYPE], ID))');
+      this.log.fine('init took: ' + (goog.now() - start) + 'ms');
+      callback.call(opt_handler || this);
     }, this),
     goog.bind(function(tx, err) {
       this.error('initialisation', [], err);
-    }, this),
-    goog.bind(function() {
-      this.log.fine('init took: ' + (goog.now() - start) + 'ms');
-      callback.call(opt_handler || this);
     }, this));
   }, this);
 };
@@ -91,7 +89,6 @@ pn.data.WebSQLRepository.prototype.saveList =
     goog.array.forEach(list, function(item) {
       var itemid = typeof(item) === 'number' ? item : item.ID;
       var str = typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item;
-
       t.executeSql(typepos !== -1 ?
           'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
           '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +
@@ -99,8 +96,10 @@ pn.data.WebSQLRepository.prototype.saveList =
           'INSERT OR REPLACE INTO [' + type + '] (ID, value) VALUES(?, ?)',
           [itemid, str]);
     }, this);
-  }, this), goog.bind(function(tx, err) { this.error('savelist', [], err); },
-      function() { callback.call(opt_handler || this, true); }, this));
+    callback.call(opt_handler || this, true);
+  }, this), goog.bind(function(tx, err) {
+    this.error('savelist', [], err);
+  }));
 };
 
 
@@ -111,10 +110,9 @@ pn.data.WebSQLRepository.prototype.clearEntireDatabase =
     goog.array.forEach(this.types, function(type) {
       t.executeSql('DELETE FROM [' + type + ']', []);
     }, this);
+    callback.call(opt_handler || this);
   }, this), goog.bind(function(tx, err) {
     this.error('clearEntireDatabase', [], err);
-  }, this), goog.bind(function() {
-    callback.call(opt_handler || this);
   }, this));
 };
 

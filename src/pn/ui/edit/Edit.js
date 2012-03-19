@@ -11,7 +11,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
-goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.edit.FieldBuilder');
@@ -25,23 +24,16 @@ goog.require('pn.ui.grid.Grid');
 /**
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
+ * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} data The data object to edit, null for new entity.
- * @param {!Array.<pn.ui.edit.Command>} commands The commands to show in the
- *    edit page.
- * @param {!Array.<pn.ui.edit.Field>} fields The field specs to show in the
- *    edit page.
- * @param {!pn.ui.edit.Config} cfg Global options for this control.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
-
+pn.ui.edit.Edit = function(spec, data, cache) {
+  goog.asserts.assert(spec);
   goog.asserts.assert(data);
-  goog.asserts.assert(commands);
-  goog.asserts.assert(fields);
-  goog.asserts.assert(cfg);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, commands);
+  pn.ui.edit.CommandsComponent.call(this, spec, data, cache);
 
   /**
    * @private
@@ -49,23 +41,24 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    */
   this.data_ = data;
 
-  /**
-   * @private
-   * @type {!Array.<pn.ui.edit.Field>}
-   */
-  this.fields_ = fields;
-
-  /**
-   * @private
-   * @type {!pn.ui.edit.Config}
-   */
-  this.cfg_ = cfg;
 
   /**
    * @private
    * @type {!Object.<!Array>}
    */
   this.cache_ = cache;
+
+  /**
+   * @private
+   * @type {!Array.<pn.ui.edit.Field>}
+   */
+  this.fields_ = this.spec.getEditFields(!this.data_['ID']);
+
+  /**
+   * @private
+   * @type {!pn.ui.edit.Config}
+   */
+  this.cfg_ = this.spec.getEditConfig();
 
   /**
    * @private
@@ -151,43 +144,49 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  var opts = {
-    'class': 'details-container ' + this.cfg_.type,
-    'style': 'display:none'
-  };
-  var div = goog.dom.createDom('div', opts);
+  var div = goog.dom.createDom('div', 'details-container ' + this.cfg_.type);
   this.disposables_.push(div);
   goog.dom.appendChild(element, div);
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
-  this.decorateFields_(div);
-
-  goog.style.showElement(div, true);
+  if (this.cfg_.template) {
+    var html = this.cfg_.template(this.data_);
+    var templateDiv = goog.dom.htmlToDocumentFragment(html);
+    this.disposables_.push(templateDiv);
+    goog.dom.appendChild(div, templateDiv);
+  }
+  var fields = this.decorateFields_(div);
+  this.spec.initEdit(this.data_, this.cache_, fields);
 };
 
 
 /**
  * @private
  * @param {!Element} parent The parent element to attach the fields to.
+ * @return {!Object.<Element|goog.ui.Component>} The fields created.
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var fieldset = goog.dom.createDom('fieldset', 'fields'),
-      focusSet = false;
+  var useTemplate = !!this.cfg_.template,
+      focusSet = false,
+      fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
+      newEntity = !this.data_['ID'],
+      fields = {};
 
-  this.disposables_.push(fieldset);
-  goog.dom.appendChild(parent, fieldset);
+  if (fieldset) {
+    this.disposables_.push(fieldset);
+    goog.dom.appendChild(parent, fieldset);
+  }
 
-  goog.array.forEach(this.fields_, function(f, idx) {
+  goog.array.forEach(this.fields_, function(f) {
     // Do not do child tables on new entities
-    var newEntity = !this.data_['ID'];
     var isChildTable = f.tableType;
     if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
-    var fieldParent = fieldset;
-    if (!f.renderer || f.renderer.showLabel !== false) {
+    var fieldParent = useTemplate ? pn.Utils.getElement(f.id) : fieldset;
+    if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       var required = f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
       this.disposables_.push(fieldParent);
@@ -198,10 +197,10 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
+    fields[f.id] = input;
     this.disposables_.push(input);
-    if (f.oncreate) {
-      f.oncreate(input, this.data_);
-    }
+    if (f.oncreate) { f.oncreate(input, this.data_); }
+
     // If displaying data from a parent (and not a parent selector) then
     // disable the field as its obviousle there as a reference.  See:
     // FormulaMaterial for an example.
@@ -219,6 +218,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         try { input.focus(); } catch (ex) {}
       }, 1); }
   }, this);
+
+  return fields;
 };
 
 
@@ -257,7 +258,10 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    if (!this.spec.isShown(f.id)) return;
+
+    var input = this.inputs_[f.id];
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(input);
     var error;
     if (f.renderer && f.renderer.validate) {
       error = f.renderer.validate();
@@ -267,7 +271,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
           f, val, this.data_, this.cache_[this.cfg_.type]);
-      if (error) errors.push(error);
+      if (error) { errors.push(error); }
     }
   }, this);
   return errors;
@@ -279,6 +283,7 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.data_);
   goog.object.extend(current, this.getFormData());
+
   return current;
 };
 
@@ -328,6 +333,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
+  this.spec.documentEntered();
 };
 
 
@@ -337,12 +343,9 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
   var table = field.tableType;
-  if (!table) return;
-  var readonly = field.tableReadOnly;
+  if (!table || field.readonly) return;
 
   var grid = this.inputs_[field.id];
-  if (readonly) return;
-
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;

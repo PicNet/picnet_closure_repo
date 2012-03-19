@@ -24,7 +24,8 @@ pn.ui.edit.Field = function(id, name) {
 
   /** @type
       {pn.ui.edit.ComplexRenderer|
-          function(*, Object, !Element, boolean=):!Element} */
+          function(*, Object, !Element, boolean=):
+              !(Element|goog.ui.Component|Text)} */
   this.renderer = null;
 
   /** @type {null|pn.ui.edit.ValidateInfo|
@@ -42,5 +43,20 @@ pn.ui.edit.Field = function(id, name) {
 
   /** @type {boolean} */
   this.showOnAdd = true;
+
+  /** @type {boolean} */
+  this.readonly = false;
+
+  /** @type {*} */
+  this.defaultValue = undefined;
+
+  /** @type {string} */
+  this.tableType = '';
+
+  /** @type {string} */
+  this.tableSpec = '';
+
+  /** @type {string} */
+  this.tableParentField = '';
 };
 goog.inherits(pn.ui.edit.Field, pn.ui.SpecDisplayItem);

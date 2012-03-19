@@ -29,9 +29,21 @@ pn.Utils.getElement = function(id) {
 pn.Utils.datePattern_ = "dd'/'MMM'/'yyyy";
 
 
+/**
+ * @private
+ * @type {string}
+ */
+pn.Utils.dateTimePattern_ = "dd'/'MMM'/'yyyy hh:mm aa";
+
+
 /** @type {!goog.i18n.DateTimeFormat} */
 pn.Utils.dateFormat =
     new goog.i18n.DateTimeFormat(pn.Utils.datePattern_);
+
+
+/** @type {!goog.i18n.DateTimeFormat} */
+pn.Utils.dateTimeFormat =
+    new goog.i18n.DateTimeFormat(pn.Utils.dateTimePattern_);
 
 
 /** @type {!goog.i18n.DateTimeParse} */
@@ -56,8 +68,20 @@ pn.Utils.isArray = function(o) {
 pn.Utils.parseJson = function(json) {
   if (!json || typeof(json) !== 'string') return json;
   var jsonDateSafe =
-      json.replace(/\"\\\\\/Date\((\d+)\)\\\\\/\"/g, 'new Date($1)');
-  return jsonDateSafe ? goog.json.unsafeParse(jsonDateSafe) : null;
+      json.replace(/\"\\\/Date\((-?\d+\+\d+)\)\\\/\"/g , '$1');
+  return goog.json.unsafeParse(jsonDateSafe);
+};
+
+
+/**
+ * @param {number} cents The cents to display as a dollar/cents string.
+ * @return {string} The dollar / cents string.
+ */
+pn.Utils.centsToDisplayString = function(cents) {
+  goog.asserts.assert(goog.isNumber(cents));
+  var actualDollars = Math.floor(cents / 100);
+  var actualCents = Math.floor(cents % 100);
+  return '$' + actualDollars + '.' + goog.string.padNumber(actualCents, 2);
 };
 
 

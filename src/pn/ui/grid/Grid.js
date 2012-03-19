@@ -9,6 +9,7 @@ goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('pn.data.EntityUtils');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
@@ -22,24 +23,33 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  *
  * @constructor
  * @extends {goog.ui.Component}
+ * @param {!pn.ui.UiSpec} spec The specs for the entities in
+ *    this grid.
  * @param {!Array} list The entities to display.
- * @param {!Array.<pn.ui.grid.Column>} cols The columns to display.
- * @param {!Array.<goog.ui.Component>} commands The commands supported.
- * @param {!pn.ui.grid.Config} cfg The grid configuration.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {number} width The width of this grid.
  */
-pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
+pn.ui.grid.Grid = function(spec, list, cache, width) {
+  goog.asserts.assert(spec);
   goog.asserts.assert(list);
-  goog.asserts.assert(cols && cols.length);
-
-  var uniqueColIds = goog.array.map(cols, function(c) { return c.id; });
-  goog.array.removeDuplicates(uniqueColIds);
-  goog.asserts.assert(cols.length === uniqueColIds.length,
-      'All column IDs should be unique. Grid type: ' + cfg.type);
-  goog.asserts.assert(cfg);
   goog.asserts.assert(cache);
+  goog.asserts.assert(width > 0);
 
   goog.ui.Component.call(this);
+
+  /**
+   * @private
+   * @type {!pn.ui.UiSpec}
+   */
+  this.spec_ = spec;
+
+  var cols = this.spec_.getGridColumns();
+  var uniqueColIds = goog.array.map(cols, function(c) {
+    return c.id;
+  });
+  goog.array.removeDuplicates(uniqueColIds);
+  goog.asserts.assert(cols.length === uniqueColIds.length,
+      'All column IDs should be unique. Grid type: ' + this.spec_.id);
 
   /**
    * @private
@@ -66,7 +76,13 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(cols);
+  this.cols_ = this.getColumnsWithInitialState_(this.spec_.getGridColumns());
+
+  /**
+   * @private
+   * @type {!pn.ui.grid.Config}
+   */
+  this.cfg_ = this.spec_.getGridConfig(width);
 
   /**
    * @private
@@ -77,21 +93,15 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
-   * @type {!pn.ui.grid.Config}
-   */
-  this.cfg_ = cfg;
-
-  /**
-   * @private
    * @type {!Object.<Array>}
    */
   this.cache_ = cache;
 
   /**
    * @private
-   * @type {!Array.<goog.ui.Component>}
+   * @type {!Array.<pn.ui.grid.Command>}
    */
-  this.commands_ = commands;
+  this.commands_ = this.spec_.getGridCommands();
 
   /**
    * @private
@@ -213,9 +223,12 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       goog.array.map(this.cols_, function(c) {
         if (!c.renderer && c.source) {
           c.isParentFormatter = true;
-          c.renderer = goog.bind(this.parentColumnFormatter_, this);
+          c.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
         }
-        return c.toSlick(c.renderer);
+        return c.toSlick(!c.renderer ? null :
+            goog.bind(function(row, cell, value, col, item) {
+              return c.renderer(item, this.cache_, value, col);
+            }, this));
       }, this), this.cfg_.toSlick());
   if (this.totalColumns_.length) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
@@ -266,8 +279,8 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
-      var dat = rowData[cc.dataColumn];
-      var txt = cc.renderer ? cc.renderer(row, col, dat, cc, rowData) : dat;
+      var val = rowData[cc.dataColumn];
+      var txt = cc.renderer ? cc.renderer({}, this.cache_, val, cc) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -276,71 +289,17 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
 };
 
 
-/**
- * @private
- * @param {number} row The row index.
- * @param {number} cell The cell index.
- * @param {Object} value The raw cell value.
- * @param {pn.ui.grid.Column} col The Slick column config object.
- * @param {Object} dataContext entity data being displayed in this row.
- * @return {string} The html to render for this field.
- */
-pn.ui.grid.Grid.prototype.parentColumnFormatter_ =
-    function(row, cell, value, col, dataContext) {
-  value = dataContext[col.dataColumn];
-  if (!value) return '';
-  return this.getCachedEntityName_(col, value);
-};
-
-
-/**
- * @private
- * @param {pn.ui.grid.Column} col The Slick column config object.
- * @param {number} id The id of the entitiy in the list.
- * @return {string} The entities name.
- */
-pn.ui.grid.Grid.prototype.getCachedEntityName_ = function(col, id) {
-  var steps = col.source.split('.');
-  var entity = this.getTargetEntity_(goog.array.clone(steps), id);
-  if (!entity) return '';
-
-  var name = steps.length > 1 ? steps[steps.length - 1] : (steps[0] + 'Name');
-  return entity[name];
-};
-
-
-/**
- * @private
- * @param {!Array.<string>} steps The steps (path) to the entity.
- * @param {number} id The id of the entitiy in the list.
- * @return {Object} The matched entity.
- */
-pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
-  if (id <= 0) return null;
-  var type = steps[0];
-  goog.asserts.assert(this.cache_[type], 'Type: ' + type +
-      ' not found in cache');
-  var entity = /** @type {Object} */
-      (goog.array.find(this.cache_[type],
-      function(e) { return e['ID'] === id; }, this));
-  if (steps.length > 2) {
-    var id2 = entity[steps[1] + 'ID'];
-    steps.shift();
-    return this.getTargetEntity_(steps, id2);
-  }
-  return entity;
-};
-
-
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
   // Selecting
-  if (!this.cfg_.readonly) {
-    this.slick_.setSelectionModel(new Slick.RowSelectionModel());
-    this.selectionHandler_ = goog.bind(this.handleSelection_, this);
-    this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
+  if (!this.cfg_.readonly && this.commands_.length) {
+    if (this.cfg_.allowEdit) {
+      this.slick_.setSelectionModel(new Slick.RowSelectionModel());
+      this.selectionHandler_ = goog.bind(this.handleSelection_, this);
+      this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
+    }
     goog.array.forEach(this.commands_, function(c) {
       this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
     }, this);
@@ -399,9 +358,18 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   var state = goog.net.cookies.get(this.hash_);
   if (!state) return;
   var data = goog.json.unsafeParse(state);
+  var col = null,
+      asc = true;
   if (data['sort']) {
-    this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
-    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
+    col = data['sort']['colid'];
+    asc = data['sort']['asc'];
+  } else if (this.cfg_.defaultSortColumn) {
+    col = this.cfg_.defaultSortColumn;
+    col = this.cfg_.defaultSortAscending;
+  }
+  if (col) {
+    this.dataView_.fastSort(col, asc);
+    this.slick_.setSortColumn(col, asc);
   }
 };
 
@@ -425,7 +393,9 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       return c.id === field;
     });
     var val = total[field];
-    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }
+    if (spec.renderer) {
+      val = spec.renderer({}, this.cache_, val, spec);
+    }
     else { val = parseInt(val, 10); }
     html.push('Total ' + spec.name + ': ' + val || '0');
   }
@@ -502,21 +472,25 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
 
 /**
  * @private
- * @param {!Object} item the row data item.
+ * @param {!Object} entity the row data item.
  * @return {boolean} Wether the item meets the quick filters.
  */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
+pn.ui.grid.Grid.prototype.quickFilter_ = function(entity) {
+  goog.asserts.assert(entity);
+
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
       var filterVal = this.quickFilters_[columnId];
       var spec = /** @type {pn.ui.grid.Column} */
           (goog.array.find(this.cols_,
               function(col) { return col.id === columnId; }));
-      var val = item[spec.dataColumn];
+      var val = entity[spec.dataColumn];
       if (spec.isParentFormatter) {
-        val = val ? this.getCachedEntityName_(spec, val) : '';
+        val = val ?
+            pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) :
+            '';
       } else if (spec.renderer) {
-        val = spec.renderer(0, 0, val, spec, item);
+        val = spec.renderer(entity, this.cache_, val, spec);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
@@ -559,6 +533,9 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
+  goog.dispose(this.spec_);
+
+  delete this.spec_;
   delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;

@@ -13,7 +13,7 @@ pn.ui.grid.Config = function(type) {
   /** @type {boolean} */
   this.readonly = false;
   /** @type {boolean} */
-  this.allowAdd = true;
+  this.allowEdit = true;
   /** @type {boolean} */
   this.enableColumnReorder = false;
   /** @type {boolean} */
@@ -28,6 +28,10 @@ pn.ui.grid.Config = function(type) {
   this.enableQuickFilters = true;
   /** @type {number} */
   this.width = 0;
+  /** @type {string} */
+  this.defaultSortColumn = '';
+  /** @type {boolean} */
+  this.defaultSortAscending = true;
 };
 
 

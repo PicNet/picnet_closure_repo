@@ -18,7 +18,7 @@ var data;
 var log;
 var rep;
 
-var setUpPage = function() {
+var setUpPage = function() {  
   log = goog.debug.Logger.getLogger('GenericDataManagerTests');
   log.setLevel(goog.debug.Logger.Level.FINEST);
   new goog.debug.Console().setCapturing(true);
@@ -73,15 +73,14 @@ var testDeleteEntityRemoteUpdatesLocal = function() {
 	});
 };
 
-var testGetEntitiesRemoteDataUpdatesLocal = function() {
-	preTest(function() {
-
+var testGetEntitiesRemoteDataUpdatesLocal = function() {  
+	preTest(function() {    
 		var entities = {'TestEntity': [{ID: 1, Name: 'Name 1'}, {ID: 2, Name: 'Name 2'}]};
 		data.saveEntities(entities, function(err) {
       var d1 = data.remote_.ajax_.getEntities(type);
       assertEquals(2, d1.length);
       var d2 = data.local_.repository.getList(type, function(d2) {
-				assertEquals('Remote ID of first', 1, d1[0].ID);
+        assertEquals('Remote ID of first', 1, d1[0].ID);
 				assertEquals('Name 1', d1[0].Name);
 				assertEquals('Remote ID of second', 2, d1[1].ID);
 				assertEquals('Name 2', d1[1].Name);

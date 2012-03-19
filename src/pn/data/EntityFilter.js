@@ -10,9 +10,9 @@ goog.require('goog.asserts');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {string} type The type of the entity being filtered.
+ * @param {!pn.ui.UiSpec} spec The spec being filtered.
  */
-pn.data.EntityFilter = function(cache, type) {
+pn.data.EntityFilter = function(cache, spec) {
   goog.Disposable.call(this);
 
   /**
@@ -23,9 +23,9 @@ pn.data.EntityFilter = function(cache, type) {
 
   /**
    * @private
-   * @type {string}
+   * @type {!pn.ui.UiSpec}
    */
-  this.type_ = type;
+  this.spec_ = spec;
 
   /**
    * @private
@@ -69,7 +69,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
  * @param {Object} entity The entity to test for match.
- * @param {string} id The filter id.
+ * @param {string} id The filter/field id.
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.
  */
@@ -79,7 +79,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
   var steps = id.split('.'),
-      parentType = this.type_,
+      parentType = this.spec_.type,
       result = entity;
   while (true) {
     var step = steps.shift();
@@ -93,7 +93,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     parentType = this.getStepType_(step);
   }
 
-  return this.matchesFilter_(result, filterValue);
+  return this.matchesFilter_(result, filterValue, id);
 };
 
 
@@ -178,22 +178,37 @@ pn.data.EntityFilter.prototype.getStepType_ = function(property) {
  * @private
  * @param {*} entityValue The value of the current entity(s) in the final step.
  * @param {string|Array.<string>} filterValue The filter value.
+ * @param {string} id The filter/field id.
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.matchesFilter_ =
-    function(entityValue, filterValue) {
+    function(entityValue, filterValue, id) {
   if (!goog.isDefAndNotNull(entityValue)) {
     this.dbg_('matchesFilter_ null entity value');
     return false;
   }
   this.dbg_('matchesFilter_: ' + goog.debug.expose(arguments));
+  var FieldRenderers = pn.ui.edit.FieldRenderers;
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ' + goog.debug.expose(arguments));
     if (ev['ID']) return ev['ID'].toString() === fv;
+    var field = goog.array.find(this.spec_.getSearchFields(), function(sf) {
+      return sf.id === id;
+    });
+    if (field.renderer === FieldRenderers.dateRenderer ||
+        field.renderer === FieldRenderers.readOnlyDateField) {
+      var min = filterValue;
+      var max = filterValue + (24 * 60 * 60 * 1000);
+      return min <= ev && ev < max;
+    } else if (field.renderer === FieldRenderers.centsRenderer) {
+      ev = pn.Utils.centsToDisplayString(ev);
+    }
     var eval = ev.toString().toLowerCase();
-    if (exact) return eval === fv;
+    if (exact) return eval === fv.toLowerCase();
     else return eval.indexOf(fv) >= 0;
   };
+
+
   if (goog.isArray(entityValue)) {
     return goog.array.findIndex(entityValue, function(entity) {
       return this.singleEntityMatches_(filterValue, entity, matcher);
@@ -246,7 +261,6 @@ pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
       goog.debug.expose(arguments));
 
   if (!filterVal || filterVal === '0') return true;
-  filterVal = filterVal.toLowerCase();
   return predicate.call(this, entityVal, filterVal, exact);
 };
 
@@ -266,6 +280,6 @@ pn.data.EntityFilter.prototype.disposeInternal = function() {
 
   goog.dispose(this.log_);
   delete this.cache_;
-  delete this.type_;
+  delete this.spec_;
   delete this.log_;
 };
