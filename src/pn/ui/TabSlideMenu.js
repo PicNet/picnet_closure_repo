@@ -8,6 +8,7 @@ goog.require('goog.fx.easing');
 goog.require('goog.style');
 goog.require('goog.userAgent');
 
+goog.require('pn.Utils');
 goog.require('pn.ui.TabSlideMenuSettings');
 
 goog.provide('pn.ui.TabSlideMenu');
