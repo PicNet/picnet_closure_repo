@@ -201,14 +201,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     this.disposables_.push(input);
     if (f.oncreate) { f.oncreate(input, this.data_); }
 
-    // If displaying data from a parent (and not a parent selector) then
-    // disable the field as its obviousle there as a reference.  See:
-    // FormulaMaterial for an example.
-    if (!goog.string.endsWith(f.id, 'ID') &&
-        f.source && f.source.indexOf('.') > 0) {
-      input['disabled'] = 'disabled';
-    }
-
     this.inputs_[f.id] = input;
     this.attachOnChangeListenerIfRequired_(f, input);
 
@@ -296,7 +288,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
   goog.array.forEach(this.getEditableFields_(), function(f) {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
-    if (val !== undefined) current[f.dataColumn] = val;
+    if (val !== undefined) current[f.dataProperty] = val;
   }, this);
   return current;
 };

@@ -33,7 +33,7 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {!pn.ui.SpecDisplayItem}
+   * @type {!pn.ui.BaseField}
    */
   this.spec;
 
@@ -56,7 +56,7 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
  * @param {Object} entity The entity being displayed.
  * @param {!Object.<Array>} cache The admin cache for entities related to the
  *    current entity.
- * @param {!pn.ui.SpecDisplayItem} spec The field spec.
+ * @param {!pn.ui.BaseField} spec The field spec.
  */
 pn.ui.edit.ComplexRenderer.prototype.initialise =
     function(val, entity, cache, spec) {

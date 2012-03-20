@@ -188,7 +188,7 @@ pn.ui.UiSpec.prototype.createField =
 /**
  * @private
  * @param {string} field The field in the data representing this column.
- * @param {function(new:pn.ui.SpecDisplayItem,string,string)} typeConst The
+ * @param {function(new:pn.ui.BaseField,string,string)} typeConst The
  *    constructor for the display item we are creating.  Expects a
  *    constructor with the 'field' and 'caption' params.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
@@ -196,7 +196,7 @@ pn.ui.UiSpec.prototype.createField =
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
- * @return {pn.ui.SpecDisplayItem} The created column.
+ * @return {pn.ui.BaseField} The created column.
  */
 pn.ui.UiSpec.prototype.createDisplayItem_ =
     function(field, typeConst, opt_captionOrProps, opt_props) {
@@ -207,40 +207,16 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
     throw new Error('Cannot specify both opt_captionOrProps and opt_props ' +
         'as properties object');
   }
-  var caption = this.getCaption_(field, opt_captionOrProps);
+
   var props = goog.isObject(opt_captionOrProps) ?
       opt_captionOrProps :
       (opt_props || {});
 
+  var caption = goog.isString(opt_captionOrProps) ? opt_captionOrProps : '';
+
   var di = new typeConst(field, caption);
-  goog.object.extend(di, props);
-  var dataCol = di.dataColumn;
-  if (!di.source && dataCol !== this.type.split('-')[0] + 'ID' &&
-      dataCol !== 'ID' && goog.string.endsWith(dataCol, 'ID')) {
-    di.source = dataCol.substring(0, dataCol.length - 2);
-  }
-
+  di.extend(props);
   return di;
-};
-
-/**
- * @private
- * @param {string} id The id representing this field or column.
- * @param {(string|Object)=} opt_caption The optional header caption for
- *    this field. If caption is omitted the the field id
- *    will be used (parsing cammel casing).
- * @return {string} The caption of this field or column.
- */
-
-pn.ui.UiSpec.prototype.getCaption_ = function(id, opt_caption) {
-  if (opt_caption && goog.isString(opt_caption))
-    return /** @type {string} */ (opt_caption);
-
-  var caption = id.split('.').pop();
-  if (caption !== 'ID' && goog.string.endsWith(caption, 'ID')) {
-    caption = caption.substring(0, caption.length - 2);
-  }
-  return caption.replace(/([A-Z])/g, ' $1');
 };
 
 
@@ -253,7 +229,7 @@ pn.ui.UiSpec.prototype.getRelatedTypes = function() {
 /**
  * @param {string} type The type we are querying as this will also be related
  *    for duplicate checking.
- * @param {!Array.<!pn.ui.SpecDisplayItem>} items The fields or columns to
+ * @param {!Array.<!pn.ui.BaseField>} items The fields or columns to
  *    parse for required related entities.
  * @return {!Array.<string>} The list of types required for related displays.
  */
@@ -266,15 +242,17 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
     if (additional.length) {
       goog.array.forEach(additional, function(at) { types.push(at); });
     }
-    if (i.source) {
-      var steps = i.source.split('.');
+    if (i.displayPath) {
+      var steps = i.displayPath.split('.');
       for (var s = 0; s === 0 || s < steps.length - 1; s++) {
         var step = steps[s];
         if (goog.string.endsWith(step, 'Entities')) {
           step = goog.string.remove(step, 'Entities');
+        } else if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
+          step = goog.string.remove(step, 'ID');
         }
         types.push(step);  // Always include at lease one
-      }
+      }      
     }
     else if (i.tableType) {
       var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);

@@ -221,7 +221,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       goog.array.map(this.cols_, function(c) {
-        if (!c.renderer && c.source) {
+        if (!c.renderer && c.displayPath) {
           c.isParentFormatter = true;
           c.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
         }
@@ -279,7 +279,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
-      var val = rowData[cc.dataColumn];
+      var val = rowData[cc.dataProperty];
       var txt = cc.renderer ? cc.renderer({}, this.cache_, val, cc) : val;
       rowTxt.push(txt);
     }
@@ -484,10 +484,10 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(entity) {
       var spec = /** @type {pn.ui.grid.Column} */
           (goog.array.find(this.cols_,
               function(col) { return col.id === columnId; }));
-      var val = entity[spec.dataColumn];
+      var val = entity[spec.dataProperty];
       if (spec.isParentFormatter) {
-        val = val ?
-            pn.data.EntityUtils.getEntityName(this.cache_, spec.source, val) :
+        val = val ? pn.data.EntityUtils.
+            getEntityDisplayValue(this.cache_, spec.displayPath, val) :
             '';
       } else if (spec.renderer) {
         val = spec.renderer(entity, this.cache_, val, spec);

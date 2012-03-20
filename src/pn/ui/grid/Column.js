@@ -2,22 +2,21 @@
 goog.provide('pn.ui.grid.Column');
 
 goog.require('pn.Utils');
-goog.require('pn.ui.SpecDisplayItem');
+goog.require('pn.ui.BaseField');
 
 
 
 /**
  * @constructor
- * @extends {pn.ui.SpecDisplayItem}
+ * @extends {pn.ui.BaseField}
  *
  * @param {string} id The id of this column.
- * @param {string} name The name/caption of this column.
+ * @param {string=} opt_name The optional name/caption of this column.
  */
-pn.ui.grid.Column = function(id, name) {
+pn.ui.grid.Column = function(id, opt_name) {
   goog.asserts.assert(id);
-  goog.asserts.assert(name);
 
-  pn.ui.SpecDisplayItem.apply(this, arguments);
+  pn.ui.BaseField.call(this, id, opt_name);
 
   /** @type {boolean} */
   this.resizable = true;
@@ -41,7 +40,7 @@ pn.ui.grid.Column = function(id, name) {
   /** @type {boolean} */
   this.total = false;
 };
-goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
+goog.inherits(pn.ui.grid.Column, pn.ui.BaseField);
 
 
 /**
@@ -54,7 +53,7 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
   var col = /** @type {pn.ui.grid.Column} */ (goog.object.clone(this));
   goog.object.extend(col, {
     'id': this.id,
-    'dataColumn': this.dataColumn,
+    'dataColumn': this.dataProperty,
     'field': this.id,
     'name': this.name,
     'resizable': this.resizable,
@@ -65,7 +64,7 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     'headerCssClass': this.headerCssClass,
     'behavior': this.behavior,
     'formatter': formatter,
-    source: this.source
+    'source': this.displayPath
   });
   return col;
 };

@@ -326,7 +326,7 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   var input;
   var parent =
       (f.renderer === FieldRenderers.readOnlyTextField && f.id !== 'ID') ||
-      (!f.renderer && f.source);
+      (!f.renderer && f.displayPath);
   if (parent) {
     input = FieldBuilder.createSearchParentFilter(f, -1, this.cache_);
     goog.dom.appendChild(dom, input);

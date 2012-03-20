@@ -2,7 +2,7 @@
 goog.require('goog.date.Date');
 goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
-goog.require('pn.ui.SpecDisplayItem');
+goog.require('pn.ui.BaseField');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.ValidateInfo');
 
@@ -12,15 +12,14 @@ goog.provide('pn.ui.edit.Field');
 
 /**
  * @constructor
- * @extends {pn.ui.SpecDisplayItem}
+ * @extends {pn.ui.BaseField}
  * @param {string} id The id of this column.
- * @param {string} name The name/caption of this column.
+ * @param {string=} opt_name The optional name/caption of this column.
  */
-pn.ui.edit.Field = function(id, name) {
-  goog.asserts.assert(id);
-  goog.asserts.assert(name);
+pn.ui.edit.Field = function(id, opt_name) {
+  goog.asserts.assert(id);  
 
-  pn.ui.SpecDisplayItem.apply(this, arguments);
+  pn.ui.BaseField.call(this, id, opt_name);
 
   /** @type
       {pn.ui.edit.ComplexRenderer|
@@ -39,7 +38,7 @@ pn.ui.edit.Field = function(id, name) {
   this.oncreate = null;
 
   /** @type {null|function(!Array.<Object>, !Object.<Array>):!Array.<Object>} */
-  this.sourceFilter = null;
+  this.displayPathFilter = null;
 
   /** @type {boolean} */
   this.showOnAdd = true;
@@ -59,4 +58,4 @@ pn.ui.edit.Field = function(id, name) {
   /** @type {string} */
   this.tableParentField = '';
 };
-goog.inherits(pn.ui.edit.Field, pn.ui.SpecDisplayItem);
+goog.inherits(pn.ui.edit.Field, pn.ui.BaseField);

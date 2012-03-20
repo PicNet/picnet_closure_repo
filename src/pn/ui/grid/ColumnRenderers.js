@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.ColumnRenderers');
 
 goog.require('goog.string');
 goog.require('pn.data.EntityUtils');
-goog.require('pn.ui.SpecDisplayItem');
+goog.require('pn.ui.BaseField');
 
 
 /**
@@ -79,9 +79,10 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer =
     function(entity, cache, val, col) {
-  var value = entity[col.dataColumn];
+  var value = entity[col.dataProperty];
   if (!value) return '';
-  return pn.data.EntityUtils.getEntityName(cache, col.source, value);
+  return pn.data.EntityUtils.
+      getEntityDisplayValue(cache, col.displayPath, value);
 };
 
 

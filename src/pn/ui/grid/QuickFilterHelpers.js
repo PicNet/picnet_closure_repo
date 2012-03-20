@@ -1,7 +1,7 @@
 ﻿;
 goog.provide('pn.ui.grid.QuickFilterHelpers');
 
-goog.require('pn.ui.SpecDisplayItem');
+goog.require('pn.ui.BaseField');
 
 
 /**

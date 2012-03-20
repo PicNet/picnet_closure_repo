@@ -88,7 +88,7 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 pn.ui.edit.ValidateInfo.prototype.validateField =
     function(field, val, opt_entity, opt_all) {
   return this.validateItem(
-      field.id, field.name, !!field.source, val, opt_entity, opt_all);
+      field.id, field.name, !!field.displayPath, val, opt_entity, opt_all);
 };
 
 
