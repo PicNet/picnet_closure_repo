@@ -316,7 +316,8 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   var FieldBuilder = pn.ui.edit.FieldBuilder;
   var FieldRenderers = pn.ui.edit.FieldRenderers;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
-  var name = spec.name + ' - ' + f.name;
+
+  var name = f.name;
   var lbl = goog.dom.createDom('label', { 'for': f.id }, name);
   var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
       lbl,

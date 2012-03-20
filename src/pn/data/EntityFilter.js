@@ -52,10 +52,10 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
   goog.asserts.assert(entity);
   goog.asserts.assert(filters);
 
-  this.dbg_('filterEntity: ' + goog.debug.expose(filters));
-
+  this.dbg_('filterEntity: ', filters);
   for (var id in filters) {
-    if (!this.filterEntityImpl_(filters[id], entity, id)) {
+    var fv = filters[id].toString().toLowerCase();
+    if (!this.filterEntityImpl_(fv, entity, id)) {
       return false;
     }
   }
@@ -85,7 +85,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     var step = steps.shift();
     if (!step) break;
     result = this.processStep_(step, parentType, result, step.length === 0);
-    this.dbg_('process step result: ' + goog.debug.expose(result));
+    this.dbg_('process step result: ', result);
     if (!goog.isDefAndNotNull(result)) {
       this.dbg_('returning as is null');
       return false;
@@ -108,7 +108,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
  */
 pn.data.EntityFilter.prototype.processStep_ =
     function(property, parentType, source, isFinal) {
-  this.dbg_('processStep_: ' + goog.debug.expose(arguments));
+  this.dbg_('processStep_: ', arguments);
 
   var type = this.getStepType_(property);
   if (type && !this.cache_[type])
@@ -187,25 +187,29 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     this.dbg_('matchesFilter_ null entity value');
     return false;
   }
-  this.dbg_('matchesFilter_: ' + goog.debug.expose(arguments));
+  this.dbg_('matchesFilter_: ', arguments);
   var FieldRenderers = pn.ui.edit.FieldRenderers;
+
   var matcher = function(ev, fv, exact) {
-    this.dbg_('matchesFilter_.matcher: ' + goog.debug.expose(arguments));
+    this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
     var field = goog.array.find(this.spec_.getSearchFields(), function(sf) {
       return sf.id === id;
     });
     if (field.renderer === FieldRenderers.dateRenderer ||
         field.renderer === FieldRenderers.readOnlyDateField) {
-      var min = filterValue;
-      var max = filterValue + (24 * 60 * 60 * 1000);
+      var min = parseInt(filterValue, 10);
+      var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
     } else if (field.renderer === FieldRenderers.centsRenderer) {
       ev = pn.Utils.centsToDisplayString(ev);
     }
     var eval = ev.toString().toLowerCase();
-    if (exact) return eval === fv.toLowerCase();
-    else return eval.indexOf(fv) >= 0;
+    var result = exact ? eval === fv : eval.indexOf(fv) >= 0;
+
+    this.dbg_('matchesFilter_.matcher result: ',
+        result, ' eval: ', eval, ' exact: ', exact, ' fv: ', fv);
+    return result;
   };
 
 
@@ -231,7 +235,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 pn.data.EntityFilter.prototype.singleEntityMatches_ =
     function(filterVal, entityVal, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleEntityMatches_: ' + goog.debug.expose(arguments));
+  this.dbg_('singleEntityMatches_: ', arguments);
 
   if (goog.isArray(filterVal)) {
     return goog.array.findIndex(filterVal, function(fv) {
@@ -257,8 +261,7 @@ pn.data.EntityFilter.prototype.singleEntityMatches_ =
 pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
     function(filterVal, entityVal, exact, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleFilterValueMatches_: ' +
-      goog.debug.expose(arguments));
+  this.dbg_('singleFilterValueMatches_: ', arguments);
 
   if (!filterVal || filterVal === '0') return true;
   return predicate.call(this, entityVal, filterVal, exact);
@@ -267,10 +270,19 @@ pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
 
 /**
  * @private
- * @param {string} message The message to log if debug is enabled.
+ * @param {...*} args Any additional arguments to append to the message.
  */
-pn.data.EntityFilter.prototype.dbg_ = function(message) {
-  if (this.debug_) this.log_.finest(message);
+pn.data.EntityFilter.prototype.dbg_ = function(args) {
+  if (!this.debug_) return;
+  var format = function(arg) {
+    if (!goog.isString(arg) && arg.length) {
+      return '[' + goog.array.map(arg, format).join(',') + ']';
+    } else if (goog.isObject(arg)) { return goog.debug.expose(arg); }
+    else return arg;
+  };
+
+  var strings = goog.array.map(arguments, format);
+  this.log_.finest(strings.join(''));
 };
 
 
