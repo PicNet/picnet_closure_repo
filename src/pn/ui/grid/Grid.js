@@ -270,13 +270,16 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cols_,
       function(c) { return c.name; }, this);
   var gridData = [headers];
+  var lencol = this.cols_.length;
+
   for (var row = 0, len = this.list_.length; row < len; row++) {
     var rowData = this.list_[row];
     var rowTxt = [];
-    for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
+
+    for (var col = 0; col < lencol; col++) {
       var cc = this.cols_[col];
       var val = rowData[cc.dataProperty];
-      var txt = cc.renderer ? cc.renderer({}, this.cache_, val, cc) : val;
+      var txt = cc.renderer ? cc.renderer(rowData, this.cache_, val, cc) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
