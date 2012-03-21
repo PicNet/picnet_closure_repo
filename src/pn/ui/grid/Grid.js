@@ -43,7 +43,14 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    */
   this.spec_ = spec;
 
-  var cols = this.spec_.getGridColumns();
+
+  /**
+   * @private
+   * @type {!pn.ui.grid.Config}
+   */
+  this.cfg_ = this.spec_.getGridConfig(width);
+
+  var cols = this.cfg_.columns;
   var uniqueColIds = goog.array.map(cols, function(c) {
     return c.id;
   });
@@ -76,13 +83,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    * @private
    * @type {!Array.<pn.ui.grid.Column>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(this.spec_.getGridColumns());
-
-  /**
-   * @private
-   * @type {!pn.ui.grid.Config}
-   */
-  this.cfg_ = this.spec_.getGridConfig(width);
+  this.cols_ = this.getColumnsWithInitialState_(this.cfg_.columns);
 
   /**
    * @private
@@ -101,7 +102,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    * @private
    * @type {!Array.<pn.ui.grid.Command>}
    */
-  this.commands_ = this.spec_.getGridCommands();
+  this.commands_ = this.cfg_.commands;
 
   /**
    * @private
@@ -206,7 +207,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
 
-  var parent = goog.dom.createDom('div', 'grid-parent ' + this.cfg_.type,
+  var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
         'style': 'display:none'

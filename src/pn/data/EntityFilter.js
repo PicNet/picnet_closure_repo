@@ -84,8 +84,8 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   while (true) {
     var step = steps.shift();
     if (!step) break;
-    result = this.processStep_(step, parentType, result, step.length === 0);    
-    
+    result = this.processStep_(step, parentType, result, step.length === 0);
+
     this.dbg_('process step result: ', result);
     if (!goog.isDefAndNotNull(result)) {
       this.dbg_('returning as is null');

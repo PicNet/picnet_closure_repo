@@ -16,11 +16,19 @@ goog.require('pn.ui.grid.Grid.EventType');
 
 
 /**
+ * The base class for all entity rendering or panel specifications.  This class
+ *    defines fields, columns, commands, configs, etc that should allow generic
+ *    use of the pn.ui.edit.Edit / pn.ui.grid.Grid utility classes whilst being
+ *    flexible enough to provide any kind of UI layer.
+
  * @constructor
  * @extends {goog.Disposable}
- * @param {string} id The unique identifier for this spec.
- * @param {string=} opt_type The type representing this spec.
- * @param {string=} opt_name The display name of this type.
+ * @param {string} id The unique identifier for this display spec.  There can
+ *    not be more than one UiSpec in the system defined with this ID.
+ * @param {string=} opt_type The optional type representing this display spec.
+ *    If this is omitted it is inferred from the id.
+ * @param {string=} opt_name The optional display name of this entity type. If
+ *    If this is omitted it is inferred from the type.
  */
 pn.ui.UiSpec = function(id, opt_type, opt_name) {
   goog.asserts.assert(id);
@@ -35,15 +43,6 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
 
   /** @type {string} */
   this.name = opt_name || this.type;
-
-  /** @type {!Object.<*>} */
-  this.additionalData = {};
-
-  /**
-   * @protected
-   * @type {boolean}
-   */
-  this.allowClone = true;
 
   /**
    * @protected
@@ -75,33 +74,40 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
 goog.inherits(pn.ui.UiSpec, goog.Disposable);
 
 
-/** @return {!Array.<pn.ui.grid.Column>} The columns to display. */
-pn.ui.UiSpec.prototype.getGridColumns = function() { return []; };
-
-
-/** @return {!Array.<pn.ui.edit.Field>} The search fields to display. */
-pn.ui.UiSpec.prototype.getSearchFields = function() {
-  return this.getEditFields(true);
-};
-
-
 /**
- * @param {boolean} isNew If Add or Edit.
- * @return {!Array.<pn.ui.edit.Field>} The edit fields to display.
- */
-pn.ui.UiSpec.prototype.getEditFields = function(isNew) { return []; };
-
-
-/**
- * Gets a default grid config with the specified width
+ * Gets a grid config with the specified width.  The grid config specifies
+ *    details such as columns, commands and internal slick grid details.  This
+ *    configuration object is used by any pn.ui.grid.Grid entity to display
+ *    a grid of entities of this type.
+ *
  * @param {number} width The width of this grid.  This cannot be generic.
  * @return {!pn.ui.grid.Config} The grid configuration.
  */
-pn.ui.UiSpec.prototype.getGridConfig = function(width) {
-  var cfg = new pn.ui.grid.Config(this.type);
-  cfg.width = width;
-  return cfg;
+pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
+
+
+/** @return {!pn.ui.edit.Config} The edit page config. */
+pn.ui.UiSpec.prototype.getEditConfig = function() {
+  return new pn.ui.edit.Config(this.type);
 };
+
+/**
+ * Used by pn.ui.SearchPanel to do live filtering on a list of entities.
+ *
+ * @return {!Array.<pn.ui.edit.Field>} The search fields to display.
+ */
+pn.ui.UiSpec.prototype.getSearchFields = function() {
+  return this.getEditFields();
+};
+
+
+/**
+ * Returns an array of field specifications that describe how each of the
+ *    display fields should be displayed, captioned and validated.
+ *
+ * @return {!Array.<pn.ui.edit.Field>} The edit fields to display.
+ */
+pn.ui.UiSpec.prototype.getEditFields = function() { return []; };
 
 
 /**
@@ -117,25 +123,10 @@ pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
   };
   var clone = new pn.ui.edit.Command('Clone', eventType.CLONE);
   var commands = [new pn.ui.edit.Command('Save', eventType.SAVE, true)];
-  if (!!entity['ID'] && this.allowClone) commands.push(clone);
+  if (!!entity['ID']) commands.push(clone);
   if (!!entity['ID']) commands.push(del);
   commands.push(new pn.ui.edit.Command('Cancel', eventType.CANCEL));
   return commands;
-};
-
-
-/** @return {!Array.<pn.ui.grid.Command>} The edit commands. */
-pn.ui.UiSpec.prototype.getGridCommands = function() {
-  return [
-    new pn.ui.grid.Command('Add', pn.ui.grid.Grid.EventType.ADD),
-    new pn.ui.grid.ExportCommand()
-  ];
-};
-
-
-/** @return {!pn.ui.edit.Config} The edit page config. */
-pn.ui.UiSpec.prototype.getEditConfig = function() {
-  return new pn.ui.edit.Config(this.type);
 };
 
 
@@ -209,7 +200,7 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
 
 /** @return {!Array.<string>} The list of types related to this entity. */
 pn.ui.UiSpec.prototype.getRelatedTypes = function() {
-  return pn.ui.UiSpec.getRelatedTypes(this.type, this.getEditFields(false));
+  return pn.ui.UiSpec.getRelatedTypes(this.type, this.getEditFields());
 };
 
 
@@ -243,7 +234,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
     }
     else if (i.tableType) {
       var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);
-      var cols = spec.getGridColumns();
+      var cols = spec.getGridConfig(1).columns;
       var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
       types = goog.array.concat(types, related);
       goog.dispose(spec);

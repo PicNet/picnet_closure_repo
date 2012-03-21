@@ -52,7 +52,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @private
    * @type {!Array.<pn.ui.edit.Field>}
    */
-  this.fields_ = this.spec.getEditFields(!this.data_['ID']);
+  this.fields_ = this.spec.getEditFields();
 
   /**
    * @private

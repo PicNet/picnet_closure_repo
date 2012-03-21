@@ -5,33 +5,56 @@ goog.provide('pn.ui.grid.Config');
 
 /**
  * @constructor
- * @param {string} type The entity types of this grid.
+ * @param {number} width The width of this grid.
+ * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
+ *    columns to display in this grid.
+ * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
+ *    this grid.
  */
-pn.ui.grid.Config = function(type) {
-  /** @type {string} */
-  this.type = type;
+pn.ui.grid.Config = function(width, columns, commands) {
+  goog.asserts.assert(width > 0);
+  goog.asserts.assert(columns.length > 0);
+  goog.asserts.assert(commands);
+
+  /** @type {number} */
+  this.width = width;
+
+  /** @type {!Array.<pn.ui.grid.Column>} */
+  this.columns = columns;
+
+  /** @type {!Array.<pn.ui.grid.Command>} */
+  this.commands = commands;
+
   /** @type {boolean} */
   this.readonly = false;
+
   /** @type {boolean} */
   this.allowEdit = true;
-  /** @type {boolean} */
-  this.enableColumnReorder = false;
-  /** @type {boolean} */
-  this.forceFitColumns = true;
-  /** @type {boolean} */
-  this.multiSelect = false;
-  /** @type {boolean} */
-  this.editable = true;
-  /** @type {boolean} */
-  this.checkboxRowSelect = false;
+
   /** @type {boolean} */
   this.enableQuickFilters = true;
-  /** @type {number} */
-  this.width = 0;
+
   /** @type {string} */
   this.defaultSortColumn = '';
+
   /** @type {boolean} */
   this.defaultSortAscending = true;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Slick Grid Properties
+  //////////////////////////////////////////////////////////////////////////////
+
+  /** @type {boolean} */
+  this.enableColumnReorder = false;
+
+  /** @type {boolean} */
+  this.forceFitColumns = true;
+
+  /** @type {boolean} */
+  this.multiSelect = false;
+
+  /** @type {boolean} */
+  this.editable = true;
 };
 
 
