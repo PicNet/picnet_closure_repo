@@ -119,7 +119,6 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, id, cache) {
       entityType + 'Name' : steps[steps.length - 1];
 
   var list = cache[entityType];
-  if (spec.displayPathFilter) { list = spec.displayPathFilter(list, cache); }
 
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));

@@ -25,7 +25,7 @@ pn.data.EntityUtils.getEntityDisplayValue = function(cache, path, id) {
  * @return {Object} The matched entity.
  */
 pn.data.EntityUtils.getTargetEntity = function(cache, path, id) {
-  if (id <= 0) return null;  
+  if (id <= 0) return null;
   var steps = goog.isArray(path) ? path : path.split('.');
   var type = steps[0];
   if (goog.string.endsWith(type, 'ID')) {
@@ -34,8 +34,8 @@ pn.data.EntityUtils.getTargetEntity = function(cache, path, id) {
 
   var list = cache[type];
   goog.asserts.assert(list, 'Type: ' + type + ' not found in cache');
-  var entity = /** @type {Object} */ (goog.array.find(list, function(e) { 
-    return e['ID'] === id; 
+  var entity = /** @type {Object} */ (goog.array.find(list, function(e) {
+    return e['ID'] === id;
   }));
 
   if (steps.length > 2) {

@@ -4,13 +4,23 @@ goog.provide('pn.ui.BaseField');
 
 
 /**
+ * The BaseField is inherited by pn.ui.edit.Field and pn.ui.grid.Column and
+ *    provides the base functionality required for defining fields and
+ *    columns.
+ *
+ * BaseField types (Field / Column) should be constructed using the
+ *    convenience methods in UiSpec.
+ *
  * @constructor
  * @param {string} id The id of this column.
+ * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
+ *    the entity being displayed.
  * @param {string=} opt_name The optional name/caption of this column. If the
  *    name is omitted the the field id will be used (parsing cammel casing).
  */
-pn.ui.BaseField = function(id, opt_name) {
+pn.ui.BaseField = function(id, entitySpec, opt_name) {
   goog.asserts.assert(id);
+  goog.asserts.assert(entitySpec);
 
   /**
    * The ID of this field or column.  An ID must be unique within a parent
@@ -19,6 +29,13 @@ pn.ui.BaseField = function(id, opt_name) {
    * @type {string}
    */
   this.id = id;
+
+  /**
+   * @protected
+   * @type {!pn.ui.UiSpec} The specifications of the entity
+   *    being displayed (parent of this field).
+   */
+  this.entitySpec = entitySpec;
 
   /**
    * The name is the caption to use when labeling this field or column. If the
@@ -43,7 +60,7 @@ pn.ui.BaseField = function(id, opt_name) {
    *    - ParentID.Description
    *
    * By convention this is the first step as specified by the id of the
-   *    field (as in the example above).  
+   *    field (as in the example above).
    *
    * @type {string}
    */
@@ -57,8 +74,8 @@ pn.ui.BaseField = function(id, opt_name) {
    *      supported.
    *
    *    If the displayPath ends with ID then we will append a path step to the
-   *    default name property of the last step's entity.  Eg: If the 
-   *    id is 'ParentID' then we will make the display path: 
+   *    default name property of the last step's entity.  Eg: If the
+   *    id is 'ParentID' then we will make the display path:
    *    'Parent.ParentName'.
    *
    * @type {string}
@@ -97,11 +114,11 @@ pn.ui.BaseField.prototype.extend = function(props) {
   if (!this.dataProperty) {
     this.dataProperty = this.id.split('.')[0];
   }
-  if (!this.displayPath) {    
+  if (!this.displayPath) {
     if (this.id.indexOf('.') > 0) this.displayPath = this.id;
     else if (this.id !== 'ID' && goog.string.endsWith(this.id, 'ID')) {
-      this.displayPath = this.id + '.' + 
-        this.id.substring(0, this.id.length - 2) + 'Name';
+      this.displayPath = this.id + '.' +
+          this.id.substring(0, this.id.length - 2) + 'Name';
     }
   }
 };

@@ -221,10 +221,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       goog.array.map(this.cols_, function(c) {
-        if (!c.renderer && c.displayPath) {
-          c.isParentFormatter = true;
-          c.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
-        }
         return c.toSlick(!c.renderer ? null :
             goog.bind(function(row, cell, value, col, item) {
               return c.renderer(item, this.cache_, value, col);
@@ -389,15 +385,13 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       }, {}, this);
   var html = [];
   for (var field in total) {
-    var spec = goog.array.find(this.totalColumns_, function(c) {
+    var col = goog.array.find(this.totalColumns_, function(c) {
       return c.id === field;
     });
     var val = total[field];
-    if (spec.renderer) {
-      val = spec.renderer({}, this.cache_, val, spec);
-    }
+    if (col.renderer) { val = col.renderer({}, this.cache_, val, col); }
     else { val = parseInt(val, 10); }
-    html.push('Total ' + spec.name + ': ' + val || '0');
+    html.push('Total ' + col.name + ': ' + val || '0');
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
       html.join('</li><li>') + '</li>';
@@ -481,16 +475,16 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(entity) {
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
       var filterVal = this.quickFilters_[columnId];
-      var spec = /** @type {pn.ui.grid.Column} */
+      var col = /** @type {pn.ui.grid.Column} */
           (goog.array.find(this.cols_,
               function(col) { return col.id === columnId; }));
-      var val = entity[spec.dataProperty];
-      if (spec.isParentFormatter) {
+      var val = entity[col.dataProperty];
+      if (col.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? pn.data.EntityUtils.
-            getEntityDisplayValue(this.cache_, spec.displayPath, val) :
+            getEntityDisplayValue(this.cache_, col.displayPath, val) :
             '';
-      } else if (spec.renderer) {
-        val = spec.renderer(entity, this.cache_, val, spec);
+      } else if (col.renderer) {
+        val = col.renderer(entity, this.cache_, val, col);
       }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
       if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {

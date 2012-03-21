@@ -147,11 +147,11 @@ pn.ui.UiSpec.prototype.getEditConfig = function() {
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
- * @return {pn.ui.grid.Column} The created column.
+ * @return {!pn.ui.grid.Column} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn =
     function(field, opt_captionOrProps, opt_props) {
-  return /** @type {pn.ui.grid.Column} */ (this.createDisplayItem_(
+  return /** @type {!pn.ui.grid.Column} */ (this.createDisplayItem_(
       field, pn.ui.grid.Column, opt_captionOrProps, opt_props));
 };
 
@@ -164,39 +164,27 @@ pn.ui.UiSpec.prototype.createColumn =
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this field.
- * @return {pn.ui.edit.Field} The field created.
+ * @return {!pn.ui.edit.Field} The field created.
  */
 pn.ui.UiSpec.prototype.createField =
     function(id, opt_captionOrProps, opt_props) {
-  var field = /** @type {pn.ui.edit.Field} */ (this.createDisplayItem_(
+  return /** @type {!pn.ui.edit.Field} */ (this.createDisplayItem_(
       id, pn.ui.edit.Field, opt_captionOrProps, opt_props));
-  // TODO: Add all of the post create massaging here not in FieldBuilder, etc
-  if (goog.string.endsWith(id, 'Entities') && !field.tableType) {
-    field.tableType = id.replace('Entities', '');
-  }
-  if (field.tableType && !field.tableSpec) {
-    field.tableSpec = field.tableType;
-  }
-  if (field.tableType && !field.tableParentField) {
-    throw new Error('Field: ' + id + ' has a table field but did ' +
-        'not specify the "tableParentField" property.');
-  }
-  return field;
 };
 
 
 /**
  * @private
  * @param {string} field The field in the data representing this column.
- * @param {function(new:pn.ui.BaseField,string,string)} typeConst The
- *    constructor for the display item we are creating.  Expects a
+ * @param {function(new:pn.ui.BaseField,string,pn.ui.UiSpec!,string)} typeConst
+ *    The constructor for the display item we are creating.  Expects a
  *    constructor with the 'field' and 'caption' params.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
  *    this field or the properties map. If caption is omitted the the field id
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
- * @return {pn.ui.BaseField} The created column.
+ * @return {!pn.ui.BaseField} The created column or field.
  */
 pn.ui.UiSpec.prototype.createDisplayItem_ =
     function(field, typeConst, opt_captionOrProps, opt_props) {
@@ -213,8 +201,7 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
       (opt_props || {});
 
   var caption = goog.isString(opt_captionOrProps) ? opt_captionOrProps : '';
-
-  var di = new typeConst(field, caption);
+  var di = new typeConst(field, this, caption);
   di.extend(props);
   return di;
 };
@@ -252,7 +239,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
           step = goog.string.remove(step, 'ID');
         }
         types.push(step);  // Always include at lease one
-      }      
+      }
     }
     else if (i.tableType) {
       var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);

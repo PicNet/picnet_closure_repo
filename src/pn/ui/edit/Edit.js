@@ -199,10 +199,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
     fields[f.id] = input;
     this.disposables_.push(input);
-    if (f.oncreate) { f.oncreate(input, this.data_); }
 
     this.inputs_[f.id] = input;
-    this.attachOnChangeListenerIfRequired_(f, input);
 
     if (!focusSet && input.focus && input.id) {
       focusSet = true;
@@ -212,23 +210,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   }, this);
 
   return fields;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {!Element} input The element to attach the change listener to.
- */
-pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
-    function(field, input) {
-  var gfb = pn.ui.edit.FieldBuilder.getFieldValue;
-  if (field.onchange) {
-    this.eh.listen(input, goog.events.EventType.CHANGE, function() {
-      field.onchange(gfb(input), input, this.data_);
-    });
-    field.onchange(gfb(input), input, this.data_);
-  }
 };
 
 
