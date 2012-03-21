@@ -46,7 +46,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
 
   /**
    * @private
-   * @type {!pn.ui.grid.Config}
+   * @type {pn.ui.grid.Config}
    */
   this.cfg_ = this.spec_.getGridConfig(width);
 

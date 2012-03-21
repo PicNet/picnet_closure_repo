@@ -50,15 +50,16 @@ pn.ui.edit.Edit = function(spec, data, cache) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.edit.Field>}
+   * @type {pn.ui.edit.Config}
    */
-  this.fields_ = this.spec.getEditFields();
+  this.cfg_ = this.spec.editConfig;
+
 
   /**
    * @private
-   * @type {!pn.ui.edit.Config}
+   * @type {!Array.<pn.ui.edit.Field>}
    */
-  this.cfg_ = this.spec.getEditConfig();
+  this.fields_ = this.cfg_.fields;
 
   /**
    * @private
@@ -144,7 +145,7 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-  var div = goog.dom.createDom('div', 'details-container ' + this.cfg_.type);
+  var div = goog.dom.createDom('div', 'details-container ' + this.spec.type);
   this.disposables_.push(div);
   goog.dom.appendChild(element, div);
 
@@ -243,7 +244,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
       }
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
-          f, val, this.data_, this.cache_[this.cfg_.type]);
+          f, val, this.data_, this.cache_[this.spec.type]);
       if (error) { errors.push(error); }
     }
   }, this);

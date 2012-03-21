@@ -44,6 +44,13 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
   /** @type {string} */
   this.name = opt_name || this.type;
 
+  /** @type {pn.ui.edit.Config} */
+  this.editConfig = this.getEditConfig();
+
+  // TODO: Remove width
+  /** @type {pn.ui.grid.Config} */
+  this.gridConfig = null; //this.getGridConfig();
+
   /**
    * @protected
    * @type {!Object} The entity being edited.  This is set in the
@@ -75,44 +82,52 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
 
 
 /**
+ * @protected
+ * Gets the specifications for the pn.ui.edit.Edit component including all
+ *  fields, commands and display details.
+ *
+ * Note: This is a template method and should only be called by this
+ *    constructor to initialise this UiSpec.
+ *
+ * @return {pn.ui.edit.Config} The edit page config.
+ */
+pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
+
+
+/**
+ * @protected
+ *
  * Gets a grid config with the specified width.  The grid config specifies
  *    details such as columns, commands and internal slick grid details.  This
  *    configuration object is used by any pn.ui.grid.Grid entity to display
  *    a grid of entities of this type.
  *
+ * Note: This is a template method and should only be called by this
+ *    constructor to initialise this UiSpec.
+ *
  * @param {number} width The width of this grid.  This cannot be generic.
- * @return {!pn.ui.grid.Config} The grid configuration.
+ * @return {pn.ui.grid.Config} The grid configuration.
  */
-pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
+pn.ui.UiSpec.prototype.getGridConfig = function(width) { return null; };
 
-
-/** @return {!pn.ui.edit.Config} The edit page config. */
-pn.ui.UiSpec.prototype.getEditConfig = function() {
-  return new pn.ui.edit.Config(this.type);
-};
 
 /**
  * Used by pn.ui.SearchPanel to do live filtering on a list of entities.
  *
- * @return {!Array.<pn.ui.edit.Field>} The search fields to display.
+ * @return {Array.<pn.ui.edit.Field>} The search fields to display.
  */
-pn.ui.UiSpec.prototype.getSearchFields = function() {
-  return this.getEditFields();
-};
+pn.ui.UiSpec.prototype.getSearchFields = function() { return null; };
 
 
 /**
- * Returns an array of field specifications that describe how each of the
- *    display fields should be displayed, captioned and validated.
+ * returns the commands for this edit component.  By default it returns:
+ *    Delete, Clone, Save and Cancel which will all be dispatched as
+ *    'entity-delete', 'entity-clone', etc.
+ * If other commands are required then this method needs to be overriden
+ *    or intercepted.
  *
- * @return {!Array.<pn.ui.edit.Field>} The edit fields to display.
- */
-pn.ui.UiSpec.prototype.getEditFields = function() { return []; };
-
-
-/**
  * @param {!Object} entity The entity being displayed.
- * @param {!Object.<!Array.<Object>>=} opt_cache The current entities cache.
+ * @param {Object.<!Array.<Object>>=} opt_cache The current entities cache.
  * @return {!Array.<pn.ui.edit.Command>} The edit commands.
  */
 pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
@@ -200,7 +215,7 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
 
 /** @return {!Array.<string>} The list of types related to this entity. */
 pn.ui.UiSpec.prototype.getRelatedTypes = function() {
-  return pn.ui.UiSpec.getRelatedTypes(this.type, this.getEditFields());
+  return pn.ui.UiSpec.getRelatedTypes(this.type, this.editConfig.fields);
 };
 
 
@@ -249,6 +264,10 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
  * Called after an Edit.js is created.  This is only used to initialise
  * the values related to the entity being edited. To attach events, etc
  * override the documentEntered method.
+ *
+ * Note: This method is an internal method and should not be called or
+ *    inherited. Currently only called by Edit.js to initialise the spec
+ *    to allow documentEntered functionality.
  *
  * @param {!Object} entity The entity that was just decorated.
  * @param {!Object.<Array>} cache The cache with all related entities.
@@ -310,10 +329,15 @@ pn.ui.UiSpec.prototype.disposeInternal = function() {
   pn.ui.UiSpec.superClass_.disposeInternal.call(this);
 
   this.eh.removeAll();
+
   goog.dispose(this.eh);
+  goog.dispose(this.editConfig);
+  goog.dispose(this.gridConfig);
 
   delete this.eh;
   delete this.entity;
   delete this.cache;
   delete this.fields;
+  delete this.editConfig;
+  delete this.gridConfig;
 };
