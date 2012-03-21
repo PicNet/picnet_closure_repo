@@ -47,9 +47,8 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
   /** @type {pn.ui.edit.Config} */
   this.editConfig = this.getEditConfig();
 
-  // TODO: Remove width
   /** @type {pn.ui.grid.Config} */
-  this.gridConfig = null; //this.getGridConfig();
+  this.gridConfig = this.getGridConfig();
 
   /**
    * @protected
@@ -105,10 +104,9 @@ pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
  * Note: This is a template method and should only be called by this
  *    constructor to initialise this UiSpec.
  *
- * @param {number} width The width of this grid.  This cannot be generic.
  * @return {pn.ui.grid.Config} The grid configuration.
  */
-pn.ui.UiSpec.prototype.getGridConfig = function(width) { return null; };
+pn.ui.UiSpec.prototype.getGridConfig = function() { return null; };
 
 
 /**
@@ -249,7 +247,7 @@ pn.ui.UiSpec.getRelatedTypes = function(type, items) {
     }
     else if (i.tableType) {
       var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);
-      var cols = spec.getGridConfig(1).columns;
+      var cols = spec.gridConfig.columns;
       var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
       types = goog.array.concat(types, related);
       goog.dispose(spec);

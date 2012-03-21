@@ -268,26 +268,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
   var spec = pn.ui.UiSpecsRegister.get(field.tableSpec);
-  var width = pn.ui.edit.FieldBuilder.getPxWidth_(parent) - 10;
-  var g = new pn.ui.grid.Grid(spec, data, cache, width);
+  var g = new pn.ui.grid.Grid(spec, data, cache);
   g.decorate(parent);
   return g;
-};
-
-
-/**
- * @private
- * @param {Element} e The element to retreive the computed width for.
- * @return {number} The computed width in pixels.
- */
-pn.ui.edit.FieldBuilder.getPxWidth_ = function(e) {
-  var w = 0;
-  while (e && (!w || w <= 0)) {
-    var styleWidth = goog.style.getComputedStyle(e, 'width');
-    if (styleWidth && styleWidth.indexOf('px') >= 0) {
-      w = parseInt(styleWidth, 10);
-    }
-    e = /** @type {Element} */ (e.parentNode);
-  }
-  return w;
 };

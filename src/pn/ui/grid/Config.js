@@ -5,19 +5,14 @@ goog.provide('pn.ui.grid.Config');
 
 /**
  * @constructor
- * @param {number} width The width of this grid.
  * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
  */
-pn.ui.grid.Config = function(width, columns, commands) {
-  goog.asserts.assert(width > 0);
+pn.ui.grid.Config = function(columns, commands) {
   goog.asserts.assert(columns.length > 0);
   goog.asserts.assert(commands);
-
-  /** @type {number} */
-  this.width = width;
 
   /** @type {!Array.<pn.ui.grid.Column>} */
   this.columns = columns;

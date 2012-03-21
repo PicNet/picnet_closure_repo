@@ -27,13 +27,11 @@ goog.require('pn.ui.grid.QuickFilterHelpers');
  *    this grid.
  * @param {!Array} list The entities to display.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {number} width The width of this grid.
  */
-pn.ui.grid.Grid = function(spec, list, cache, width) {
+pn.ui.grid.Grid = function(spec, list, cache) {
   goog.asserts.assert(spec);
   goog.asserts.assert(list);
   goog.asserts.assert(cache);
-  goog.asserts.assert(width > 0);
 
   goog.ui.Component.call(this);
 
@@ -48,7 +46,7 @@ pn.ui.grid.Grid = function(spec, list, cache, width) {
    * @private
    * @type {pn.ui.grid.Config}
    */
-  this.cfg_ = this.spec_.getGridConfig(width);
+  this.cfg_ = this.spec_.gridConfig;
 
   var cols = this.cfg_.columns;
   var uniqueColIds = goog.array.map(cols, function(c) {
@@ -197,7 +195,6 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
-  goog.asserts.assert(this.cfg_.width);
 
   this.setElementInternal(element);
   if (!this.cfg_.readonly) {
@@ -214,7 +211,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       }, 'No matches found.'),
       this.gridContainer_ = goog.dom.createDom('div', {
         'class': 'grid-container',
-        'style': 'width:' + this.cfg_.width + 'px;height:' + height
+        'style': 'width:' + this.getWidth_(element) + 'px;height:' + height
       })
       );
   goog.dom.appendChild(element, parent);
@@ -233,6 +230,21 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
+};
+
+
+/**
+ * @private
+ * @param {Element} e The element to query for width.
+ * @return {number} The width of this element.
+ */
+pn.ui.grid.Grid.prototype.getWidth_ = function(e) {
+  var w = goog.style.getComputedStyle(e, 'width');
+  while (w.indexOf('px') < 0) {
+    e = /** @type {Element} */ (e.parentNode);
+    w = goog.style.getComputedStyle(e, 'width');
+  }
+  return parseInt(w, 10);
 };
 
 
@@ -460,7 +472,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
     var header = this.slick_.getHeaderRowColumn(col.id);
 
     var input = goog.dom.getChildren(header)[0];
-    var width = jQuery(headerTemplates[i]).width();
+    var width = this.getWidth_(headerTemplates[i]);
     goog.style.setWidth(header, width - 1);
     goog.style.setWidth(input, width - 3);
 
