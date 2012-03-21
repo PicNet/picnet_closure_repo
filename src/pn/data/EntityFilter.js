@@ -53,9 +53,9 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
   goog.asserts.assert(filters);
 
   this.dbg_('filterEntity: ', filters);
-  for (var id in filters) {
-    var fv = filters[id].toString().toLowerCase();
-    if (!this.filterEntityImpl_(fv, entity, id)) {
+  for (var filterId in filters) {
+    var fv = filters[filterId].toString().toLowerCase();
+    if (!this.filterEntityImpl_(fv, entity, filterId)) {
       return false;
     }
   }
@@ -69,31 +69,38 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
  * @param {Object} entity The entity to test for match.
- * @param {string} id The filter/field id.
+ * @param {string} fieldId The filter/field id.
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.
  */
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
-    function(filterValue, entity, id) {
+    function(filterValue, entity, fieldId) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  var steps = id.split('.'),
+  var steps = fieldId.split('.'),
       parentType = this.spec_.type,
       result = entity;
   while (true) {
     var step = steps.shift();
     if (!step) break;
-    result = this.processStep_(step, parentType, result, step.length === 0);
+    result = this.processStep_(step, parentType, result, step.length === 0);    
+    
     this.dbg_('process step result: ', result);
     if (!goog.isDefAndNotNull(result)) {
       this.dbg_('returning as is null');
       return false;
     }
+    // Whenever an entity is found in the path then we stop at that step with
+    // that entities ID
+    if (result['ID']) {
+      result = result['ID'];
+      break;
+    }
     parentType = this.getStepType_(step);
   }
 
-  return this.matchesFilter_(result, filterValue, id);
+  return this.matchesFilter_(result, filterValue, fieldId);
 };
 
 
@@ -129,9 +136,9 @@ pn.data.EntityFilter.prototype.processStep_ =
     this.dbg_('\tprocessStep_ Parent Entity type [' + type + ']');
     var getChild = goog.bind(function(sourceEntity) {
       if (!sourceEntity) return null;
-      var id = sourceEntity[property];
+      var entityId = sourceEntity[property];
       return goog.array.find(this.cache_[type], function(child) {
-        return id === child['ID'];
+        return entityId === child['ID'];
       }, this);
     }, this);
 
@@ -178,11 +185,11 @@ pn.data.EntityFilter.prototype.getStepType_ = function(property) {
  * @private
  * @param {*} entityValue The value of the current entity(s) in the final step.
  * @param {string|Array.<string>} filterValue The filter value.
- * @param {string} id The filter/field id.
+ * @param {string} fieldId The filter/field id.
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.matchesFilter_ =
-    function(entityValue, filterValue, id) {
+    function(entityValue, filterValue, fieldId) {
   if (!goog.isDefAndNotNull(entityValue)) {
     this.dbg_('matchesFilter_ null entity value');
     return false;
@@ -194,7 +201,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
     var field = goog.array.find(this.spec_.getSearchFields(), function(sf) {
-      return sf.id === id;
+      return sf.id === fieldId;
     });
     if (field.renderer === FieldRenderers.dateRenderer ||
         field.renderer === FieldRenderers.readOnlyDateField) {
