@@ -100,7 +100,6 @@ pn.ui.UiSpec.prototype.getGridConfig = function() { return null; };
 
 
 /**
- * @protected
  * @param {string} field The field in the data representing this column.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
  *    this field or the properties map. If caption is omitted the the field id
@@ -117,7 +116,6 @@ pn.ui.UiSpec.prototype.createColumn =
 
 
 /**
- * @protected
  * @param {string} id The id representing this field.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
  *    this field or the properties map. If caption is omitted the the field id

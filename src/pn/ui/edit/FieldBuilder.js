@@ -153,10 +153,12 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, id, cache) {
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
-    function(spec, id, cache) {    
+    function(spec, id, cache) {
   var path = spec.displayPath;
   var val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, id) || '';
-  return goog.dom.createDom('div', 'field', val);
+  var field = goog.dom.createDom('div', 'field', val);
+  field.value = id;
+  return field;
 };
 
 
