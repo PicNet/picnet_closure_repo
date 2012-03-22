@@ -358,7 +358,7 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
   if (!field.renderer) return field;
   var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
   var fr = pn.ui.edit.FieldRenderers;
-  if (field.renderer === fr.centsRenderer ||
+  if (field.renderer === fr.readOnlyCentsField ||
       field.renderer === fr.timeRenderer ||
       field.renderer === fr.textAreaRenderer ||
       field.renderer === fr.hiddenTextField ||

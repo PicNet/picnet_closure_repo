@@ -210,7 +210,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
       var min = parseInt(filterValue, 10);
       var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
-    } else if (field.renderer === FieldRenderers.centsRenderer) {
+    } else if (field.renderer === FieldRenderers.readOnlyCentsField) {
       ev = pn.convert.centsToDisplayString(ev);
     }
     var eval = ev.toString().toLowerCase();

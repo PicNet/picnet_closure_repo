@@ -66,7 +66,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
  * @param {number} val The value currently in this cell.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
+pn.ui.grid.ColumnRenderers.readOnlyCentsField = function(entity, cache, val) {
   return pn.convert.centsToDisplayString(val);
 };
 

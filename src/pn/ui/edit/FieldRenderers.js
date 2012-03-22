@@ -73,13 +73,15 @@ pn.ui.edit.FieldRenderers.timeRenderer =
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
  * @param {!Element} parent The parent to attach this input control to.
- * @return {!Text} The readonly
+ * @return {!Element} The readonly
  *    text field control.
  */
-pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
+pn.ui.edit.FieldRenderers.readOnlyCentsField = function(val, entity, parent) {
   goog.asserts.assertNumber(val);
   var display = pn.convert.centsToDisplayString(/** @type {number} */ (val));
-  return goog.dom.createTextNode(display);
+  var field = goog.dom.createDom('div', 'field', display);
+  goog.dom.appendChild(parent, field);
+  return field;
 };
 
 
@@ -97,6 +99,17 @@ pn.ui.edit.FieldRenderers.boolRenderer =
   return inp;
 };
 
+/**
+ * @param {*} val The boolean to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @return {!Element} The checkbox control.
+ */
+pn.ui.edit.FieldRenderers.readOnlyBoolField = function(val, entity, parent) {
+  var field = goog.dom.createDom('div', 'field', val === true ? 'yes' : 'no');
+  goog.dom.appendChild(parent, field);
+  return field;
+};
 
 /**
  * @param {*} val The text to display.
