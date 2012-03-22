@@ -153,21 +153,10 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, id, cache) {
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
-    function(spec, id, cache) {
-  var steps = spec.displayPath.split('.');
-  var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
-  if (goog.string.endsWith(entityType, 'Entities')) {
-    entityType = goog.string.remove(entityType, 'Entities');
-  } else if (goog.string.endsWith(entityType, 'ID')) {
-    entityType = goog.string.remove(entityType, 'ID');
-  }
-
-  var textField = steps.length === 1 ?
-      entityType + 'Name' : steps[steps.length - 1];
-  var entity = goog.array.find(cache[entityType], function(e) {
-    return e['ID'] === id;
-  });
-  return goog.dom.createDom('div', 'field', entity ? entity[textField] : '');
+    function(spec, id, cache) {    
+  var path = spec.displayPath;
+  var val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, id) || '';
+  return goog.dom.createDom('div', 'field', val);
 };
 
 
