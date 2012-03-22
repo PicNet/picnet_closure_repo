@@ -202,7 +202,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
-    var field = goog.array.find(this.spec_.getSearchFields(), function(sf) {
+    var field = goog.array.find(this.spec_.searchConfig.fields, function(sf) {
       return sf.id === fieldId;
     });
     if (field.renderer === FieldRenderers.dateRenderer ||

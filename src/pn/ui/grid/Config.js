@@ -1,10 +1,12 @@
-﻿;
+﻿
 goog.provide('pn.ui.grid.Config');
 
+goog.require('pn.ui.BaseConfig');
 
 
 /**
  * @constructor
+ * @extends {pn.ui.BaseConfig}
  * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
@@ -13,6 +15,8 @@ goog.provide('pn.ui.grid.Config');
 pn.ui.grid.Config = function(columns, commands) {
   goog.asserts.assert(columns.length > 0);
   goog.asserts.assert(commands);
+
+  pn.ui.BaseConfig.call(this, columns);
 
   /** @type {!Array.<pn.ui.grid.Column>} */
   this.columns = columns;
@@ -51,7 +55,7 @@ pn.ui.grid.Config = function(columns, commands) {
   /** @type {boolean} */
   this.editable = true;
 };
-
+goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
 
 /**
  * @return {pn.ui.grid.Config} A SlickGrid compative object even when

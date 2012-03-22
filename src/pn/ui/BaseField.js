@@ -122,6 +122,9 @@ pn.ui.BaseField.prototype.extend = function(props) {
     else if (this.id !== 'ID' && goog.string.endsWith(this.id, 'ID')) {
       this.displayPath = this.id + '.' +
           this.id.substring(0, this.id.length - 2) + 'Name';
+    } else if (goog.string.endsWith(this.id, 'Entities')) {
+      this.displayPath = this.id + '.' +
+          this.id.substring(0, this.id.length - 8) + 'Name';
     }
   }
 };

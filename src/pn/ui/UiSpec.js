@@ -12,7 +12,7 @@ goog.require('pn.ui.grid.Command');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.ExportCommand');
 goog.require('pn.ui.grid.Grid.EventType');
-
+goog.require('pn.ui.srch.Config');
 
 
 /**
@@ -46,6 +46,9 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
 
   /** @type {pn.ui.edit.Config} */
   this.editConfig = this.getEditConfig();
+
+  /** @type {pn.ui.srch.Config} */
+  this.searchConfig = this.getSearchConfig();
 
   /** @type {pn.ui.grid.Config} */
   this.gridConfig = this.getGridConfig();
@@ -92,6 +95,17 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
  */
 pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
 
+/**
+ * @protected
+ * Gets the specifications for the pn.ui.srch.SearchPanel component including 
+ *    all fields to be searcheable.
+ *
+ * Note: This is a template method and should only be called by this
+ *    constructor to initialise this UiSpec.
+ *
+ * @return {pn.ui.srch.Config} The search component config.
+ */
+pn.ui.UiSpec.prototype.getSearchConfig = function() { return null; };
 
 /**
  * @protected
@@ -107,14 +121,6 @@ pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
  * @return {pn.ui.grid.Config} The grid configuration.
  */
 pn.ui.UiSpec.prototype.getGridConfig = function() { return null; };
-
-
-/**
- * Used by pn.ui.SearchPanel to do live filtering on a list of entities.
- *
- * @return {Array.<pn.ui.edit.Field>} The search fields to display.
- */
-pn.ui.UiSpec.prototype.getSearchFields = function() { return null; };
 
 
 /**
@@ -209,54 +215,6 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
   di.extend(props);
   return di;
 };
-
-
-/** @return {!Array.<string>} The list of types related to this entity. */
-pn.ui.UiSpec.prototype.getRelatedTypes = function() {
-  return pn.ui.UiSpec.getRelatedTypes(this.type, this.editConfig.fields);
-};
-
-
-/**
- * @param {string} type The type we are querying as this will also be related
- *    for duplicate checking.
- * @param {!Array.<!pn.ui.BaseField>} items The fields or columns to
- *    parse for required related entities.
- * @return {!Array.<string>} The list of types required for related displays.
- */
-pn.ui.UiSpec.getRelatedTypes = function(type, items) {
-  var types = [];
-  if (type && type.indexOf(' ') < 0) { types.push(type); }
-
-  goog.array.forEach(items, function(i) {
-    var additional = i.additionalCacheTypes;
-    if (additional.length) {
-      goog.array.forEach(additional, function(at) { types.push(at); });
-    }
-    if (i.displayPath) {
-      var steps = i.displayPath.split('.');
-      for (var s = 0; s === 0 || s < steps.length - 1; s++) {
-        var step = steps[s];
-        if (goog.string.endsWith(step, 'Entities')) {
-          step = goog.string.remove(step, 'Entities');
-        } else if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
-          step = goog.string.remove(step, 'ID');
-        }
-        types.push(step);  // Always include at lease one
-      }
-    }
-    else if (i.tableType) {
-      var spec = pn.ui.UiSpecsRegister.get(i.tableSpec);
-      var cols = spec.gridConfig.columns;
-      var related = pn.ui.UiSpec.getRelatedTypes(i.tableType, cols);
-      types = goog.array.concat(types, related);
-      goog.dispose(spec);
-    }
-  });
-  goog.array.removeDuplicates(types);
-  return types;
-};
-
 
 /**
  * Called after an Edit.js is created.  This is only used to initialise
