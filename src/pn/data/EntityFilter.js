@@ -4,6 +4,8 @@ goog.provide('pn.data.EntityFilter');
 goog.require('goog.array');
 goog.require('goog.asserts');
 
+goog.require('pn.convert');
+
 
 
 /**
@@ -38,7 +40,7 @@ pn.data.EntityFilter = function(cache, spec) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('EntityFilter');
+  this.log_ = pn.log.getLogger('EntityFilter');
 };
 goog.inherits(pn.data.EntityFilter, goog.Disposable);
 
@@ -209,7 +211,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
       var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
     } else if (field.renderer === FieldRenderers.centsRenderer) {
-      ev = pn.Utils.centsToDisplayString(ev);
+      ev = pn.convert.centsToDisplayString(ev);
     }
     var eval = ev.toString().toLowerCase();
     var result = exact ? eval === fv : eval.indexOf(fv) >= 0;

@@ -68,7 +68,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.ui.grid.Grid');
+  this.log_ = pn.log.getLogger('pn.ui.grid.Grid');
 
   /**
    * @private
@@ -195,14 +195,15 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
-
   this.setElementInternal(element);
+
   if (!this.cfg_.readonly) {
     goog.array.forEach(this.commands_, function(c) {
       c.decorate(element);
     }, this);
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
+  var width = pn.dom.getComputedPixelWidth(/** @type {!Element} */ (element));
 
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
@@ -211,7 +212,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       }, 'No matches found.'),
       this.gridContainer_ = goog.dom.createDom('div', {
         'class': 'grid-container',
-        'style': 'width:' + this.getWidth_(element) + 'px;height:' + height
+        'style': 'width:' + width + 'px;height:' + height
       })
       );
   goog.dom.appendChild(element, parent);
@@ -230,21 +231,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
-};
-
-
-/**
- * @private
- * @param {Element} e The element to query for width.
- * @return {number} The width of this element.
- */
-pn.ui.grid.Grid.prototype.getWidth_ = function(e) {
-  var w = goog.style.getComputedStyle(e, 'width');
-  while (w.indexOf('px') < 0) {
-    e = /** @type {Element} */ (e.parentNode);
-    w = goog.style.getComputedStyle(e, 'width');
-  }
-  return parseInt(w, 10);
 };
 
 
@@ -472,7 +458,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
     var header = this.slick_.getHeaderRowColumn(col.id);
 
     var input = goog.dom.getChildren(header)[0];
-    var width = this.getWidth_(headerTemplates[i]);
+    var width = pn.dom.getComputedPixelWidth(headerTemplates[i]);
     goog.style.setWidth(header, width - 1);
     goog.style.setWidth(input, width - 3);
 

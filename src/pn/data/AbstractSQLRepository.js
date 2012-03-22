@@ -1,9 +1,9 @@
-﻿goog.require('goog.array');
 
-goog.require('pn.Utils');
+goog.require('goog.array');
 goog.require('pn.data.AbstractRepository');
 goog.require('pn.data.IEntity');
 goog.require('pn.data.IRepository');
+goog.require('pn.json');
 
 goog.provide('pn.data.AbstractSQLRepository');
 
@@ -71,7 +71,7 @@ pn.data.AbstractSQLRepository.prototype.getList =
   this.execute('SELECT value FROM [' + type + ']', [], function(results) {
     var list = [];
     for (var i = 0; i < results.length; i++) {
-      list.push(pn.Utils.parseJson(results[i]));
+      list.push(pn.json.parseJson(results[i]));
     }
     callback.call(opt_handler || this, list);
   }, null, this);
@@ -105,7 +105,7 @@ pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
         goog.array.forEach(results, function(dr) {
           var tablename = dr[0];
           if (!(tablename in dict)) { dict[tablename] = []; }
-          dict[tablename].push(pn.Utils.parseJson(dr[1]));
+          dict[tablename].push(pn.json.parseJson(dr[1]));
         }, this);
         callback.call(opt_handler || this, dict);
       }, null, this);
@@ -166,7 +166,7 @@ pn.data.AbstractSQLRepository.prototype.getItem =
   this.execute('SELECT value FROM [' + type + '] WHERE ID = ?', [id],
       function(results) {
         var e = /** @type {pn.data.IEntity} */
-            (results.length === 1 ? pn.Utils.parseJson(results[0]) : null);
+            (results.length === 1 ? pn.json.parseJson(results[0]) : null);
         callback.call(opt_handler || this, e);
       }, null, this);
 };
@@ -206,7 +206,7 @@ pn.data.AbstractSQLRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
   var typepos = type.indexOf('|');
   var itemid = (typeof(item) === 'number' ? item : item.ID);
-  var str = (typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item);
+  var str = (typeof(item) !== 'number' ? pn.json.serialiseJson(item) : item);
   this.execute(typepos !== -1 ?
       'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +
       '] (ID, TYPE, value) VALUES(?, \'' + type.substring(typepos + 1) +

@@ -120,7 +120,7 @@ pn.ui.SearchPanel = function(filters, cache) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.ui.SearchPanel');
+  this.log_ = pn.log.getLogger('pn.ui.SearchPanel');
 };
 goog.inherits(pn.ui.SearchPanel, goog.ui.Component);
 

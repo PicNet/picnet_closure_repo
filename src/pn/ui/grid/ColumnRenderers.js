@@ -2,7 +2,9 @@
 goog.provide('pn.ui.grid.ColumnRenderers');
 
 goog.require('goog.string');
+goog.require('pn.convert');
 goog.require('pn.data.EntityUtils');
+goog.require('pn.date');
 goog.require('pn.ui.BaseField');
 
 
@@ -25,7 +27,7 @@ pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(entity, cache, val) {
  */
 pn.ui.grid.ColumnRenderers.dateRenderer = function(entity, cache, val) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      entity, cache, val, pn.Utils.dateFormat);
+      entity, cache, val, pn.date.dateFormat);
 };
 
 
@@ -37,7 +39,7 @@ pn.ui.grid.ColumnRenderers.dateRenderer = function(entity, cache, val) {
  */
 pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(entity, cache, val) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      entity, cache, val, pn.Utils.dateTimeFormat);
+      entity, cache, val, pn.date.dateTimeFormat);
 };
 
 
@@ -65,7 +67,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
-  return pn.Utils.centsToDisplayString(val);
+  return pn.convert.centsToDisplayString(val);
 };
 
 

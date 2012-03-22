@@ -8,7 +8,6 @@ goog.require('goog.fx.easing');
 goog.require('goog.style');
 goog.require('goog.userAgent');
 
-goog.require('pn.Utils');
 goog.require('pn.ui.TabSlideMenuSettings');
 
 goog.provide('pn.ui.TabSlideMenu');
@@ -84,7 +83,7 @@ pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
   this.settings_.tabHandle = args.tabHandle;
   this.settings_.toggleButton = args.toggleButton || '.open-close-tab';
   this.settings_.toggleButton =
-      pn.Utils.getElement(this.settings_.toggleButton);
+      pn.dom.getElement(this.settings_.toggleButton);
 
   this.settings_.speed = args.speed || 300;
   this.settings_.action = args.action || 'click';

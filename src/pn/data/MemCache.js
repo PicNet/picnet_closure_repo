@@ -3,7 +3,7 @@ goog.provide('pn.data.MemCache');
 
 goog.require('goog.net.XhrManager');
 
-goog.require('pn.LogUtils');
+goog.require('pn.log');
 
 
 
@@ -45,7 +45,7 @@ pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.data.MemCache');
+  this.log_ = pn.log.getLogger('pn.data.MemCache');
 
   // Check every 10 seconds for invalid entities
   setInterval(goog.bind(this.invalidateCache_, this), 10000);

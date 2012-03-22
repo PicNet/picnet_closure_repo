@@ -1,7 +1,6 @@
 ﻿;
 goog.provide('pn.ui.grid.Column');
 
-goog.require('pn.Utils');
 goog.require('pn.ui.BaseField');
 
 

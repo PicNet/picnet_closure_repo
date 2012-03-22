@@ -36,7 +36,7 @@ pn.ui.MessagePanel = function(panel) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.ui.MessagePanel');
+  this.log_ = pn.log.getLogger('pn.ui.MessagePanel');
 };
 goog.inherits(pn.ui.MessagePanel, goog.Disposable);
 

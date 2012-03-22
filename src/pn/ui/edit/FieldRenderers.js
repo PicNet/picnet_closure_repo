@@ -2,8 +2,8 @@
 goog.require('goog.date.Date');
 goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
-
-goog.require('pn.Utils');
+goog.require('pn.convert');
+goog.require('pn.date');
 goog.provide('pn.ui.edit.FieldRenderers');
 
 
@@ -27,8 +27,7 @@ pn.ui.edit.FieldRenderers.dateRenderer =
   fieldLabelInput.render(parent);
   parent.labelInput_ = fieldLabelInput;
 
-  var idp = new goog.ui.InputDatePicker(
-      pn.Utils.dateFormat, pn.Utils.dateParser);
+  var idp = new goog.ui.InputDatePicker(pn.date.dateFormat, pn.date.dateParser);
   idp.getDatePicker().setShowWeekNum(false);
   idp.decorate(fieldLabelInput.getElement());
   if (dt) {
@@ -79,7 +78,7 @@ pn.ui.edit.FieldRenderers.timeRenderer =
  */
 pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
   goog.asserts.assertNumber(val);
-  var display = pn.Utils.centsToDisplayString(/** @type {number} */ (val));
+  var display = pn.convert.centsToDisplayString(/** @type {number} */ (val));
   return goog.dom.createTextNode(display);
 };
 
@@ -170,7 +169,7 @@ pn.ui.edit.FieldRenderers.readOnlyTextAreaField =
 pn.ui.edit.FieldRenderers.readOnlyDateField =
     function(val, entity, parent) {
   var date = !val ? null : new Date(val);
-  var txt = !date ? '' : pn.Utils.dateFormat.format(date);
+  var txt = !date ? '' : pn.date.dateFormat.format(date);
   var li = new goog.ui.LabelInput(txt);
   li.render(parent);
   li.setEnabled(false);

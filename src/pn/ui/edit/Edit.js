@@ -9,6 +9,8 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+
+goog.require('pn.dom');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
@@ -77,7 +79,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.ui.edit.Edit');
+  this.log_ = pn.log.getLogger('pn.ui.edit.Edit');
 
   this.normaliseDateOnlyFields_(data);
 };
@@ -186,7 +188,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     var isChildTable = f.tableType;
     if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
 
-    var fieldParent = useTemplate ? pn.Utils.getElement(f.id) : fieldset;
+    var fieldParent = useTemplate ? pn.dom.getElement(f.id) : fieldset;
     if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       var required = f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);

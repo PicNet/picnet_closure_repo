@@ -2,11 +2,10 @@
 goog.require('goog.Disposable');
 goog.require('goog.array');
 goog.require('goog.object');
-
-goog.require('pn.Utils');
 goog.require('pn.data.IDataProvider');
 goog.require('pn.data.IEntity');
 goog.require('pn.data.TransactionResult');
+goog.require('pn.json');
 
 goog.provide('pn.data.IDataAjaxRequest');
 goog.provide('pn.data.RemoteDataProvider');
@@ -87,7 +86,7 @@ pn.data.RemoteDataProvider.prototype.saveEntity =
   }
 
   this.ajax_.makeAjaxRequest('SaveEntity', {'type': type, 'entity':
-        pn.Utils.serialiseJson(data)}, callback, function() {
+        pn.json.serialiseJson(data)}, callback, function() {
     callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
   }, opt_handler);
 };
@@ -120,7 +119,7 @@ pn.data.RemoteDataProvider.prototype.deleteEntities =
 pn.data.RemoteDataProvider.prototype.saveEntities =
     function(data, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('SaveEntities', {'data':
-        pn.Utils.serialiseJson(
+        pn.json.serialiseJson(
         this.convertToPolymorphicablePackage_(data))},
   callback, function() {
     callback.call(opt_handler, pn.data.RemoteDataProvider.OFFLINE);
@@ -144,7 +143,7 @@ pn.data.RemoteDataProvider.prototype.convertToPolymorphicablePackage_ =
     if (this.onPreSave) {
       arr = goog.array.map(arr, function(e) { this.onPreSave(type, e); });
     }
-    data2[type] = pn.Utils.serialiseJson(arr);
+    data2[type] = pn.json.serialiseJson(arr);
   }
   return data2;
 };
@@ -166,9 +165,9 @@ pn.data.RemoteDataProvider.prototype.updateServer =
   }
   this.ajax_.makeAjaxRequest('UpdateServer', {
     'tosave':
-        pn.Utils.serialiseJson(
+        pn.json.serialiseJson(
         this.convertToPolymorphicablePackage_(tosave)),
-    'todelete': pn.Utils.serialiseJson(todelete)
+    'todelete': pn.json.serialiseJson(todelete)
   }, callback, null, opt_handler);
 };
 
@@ -192,7 +191,7 @@ pn.data.RemoteDataProvider.prototype.getChangesSince =
 pn.data.RemoteDataProvider.prototype.stringifyValues_ = function(o) {
   if (!o) { return; }
   for (var i in o) {
-    o[i] = pn.Utils.serialiseJson(o[i]);
+    o[i] = pn.json.serialiseJson(o[i]);
   }
 };
 

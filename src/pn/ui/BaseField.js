@@ -107,7 +107,7 @@ pn.ui.BaseField.prototype.extend = function(props) {
     var newName = this.id.split('.').pop();
     if (newName !== 'ID' && goog.string.endsWith(newName, 'ID')) {
       newName = newName.substring(0, newName.length - 2);
-    } else if (newName !== 'Entities' && 
+    } else if (newName !== 'Entities' &&
         goog.string.endsWith(newName, 'Entities')) {
       newName = newName.substring(0, newName.length - 8) + 's';
     }

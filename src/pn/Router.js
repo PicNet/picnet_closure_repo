@@ -4,7 +4,7 @@ goog.provide('pn.Router');
 goog.require('goog.History');
 goog.require('goog.events.EventHandler');
 goog.require('goog.history.EventType');
-goog.require('pn.LogUtils');
+goog.require('pn.log');
 
 
 
@@ -26,7 +26,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.Router', false);
+  this.log_ = pn.log.getLogger('pn.Router', false);
 
   /**
    * @private
