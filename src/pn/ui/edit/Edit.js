@@ -35,7 +35,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
   goog.asserts.assert(data);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, spec, data, cache);
+  pn.ui.edit.CommandsComponent.call(this, spec);
 
   /**
    * @private
@@ -168,7 +168,9 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
     goog.dom.appendChild(div, templateDiv);
   }
   this.decorateFields_(div);
-  this.cfg_.interceptor.initInternal(this.data_, this.cache_, this.inputs_);
+
+  this.cfg_.interceptor.initInternal(
+      this.data_, this.cache_, this.inputs_, this.getCommandButtons());
 };
 
 

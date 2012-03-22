@@ -14,23 +14,25 @@ pn.ui.edit.Interceptor = function() {
 
   /**
    * @protected
-   * @type {!Object} The entity being edited.  This is set in the
-   *  initEdit method and unset in the dispose method.
+   * @type {!Object} The entity being edited.
    */
   this.entity = {};
 
   /**
    * @protected
-   * @type {!Object.<Array>} The cache with all related entities.  This is
-   *    set in the  initEdit method and unset in the dispose method.
+   * @type {!Object.<Array>} The cache with all related entities.
    */
   this.cache = {};
 
   /**
-   * @type {!Object.<Element|goog.ui.Component>} The fields map in the UI.
-   *    This is set in the  initEdit method and unset in the dispose method.
+   * @type {!Object.<!(Element|goog.ui.Component)>} The fields map in the UI.
    */
   this.fields = {};
+
+  /**
+   * @type {!Object.<!goog.ui.Button>} The commands map in the UI.
+   */
+  this.commands = {};
 
   /**
    * @protected
@@ -53,12 +55,14 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  * @param {!Object} entity The entity that was just decorated.
  * @param {!Object.<Array>} cache The cache with all related entities.
  * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI.
+ * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.initInternal =
-    function(entity, cache, fields) {
+    function(entity, cache, fields, commands) {
   this.entity = entity;
   this.cache = cache;
   this.fields = fields;
+  this.commands = commands;
 
   if (!this.entity['ID']) {
     this.showCommand('Delete', false);
@@ -83,7 +87,8 @@ pn.ui.edit.Interceptor.prototype.init = function() {};
  *    visible.
  */
 pn.ui.edit.Interceptor.prototype.isShown = function(id) {
-  return goog.style.isElementShown(this.getFieldContainer_(id));
+  var el = this.getFieldContainer_(this.fields[id], id);
+  return goog.style.isElementShown(el);
 };
 
 
@@ -93,7 +98,8 @@ pn.ui.edit.Interceptor.prototype.isShown = function(id) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
-  goog.style.showElement(this.getFieldContainer_(id), visible);
+  var el = this.getFieldContainer_(this.fields[id], id);
+  goog.style.showElement(el, visible);
 };
 
 
@@ -103,22 +109,21 @@ pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
  * @param {boolean} visible Wether to show or hide the command.
  */
 pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
-  var commandsContainer = goog.dom.getElementByClass('commands-container');
-  var el = goog.dom.getElementByClass(id.toLowerCase(), commandsContainer);
+  var el = this.getFieldContainer_(this.commands[id], id);
   goog.style.showElement(el, visible);
 };
 
 
 /**
  * @private
- * @param {string} id The id of the element to get the container for.
+ * @param {!(Element|goog.ui.Component)} el The element to get the parent
+ *    container element for.
+ * @param {string} id The id of the element we are looking for.
  * @return {!Element} The parent container of the speicified field id.
  */
-pn.ui.edit.Interceptor.prototype.getFieldContainer_ = function(id) {
-  goog.asserts.assert(this.fields);
-  goog.asserts.assert(this.fields[id]);
+pn.ui.edit.Interceptor.prototype.getFieldContainer_ = function(el, id) {
+  goog.asserts.assert(el);
 
-  var el = this.fields[id];
   var element = el.getElement ? el.getElement() : el;
   while (element.id !== id) { element = element.parentNode; }
   return /** @type {!Element} */ (element);
