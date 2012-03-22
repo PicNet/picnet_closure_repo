@@ -69,7 +69,6 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
   this.cache = {};
 
   /**
-   * @protected
    * @type {!Object.<Element|goog.ui.Component>} The fields map in the UI.
    *    This is set in the  initEdit method and unset in the dispose method.
    */
