@@ -9,7 +9,6 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
-
 goog.require('pn.dom');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
@@ -17,6 +16,7 @@ goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.edit.FieldBuilder');
 goog.require('pn.ui.edit.FieldValidator');
+goog.require('pn.ui.edit.Interceptor');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
@@ -55,7 +55,6 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @type {pn.ui.edit.Config}
    */
   this.cfg_ = this.spec.editConfig;
-
 
   /**
    * @private
@@ -138,6 +137,15 @@ pn.ui.edit.Edit.prototype.resetDirty = function() {
 };
 
 
+/**
+ * @return {!Object.<!Element|!goog.ui.Component>} All input elements in this
+ *    edit component.
+ */
+pn.ui.edit.Edit.prototype.getInputs = function() {
+  return this.inputs_;
+};
+
+
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
@@ -159,15 +167,14 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
     this.disposables_.push(templateDiv);
     goog.dom.appendChild(div, templateDiv);
   }
-  var fields = this.decorateFields_(div);
-  this.spec.initEdit(this.data_, this.cache_, fields);
+  this.decorateFields_(div);
+  this.cfg_.interceptor.initInternal(this.data_, this.cache_, this.inputs_);
 };
 
 
 /**
  * @private
  * @param {!Element} parent The parent element to attach the fields to.
- * @return {!Object.<Element|goog.ui.Component>} The fields created.
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
@@ -176,8 +183,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var useTemplate = !!this.cfg_.template,
       focusSet = false,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
-      newEntity = !this.data_['ID'],
-      fields = {};
+      newEntity = !this.data_['ID'];
 
   if (fieldset) {
     this.disposables_.push(fieldset);
@@ -201,9 +207,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
-    fields[f.id] = input;
     this.disposables_.push(input);
-
     this.inputs_[f.id] = input;
 
     if (!focusSet && input.focus && input.id) {
@@ -212,8 +216,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         try { input.focus(); } catch (ex) {}
       }, 1); }
   }, this);
-
-  return fields;
 };
 
 
@@ -310,7 +312,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
-  this.spec.documentEntered();
+  this.cfg_.interceptor.init();
 };
 
 

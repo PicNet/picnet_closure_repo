@@ -19,8 +19,11 @@ goog.require('pn.ui.edit.DeleteCommand');
  *    are used.
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
+  * @param {pn.ui.edit.Interceptor=} opt_interceptor The optional interceptor
+  *   used to receive and intercept lifecycle events.
  */
-pn.ui.edit.Config = function(fields, opt_commands, opt_template) {
+pn.ui.edit.Config =
+    function(fields, opt_commands, opt_template, opt_interceptor) {
   goog.asserts.assert(fields);
 
   pn.ui.BaseConfig.call(this, fields);
@@ -33,6 +36,9 @@ pn.ui.edit.Config = function(fields, opt_commands, opt_template) {
 
   /** @type {null|function(?):string} */
   this.template = opt_template || null;
+
+  /** @type {!pn.ui.edit.Interceptor} */
+  this.interceptor = opt_interceptor || new pn.ui.edit.Interceptor();
 };
 goog.inherits(pn.ui.edit.Config, pn.ui.BaseConfig);
 
@@ -49,4 +55,17 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
     new pn.ui.edit.DeleteCommand(),
     new pn.ui.edit.Command('Cancel', pn.ui.edit.Edit.EventType.CANCEL)
   ];
+};
+
+
+/** @inheritDoc */
+pn.ui.edit.Config.prototype.disposeInternal = function() {
+  pn.ui.edit.Config.superClass_.disposeInternal.call(this);
+
+  delete this.fields;
+  delete this.commands;
+  delete this.template;
+
+  goog.dispose(this.interceptor);
+  delete this.interceptor;
 };

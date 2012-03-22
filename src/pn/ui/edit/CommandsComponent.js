@@ -89,15 +89,15 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
 
 
 /**
- * @protected
+ * @private
  * @param {!Element} parent The parent for this commands panel.
  * @param {string} className The name of the css class for this control.
  */
 pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
-    function(parent, className) {    
+    function(parent, className) {
   goog.asserts.assert(parent);
   if (!this.commands_.length) return;
-  
+
   var div = goog.dom.getElementsByClass(className)[0] ||
       goog.dom.createDom('div', className);
   goog.dom.appendChild(parent, div);
