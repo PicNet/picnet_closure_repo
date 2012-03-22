@@ -314,7 +314,6 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   goog.asserts.assert(option);
 
   var FieldBuilder = pn.ui.edit.FieldBuilder;
-  var FieldRenderers = pn.ui.edit.FieldRenderers;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
 
   var name = f.name;
@@ -324,9 +323,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
       remove);
   goog.dom.appendChild(this.filtersPanel_, dom);
   var input;
-  var parent =
-      (f.renderer === FieldRenderers.readOnlyTextField && f.id !== 'ID') ||
-      (!f.renderer && f.displayPath);
+  var parent = !f.renderer && f.displayPath;
   if (parent) {
     input = FieldBuilder.createSearchParentFilter(f, -1, this.cache_);
     goog.dom.appendChild(dom, input);
@@ -358,15 +355,11 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
   if (!field.renderer) return field;
   var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
   var fr = pn.ui.edit.FieldRenderers;
-  if (field.renderer === fr.readOnlyCentsField ||
+  if (field.renderer === fr.centsRenderer ||
       field.renderer === fr.timeRenderer ||
       field.renderer === fr.textAreaRenderer ||
-      field.renderer === fr.hiddenTextField ||
-      field.renderer === fr.readOnlyTextField ||
-      field.renderer === fr.readOnlyTextAreaField) {
+      field.renderer === fr.hiddenTextField) {
     sf.renderer = fr.standardTextSearchField;
-  } else if (field.renderer === fr.readOnlyDateField) {
-    sf.renderer = fr.dateRenderer;
   }
   return sf;
 };

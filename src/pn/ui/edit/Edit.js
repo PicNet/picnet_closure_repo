@@ -207,7 +207,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       }
       goog.dom.appendChild(fieldset, fieldParent);
     }
-
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
     this.disposables_.push(input);
     this.inputs_[f.id] = input;
@@ -291,10 +290,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
     return f.id.indexOf('.') < 0 &&
-        !f.tableType &&
-        (f.showOnAdd || !newEntity) &&
-        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField &&
-        f.renderer !== pn.ui.edit.FieldRenderers.readOnlyDateField;
+        !f.readonly && !f.tableType && (f.showOnAdd || !newEntity);
   });
 };
 

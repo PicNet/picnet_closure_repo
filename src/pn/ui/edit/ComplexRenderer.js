@@ -33,9 +33,15 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {!pn.ui.BaseField}
+   * @type {pn.ui.BaseField}
    */
-  this.spec;
+  this.spec = null;
+
+  /**
+   * @protected
+   * @type {boolean}
+   */
+  this.readonly = false;
 
   /**
    * @type {boolean}
@@ -68,6 +74,12 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
   this.entity = entity;
   this.cache = cache;
   this.spec = spec;
+};
+
+
+/** @param {boolean} readonly Wether this should be rendered as readonly. */
+pn.ui.edit.ComplexRenderer.prototype.setReadOnly = function(readonly) {
+  this.readonly = readonly;
 };
 
 

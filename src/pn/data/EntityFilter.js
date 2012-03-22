@@ -205,12 +205,11 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     var field = goog.array.find(this.spec_.searchConfig.fields, function(sf) {
       return sf.id === fieldId;
     });
-    if (field.renderer === FieldRenderers.dateRenderer ||
-        field.renderer === FieldRenderers.readOnlyDateField) {
+    if (field.renderer === FieldRenderers.dateRenderer) {
       var min = parseInt(filterValue, 10);
       var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
-    } else if (field.renderer === FieldRenderers.readOnlyCentsField) {
+    } else if (field.renderer === FieldRenderers.centsRenderer) {
       ev = pn.convert.centsToDisplayString(ev);
     }
     var eval = ev.toString().toLowerCase();

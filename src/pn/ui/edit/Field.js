@@ -132,8 +132,5 @@ pn.ui.edit.Field.prototype.extend = function(props) {
   if (this.tableType && !this.tableParentField) {
     this.tableParentField = this.entitySpec.type + 'ID';
   }
-  if (this.readonly && this.renderer) {
-    throw new Error('Field: ' + this.id + ' cannot be readonly as it ' +
-        'is specifying a custom renderer');
-  }
+  if (this.readonly) { pn.ui.edit.ReadOnlyFields.toReadOnlyField(this); }
 };
