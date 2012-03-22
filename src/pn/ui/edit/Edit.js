@@ -147,6 +147,7 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
+
   var div = goog.dom.createDom('div', 'details-container ' + this.spec.type);
   this.disposables_.push(div);
   goog.dom.appendChild(element, div);

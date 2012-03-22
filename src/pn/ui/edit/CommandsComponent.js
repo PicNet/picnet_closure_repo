@@ -48,7 +48,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    * @private
    * @type {!Array.<pn.ui.edit.Command>}
    */
-  this.commands_ = spec.getEditCommands(entity, cache);
+  this.commands_ = spec.editConfig.commands;
 
   /**
    * @private
@@ -84,7 +84,7 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
   goog.asserts.assert(element);
 
   this.setElementInternal(element);
-  this.addCommandsPanel(element, 'commands-container');
+  this.addCommandsPanel_(element, 'commands-container');
 };
 
 
@@ -93,11 +93,11 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
  * @param {!Element} parent The parent for this commands panel.
  * @param {string} className The name of the css class for this control.
  */
-pn.ui.edit.CommandsComponent.prototype.addCommandsPanel =
-    function(parent, className) {
+pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
+    function(parent, className) {    
   goog.asserts.assert(parent);
   if (!this.commands_.length) return;
-
+  
   var div = goog.dom.getElementsByClass(className)[0] ||
       goog.dom.createDom('div', className);
   goog.dom.appendChild(parent, div);

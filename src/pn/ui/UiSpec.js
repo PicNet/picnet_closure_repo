@@ -127,32 +127,6 @@ pn.ui.UiSpec.prototype.getGridConfig = function() { return null; };
 
 
 /**
- * returns the commands for this edit component.  By default it returns:
- *    Delete, Clone, Save and Cancel which will all be dispatched as
- *    'entity-delete', 'entity-clone', etc.
- * If other commands are required then this method needs to be overriden
- *    or intercepted.
- *
- * @param {!Object} entity The entity being displayed.
- * @param {Object.<!Array.<Object>>=} opt_cache The current entities cache.
- * @return {!Array.<pn.ui.edit.Command>} The edit commands.
- */
-pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
-  var eventType = pn.ui.edit.Edit.EventType;
-  var del = new pn.ui.edit.Command('Delete', eventType.DELETE);
-  del.preclick = function() {
-    return window.confirm('Are you sure you want to delete this item?');
-  };
-  var clone = new pn.ui.edit.Command('Clone', eventType.CLONE);
-  var commands = [new pn.ui.edit.Command('Save', eventType.SAVE, true)];
-  if (!!entity['ID']) commands.push(clone);
-  if (!!entity['ID']) commands.push(del);
-  commands.push(new pn.ui.edit.Command('Cancel', eventType.CANCEL));
-  return commands;
-};
-
-
-/**
  * @protected
  * @param {string} field The field in the data representing this column.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
@@ -245,7 +219,12 @@ pn.ui.UiSpec.prototype.initEdit = function(entity, cache, fields) {
  * processing.  At this stage you will have access to this.entity, this.cache
  * and this.fields.
  */
-pn.ui.UiSpec.prototype.documentEntered = function() {};
+pn.ui.UiSpec.prototype.documentEntered = function() {
+  if (!this.entity['ID']) {
+    this.showCommand('Delete', false);
+    this.showCommand('Clone', false);
+  }
+};
 
 
 /**
@@ -273,7 +252,7 @@ pn.ui.UiSpec.prototype.showElement = function(id, visible) {
  * @param {boolean} visible Wether to show or hide the command.
  */
 pn.ui.UiSpec.prototype.showCommand = function(id, visible) {
-  var commandsContainer = pn.dom.getElement('commands-container');
+  var commandsContainer = goog.dom.getElementByClass('commands-container');  
   var el = goog.dom.getElementByClass(id.toLowerCase(), commandsContainer);
   goog.style.showElement(el, visible);
 };
