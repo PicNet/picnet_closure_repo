@@ -1,7 +1,8 @@
-﻿
+﻿;
 goog.provide('pn.ui.srch.Config');
 
 goog.require('pn.ui.BaseConfig');
+
 
 
 /**
@@ -17,7 +18,10 @@ pn.ui.srch.Config = function(type, fields) {
 
   pn.ui.BaseConfig.call(this, fields);
 
-  /** @type {string} */
+  /**
+   * @private
+   * @type {string}
+   */
   this.type_ = type;
 
   /** @type {!Array.<pn.ui.edit.Field>} */
@@ -27,6 +31,7 @@ pn.ui.srch.Config = function(type, fields) {
   this.showTypePrefixes = false;
 };
 goog.inherits(pn.ui.srch.Config, pn.ui.BaseConfig);
+
 
 /** @inheritDoc */
 pn.ui.srch.Config.prototype.getRelatedTypes = function() {

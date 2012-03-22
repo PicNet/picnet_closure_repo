@@ -1,7 +1,8 @@
-﻿
+﻿;
 goog.provide('pn.ui.edit.Config');
 
 goog.require('pn.ui.BaseConfig');
+
 
 
 /**
@@ -13,8 +14,8 @@ goog.require('pn.ui.BaseConfig');
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
  */
-pn.ui.edit.Config = function(fields, opt_template) {  
-  goog.asserts.assert(fields);  
+pn.ui.edit.Config = function(fields, opt_template) {
+  goog.asserts.assert(fields);
 
   pn.ui.BaseConfig.call(this, fields);
 

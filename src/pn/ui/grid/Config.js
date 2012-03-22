@@ -1,7 +1,8 @@
-﻿
+﻿;
 goog.provide('pn.ui.grid.Config');
 
 goog.require('pn.ui.BaseConfig');
+
 
 
 /**
@@ -56,6 +57,7 @@ pn.ui.grid.Config = function(columns, commands) {
   this.editable = true;
 };
 goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
+
 
 /**
  * @return {pn.ui.grid.Config} A SlickGrid compative object even when

@@ -15,6 +15,7 @@ goog.require('pn.ui.grid.Grid.EventType');
 goog.require('pn.ui.srch.Config');
 
 
+
 /**
  * The base class for all entity rendering or panel specifications.  This class
  *    defines fields, columns, commands, configs, etc that should allow generic
@@ -95,9 +96,10 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
  */
 pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
 
+
 /**
  * @protected
- * Gets the specifications for the pn.ui.srch.SearchPanel component including 
+ * Gets the specifications for the pn.ui.srch.SearchPanel component including
  *    all fields to be searcheable.
  *
  * Note: This is a template method and should only be called by this
@@ -106,6 +108,7 @@ pn.ui.UiSpec.prototype.getEditConfig = function() { return null; };
  * @return {pn.ui.srch.Config} The search component config.
  */
 pn.ui.UiSpec.prototype.getSearchConfig = function() { return null; };
+
 
 /**
  * @protected
@@ -216,6 +219,7 @@ pn.ui.UiSpec.prototype.createDisplayItem_ =
   return di;
 };
 
+
 /**
  * Called after an Edit.js is created.  This is only used to initialise
  * the values related to the entity being edited. To attach events, etc
@@ -261,6 +265,17 @@ pn.ui.UiSpec.prototype.isShown = function(id) {
  */
 pn.ui.UiSpec.prototype.showElement = function(id, visible) {
   goog.style.showElement(this.getFieldContainer_(id), visible);
+};
+
+
+/**
+ * @param {string} id The id of the command to hide.
+ * @param {boolean} visible Wether to show or hide the command.
+ */
+pn.ui.UiSpec.prototype.showCommand = function(id, visible) {
+  var commandsContainer = pn.dom.getElement('commands-container');
+  var el = goog.dom.getElementByClass(id.toLowerCase(), commandsContainer);
+  goog.style.showElement(el, visible);
 };
 
 

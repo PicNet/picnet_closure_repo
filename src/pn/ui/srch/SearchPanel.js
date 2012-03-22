@@ -353,7 +353,8 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
  * @param {!pn.ui.edit.Field} field The field to make appropriate for searching.
  * @return {!pn.ui.edit.Field} The search appropriate field.
  */
-pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ = function(field) {
+pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
+    function(field) {
   if (!field.renderer) return field;
   var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
   var fr = pn.ui.edit.FieldRenderers;

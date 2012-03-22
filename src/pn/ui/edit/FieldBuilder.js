@@ -234,8 +234,15 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
  */
 pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
   var relationship = spec.displayPath.split('.');
-  var list = cache[relationship[0]];
-  if (!list) throw new Error('Expected access to "' + relationship[0] +
+  var type = relationship[0];
+  if (goog.string.endsWith(type, 'ID')) {
+    type = type.substring(0, type.length - 2);
+  } else if (goog.string.endsWith(type, 'Entities')) {
+    type = type.substring(0, type.length - 8);
+  }
+
+  var list = cache[type];
+  if (!list) throw new Error('Expected access to "' + type +
       '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
   var source = goog.array.find(list, function(e) {
     return e['ID'] === id;
