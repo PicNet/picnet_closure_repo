@@ -238,7 +238,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    if (!this.spec.isShown(f.id)) return;
+    if (!this.cfg_.interceptor.isShown(f.id)) return;
 
     var input = this.inputs_[f.id];
     var val = pn.ui.edit.FieldBuilder.getFieldValue(input);

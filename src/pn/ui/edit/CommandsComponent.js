@@ -56,12 +56,6 @@ pn.ui.edit.CommandsComponent = function(spec) {
 goog.inherits(pn.ui.edit.CommandsComponent, goog.ui.Component);
 
 
-/** @inheritDoc */
-pn.ui.edit.CommandsComponent.prototype.createDom = function() {
-  this.decorateInternal(this.dom_.createElement('div'));
-};
-
-
 /**
  * @protected
  * @return {boolean} If this form is valid.
@@ -74,6 +68,20 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
  * @return {!Object} The current form data (Read from input controls).
  */
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
+
+
+/**
+ * @protected
+ * @param {pn.ui.edit.Command} command The command to fire.
+ * @param {Object} data The current form data.
+ */
+pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
+
+
+/** @inheritDoc */
+pn.ui.edit.CommandsComponent.prototype.createDom = function() {
+  this.decorateInternal(this.dom_.createElement('div'));
+};
 
 
 /** @return {!Object.<goog.ui.Button>} The command buttons. */
@@ -133,9 +141,6 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 
 
 /**
- * TODO: There is some very strange behaviour going on with this.  This is
- *    duplicate code with EditHandler.enterDocument.  Why 2 ways of handling
- *    commands/buttons?
  * @private
  * @param {pn.ui.edit.Command} command The command to attach events to.
  */
@@ -161,14 +166,6 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
   } if (command.validate && !this.isValidForm()) { return false; }
   return true;
 };
-
-
-/**
- * @protected
- * @param {pn.ui.edit.Command} command The command to fire.
- * @param {Object} data The current form data.
- */
-pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
 
 
 /** @inheritDoc */

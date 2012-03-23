@@ -7,6 +7,7 @@ goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
 goog.require('pn.ui.UiSpecsRegister');
+goog.require('pn.ui.grid.Grid');
 
 
 /**
