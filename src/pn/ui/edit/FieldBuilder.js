@@ -266,7 +266,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.ui.UiSpecsRegister.get(field.tableSpec);
+  var spec = pn.app.ctx.specs.get(field.tableSpec);
   var g = new pn.ui.grid.Grid(spec, data, cache);
   g.decorate(parent);
   return g;

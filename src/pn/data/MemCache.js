@@ -83,7 +83,7 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
  *    parentId match.
  * @param {number=} opt_parentId The optional parent id to check for a match.
  */
-pn.data.MemCache.prototype.getCachedLists =
+pn.data.MemCache.prototype.getLists =
     function(types, cb, opt_parentField, opt_parentId) {
   goog.asserts.assert(goog.isDefAndNotNull(types));
   goog.asserts.assert(cb);

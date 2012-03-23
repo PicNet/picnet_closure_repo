@@ -284,7 +284,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   if (!val) return;
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var spec = pn.ui.UiSpecsRegister.get(specid);
+  var spec = pn.app.ctx.specs.get(specid);
   var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
       spec.searchConfig.fields, function(f) {
         return f.id === fieldId;

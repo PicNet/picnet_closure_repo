@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.Router');
+goog.provide('pn.app.Router');
 
 goog.require('goog.History');
 goog.require('goog.events.EventHandler');
@@ -12,13 +12,13 @@ goog.require('pn.log');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!Object.<function(?):undefined>} routes The registered routes.
- * @param {!string} defaultRoute The default route when non is specified.
+ * @param {string=} opt_defaultRoute The optional default route when non is
+ *    available.  Be default this is the first route in the routes map.
  * @param {boolean=} opt_invisible True to use hidden history states instead
  *    of the user-visible location hash.
  */
-pn.Router = function(routes, defaultRoute, opt_invisible) {
+pn.app.Router = function(routes, opt_defaultRoute, opt_invisible) {
   goog.asserts.assert(routes);
-  goog.asserts.assert(defaultRoute);
 
   goog.Disposable.call(this);
 
@@ -26,7 +26,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.log.getLogger('pn.Router', false);
+  this.log_ = pn.log.getLogger('pn.app.Router', false);
 
   /**
    * @private
@@ -38,7 +38,7 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
    * @private
    * @type {!string}
    */
-  this.defaultRoute_ = defaultRoute;
+  this.defaultRoute_ = opt_defaultRoute || goog.object.getKeys(this.routes_)[0];
 
   /**
    * @private
@@ -65,11 +65,11 @@ pn.Router = function(routes, defaultRoute, opt_invisible) {
   });
   this.history_.setEnabled(true);
 };
-goog.inherits(pn.Router, goog.Disposable);
+goog.inherits(pn.app.Router, goog.Disposable);
 
 
 /** Goes back to last history state */
-pn.Router.prototype.back = function() {
+pn.app.Router.prototype.back = function() {
   this.historyStack_.pop(); // Ignore current page
   var to = this.historyStack_.pop() || this.defaultRoute_;
   this.log_.fine('back: ' + to);
@@ -82,7 +82,7 @@ pn.Router.prototype.back = function() {
  * @param {!string} path The full route path to navigate to.
  * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.Router.prototype.navigate = function(path, opt_add) {
+pn.app.Router.prototype.navigate = function(path, opt_add) {
   goog.asserts.assert(path);
   var add = opt_add !== false;
   if (add) {
@@ -100,7 +100,7 @@ pn.Router.prototype.navigate = function(path, opt_add) {
  * @param {!string} path The full route path to navigate to.
  * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.Router.prototype.navigateImpl_ = function(path, opt_add) {
+pn.app.Router.prototype.navigateImpl_ = function(path, opt_add) {
   if (!path) {
     this.log_.fine('navigateImpl empty path going to defaultRoute');
     this.history_.setToken(this.defaultRoute_);
@@ -124,8 +124,8 @@ pn.Router.prototype.navigateImpl_ = function(path, opt_add) {
 
 
 /** @inheritDoc */
-pn.Router.prototype.disposeInternal = function() {
-  pn.Router.superClass_.disposeInternal.call(this);
+pn.app.Router.prototype.disposeInternal = function() {
+  pn.app.Router.superClass_.disposeInternal.call(this);
   this.log_.fine('disposing');
 
   goog.dispose(this.log_);

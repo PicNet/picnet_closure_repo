@@ -44,7 +44,7 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
       }
     }
     if (field.tableSpec) {
-      var spec = pn.ui.UiSpecsRegister.get(field.tableSpec);
+      var spec = pn.app.ctx.specs.get(field.tableSpec);
       var related = spec.gridConfig.getRelatedTypes();
       types = goog.array.concat(types, related);
       goog.dispose(spec);
