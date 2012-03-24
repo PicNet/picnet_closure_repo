@@ -16,28 +16,38 @@ goog.provide('pn.app.BaseApp');
  */
 pn.app.BaseApp = function() {
   goog.Disposable.call(this);
-
+    
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
 
   pn.log.initialise();
   /** @type {goog.debug.Logger} */
   this.log = pn.log.getLogger('pn.app.BaseApp');
-  this.log.info('Creating Application');
-
-  /** @type {pn.app.Router} */
-  this.router = new pn.app.Router(this.getRoutes);
+  this.log.info('Creating Application');  
 
   /** @type {pn.ui.UiSpecsRegister} */
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs);
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+
+  /**
+   * @private
+   * @const
+   * @type {boolean}
+   */
+  this.asyncPubSub_ = false;
 
   /**
    * @private
    * @type {goog.pubsub.PubSub}
    */
-  this.bus_ = new goog.pubsub.PubSub();
+  this.bus_ = new goog.pubsub.PubSub();  
 
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
+  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
+
+  /** @type {pn.app.Router} */
+  this.router = new pn.app.Router(this.getRoutes());  
+
+  var events = this.getAppEventHandlers();
+  for (var event in events) { this.sub(event, events[event]); }
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -77,6 +87,20 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  */
 pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
 
+/**
+ * A template method used to get all required event handlers.  These event 
+ *    handlers will respond to the pn.app.ctx.pub('event-name', args) calls.
+ *
+ *    The map should be in the following format:
+ *    {
+ *      'event-name-1': callback1,
+ *      'event-name-2': callback2
+ *    {
+ *
+ * @return {!Object.<!Function>} The event handlers for handling 
+ *    pn.app.ctx.pub('event-name', args) calls.
+ */
+pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 
 /**
  * @param {string} topic Topic to publish to.
@@ -106,10 +130,13 @@ pn.app.BaseApp.prototype.pub = function(topic, args) {
  */
 pn.app.BaseApp.prototype.sub = function(topic, callback, opt_handler) {
   var handler = opt_handler || this;
-  this.bus_.subscribe(topic, function() {
-    var args = arguments;
-    goog.Timer.callOnce(function() { callback.apply(handler, args); }, 0);
-  });
+  var args = arguments;
+  var cb = function() { callback.apply(handler, args); };
+  if (this.asyncPubSub_) {
+    this.bus_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });    
+  } else { 
+    this.bus_.subscribe(topic, cb);
+  }
 };
 
 

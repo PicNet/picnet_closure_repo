@@ -9,20 +9,25 @@ goog.require('goog.object');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Object.<!function(new:pn.ui.UiSpec)>} map The UiSpecs map
+ * @param {!Array.<!function(new:pn.ui.UiSpec)>} specs The UiSpecs array
  *    containing all the UI specifications that will be used in this
  *    application.
  */
-pn.ui.UiSpecsRegister = function(map) {
-  goog.asserts.assert(map);
+pn.ui.UiSpecsRegister = function(specs) {
+  goog.asserts.assert(specs.length);
 
   goog.Disposable.call(this);
-
+  
   /**
    * @private
    * @type {!Object.<!function(new:pn.ui.UiSpec)>}
    */
-  this.map_ = map;
+  this.map_ = {};
+  goog.array.forEach(specs, function(spec) {
+    var instance = new spec();
+    this.map_[instance.id] = spec;
+    goog.dispose(instance);  
+  }, this);
 };
 goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
 
