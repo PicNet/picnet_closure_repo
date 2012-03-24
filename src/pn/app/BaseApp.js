@@ -43,11 +43,12 @@ pn.app.BaseApp = function() {
 
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
 
-  /** @type {pn.app.Router} */
-  this.router = new pn.app.Router(this.getRoutes());  
-
   var events = this.getAppEventHandlers();
   for (var event in events) { this.sub(event, events[event]); }
+
+  /** @type {pn.app.Router} */
+  this.router = new pn.app.Router(this.getRoutes());    
+  this.router.initialise(); // Parse and execute the first route
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -58,6 +59,10 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
  */
 pn.app.ctx = null;
 
+/** Start the application */
+pn.app.BaseApp.prototype.initialise = function() {
+  this.router.initialise();
+};
 
 /**
  * A template method used to get all required routes.  This method should
