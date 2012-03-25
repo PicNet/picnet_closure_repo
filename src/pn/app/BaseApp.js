@@ -5,6 +5,7 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.Router');
 goog.require('pn.log');
 goog.require('pn.ui.UiSpecsRegister');
+goog.require('pn.app.EventBus');
 
 goog.provide('pn.app.BaseApp');
 
@@ -37,18 +38,21 @@ pn.app.BaseApp = function() {
 
   /**
    * @private
-   * @type {goog.pubsub.PubSub}
+   * @type {!pn.app.EventBus}
    */
-  this.bus_ = new goog.pubsub.PubSub();  
+  this.bus_ = new pn.app.EventBus(false);  
 
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
 
   var events = this.getAppEventHandlers();
-  for (var event in events) { this.sub(event, events[event]); }
+  for (var event in events) { this.bus_.sub(event, events[event]); }
 
   /** @type {pn.app.Router} */
   this.router = new pn.app.Router(this.getRoutes());    
   this.router.initialise(); // Parse and execute the first route
+
+  // Convenience delegates  
+  pn.app.ctx.pub = goog.bind(this.bus_.pub, this.bus_);
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -106,43 +110,6 @@ pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
  *    pn.app.ctx.pub('event-name', args) calls.
  */
 pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
-
-/**
- * @param {string} topic Topic to publish to.
- * @param {...*} args Arguments that are applied to each subscription function.
- */
-pn.app.BaseApp.prototype.pub = function(topic, args) {
-  goog.asserts.assert(topic);
-
-  var msg = topic;
-  if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;
-  this.log.fine(msg);
-
-  var hasSubscribersMsg = '"' + topic + '" has no subscribers.';
-  goog.asserts.assert(this.bus_.getCount(topic) > 0, hasSubscribersMsg);
-  this.bus_.publish.apply(this.bus_, arguments);
-};
-
-
-/**
- * Use this method to to subscribe to the stream of events.
- *
- * @param {string} topic The topic to subscribe to.
- * @param {Function} callback The callback to call on the publishing
- *    of the specified topic.
- * @param {Object=} opt_handler The optional object to use as the callback
- *    context.
- */
-pn.app.BaseApp.prototype.sub = function(topic, callback, opt_handler) {
-  var handler = opt_handler || this;
-  var args = arguments;
-  var cb = function() { callback.apply(handler, args); };
-  if (this.asyncPubSub_) {
-    this.bus_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });    
-  } else { 
-    this.bus_.subscribe(topic, cb);
-  }
-};
 
 
 /** @inheritDoc */
