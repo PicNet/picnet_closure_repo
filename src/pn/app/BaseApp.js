@@ -2,10 +2,10 @@
 goog.require('goog.Disposable');
 goog.require('goog.debug.Logger');
 goog.require('goog.pubsub.PubSub');
+goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.log');
 goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.app.EventBus');
 
 goog.provide('pn.app.BaseApp');
 
@@ -17,14 +17,14 @@ goog.provide('pn.app.BaseApp');
  */
 pn.app.BaseApp = function() {
   goog.Disposable.call(this);
-    
+
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
 
   pn.log.initialise();
   /** @type {goog.debug.Logger} */
   this.log = pn.log.getLogger('pn.app.BaseApp');
-  this.log.info('Creating Application');  
+  this.log.info('Creating Application');
 
   /** @type {pn.ui.UiSpecsRegister} */
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
@@ -40,18 +40,18 @@ pn.app.BaseApp = function() {
    * @private
    * @type {!pn.app.EventBus}
    */
-  this.bus_ = new pn.app.EventBus(false);  
+  this.bus_ = new pn.app.EventBus(false);
 
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
+  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
   var events = this.getAppEventHandlers();
   for (var event in events) { this.bus_.sub(event, events[event]); }
 
   /** @type {pn.app.Router} */
-  this.router = new pn.app.Router(this.getRoutes());    
+  this.router = new pn.app.Router(this.getRoutes());
   this.router.initialise(); // Parse and execute the first route
 
-  // Convenience delegates  
+  // Convenience delegates
   pn.app.ctx.pub = goog.bind(this.bus_.pub, this.bus_);
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
@@ -63,10 +63,12 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
  */
 pn.app.ctx = null;
 
+
 /** Start the application */
 pn.app.BaseApp.prototype.initialise = function() {
   this.router.initialise();
 };
+
 
 /**
  * A template method used to get all required routes.  This method should
@@ -96,8 +98,9 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  */
 pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
 
+
 /**
- * A template method used to get all required event handlers.  These event 
+ * A template method used to get all required event handlers.  These event
  *    handlers will respond to the pn.app.ctx.pub('event-name', args) calls.
  *
  *    The map should be in the following format:
@@ -106,7 +109,7 @@ pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
  *      'event-name-2': callback2
  *    {
  *
- * @return {!Object.<!Function>} The event handlers for handling 
+ * @return {!Object.<!Function>} The event handlers for handling
  *    pn.app.ctx.pub('event-name', args) calls.
  */
 pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;

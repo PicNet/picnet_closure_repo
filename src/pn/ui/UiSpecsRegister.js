@@ -17,7 +17,7 @@ pn.ui.UiSpecsRegister = function(specs) {
   goog.asserts.assert(specs.length);
 
   goog.Disposable.call(this);
-  
+
   /**
    * @private
    * @type {!Object.<!function(new:pn.ui.UiSpec)>}
@@ -26,7 +26,7 @@ pn.ui.UiSpecsRegister = function(specs) {
   goog.array.forEach(specs, function(spec) {
     var instance = new spec();
     this.map_[instance.id] = spec;
-    goog.dispose(instance);  
+    goog.dispose(instance);
   }, this);
 };
 goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);

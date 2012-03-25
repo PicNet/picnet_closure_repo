@@ -62,14 +62,16 @@ pn.app.Router = function(routes, opt_defaultRoute, opt_invisible) {
   var historyEvent = goog.history.EventType.NAVIGATE;
   this.eh_.listen(this.history_, historyEvent, function(e) {
     this.navigateImpl_(e.token);
-  });  
+  });
 };
 goog.inherits(pn.app.Router, goog.Disposable);
+
 
 /** Enable the router and parse the first history token */
 pn.app.Router.prototype.initialise = function() {
   this.history_.setEnabled(true);
 };
+
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {

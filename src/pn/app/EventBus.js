@@ -1,8 +1,8 @@
 ﻿;
 goog.provide('pn.app.EventBus');
 
-goog.require('goog.pubsub.PubSub');
 goog.require('goog.debug.Logger');
+goog.require('goog.pubsub.PubSub');
 
 
 
@@ -11,7 +11,7 @@ goog.require('goog.debug.Logger');
  * @extends {goog.Disposable}
  * @param {boolean} async Wether the pub sub functionality should be async.
  */
-pn.app.EventBus = function(async) {  
+pn.app.EventBus = function(async) {
   goog.Disposable.call(this);
 
   /**
@@ -20,10 +20,10 @@ pn.app.EventBus = function(async) {
    * @type {boolean}
    */
   this.async_ = async;
-  
-  /** 
+
+  /**
    * @private
-   * @type {goog.debug.Logger} 
+   * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.app.BaseApp');
 
@@ -31,9 +31,10 @@ pn.app.EventBus = function(async) {
    * @private
    * @type {goog.pubsub.PubSub}
    */
-  this.pubsub_ = new goog.pubsub.PubSub();  
+  this.pubsub_ = new goog.pubsub.PubSub();
 };
 goog.inherits(pn.app.EventBus, goog.Disposable);
+
 
 /**
  * @param {string} topic Topic to publish to.
@@ -43,11 +44,11 @@ pn.app.EventBus.prototype.pub = function(topic, args) {
   goog.asserts.assert(topic);
   goog.asserts.assert(this.pubsub_.getCount(topic) > 0, 'No subscribers found');
 
-  var msg = topic;  
+  var msg = topic;
   if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;
   this.log_.fine(msg);
-  
-  this.pubsub_.publish.apply(this.pubsub_, args);
+
+  this.pubsub_.publish.apply(this.pubsub_, arguments);
 };
 
 
@@ -62,11 +63,10 @@ pn.app.EventBus.prototype.pub = function(topic, args) {
  */
 pn.app.EventBus.prototype.sub = function(topic, callback, opt_handler) {
   var handler = opt_handler || this;
-  var args = arguments;
-  var cb = function() { callback.apply(handler, args); };
+  var cb = goog.bind(callback, handler);
   if (this.asyncPubSub_) {
-    this.pubsub_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });    
-  } else { 
+    this.pubsub_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });
+  } else {
     this.pubsub_.subscribe(topic, cb);
   }
 };
@@ -77,8 +77,8 @@ pn.app.EventBus.prototype.disposeInternal = function() {
   pn.app.EventBus.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
-  goog.dispose(this.bus_);
+  goog.dispose(this.pubsub_);
 
   delete this.log_;
-  delete this.bus_;
+  delete this.pubsub_;
 };

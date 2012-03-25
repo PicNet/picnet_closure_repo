@@ -165,9 +165,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
 
-/**
- * @param {function(Object):boolean} filter The filter function to apply.
- */
+/** @param {function(Object):boolean} filter The filter function to apply. */
 pn.ui.grid.Grid.prototype.filter = function(filter) {
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;

@@ -103,7 +103,7 @@ pn.ui.SrchGrid.prototype.decorateInternal = function(element) {
   this.decorateSeachPanel_(leftDiv);
 
   this.grid_ = new pn.ui.grid.Grid(this.spec_, this.list_, this.cache_);
-  this.grid_.decorate(rightDiv); 
+  this.grid_.decorate(rightDiv);
   // Allow all grid events to pass through 'this' Event Target.  This
   // allows anyone to listen to the grid events by listening to this class
   this.grid_.dispatchEvent = goog.bind(this.dispatchEvent, this);
