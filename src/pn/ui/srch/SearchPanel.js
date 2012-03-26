@@ -10,6 +10,7 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
@@ -330,6 +331,9 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   } else {
     var srchFld = this.getSearchAppropriateFieldSpec_(f);
     input = FieldBuilder.createAndAttach(srchFld, dom, {}, this.cache_);
+    if (input['type'] === 'text') {
+      input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
+    }
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 

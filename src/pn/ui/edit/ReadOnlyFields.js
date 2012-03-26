@@ -117,7 +117,7 @@ pn.ui.edit.ReadOnlyFields.dateField = function(val, entity, parent) {
  * @param {!pn.ui.edit.ReadOnlyFields.FieldType_} type The type of this field.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {  
+pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
   goog.asserts.assert(parent);
   goog.asserts.assert(type);
 

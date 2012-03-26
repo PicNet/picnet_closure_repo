@@ -37,6 +37,7 @@ pn.data.EntityUtils.getTargetEntity = function(cache, path, id) {
   var entity = /** @type {Object} */ (goog.array.find(list, function(e) {
     return e['ID'] === id;
   }));
+  if (!entity) return null;
 
   if (steps.length > 2) {
     var id2 = entity[steps[1]];

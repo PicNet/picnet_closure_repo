@@ -5,6 +5,7 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 
 goog.require('pn.convert');
+goog.require('pn.ui.filter.SearchEngine');
 
 
 
@@ -28,6 +29,12 @@ pn.data.EntityFilter = function(cache, spec) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec_ = spec;
+
+  /**
+   * @private
+   * @type {!pn.ui.filter.SearchEngine}
+   */
+  this.search_ = new pn.ui.filter.SearchEngine();
 
   /**
    * @private
@@ -83,6 +90,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   var steps = fieldId.split('.'),
       parentType = this.spec_.type,
       result = entity;
+
   while (true) {
     var step = steps.shift();
     if (!step) break;
@@ -90,7 +98,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
     this.dbg_('process step result: ', result);
     if (!goog.isDefAndNotNull(result)) {
-      this.dbg_('returning as is null');
+      this.dbg_('returning false as is null');
       return false;
     }
     // Whenever an entity is found in the path then we stop at that step with
@@ -213,10 +221,10 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
       ev = pn.convert.centsToDisplayString(ev);
     }
     var eval = ev.toString().toLowerCase();
-    var result = exact ? eval === fv : eval.indexOf(fv) >= 0;
+    var result = exact ? eval === fv : this.search_.matches(eval, fv);
 
-    this.dbg_('matchesFilter_.matcher result: ',
-        result, ' eval: ', eval, ' exact: ', exact, ' fv: ', fv);
+    this.dbg_('matchesFilter_.matcher result: ', result, ' eval: ', eval,
+        ' exact: ', exact, ' fv: ', fv);
     return result;
   };
 
@@ -283,7 +291,7 @@ pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
 pn.data.EntityFilter.prototype.dbg_ = function(args) {
   if (!this.debug_) return;
   var format = function(arg) {
-    if (!goog.isString(arg) && arg.length) {
+    if (!goog.isString(arg) && arg && arg.length) {
       return '[' + goog.array.map(arg, format).join(',') + ']';
     } else if (goog.isObject(arg)) { return goog.debug.expose(arg); }
     else return arg;
@@ -299,7 +307,10 @@ pn.data.EntityFilter.prototype.disposeInternal = function() {
   pn.data.EntityFilter.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
+  goog.dispose(this.search_);
+
   delete this.cache_;
   delete this.spec_;
+  delete this.search_;
   delete this.log_;
 };

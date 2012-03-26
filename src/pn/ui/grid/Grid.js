@@ -12,7 +12,7 @@ goog.require('goog.ui.Component.EventType');
 goog.require('pn.data.EntityUtils');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
-goog.require('pn.ui.grid.QuickFilterHelpers');
+goog.require('pn.ui.grid.QuickFind');
 
 
 
@@ -146,9 +146,10 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {Object.<string>}
+   * @type {pn.ui.grid.QuickFind}
    */
-  this.quickFilters_ = {};
+  this.quickFind_ = null;
+
 
   /**
    * @private
@@ -180,7 +181,7 @@ pn.ui.grid.Grid.prototype.filter = function(filter) {
  * @return {boolean} Whether the specified item satisfies the currentFilter.
  */
 pn.ui.grid.Grid.prototype.filterImpl_ = function(item) {
-  if (this.cfg_.enableQuickFilters && !this.quickFilter_(item)) return false;
+  if (this.quickFind_ && !this.quickFind_.matches(item)) { return false; }
   return !this.currentFilter_ || this.currentFilter_(item);
 };
 
@@ -336,14 +337,17 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
   // Quick Filters
   if (this.cfg_.enableQuickFilters) {
-    var rfr = goog.bind(function() {
-      this.resizeFiltersRow_();
-      this.saveGridState_();
-    }, this);
-    this.slick_.onColumnsReordered.subscribe(rfr);
-    this.slick_.onColumnsResized.subscribe(rfr);
-    this.initFiltersRow_();
+    this.quickFind_ = new pn.ui.grid.QuickFind(
+        this.cache_, this.cols_, this.slick_);
+    this.quickFind_.init();
   }
+
+  var rfr = goog.bind(function() {
+    if (this.quickFind_) { this.quickFind_.resize(); }
+    this.saveGridState_();
+  }, this);
+  this.slick_.onColumnsReordered.subscribe(rfr);
+  this.slick_.onColumnsResized.subscribe(rfr);
 
   this.setGridInitialSortState_();
 };
@@ -406,34 +410,6 @@ pn.ui.grid.Grid.prototype.exitDocument = function() {
 
 
 /** @private */
-pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
-  for (var i = 0; i < this.cols_.length; i++) {
-    var col = this.cols_[i];
-    var header = this.slick_.getHeaderRowColumn(col.id);
-    var val = this.quickFilters_[col.id];
-    var input = pn.ui.grid.QuickFilterHelpers.
-        createFilterInput(col, 100, val);
-    input['data-id'] = col.id;
-
-    goog.dom.removeChildren(header);
-    goog.dom.appendChild(header, input);
-  }
-
-  var dv = this.dataView_;
-  var qf = this.quickFilters_;
-
-  $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
-      function() {
-        qf[this['data-id']] = $.trim(
-            /** @type {string} */ ($(this).val())).toLowerCase();
-        dv.refresh();
-      });
-
-  this.resizeFiltersRow_();
-};
-
-
-/** @private */
 pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
   var data = {
@@ -442,57 +418,6 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'sort': this.sort_
   };
   goog.net.cookies.set(this.hash_, goog.json.serialize(data));
-};
-
-
-/** @private */
-pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
-  var grid = /** @type {Element} */
-      (this.slick_.getHeaderRow().parentNode.parentNode);
-  var headerTemplates =
-      goog.dom.getElementsByClass('slick-header-column', grid);
-  for (var i = 0; i < this.cols_.length; i++) {
-    var col = this.cols_[i];
-    var header = this.slick_.getHeaderRowColumn(col.id);
-
-    var input = goog.dom.getChildren(header)[0];
-    var width = pn.dom.getComputedPixelWidth(headerTemplates[i]);
-    goog.style.setWidth(header, width - 1);
-    goog.style.setWidth(input, width - 3);
-
-  }
-};
-
-
-/**
- * @private
- * @param {!Object} entity the row data item.
- * @return {boolean} Wether the item meets the quick filters.
- */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(entity) {
-  goog.asserts.assert(entity);
-
-  for (var columnId in this.quickFilters_) {
-    if (columnId && this.quickFilters_[columnId]) {
-      var filterVal = this.quickFilters_[columnId];
-      var col = /** @type {pn.ui.grid.Column} */
-          (goog.array.find(this.cols_,
-              function(col) { return col.id === columnId; }));
-      var val = entity[col.dataProperty];
-      if (col.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
-        val = val ? pn.data.EntityUtils.
-            getEntityDisplayValue(this.cache_, col.displayPath, val) :
-            '';
-      } else if (col.renderer) {
-        val = col.renderer(entity, this.cache_, val, col);
-      }
-      if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
-      if (!goog.isDefAndNotNull(val) || val.indexOf(filterVal) < 0) {
-        return false;
-      }
-    }
-  }
-  return true;
 };
 
 
@@ -516,7 +441,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 
   goog.array.forEach(this.commands_, goog.dispose);
   goog.array.forEach(this.cols_, goog.dispose);
-  goog.object.forEach(this.quickFilters_, goog.dispose);
   goog.dispose(this.cfg_);
   if (this.slick_) this.slick_.destroy();
   goog.dispose(this.slick_);
@@ -528,9 +452,9 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.gridContainer_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   goog.dispose(this.spec_);
+  goog.dispose(this.quickFind_);
 
   delete this.spec_;
-  delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;
   delete this.dataView_;
@@ -549,6 +473,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.selectionHandler_;
   delete this.currentFilter_;
   delete this.sort_;
+  delete this.quickFind_;
 };
 
 
