@@ -37,15 +37,26 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
-
+  
+  var rendermap = [
+    [fr.timeRenderer, rr.timeField],
+    [fr.dateRenderer, rr.dateField],
+    [fr.boolRenderer, rr.boolField],
+    [fr.centsRenderer, rr.centsField]
+  ];
   if (field.displayPath && !field.tableType) field.readonly = true;
   else if (!curr) field.renderer = rr.textField;
   else if (curr.setReadOnly) curr.setReadOnly(true);
-  else if (curr === fr.timeRenderer) field.renderer = rr.timeField;
-  else if (curr === fr.dateRenderer) field.renderer = rr.dateField;
-  else if (curr === fr.boolRenderer) field.renderer = rr.boolField;
-  else if (curr === fr.centsRenderer) field.renderer = rr.centsField;
-  else field.renderer = rr.textField;
+  else {
+    if (goog.array.findIndex(rendermap, function(trans) {
+      if (curr === trans[0] || curr === trans[1]) {
+        field.renderer = trans[1];
+        return true;
+      }
+    }) < 0) {
+      field.renderer = rr.textField;
+    }
+  }
 };
 
 
@@ -93,7 +104,9 @@ pn.ui.edit.ReadOnlyFields.centsField = function(val, entity, parent) {
  */
 pn.ui.edit.ReadOnlyFields.boolField = function(val, entity, parent) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.BOOLEAN;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  var field = pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  field.checked = field.value;
+  return field;
 };
 
 
@@ -123,7 +136,7 @@ pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
   var readonly = goog.dom.createDom('div', 'field', text);
-  readonly.value = value;
+  readonly.value = value;  
   goog.dom.appendChild(parent, readonly);
   return readonly;
 };
