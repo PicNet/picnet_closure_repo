@@ -80,7 +80,7 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer =
-    function(entity, cache, val, col) {  
+    function(entity, cache, val, col) {
   return pn.data.EntityUtils.getEntityDisplayValue(
       cache, col.displayPath, entity);
 };

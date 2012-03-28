@@ -103,7 +103,7 @@ pn.ui.edit.ValidateInfo.prototype.validateField =
  */
 pn.ui.edit.ValidateInfo.prototype.validateItem =
     function(id, name, isParent, val, opt_entity, opt_all) {
-  if (!goog.isDefAndNotNull(val) || !val.length || (isParent && val === '0')) {
+  if (!goog.isDefAndNotNull(val) || (isParent && val === '0')) {
     return this.required ? name + ' is required.' : '';
   }
 

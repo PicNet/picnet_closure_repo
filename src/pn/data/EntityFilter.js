@@ -87,11 +87,11 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  
+
   var res = fieldId.indexOf('.') > 0 ?
-      pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity) :
+      pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity)[0] :
       entity[fieldId];
-  if (res['ID']) { res = res['ID']; }  
+  if (res['ID']) { res = res['ID']; }
   return this.matchesFilter_(res, filterValue, fieldId);
 };
 

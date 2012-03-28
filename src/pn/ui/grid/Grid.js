@@ -298,9 +298,9 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
     goog.array.forEach(this.commands_, function(c) {
-      this.eh_.listen(c, c.eventType, function(e) { 
+      this.eh_.listen(c, c.eventType, function(e) {
         e.target = this;
-        this.dispatchEvent(e); 
+        this.dispatchEvent(e);
       });
     }, this);
   }

@@ -109,12 +109,12 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
  */
 pn.ui.edit.Edit.prototype.isDirty = function() {
   if (!this.data_) return false;
-  
+
   return goog.array.findIndex(this.getEditableFields_(), function(f) {
     if (!this.cfg_.interceptor.isShown(f.id)) { return false; }
     var orig = this.data_[f.dataProperty];
-    var curr = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);   
-    
+    var curr = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+
     if ((curr === '0' || !curr) && (orig === '0' || !orig)) { return false; }
 
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
@@ -126,7 +126,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
       this.log_.info('Dirty - ' + f.id + ' 1[' + orig + '] 2[' + curr + ']');
       return true;
     }
-  }, this) >= 0;  
+  }, this) >= 0;
 };
 
 
@@ -252,7 +252,10 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
           f, val, this.data_, this.cache_[this.spec.type]);
-      if (error) { errors.push(error); }
+      if (error) {
+        this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + error);
+        errors.push(error);
+      }
     }
   }, this);
   return errors;

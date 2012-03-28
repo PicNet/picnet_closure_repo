@@ -68,6 +68,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
 };
 goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 
+
 /**
  * @protected
  * @param {!Element} parent The parent DOM container to add the edit control to.

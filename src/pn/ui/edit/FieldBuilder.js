@@ -103,14 +103,15 @@ pn.ui.edit.FieldBuilder.createAndAttach =
 
 
 /**
- * @param {!pn.ui.BaseField} spec The field/column to create a
+ * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity
+ * @param {!Object} entity The current entity.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, cache, entity) {
-  var steps = spec.displayPath.split('.');
+pn.ui.edit.FieldBuilder.createParentEntitySelect =
+    function(field, cache, entity) {
+  var steps = field.displayPath.split('.');
   var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
   if (goog.string.endsWith(entityType, 'Entities')) {
     entityType = goog.string.remove(entityType, 'Entities');
@@ -123,10 +124,10 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, cache, entity)
   var list = cache[entityType];
 
   if (!list) throw new Error('Expected access to "' + entityType +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
+      '" but could not be found in cache. Field: ' + goog.debug.expose(field));
 
 
-  var selTxt = 'Select ' + spec.name + ' ...';
+  var selTxt = 'Select ' + field.name + ' ...';
   var id = entity[steps[0]];
   return pn.ui.edit.FieldBuilder.
       createDropDownList(selTxt, list, textField, 'ID', id);
@@ -134,14 +135,16 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, cache, entity)
 
 
 /**
- * @param {!pn.ui.BaseField} spec The field/column to create a
+ * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity
+ * @param {!Object} entity The current entity.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, cache, entity) {
-  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect(spec, cache, entity);
+pn.ui.edit.FieldBuilder.createSearchParentFilter =
+    function(field, cache, entity) {
+  var sel = pn.ui.edit.FieldBuilder.
+      createParentEntitySelect(field, cache, entity);
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
@@ -149,19 +152,21 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, cache, entity)
 
 
 /**
- * @param {!pn.ui.BaseField} spec The field/column to create a
+ * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity
+ * @param {!Object} entity The current entity.
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
-    function(spec, cache, entity) {
-  var path = spec.displayPath;
-  var val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, entity) || '';
-  var field = goog.dom.createDom('div', 'field', val);
-  field.value = entity[path.split('.')[0]];
-  return field;
+    function(field, cache, entity) {
+  var path = field.displayPath;
+  var val = pn.data.EntityUtils.
+      getEntityDisplayValue(cache, path, entity) || '';
+
+  var div = goog.dom.createDom('div', 'field', val);
+  div.value = entity[path.split('.')[0]];
+  return div;
 };
 
 
@@ -216,6 +221,7 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
   });
   return cb;
 };
+
 
 /**
  * @private
