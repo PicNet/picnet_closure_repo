@@ -66,8 +66,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
               function(col) { return col.id === columnId; }));
       var val = entity[col.dataProperty];
       if (col.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
-        val = val ? pn.data.EntityUtils.
-            getEntityDisplayValue(this.cache_, col.displayPath, val) :
+        val = val ? pn.data.EntityUtils.getEntityDisplayValue(
+            this.cache_, col.displayPath, entity) :
             '';
       } else if (col.renderer) {
         val = col.renderer(entity, this.cache_, val, col);

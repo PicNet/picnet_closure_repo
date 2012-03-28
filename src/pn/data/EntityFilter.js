@@ -87,30 +87,10 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  var steps = fieldId.split('.'),
-      parentType = this.spec_.type,
-      result = entity;
-
-  while (true) {
-    var step = steps.shift();
-    if (!step) break;
-    result = this.processStep_(step, parentType, result, step.length === 0);
-
-    this.dbg_('process step result: ', result);
-    if (!goog.isDefAndNotNull(result)) {
-      this.dbg_('returning false as is null');
-      return false;
-    }
-    // Whenever an entity is found in the path then we stop at that step with
-    // that entities ID
-    if (result['ID']) {
-      result = result['ID'];
-      break;
-    }
-    parentType = this.getStepType_(step);
-  }
-
-  return this.matchesFilter_(result, filterValue, fieldId);
+  
+  var res = pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity);
+  if (res['ID']) { res = res['ID']; }  
+  return this.matchesFilter_(res, filterValue, fieldId);
 };
 
 

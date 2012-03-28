@@ -68,15 +68,6 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
 };
 goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 
-
-/** @inheritDoc */
-pn.ui.edit.MultiSpecEdit.prototype.decorateInternal = function(element) {
-  pn.ui.edit.MultiSpecEdit.superClass_.decorateInternal.call(this, element);
-
-  this.edits.push({div: element, edit: this});
-};
-
-
 /**
  * @protected
  * @param {!Element} parent The parent DOM container to add the edit control to.
@@ -92,8 +83,7 @@ pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
-  var errors = this.getFormErrors();
-  return !errors.length;
+  return !this.getFormErrors().length;
 };
 
 
@@ -101,7 +91,9 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.edits, function(c) {
-    errors = goog.array.concat(errors, c.edit.getFormErrors());
+    if (c.edit.getFormErrors) {
+      errors = goog.array.concat(errors, c.edit.getFormErrors());
+    }
   });
   return errors;
 };
@@ -112,8 +104,10 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.entity);
   goog.array.forEach(this.edits, function(c) {
-    goog.object.extend(current, c.edit.getFormData());
-  });
+    if (c.edit.getFormData) {
+      goog.object.extend(current, c.edit.getFormData());
+    }
+  }, this);
   return current;
 };
 
@@ -124,14 +118,14 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
 pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
   return goog.array.findIndex(this.edits, function(c) {
     return c.edit && c.edit.isDirty && c.edit.isDirty();
-  }) >= 0;
+  }, this) >= 0;
 };
 
 
 /** Resets the dirty state of the current view */
 pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
   goog.array.forEach(this.edits, function(c) {
-    if (c.edit && c.edit.resetDirty) c.edit.resetDirty();
+    if (c.edit.resetDirty) c.edit.resetDirty();
   });
 };
 
@@ -147,7 +141,7 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   pn.ui.edit.MultiSpecEdit.superClass_.enterDocument.call(this);
 
   var fields = {};
-  var commands = {};
+  var commands = this.getCommandButtons();
 
   goog.array.forEach(this.edits, function(edit) {
     if (edit.edit.getInputs) {

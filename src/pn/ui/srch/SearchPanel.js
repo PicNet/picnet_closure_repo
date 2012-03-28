@@ -326,7 +326,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   var input;
   var parent = !f.renderer && f.displayPath;
   if (parent) {
-    input = FieldBuilder.createSearchParentFilter(f, -1, this.cache_);
+    input = FieldBuilder.createSearchParentFilter(f, this.cache_, {});
     goog.dom.appendChild(dom, input);
   } else {
     var srchFld = this.getSearchAppropriateFieldSpec_(f);

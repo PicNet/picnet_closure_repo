@@ -77,7 +77,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   var elem;
   if (field.renderer) {
     if (field.displayPath) {
-      val = fb.getValueFromSourceTable_(field, val, cache);
+      val = pn.data.EntityUtils.
+          getEntityDisplayValue(cache, spec.displayPath, entity);
     }
     if (typeof (field.renderer) === 'object') { // Complex Renderer
       elem = field.renderer;
@@ -88,8 +89,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     }
   } else if (field.displayPath && !field.tableType) {
     elem = field.readonly ?
-        fb.createReadOnlyParentEntitySelect(field, val, cache) :
-        fb.createParentEntitySelect(field, val, cache);
+        fb.createReadOnlyParentEntitySelect(field, cache, entity) :
+        fb.createParentEntitySelect(field, cache, entity);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
@@ -104,11 +105,11 @@ pn.ui.edit.FieldBuilder.createAndAttach =
 /**
  * @param {!pn.ui.BaseField} spec The field/column to create a
  *    dom tree for.
- * @param {number} id The ID of the current child entity (this).
  * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!Object} entity The current entity
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, id, cache) {
+pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, cache, entity) {
   var steps = spec.displayPath.split('.');
   var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
   if (goog.string.endsWith(entityType, 'Entities')) {
@@ -126,6 +127,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, id, cache) {
 
 
   var selTxt = 'Select ' + spec.name + ' ...';
+  var id = entity[steps[0]];
   return pn.ui.edit.FieldBuilder.
       createDropDownList(selTxt, list, textField, 'ID', id);
 };
@@ -134,12 +136,12 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect = function(spec, id, cache) {
 /**
  * @param {!pn.ui.BaseField} spec The field/column to create a
  *    dom tree for.
- * @param {number} id The ID of the current child entity (this).
  * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!Object} entity The current entity
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, id, cache) {
-  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect(spec, id, cache);
+pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, cache, entity) {
+  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect(spec, cache, entity);
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
@@ -149,16 +151,16 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(spec, id, cache) {
 /**
  * @param {!pn.ui.BaseField} spec The field/column to create a
  *    dom tree for.
- * @param {number} id The ID of the current child entity (this).
  * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!Object} entity The current entity
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
-    function(spec, id, cache) {
+    function(spec, cache, entity) {
   var path = spec.displayPath;
-  var val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, id) || '';
+  var val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, entity) || '';
   var field = goog.dom.createDom('div', 'field', val);
-  field.value = id;
+  field.value = entity[path.split('.')[0]];
   return field;
 };
 
@@ -214,34 +216,6 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
   });
   return cb;
 };
-
-
-/**
- * @private
- * @param {!pn.ui.BaseField} spec The field/column to create a
- *    dom tree for.
- * @param {number} id The ID of the current child entity (this).
- * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @return {string} The value from the selected parent eneity.
- */
-pn.ui.edit.FieldBuilder.getValueFromSourceTable_ = function(spec, id, cache) {
-  var relationship = spec.displayPath.split('.');
-  var type = relationship[0];
-  if (goog.string.endsWith(type, 'ID')) {
-    type = type.substring(0, type.length - 2);
-  } else if (goog.string.endsWith(type, 'Entities')) {
-    type = type.substring(0, type.length - 8);
-  }
-
-  var list = cache[type];
-  if (!list) throw new Error('Expected access to "' + type +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(spec));
-  var source = goog.array.find(list, function(e) {
-    return e['ID'] === id;
-  });
-  return !source ? 'n/a' : source[relationship[1] || relationship[0] + 'Name'];
-};
-
 
 /**
  * @private
