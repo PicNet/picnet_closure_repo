@@ -121,10 +121,10 @@ goog.inherits(pn.ui.edit.Field, pn.ui.BaseField);
 /** @inheritDoc */
 pn.ui.edit.Field.prototype.extend = function(props) {
   pn.ui.edit.Field.superClass_.extend.call(this, props);
-
-  if (goog.string.endsWith(this.id, 'Entities')) {
+  var firstStep = this.id.split('.')[0];
+  if (goog.string.endsWith(firstStep, 'Entities')) {
     if (!this.tableType) {
-      this.tableType = this.id.substring(0, this.id.length - 8);
+      this.tableType = pn.data.EntityUtils.getTypeProperty(firstStep);
     }
     if (!this.tableSpec) { this.tableSpec = this.tableType; }
   }

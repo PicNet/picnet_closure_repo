@@ -102,29 +102,25 @@ pn.ui.BaseField.prototype.extend = function(props) {
   goog.asserts.assert(goog.isObject(props));
 
   goog.object.extend(this, props);
-
-  if (!this.name) {
-    var newName = this.id.split('.').pop();
-    if (newName !== 'ID' && goog.string.endsWith(newName, 'ID')) {
-      newName = newName.substring(0, newName.length - 2);
-    } else if (newName !== 'Entities' &&
-        goog.string.endsWith(newName, 'Entities')) {
-      newName = newName.substring(0, newName.length - 8) + 's';
+  
+  var steps = this.id.split('.');  
+  if (!this.name) {    
+    var nameProp = steps[steps.length - 1];
+    if (goog.string.endsWith(nameProp, 'Entities')) {
+      nameProp = pn.data.EntityUtils.getTypeProperty(nameProp) + 's';
+    } else {
+      nameProp = pn.data.EntityUtils.getTypeProperty(nameProp);
     }
-    this.name = newName.replace(/([A-Z])/g, ' $1');
+
+    this.name = nameProp.replace(/([A-Z])/g, ' $1');
   }
 
-  if (!this.dataProperty) {
-    this.dataProperty = this.id.split('.')[0];
-  }
+  if (!this.dataProperty) { this.dataProperty = steps[0]; }
   if (!this.displayPath) {
-    if (this.id.indexOf('.') > 0) this.displayPath = this.id;
-    else if (this.id !== 'ID' && goog.string.endsWith(this.id, 'ID')) {
-      this.displayPath = this.id + '.' +
-          this.id.substring(0, this.id.length - 2) + 'Name';
-    } else if (goog.string.endsWith(this.id, 'Entities')) {
-      this.displayPath = this.id + '.' +
-          this.id.substring(0, this.id.length - 8) + 'Name';
+    if (steps.length > 1) { this.displayPath = this.id; }
+    else {
+      var tmp = pn.data.EntityUtils.getTypeProperty(this.id);
+      if (tmp !== this.id) this.displayPath = this.id + '.' + tmp + 'Name';
     }
-  }
+  }    
 };

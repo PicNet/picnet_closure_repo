@@ -108,12 +108,10 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 pn.data.EntityFilter.prototype.processStep_ =
     function(property, parentType, source, isFinal) {
   this.dbg_('processStep_: ', arguments);
-
-  var type = this.getStepType_(property);
-  if (type && !this.cache_[type])
-    throw new Error('Could not find ' + type + ' in the cache.');
-
+    
   var result;
+  var type = pn.data.EntityUtils.getTypeProperty(property);
+
   // Children Entities
   if (goog.string.endsWith(property, 'Entities')) {
     this.dbg_('\tprocessStep_ Children Entities [' + type +
@@ -154,22 +152,6 @@ pn.data.EntityFilter.prototype.processStep_ =
   return goog.array.filter(result, function(r) {
     return goog.isDefAndNotNull(r);
   });
-};
-
-
-/**
- * @private
- * @param {string} property The step property used to retreive the value from
- *    the current entity step.
- * @return {string} The type of the current property if its an entity. Otherwise
- *    returns empty string.
- */
-pn.data.EntityFilter.prototype.getStepType_ = function(property) {
-  if (goog.string.endsWith(property, 'Entities')) {
-    return goog.string.remove(property, 'Entities');
-  } else if (goog.string.endsWith(property, 'ID')) {
-    return property.substring(0, property.length - 2);
-  } else return '';
 };
 
 

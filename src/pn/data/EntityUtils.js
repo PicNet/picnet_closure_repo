@@ -17,15 +17,15 @@ pn.data.EntityUtils.getEntityDisplayValue = function(cache, path, entity) {
   var target = pn.data.EntityUtils.getTargetEntity(cache, path, entity);
   if (!target.length) { return ''; }
 
-  var nameProperty = steps.pop();
-  if (goog.string.endsWith(nameProperty, 'ID')) {
-    nameProperty = nameProperty.substring(0, nameProperty.length - 2) + 'Name';
-  } else if (goog.string.endsWith(nameProperty, 'Entities')) {
-    nameProperty = nameProperty.substring(0, nameProperty.length - 8) + 'Name';
+  var lastStep = steps.pop();
+  var nameProperty = pn.data.EntityUtils.getTypeProperty(lastStep);
+  
+  if (nameProperty !== lastStep) {
+    target = goog.array.map(target, function(e) { 
+      return e[nameProperty + 'Name']; 
+    });
   }
-
-  var names = goog.array.map(target, function(e) { return e[nameProperty]; });
-  return names.join(', ');
+  return target.join(', ');
 };
 
 
@@ -50,11 +50,11 @@ pn.data.EntityUtils.getTargetEntity = function(cache, path, target) {
 
   if (goog.string.endsWith(step, 'ID')) {
     var ids = pn.data.EntityUtils.getFromEntities(target, step);
-    step = step.substring(0, step.length - 2);
+    step = pn.data.EntityUtils.getTypeProperty(step);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(cache[step],
         function(e) { return goog.array.contains(ids, e['ID']); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
-    step = step.substring(0, step.length - 8);
+    step = pn.data.EntityUtils.getTypeProperty(step);
     next = cache[step];
     if (!next) { throw new Error('Could not find: ' + step + ' in cache'); }
   } else {
@@ -80,3 +80,17 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
     return [entities[property]];
   }
 };
+
+/**
+ * @param {string} property The entity property to convert to a type name if 
+ *    possible.
+ * @return {string} The type name inferred from the property parameter or the
+ *    property itself
+ */
+pn.data.EntityUtils.getTypeProperty = function(property) {
+  if (property !== 'ID' && goog.string.endsWith(property, 'ID')) {    
+    return property.substring(0, property.length - 2);
+  } else if (goog.string.endsWith(property, 'Entities')) {
+    return property.substring(0, property.length - 8);
+  } else { return property; }
+}

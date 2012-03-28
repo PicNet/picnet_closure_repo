@@ -112,12 +112,9 @@ pn.ui.edit.FieldBuilder.createAndAttach =
 pn.ui.edit.FieldBuilder.createParentEntitySelect =
     function(field, cache, entity) {
   var steps = field.displayPath.split('.');
-  var entityType = steps[steps.length === 1 ? 0 : steps.length - 2];
-  if (goog.string.endsWith(entityType, 'Entities')) {
-    entityType = goog.string.remove(entityType, 'Entities');
-  } else if (goog.string.endsWith(entityType, 'ID')) {
-    entityType = goog.string.remove(entityType, 'ID');
-  }
+  var entityType = pn.data.EntityUtils.getTypeProperty(
+      steps[steps.length === 1 ? 0 : steps.length - 2]);
+  
   var textField = steps.length === 1 ?
       entityType + 'Name' : steps[steps.length - 1];
 
