@@ -65,6 +65,13 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 
 /**
  * @protected
+ * @return {!Array.<string>} Any errors in the form.
+ */
+pn.ui.edit.CommandsComponent.prototype.getFormErrors = goog.abstractMethod;
+
+
+/**
+ * @protected
  * @return {!Object} The current form data (Read from input controls).
  */
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;

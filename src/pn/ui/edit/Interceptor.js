@@ -57,7 +57,7 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
-pn.ui.edit.Interceptor.prototype.initInternal =
+pn.ui.edit.Interceptor.prototype.init =
     function(entity, cache, fields, commands) {
   this.entity = entity;
   this.cache = cache;
@@ -76,7 +76,7 @@ pn.ui.edit.Interceptor.prototype.initInternal =
  * processing.  At this stage you will have access to this.entity, this.cache
  * and this.fields.
  */
-pn.ui.edit.Interceptor.prototype.init = function() {};
+pn.ui.edit.Interceptor.prototype.postInit = function() {};
 
 
 /**

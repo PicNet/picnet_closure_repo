@@ -169,8 +169,8 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   }
   this.decorateFields_(div);
 
-  this.cfg_.interceptor.initInternal(
-      this.data_, this.cache_, this.inputs_, this.getCommandButtons());
+  var cmds = this.getCommandButtons();
+  this.cfg_.interceptor.init(this.data_, this.cache_, this.inputs_, cmds);
 };
 
 
@@ -234,7 +234,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 };
 
 
-/** @return {!Array.<string>} Any errors in the form. */
+/** @inheritDoc */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
@@ -310,7 +310,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
-  this.cfg_.interceptor.init();
+  this.cfg_.interceptor.postInit();
 };
 
 
