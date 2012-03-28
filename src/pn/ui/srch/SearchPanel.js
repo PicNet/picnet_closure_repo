@@ -324,7 +324,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
       remove);
   goog.dom.appendChild(this.filtersPanel_, dom);
   var input;
-  var parent = !f.renderer && f.displayPath;
+  var parent = !f.renderer && f.displayPath;  
   if (parent) {
     input = FieldBuilder.createSearchParentFilter(f, this.cache_, {});
     goog.dom.appendChild(dom, input);
@@ -359,10 +359,14 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
   if (!field.renderer) return field;
   var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
   var fr = pn.ui.edit.FieldRenderers;
-  if (field.renderer === fr.centsRenderer ||
-      field.renderer === fr.timeRenderer ||
-      field.renderer === fr.textAreaRenderer ||
-      field.renderer === fr.hiddenTextField) {
+  var rr = pn.ui.edit.ReadOnlyFields;
+  var curr = field.renderer;
+  if (curr === fr.centsRenderer ||      
+      curr === rr.centsField ||      
+      curr === fr.timeRenderer ||
+      curr === rr.timeField ||
+      curr === fr.textAreaRenderer ||
+      curr === fr.hiddenTextField) {
     sf.renderer = fr.standardTextSearchField;
   }
   return sf;

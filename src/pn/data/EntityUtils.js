@@ -43,6 +43,7 @@ pn.data.EntityUtils.getTargetEntity = function(cache, path, entity) {
     type = type.substring(0, type.length - 2);
   }
   var list = cache[type];  
+  if (!list) throw new Error('Could not find: ' + type + ' in cache');
   var target = /** @type {Object} */ (goog.array.find(list, function(e) {    
     return e['ID'] === id;
   }));
