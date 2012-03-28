@@ -166,7 +166,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       return !date ? '' : pn.date.dateFormat.format(date);
     case ft.BOOLEAN: return value === true ? 'yes' : 'no';
     case ft.CENTS:
-      return pn.convert.centsToDisplayString(/** @type {number} */ (value));
+      return pn.convert.centsToCurrency(/** @type {number} */ (value));
   }
   throw new Error('Type: ' + type + ' Not Supported');
 };

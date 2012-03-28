@@ -182,7 +182,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
       var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
     } else if (field.renderer === FieldRenderers.centsRenderer) {
-      ev = pn.convert.centsToDisplayString(ev);
+      ev = pn.convert.centsToCurrency(ev);
     }
     var eval = ev.toString().toLowerCase();
     var result = exact ? eval === fv : this.search_.matches(eval, fv);

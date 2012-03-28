@@ -78,13 +78,10 @@ pn.ui.edit.FieldRenderers.timeRenderer =
 pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
   goog.asserts.assertNumber(val);
   var input = goog.dom.createDom('input', 'cents');
-  input.value = pn.convert.centsToDisplayString(/** @type {number} */ (val));
+  input.value = pn.convert.centsToCurrency(/** @type {number} */ (val));
   goog.dom.appendChild(parent, input);
-  input.getValue = function() {
-    var str = input.value;
-    if (str.indexOf('$') === 0) str = str.substring(1);
-    var cents = parseInt(parseFloat(str) * 100, 10);
-    return cents;
+  input.getValue = function() { 
+    return pn.convert.currencyToCents(input.value);
   };
   return input;
 

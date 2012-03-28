@@ -8,8 +8,6 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.TabBar');
-goog.require('pn.accc.ui.Edit');
-goog.require('pn.accc.ui.soy');
 goog.require('pn.dom');
 goog.require('pn.object');
 goog.require('pn.ui.edit.Command');
@@ -76,6 +74,7 @@ goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
  *    render.
  */
 pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
+  // TODO: Cannot reference pn.accc.ui.Edit HERE!!!!
   var ui = new pn.accc.ui.Edit(this.specs[specid], this.entity, this.cache);
   this.edits.push({div: parent, edit: ui});
   ui.decorate(parent);
