@@ -109,23 +109,24 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
  */
 pn.ui.edit.Edit.prototype.isDirty = function() {
   if (!this.data_) return false;
-  var current = this.getCurrentFormData();
-  for (var field in current) {
-    var curr = current[field];
-    var orig = this.data_[field];
-    if ((curr === '0' || !curr) && (orig === '0' || !orig)) continue;
+  
+  return goog.array.findIndex(this.getEditableFields_(), function(f) {
+    if (!this.cfg_.interceptor.isShown(f.id)) { return false; }
+    var orig = this.data_[f.dataProperty];
+    var curr = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);   
+    
+    if ((curr === '0' || !curr) && (orig === '0' || !orig)) { return false; }
+
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
     // differenctly adding a keycode 13,10 rather than just 10
     curr = curr ? goog.string.canonicalizeNewlines(curr.toString()) : '';
     orig = orig ? goog.string.canonicalizeNewlines(orig.toString()) : '';
 
     if (curr !== orig) {
-      this.log_.info('Found dirty field: [' + field + '] ' +
-          'original [' + orig + '] now [' + curr + ']');
+      this.log_.info('Dirty - ' + f.id + ' 1[' + orig + '] 2[' + curr + ']');
       return true;
     }
-  }
-  return false;
+  }, this) >= 0;  
 };
 
 
