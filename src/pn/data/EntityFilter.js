@@ -98,65 +98,6 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
 /**
  * @private
- * @param {string} property The property to get the value of.
- * @param {string} parentType The type name of the parent of this step.
- * @param {Object|Array} source The entity or list of entities to
- *    query the given property.
- * @param {boolean} isFinal Wether this is the final step.
- * @return {Object|Array} The next level of entity value(s) from this step.
- */
-pn.data.EntityFilter.prototype.processStep_ =
-    function(property, parentType, source, isFinal) {
-  this.dbg_('processStep_: ', arguments);
-    
-  var result;
-  var type = pn.data.EntityUtils.getTypeProperty(property);
-
-  // Children Entities
-  if (goog.string.endsWith(property, 'Entities')) {
-    this.dbg_('\tprocessStep_ Children Entities [' + type +
-        '] parentType [' + parentType + ']');
-    result = goog.array.filter(this.cache_[type], function(e) {
-      return e[parentType + 'ID'] === source['ID'];
-    }, this);
-  }
-  // Parent Entity
-  else if (!isFinal && property !== 'ID' &&
-      goog.string.endsWith(property, 'ID')) {
-    this.dbg_('\tprocessStep_ Parent Entity type [' + type + ']');
-    var getChild = goog.bind(function(sourceEntity) {
-      if (!sourceEntity) return null;
-      var entityId = sourceEntity[property];
-      return goog.array.find(this.cache_[type], function(child) {
-        return entityId === child['ID'];
-      }, this);
-    }, this);
-
-    if (goog.isArray(source)) {
-      result = goog.array.map(/** @type {Array} */ (source), getChild, this);
-    } else { result = getChild(source); }
-  }
-  // Simple Property
-  else {
-    this.dbg_('\tprocessStep_ Simple Property: ' + property);
-    var getVal = goog.bind(function(sourceEntity) {
-      return sourceEntity ? sourceEntity[property] : null;
-    }, this);
-
-    if (goog.isArray(source)) {
-      result = goog.array.map(/** @type {Array} */ (source), getVal, this);
-    } else { result = getVal(source); }
-  }
-  if (!goog.isArray(result)) { return result; }
-
-  return goog.array.filter(result, function(r) {
-    return goog.isDefAndNotNull(r);
-  });
-};
-
-
-/**
- * @private
  * @param {*} entityValue The value of the current entity(s) in the final step.
  * @param {string|Array.<string>} filterValue The filter value.
  * @param {string} fieldId The filter/field id.

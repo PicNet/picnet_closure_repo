@@ -64,7 +64,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  * @return {!(Element|goog.ui.Component|Text)} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach =
-    function(field, parent, entity, cache) {  
+    function(field, parent, entity, cache) {
   var fb = pn.ui.edit.FieldBuilder;
   var useDefault = !entity['ID'] && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
@@ -84,7 +84,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
       elem = field.renderer;
       field.renderer.initialise(val, entity, cache, field);
       elem.decorate(parent);
-    } else {      
+    } else {
       elem = field.renderer(val, entity, parent);
     }
   } else if (field.displayPath && !field.tableType) {
@@ -114,7 +114,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   var steps = field.displayPath.split('.');
   var entityType = pn.data.EntityUtils.getTypeProperty(
       steps[steps.length === 1 ? 0 : steps.length - 2]);
-  
+
   var textField = steps.length === 1 ?
       entityType + 'Name' : steps[steps.length - 1];
 

@@ -102,9 +102,9 @@ pn.ui.BaseField.prototype.extend = function(props) {
   goog.asserts.assert(goog.isObject(props));
 
   goog.object.extend(this, props);
-  
-  var steps = this.id.split('.');  
-  if (!this.name) {    
+
+  var steps = this.id.split('.');
+  if (!this.name) {
     var nameProp = steps[steps.length - 1];
     if (goog.string.endsWith(nameProp, 'Entities')) {
       nameProp = pn.data.EntityUtils.getTypeProperty(nameProp) + 's';
@@ -122,5 +122,5 @@ pn.ui.BaseField.prototype.extend = function(props) {
       var tmp = pn.data.EntityUtils.getTypeProperty(this.id);
       if (tmp !== this.id) this.displayPath = this.id + '.' + tmp + 'Name';
     }
-  }    
+  }
 };

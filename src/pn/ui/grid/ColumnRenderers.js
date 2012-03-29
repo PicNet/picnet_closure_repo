@@ -107,30 +107,13 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer =
  *    the current column.
  * @param {!string} parentField The child field used to match this
  *    entities children.
- * @param {string=} opt_childType If the children are a many to many table this
- *    parameter represents the next step in the path.
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
-    function(entity, cache, val, col, parentField, opt_childType) {
+    function(entity, cache, val, col, parentField) {
   goog.asserts.assert(entity);
-  goog.asserts.assert(goog.string.endsWith(col.id, 'Entities'));
+  goog.asserts.assert(col.id.indexOf('Entities') >= 0);
 
-  var type = goog.string.remove(col.id, 'Entities');
-  var list = goog.array.filter(cache[type], function(child) {
-    return child[parentField] === entity['ID'];
-  });
-  var names;
-  if (opt_childType) {
-    names = goog.array.map(list, function(child) {
-      return goog.array.find(cache[opt_childType], function(b) {
-        return b['ID'] === child[opt_childType + 'ID'];
-      })[opt_childType + 'Name'];
-    });
-  } else {
-    names = goog.array.map(list, function(child) {
-      return child[type + 'Name'];
-    });
-  }
-  return names.join(', ');
+  return pn.data.EntityUtils.
+      getEntityDisplayValue(cache, col.id, entity, parentField);
 };

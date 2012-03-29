@@ -80,7 +80,7 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
   var input = goog.dom.createDom('input', 'cents');
   input.value = pn.convert.centsToCurrency(/** @type {number} */ (val));
   goog.dom.appendChild(parent, input);
-  input.getValue = function() { 
+  input.getValue = function() {
     return pn.convert.currencyToCents(input.value);
   };
   return input;

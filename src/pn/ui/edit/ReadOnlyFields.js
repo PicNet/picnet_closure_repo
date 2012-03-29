@@ -37,7 +37,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
-  
+
   var rendermap = [
     [fr.timeRenderer, rr.timeField],
     [fr.dateRenderer, rr.dateField],
@@ -136,7 +136,7 @@ pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
   var readonly = goog.dom.createDom('div', 'field', text);
-  readonly.value = value;  
+  readonly.value = value;
   goog.dom.appendChild(parent, readonly);
   return readonly;
 };

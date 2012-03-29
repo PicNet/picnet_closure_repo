@@ -34,13 +34,13 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
     if (field.displayPath) {
       var steps = field.displayPath.split('.');
       for (var s = 0; s === 0 || s < steps.length - 1; s++) {
-        types.push(pn.data.EntityUtils.getTypeProperty(steps[s]));        
+        types.push(pn.data.EntityUtils.getTypeProperty(steps[s]));
       }
     }
     if (field.tableSpec) {
       var spec = pn.app.ctx.specs.get(field.tableSpec);
       var related = spec.gridConfig.getRelatedTypes();
-      types = goog.array.concat(types, related);      
+      types = goog.array.concat(types, related);
       goog.dispose(spec);
     }
   });
