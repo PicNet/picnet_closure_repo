@@ -63,7 +63,9 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
 
   this.dbg_('filterEntity: ', filters);
   for (var filterId in filters) {
-    var fv = filters[filterId].toString().toLowerCase();
+    var fv = filters[filterId];
+    if (!goog.isDefAndNotNull(fv)) continue;
+    if (!goog.isArray(fv)) fv = fv.toString().toLowerCase();
     if (!this.filterEntityImpl_(fv, entity, filterId)) {
       return false;
     }
