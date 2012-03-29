@@ -109,7 +109,12 @@ pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
  * @param {boolean} visible Wether to show or hide the command.
  */
 pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
-  var el = this.getFieldContainer_(this.commands[id], id);
+  var cmd = this.commands[id];
+  // Command is not available, usually the case for commands that are only
+  // visible on edit (not add)
+  if (!cmd) return;
+
+  var el = this.getFieldContainer_(cmd, id);
   goog.style.showElement(el, visible);
 };
 

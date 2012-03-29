@@ -68,9 +68,11 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   var fb = pn.ui.edit.FieldBuilder;
   var useDefault = !entity['ID'] && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
-  if (useDefault && field.displayPath) {
-    val = goog.array.find(cache[field.displayPath], function(e) {
-      return e[field.displayPath + 'Name'] === val;
+  if (useDefault && goog.string.endsWith(field.dataProperty, 'ID')) {
+    var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
+    var list = cache[type];
+    val = goog.array.find(list, function(e) {
+      return e[type + 'Name'] === field.defaultValue;
     })['ID'];
   }
 

@@ -115,5 +115,5 @@ pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
   goog.asserts.assert(col.id.indexOf('Entities') >= 0);
 
   return pn.data.EntityUtils.
-      getEntityDisplayValue(cache, col.id, entity, parentField);
+      getEntityDisplayValue(cache, col.displayPath, entity, parentField);
 };

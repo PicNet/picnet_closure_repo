@@ -24,16 +24,6 @@ pn.data.EntityUtils.getEntityDisplayValue =
   var steps = path.split('.');
   target = pn.data.EntityUtils.
       getTargetEntity(cache, path, target, opt_parentField);
-  if (!target.length) { return ''; }
-
-  var lastStep = steps.pop();
-  var nameProperty = pn.data.EntityUtils.getTypeProperty(lastStep);
-
-  if (nameProperty !== lastStep) {
-    target = goog.array.map(target, function(e) {
-      return e[nameProperty + 'Name'];
-    });
-  }
   return target.join(', ');
 };
 
@@ -90,7 +80,6 @@ pn.data.EntityUtils.getTargetEntity =
       pn.data.EntityUtils.getTargetEntity(cache, steps, next, opt_parentField) :
       next;
 };
-
 
 /**
  * @param {!(Object|Array.<!Object>)} entities The entity or the entity array.

@@ -76,7 +76,7 @@ pn.ui.edit.FieldRenderers.timeRenderer =
  * @return {!Element} The cents input control.
  */
 pn.ui.edit.FieldRenderers.centsRenderer = function(val, entity, parent) {
-  goog.asserts.assertNumber(val);
+  val = val || 0;
   var input = goog.dom.createDom('input', 'cents');
   input.value = pn.convert.centsToCurrency(/** @type {number} */ (val));
   goog.dom.appendChild(parent, input);
