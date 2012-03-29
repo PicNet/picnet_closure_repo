@@ -84,8 +84,6 @@ pn.ui.grid.Column.prototype.extend = function(props) {
   if (!this.renderer && this.displayPath) {
     this.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
   }
-
-  // TODO: Should we make the formatter here????
 };
 
 

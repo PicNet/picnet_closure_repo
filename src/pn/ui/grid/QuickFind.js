@@ -97,7 +97,6 @@ pn.ui.grid.QuickFind.prototype.init = function() {
   var dataView = this.slick_.getData();
   var qf = this.filters_;
 
-  // TODO: This needs throttling
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
