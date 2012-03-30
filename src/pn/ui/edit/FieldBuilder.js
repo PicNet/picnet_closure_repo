@@ -68,7 +68,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   var fb = pn.ui.edit.FieldBuilder;
   var useDefault = !entity['ID'] && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
-  if (useDefault && goog.string.endsWith(field.dataProperty, 'ID')) {
+  if (useDefault && field.dataProperty !== 'ID' &&
+      goog.string.endsWith(field.dataProperty, 'ID')) {
     var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
     var list = cache[type];
     val = goog.array.find(list, function(e) {
@@ -77,6 +78,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   }
 
   var elem;
+
   if (field.renderer) {
     if (field.displayPath) {
       var path = field.displayPath;
@@ -89,7 +91,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     } else {
       elem = field.renderer(val, entity, parent);
     }
-  } else if (field.displayPath && !field.tableType) {
+  } else if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
+      !field.tableType) {
     elem = field.readonly ?
         fb.createReadOnlyParentEntitySelect(field, cache, entity) :
         fb.createParentEntitySelect(field, cache, entity);
@@ -114,22 +117,23 @@ pn.ui.edit.FieldBuilder.createAndAttach =
 pn.ui.edit.FieldBuilder.createParentEntitySelect =
     function(field, cache, entity) {
   var steps = field.displayPath.split('.');
-  var entityType = pn.data.EntityUtils.getTypeProperty(
-      steps[steps.length === 1 ? 0 : steps.length - 2]);
-
-  var textField = steps.length === 1 ?
-      entityType + 'Name' : steps[steps.length - 1];
+  var entityType = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
+  var textField = steps[steps.length - 1];
 
   var list = cache[entityType];
-
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
-
-
   var selTxt = 'Select ' + field.name + ' ...';
   var id = entity[steps[0]];
-  return pn.ui.edit.FieldBuilder.
-      createDropDownList(selTxt, list, textField, 'ID', id);
+  steps.shift();
+  var path = steps.join('.');
+  list = goog.array.map(list, function(e) {
+    return {
+      'ID': e['ID'],
+      'Name': pn.data.EntityUtils.getEntityDisplayValue(cache, path, e)
+    };
+  });
+  return pn.ui.edit.FieldBuilder.createDropDownList(selTxt, list, id);
 };
 
 
@@ -163,7 +167,7 @@ pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
   var val = pn.data.EntityUtils.
       getEntityDisplayValue(cache, path, entity) || '';
 
-  var div = goog.dom.createDom('div', 'field', val);
+  var div = goog.dom.createDom('div', 'field', val.toString());
   div.value = entity[path.split('.')[0]];
   return div;
 };
@@ -173,13 +177,11 @@ pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
  * @param {string} selectTxt The message to display in the first element of the
  *    list.
  * @param {!Array.<Object>} list The list of entities.
- * @param {string} txtf The text field property name.
- * @param {string} valf The value field property name.
- * @param {*} selValue The selected value in the valf field.
+ * @param {*} selValue The selected value in the 'ID' field.
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldBuilder.createDropDownList =
-    function(selectTxt, list, txtf, valf, selValue) {
+    function(selectTxt, list, selValue) {
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
@@ -187,9 +189,9 @@ pn.ui.edit.FieldBuilder.createDropDownList =
   }
   var options = [];
   goog.array.forEach(list, function(e) {
-    var opts = {'value': e[valf]};
-    if (selValue && e[valf] === selValue) { opts['selected'] = 'selected'; }
-    var txt = e[txtf] ? e[txtf].toString() : null;
+    var opts = {'value': e['ID']};
+    if (selValue && e['ID'] === selValue) { opts['selected'] = 'selected'; }
+    var txt = e['Name'] ? e['Name'].toString() : '';
     goog.asserts.assert(txt !== undefined);
     if (txt) options.push(goog.dom.createDom('option', opts, txt));
   });

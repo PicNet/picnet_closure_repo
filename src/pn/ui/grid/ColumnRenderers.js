@@ -81,8 +81,8 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer =
     function(entity, cache, val, col) {
-  return pn.data.EntityUtils.getEntityDisplayValue(
-      cache, col.displayPath, entity);
+  return (pn.data.EntityUtils.
+      getEntityDisplayValue(cache, col.displayPath, entity) || '').toString();
 };
 
 
@@ -114,6 +114,7 @@ pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
   goog.asserts.assert(entity);
   goog.asserts.assert(col.id.indexOf('Entities') >= 0);
 
-  return pn.data.EntityUtils.
-      getEntityDisplayValue(cache, col.displayPath, entity, parentField);
+  var path = col.displayPath;
+  return (pn.data.EntityUtils.
+      getEntityDisplayValue(cache, path, entity, parentField) || '').toString();
 };

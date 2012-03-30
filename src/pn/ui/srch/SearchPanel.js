@@ -324,8 +324,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
       remove);
   goog.dom.appendChild(this.filtersPanel_, dom);
   var input;
-  var parent = !f.renderer && f.displayPath;
-  if (parent) {
+  if (!f.renderer && pn.data.EntityUtils.isParentProperty(f.dataProperty)) {
     input = FieldBuilder.createSearchParentFilter(f, this.cache_, {});
     goog.dom.appendChild(dom, input);
   } else {

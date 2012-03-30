@@ -13,7 +13,7 @@ goog.provide('pn.data.EntityUtils');
  *    'ChildEntities'.  In this case the parent field would be 'ParentID'
  *    which cannot be inferred from the path and given we have no type
  *    information for the target we cannot infer it that way either.
- * @return {string} The entities name.
+ * @return {*} The entities name.
  */
 pn.data.EntityUtils.getEntityDisplayValue =
     function(cache, path, target, opt_parentField) {
@@ -24,7 +24,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
   var steps = path.split('.');
   target = pn.data.EntityUtils.
       getTargetEntity(cache, path, target, opt_parentField);
-  return target.join(', ');
+  return target.length > 1 ? target.join(', ') : target[0];
 };
 
 
@@ -55,7 +55,7 @@ pn.data.EntityUtils.getTargetEntity =
       next,
       ids;
 
-  if (goog.string.endsWith(step, 'ID')) {
+  if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     step = pn.data.EntityUtils.getTypeProperty(step);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(cache[step],
@@ -80,6 +80,7 @@ pn.data.EntityUtils.getTargetEntity =
       pn.data.EntityUtils.getTargetEntity(cache, steps, next, opt_parentField) :
       next;
 };
+
 
 /**
  * @param {!(Object|Array.<!Object>)} entities The entity or the entity array.
@@ -107,4 +108,15 @@ pn.data.EntityUtils.getTypeProperty = function(property) {
   } else if (goog.string.endsWith(property, 'Entities')) {
     return property.substring(0, property.length - 8);
   } else { return property; }
+};
+
+
+/**
+ * @param {string} property The entity property to check if it points to a
+ *    parent relationship field.
+ * @return {boolean} Wether the specified property is a parent property.
+ */
+pn.data.EntityUtils.isParentProperty = function(property) {
+  goog.asserts.assert(property);
+  return property !== 'ID' && goog.string.endsWith(property, 'ID');
 };

@@ -117,7 +117,7 @@ pn.ui.BaseField.prototype.extend = function(props) {
 
   if (!this.dataProperty) { this.dataProperty = steps[0]; }
   if (!this.displayPath) {
-    if (steps.length > 1) this.displayPath = this.id;
+    this.displayPath = this.id;
     var last = steps[steps.length - 1];
     var type = pn.data.EntityUtils.getTypeProperty(last);
     if (type !== last) {

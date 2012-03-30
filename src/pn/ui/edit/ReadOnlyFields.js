@@ -44,8 +44,8 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
     [fr.boolRenderer, rr.boolField],
     [fr.centsRenderer, rr.centsField]
   ];
-  if (field.displayPath && !field.tableType) field.readonly = true;
-  else if (!curr) field.renderer = rr.textField;
+  field.readonly = true;
+  if (!curr) field.renderer = rr.textField;
   else if (curr.setReadOnly) curr.setReadOnly(true);
   else {
     if (goog.array.findIndex(rendermap, function(trans) {
@@ -184,7 +184,8 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   var ro = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
-  if (field.displayPath && !field.tableType) throw new Error('Not Supported');
+  if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
+      !field.tableType) throw new Error('Not Supported');
   else if (!curr) return ft.DEFAULT;
   else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
