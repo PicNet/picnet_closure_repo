@@ -195,10 +195,14 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   goog.array.forEach(this.fields_, function(f) {
     // Do not do child tables on new entities
-    var isChildTable = f.tableType;
-    if (newEntity && (isChildTable || !f.showOnAdd)) { return; }
-
     var fieldParent = useTemplate ? pn.dom.getElement(f.id) : fieldset;
+
+    var isChildTable = f.tableType;
+    if (newEntity && (isChildTable || !f.showOnAdd)) {
+      goog.style.showElement(fieldParent, false);
+      return;
+    }
+
     if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       var required = f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
