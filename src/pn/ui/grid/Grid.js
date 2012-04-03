@@ -195,15 +195,14 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-
+  
   if (!this.cfg_.readonly) {
     goog.array.forEach(this.commands_, function(c) {
       c.decorate(element);
     }, this);
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
-  var width = pn.dom.getComputedPixelWidth(/** @type {!Element} */ (element));
-
+  var width = $(element).width();
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
@@ -215,7 +214,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       })
       );
   goog.dom.appendChild(element, parent);
-
+ 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       goog.array.map(this.cols_, function(c) {
@@ -228,6 +227,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
     goog.dom.appendChild(element, this.totalsLegend_);
   }
+ 
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
 };

@@ -92,7 +92,7 @@ pn.ui.SearchGrid.prototype.createDom = function() {
 /** @inheritDoc */
 pn.ui.SearchGrid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
-
+  
   var parentDiv = goog.dom.createDom('div', 'filterable-list-container');
   var leftDiv = goog.dom.createDom('div', 'search-layout-container');
   var rightDiv = goog.dom.createDom('div', 'grid-layout-container');

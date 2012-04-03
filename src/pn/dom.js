@@ -29,7 +29,6 @@ pn.dom.getElement = function(id) {
  */
 pn.dom.getComputedPixelWidth = function(e) {
   goog.asserts.assert(e);
-
   var w = goog.style.getComputedStyle(e, 'width');
   while (w.indexOf('px') < 0) {
     e = /** @type {!Element} */ (e.parentNode);

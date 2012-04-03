@@ -117,11 +117,10 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
   for (var i = 0; i < this.cols_.length; i++) {
     var col = this.cols_[i];
     var header = this.slick_.getHeaderRowColumn(col.id);
-
     var input = goog.dom.getChildren(header)[0];
-    var width = pn.dom.getComputedPixelWidth(headerTemplates[i]);
-    goog.style.setWidth(header, width - 1);
-    goog.style.setWidth(input, width - 3);
+    var width = $(headerTemplates[i]).width();
+    goog.style.setWidth(header, Math.max(0, width - 1));
+    goog.style.setWidth(input, Math.max(0, width - 3));
   }
 };
 
