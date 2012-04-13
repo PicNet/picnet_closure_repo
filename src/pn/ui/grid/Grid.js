@@ -261,8 +261,8 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cols_,
       function(c) { return c.name; }, this);
   var gridData = [headers];
-  for (var row = 0, len = this.list_.length; row < len; row++) {
-    var rowData = this.list_[row];
+  for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
+    var rowData = this.dataView_.getItem(row);
     var rowTxt = [];
     for (var col = 0, lencol = this.cols_.length; col < lencol; col++) {
       var cc = this.cols_[col];
