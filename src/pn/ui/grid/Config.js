@@ -28,6 +28,8 @@ pn.ui.grid.Config = function(type) {
   this.enableQuickFilters = true;
   /** @type {number} */
   this.width = 0;
+  /** @type {boolean} */
+  this.syncColumnCellResize = true;
 };
 
 
