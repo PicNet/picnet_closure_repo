@@ -45,17 +45,18 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
 
 /**
  * @param {!Object} entity The entity to filter with the specified filters.
- * @param {!Object.<string>} filters The filters to use to filter the list by.
+ * @param {!Object.<{value:(Array.<string>|string), spec:!pn.ui.edit.Field}>} filters The filters to
+ *    use to filter the list by.
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
 pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
   goog.asserts.assert(entity);
   goog.asserts.assert(filters);
-
   this.dbg_('filterEntity: ' + goog.debug.expose(filters));
 
   for (var id in filters) {
-    if (!this.filterEntityImpl_(filters[id], entity, id)) {
+    var f = filters[id];
+    if (!this.filterEntityImpl_(f.value, f.spec, entity)) {
       return false;
     }
   }
@@ -68,17 +69,18 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  * @param {Array.<string>|string} filterValue The filter value to apply to
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
+ * @param {!pn.ui.edit.Field} spec The field specification for the given
+ *    filter.
  * @param {Object} entity The entity to test for match.
- * @param {string} id The filter id.
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.
  */
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
-    function(filterValue, entity, id) {
+    function(filterValue, spec, entity) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  var steps = id.split('.'),
+  var steps = spec.dataColumn.split('.'),
       parentType = this.type_,
       result = entity;
   while (true) {

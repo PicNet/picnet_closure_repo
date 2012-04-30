@@ -1283,14 +1283,14 @@ Slick.Data.DataView.prototype.deleteItem = function(id) {};
 
 
 /**
- * @return {*}
+ * @return {number}
  */
 Slick.Data.DataView.prototype.getLength = function() {};
 
 
 /**
  * @param {*} i
- * @return {*}
+ * @return {!Object.<Object>}
  */
 Slick.Data.DataView.prototype.getItem = function(i) {};
 

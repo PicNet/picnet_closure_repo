@@ -181,7 +181,7 @@ pn.ui.SearchPanel.prototype.populateFieldSelect_ = function() {
   var options = [];
   for (var fid in this.filters_) {
     var name = this.filters_[fid];
-    options.push(goog.dom.createDom('option', {'value': fid}, name));
+    options.push(goog.dom.createDom('option', { 'value': fid }, name));
   }
 
   goog.array.sortObjectsByKey(options, 'innerHTML');
