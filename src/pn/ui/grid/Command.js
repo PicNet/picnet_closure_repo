@@ -40,6 +40,11 @@ pn.ui.grid.Command = function(name, eventType) {
   this.commandElement_ = null;
 
   /**
+   * @type {undefined|function():undefined}
+   */
+  this.onclick = undefined;
+
+  /**
    * @private
    * @type {!goog.events.EventHandler}
    */
@@ -68,7 +73,8 @@ pn.ui.grid.Command.prototype.decorateInternal = function(element) {
 pn.ui.grid.Command.prototype.enterDocument = function() {
   this.eh_.listen(this.commandElement_, goog.ui.Component.EventType.ACTION,
       function() {
-        this.dispatchEvent(new goog.events.Event(this.eventType, this));
+        if (this.onclick) this.onclick();
+        else this.dispatchEvent(new goog.events.Event(this.eventType, this));
       });
 };
 

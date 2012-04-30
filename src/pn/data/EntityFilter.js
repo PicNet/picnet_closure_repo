@@ -45,8 +45,8 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
 
 /**
  * @param {!Object} entity The entity to filter with the specified filters.
- * @param {!Object.<{value:(Array.<string>|string), spec:!pn.ui.edit.Field}>} filters The filters to
- *    use to filter the list by.
+ * @param {!Object.<{value:(Array.<string>|string), spec:!pn.ui.edit.Field}>}
+ *    filters The filters to use to filter the list by.
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
 pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
@@ -80,7 +80,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  var steps = spec.dataColumn.split('.'),
+  var steps = spec.filterColumn.split('.'),
       parentType = this.type_,
       result = entity;
   while (true) {

@@ -30,6 +30,8 @@ pn.ui.grid.Config = function(type) {
   this.width = 0;
   /** @type {boolean} */
   this.syncColumnCellResize = true;
+  /** @type {undefined|function(!Object):undefined} */
+  this.onselect = undefined;
 };
 
 

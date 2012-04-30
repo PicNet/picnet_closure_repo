@@ -536,9 +536,13 @@ pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
 pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
   var idx = evData['rows'][0];
   var selected = this.dataView_.getItem(idx);
-  var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
-  e.selected = selected;
-  this.dispatchEvent(e);
+  if (this.cfg_.onselect) {
+    this.cfg_.onselect(selected);
+  } else {
+    var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
+    e.selected = selected;
+    this.dispatchEvent(e);
+  }
 };
 
 

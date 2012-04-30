@@ -87,6 +87,10 @@ pn.ui.edit.FieldBuilder.createAndAttach =
         { 'id': field.id, 'type': 'text', 'value': val || '' });
     goog.dom.appendChild(parent, elem);
   }
+  // TODO: Add better support for defaultValue
+  if (entity && !entity['ID'] && goog.isDef(field.defaultValue)) {
+    elem.value = field.defaultValue;
+  }
   return elem;
 };
 
