@@ -6,6 +6,8 @@ goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.cookies');
+goog.require('goog.positioning.ClientPosition');
+goog.require('goog.ui.AdvancedTooltip');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
@@ -152,6 +154,18 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Element}
    */
   this.totalsLegend_ = null;
+  /**
+   * @private
+   * @type {Element}
+   */
+  this.tooltipDiv_ = null;
+
+  /**
+   * @private
+   * @type {goog.ui.AdvancedTooltip}
+   */
+  this.tooltip_ = null;
+
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
@@ -197,6 +211,10 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
 
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.cfg_.type,
+      this.tooltipDiv_ = goog.dom.createDom('div', {
+        'id': 'popup',
+        'class': 'grid-popup'
+      }),
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
         'style': 'display:none'
@@ -204,9 +222,10 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       this.gridContainer_ = goog.dom.createDom('div', {
         'class': 'grid-container',
         'style': 'width:' + this.cfg_.width + 'px;height:' + height
-      })
-      );
+      }));
   goog.dom.appendChild(element, parent);
+
+  this.tooltip_ = new goog.ui.AdvancedTooltip(this.tooltipDiv_);
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
@@ -372,6 +391,23 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
+  // Tooltips
+  var ttShowHide = goog.bind(function(e, show) {
+    var cell = this.slick_.getCellFromEvent(e);
+    var spec = this.cols_[cell['cell']];
+    if (!spec.tooltip) return;
+
+    var cellNode = this.slick_.getCellNode(cell['row'], cell['cell']);
+    var pos = goog.style.getPageOffset(cellNode);
+    if (!show && this.tooltip_.isCoordinateInTooltip(pos)) { return; }
+
+    var item = this.dataView_.getItem(cell['row']);
+    var text = item[spec.dataColumn];
+    this.showTooltip_(text, pos, show);
+  }, this);
+  this.slick_.onMouseEnter.subscribe(function(e) { ttShowHide(e, true); });
+  this.slick_.onMouseLeave.subscribe(function(e) { ttShowHide(e, false); });
+
 
   // Initialise
   this.dataView_.beginUpdate();
@@ -391,6 +427,22 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   }
 
   this.setGridInitialSortState_();
+};
+
+
+/**
+ * @private
+ * @param {string} text The text to display in the tooltip.
+ * @param {goog.math.Coordinate} pos The coordincate to display the tooltip at.
+ * @param {boolean} show Wether we are showing or hiding this tooltip.
+ */
+pn.ui.grid.Grid.prototype.showTooltip_ = function(text, pos, show) {
+  this.tooltip_.setVisible(false);
+  if (!show) return;
+  this.tooltip_.setHtml(text);
+  this.tooltip_.setPosition(new goog.positioning.ClientPosition(pos.x, pos.y));
+  this.tooltip_.setVisible(true);
+
 };
 
 
@@ -562,6 +614,8 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.log_);
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
+  goog.dispose(this.tooltip_);
+  goog.dispose(this.tooltipDiv_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   delete this.quickFilters_;
   delete this.eh_;
@@ -582,6 +636,8 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.selectionHandler_;
   delete this.currentFilter_;
   delete this.sort_;
+  delete this.tooltip_;
+  delete this.tooltipDiv_;
 };
 
 

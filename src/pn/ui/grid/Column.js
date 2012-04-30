@@ -39,6 +39,8 @@ pn.ui.grid.Column = function(id, name) {
   this.renderer = null;
   /** @type {boolean} */
   this.total = false;
+  /** @type {boolean} */
+  this.tooltip = false;
 };
 goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 
