@@ -232,9 +232,9 @@ pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
   var gfb = pn.ui.edit.FieldBuilder.getFieldValue;
   if (field.onchange) {
     this.eh.listen(input, goog.events.EventType.CHANGE, function() {
-      field.onchange(gfb(input), input, this.data_);
+      field.onchange(gfb(input), input, this.data_, this.cache_);
     });
-    field.onchange(gfb(input), input, this.data_);
+    field.onchange(gfb(input), input, this.data_, this.cache_);
   }
 };
 
