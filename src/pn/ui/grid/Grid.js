@@ -154,11 +154,6 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @type {Element}
    */
   this.totalsLegend_ = null;
-  /**
-   * @private
-   * @type {Element}
-   */
-  this.tooltipDiv_ = null;
 
   /**
    * @private
@@ -211,10 +206,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
 
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.cfg_.type,
-      this.tooltipDiv_ = goog.dom.createDom('div', {
-        'id': 'popup',
-        'class': 'grid-popup'
-      }),
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
         'style': 'display:none'
@@ -225,7 +216,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       }));
   goog.dom.appendChild(element, parent);
 
-  this.tooltip_ = new goog.ui.AdvancedTooltip(this.tooltipDiv_);
+  this.tooltip_ = new goog.ui.AdvancedTooltip();
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
@@ -395,12 +386,15 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   var ttShowHide = goog.bind(function(e, show) {
     var cell = this.slick_.getCellFromEvent(e);
     var spec = this.cols_[cell['cell']];
-    if (!spec.tooltip) return;
+    if (!spec.tooltip) {
+      return;
+    }
 
     var cellNode = this.slick_.getCellNode(cell['row'], cell['cell']);
     var pos = goog.style.getPageOffset(cellNode);
-    if (!show && this.tooltip_.isCoordinateInTooltip(pos)) { return; }
-
+    if (!show && this.tooltip_.isCoordinateInTooltip(pos)) {
+      return;
+    }
     var item = this.dataView_.getItem(cell['row']);
     var text = item[spec.dataColumn];
     this.showTooltip_(text, pos, show);
@@ -437,12 +431,13 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
  * @param {boolean} show Wether we are showing or hiding this tooltip.
  */
 pn.ui.grid.Grid.prototype.showTooltip_ = function(text, pos, show) {
-  this.tooltip_.setVisible(false);
-  if (!show) return;
+  if (!show) {
+    this.tooltip_.setVisible(false);
+    return;
+  }
   this.tooltip_.setHtml(text);
   this.tooltip_.setPosition(new goog.positioning.ClientPosition(pos.x, pos.y));
   this.tooltip_.setVisible(true);
-
 };
 
 
@@ -615,7 +610,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
   goog.dispose(this.tooltip_);
-  goog.dispose(this.tooltipDiv_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   delete this.quickFilters_;
   delete this.eh_;
@@ -637,7 +631,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.currentFilter_;
   delete this.sort_;
   delete this.tooltip_;
-  delete this.tooltipDiv_;
 };
 
 
