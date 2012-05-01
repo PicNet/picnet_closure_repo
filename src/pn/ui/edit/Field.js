@@ -31,7 +31,8 @@ pn.ui.edit.Field = function(id, name) {
       function(pn.ui.edit.Field, *):string} */
   this.validator = null;
 
-  /** @type {null|function(string, !(Element|goog.ui.Component), Object)} */
+  /** @type {null|function(string, !(Element|goog.ui.Component), Object, 
+        Object.<Array>)} */
   this.onchange = null;
 
   /** @type {null|function(!(Element|goog.ui.Component), Object)} */
