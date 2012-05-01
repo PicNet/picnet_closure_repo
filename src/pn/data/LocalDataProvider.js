@@ -1,7 +1,6 @@
 ﻿goog.require('goog.Disposable');
 goog.require('goog.array');
 goog.require('goog.object');
-goog.require('pn.Utils');
 
 goog.require('pn.data.IDataProvider');
 goog.require('pn.data.IEntity');
@@ -274,7 +273,7 @@ pn.data.LocalDataProvider.prototype.updateLocalData =
     }, this);
     this.repository.saveList(type, data['Data'], callback, opt_handler);
   // This is a getEntities result, replace list
-  } else if (pn.Utils.isArray(data)) {
+  } else if (goog.isArray(data)) {
     this.repository.saveList(type, /** @type {!Array} */ (data),
         callback, opt_handler);
   } else {  // Others

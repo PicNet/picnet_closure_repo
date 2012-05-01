@@ -6,7 +6,8 @@
     <script src="../deps.js"></script>
     <script>
 goog.require('goog.testing.jsunit');
-goog.require('pn.Utils');
+
+goog.require('pn.json');
 
 var setUp = function() {};
 
@@ -21,21 +22,11 @@ var testSimpleJSONSerialise = function () {
 
 var testComplexJSONSerialise = function () {			
   if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
-  var complexObject = {'stringval':'stringvalue','dateval':new Date()};
+  var complexObject = { 'stringval':'stringvalue','dateval': new Date() };
 
   var jsonstr1 = JSON.stringify(complexObject);
-  var jsonstr2 = pn.Utils.serialiseJson(complexObject);	
+  var jsonstr2 = pn.json.serialiseJson(complexObject);	
   assertEquals(jsonstr1, jsonstr2);
-};
-
-var testIsNull = function () {
-  assertEquals(true, pn.Utils.isNull(''));
-  assertEquals(true, pn.Utils.isNull(' '));
-  assertEquals(true, pn.Utils.isNull('     '));
-  assertEquals(false, pn.Utils.isNull(0));    
-  assertEquals(false, pn.Utils.isNull('0.14'));
-  assertEquals(false, pn.Utils.isNull('-20.14'));
-  assertEquals(false, pn.Utils.isNull(-20.14));
 };
     </script>    
   </body>

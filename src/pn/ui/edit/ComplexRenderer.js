@@ -33,9 +33,15 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {!pn.ui.SpecDisplayItem}
+   * @type {pn.ui.BaseField}
    */
-  this.spec;
+  this.spec = null;
+
+  /**
+   * @protected
+   * @type {boolean}
+   */
+  this.readonly = false;
 
   /**
    * @type {boolean}
@@ -56,7 +62,7 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
  * @param {Object} entity The entity being displayed.
  * @param {!Object.<Array>} cache The admin cache for entities related to the
  *    current entity.
- * @param {!pn.ui.SpecDisplayItem} spec The field spec.
+ * @param {!pn.ui.BaseField} spec The field spec.
  */
 pn.ui.edit.ComplexRenderer.prototype.initialise =
     function(val, entity, cache, spec) {
@@ -68,6 +74,12 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
   this.entity = entity;
   this.cache = cache;
   this.spec = spec;
+};
+
+
+/** @param {boolean} readonly Wether this should be rendered as readonly. */
+pn.ui.edit.ComplexRenderer.prototype.setReadOnly = function(readonly) {
+  this.readonly = readonly;
 };
 
 
@@ -95,8 +107,11 @@ pn.ui.edit.ComplexRenderer.prototype.createDom =
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
 
-  this.eh.removeAll();
-  goog.dispose(this.eh);
+  if (this.eh) {
+    this.eh.removeAll();
+    goog.dispose(this.eh);
+  }
+
   delete this.eh;
   delete this.val;
   delete this.entity;

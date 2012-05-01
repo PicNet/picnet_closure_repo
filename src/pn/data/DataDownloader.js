@@ -18,6 +18,16 @@ pn.data.DataDownloader.send = function(url, data, opt_cb, opt_timeout) {
     if (opt_cb) opt_cb(e && e.target ? e.target.getResponseHtml() : null);
     opt_cb = undefined;
   };
-  if (opt_cb && opt_timeout) { goog.Timer.callOnce(cb, opt_timeout); }
+
+  // This hack is required as downloading files with IframeIo does not
+  // work (response is ended and the internal form is not disposed).
+  // See report:
+  /** @suppress {accessControls} */
+  goog.Timer.callOnce(function() {
+    goog.dispose(goog.net.IframeIo.form_);
+    delete goog.net.IframeIo.form_;
+    cb(null);
+  }, opt_timeout || 2000);
+
   goog.net.IframeIo.send(url, cb, 'POST', true, data);
 };

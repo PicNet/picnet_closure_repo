@@ -4,15 +4,18 @@ goog.provide('pn.data.EntityFilter');
 goog.require('goog.array');
 goog.require('goog.asserts');
 
+goog.require('pn.convert');
+goog.require('pn.ui.filter.SearchEngine');
+
 
 
 /**
  * @constructor
  * @extends {goog.Disposable}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {string} type The type of the entity being filtered.
+ * @param {!pn.ui.UiSpec} spec The spec being filtered.
  */
-pn.data.EntityFilter = function(cache, type) {
+pn.data.EntityFilter = function(cache, spec) {
   goog.Disposable.call(this);
 
   /**
@@ -23,9 +26,15 @@ pn.data.EntityFilter = function(cache, type) {
 
   /**
    * @private
-   * @type {string}
+   * @type {!pn.ui.UiSpec}
    */
-  this.type_ = type;
+  this.spec_ = spec;
+
+  /**
+   * @private
+   * @type {!pn.ui.filter.SearchEngine}
+   */
+  this.search_ = new pn.ui.filter.SearchEngine();
 
   /**
    * @private
@@ -38,7 +47,7 @@ pn.data.EntityFilter = function(cache, type) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('EntityFilter');
+  this.log_ = pn.log.getLogger('EntityFilter');
 };
 goog.inherits(pn.data.EntityFilter, goog.Disposable);
 
@@ -52,10 +61,12 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
   goog.asserts.assert(entity);
   goog.asserts.assert(filters);
 
-  this.dbg_('filterEntity: ' + goog.debug.expose(filters));
-
-  for (var id in filters) {
-    if (!this.filterEntityImpl_(filters[id], entity, id)) {
+  this.dbg_('filterEntity: ', filters);
+  for (var filterId in filters) {
+    var fv = filters[filterId];
+    if (!goog.isDefAndNotNull(fv)) continue;
+    if (!goog.isArray(fv)) fv = fv.toString().toLowerCase();
+    if (!this.filterEntityImpl_(fv, entity, filterId)) {
       return false;
     }
   }
@@ -69,108 +80,22 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
  * @param {Object} entity The entity to test for match.
- * @param {string} id The filter id.
+ * @param {string} fieldId The filter/field id.
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.
  */
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
-    function(filterValue, entity, id) {
+    function(filterValue, entity, fieldId) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
-  var steps = id.split('.'),
-      parentType = this.type_,
-      result = entity;
-  while (true) {
-    var step = steps.shift();
-    if (!step) break;
-    result = this.processStep_(step, parentType, result, step.length === 0);
-    this.dbg_('process step result: ' + goog.debug.expose(result));
-    if (!goog.isDefAndNotNull(result)) {
-      this.dbg_('returning as is null');
-      return false;
-    }
-    parentType = this.getStepType_(step);
-  }
 
-  return this.matchesFilter_(result, filterValue);
-};
-
-
-/**
- * @private
- * @param {string} property The property to get the value of.
- * @param {string} parentType The type name of the parent of this step.
- * @param {Object|Array} source The entity or list of entities to
- *    query the given property.
- * @param {boolean} isFinal Wether this is the final step.
- * @return {Object|Array} The next level of entity value(s) from this step.
- */
-pn.data.EntityFilter.prototype.processStep_ =
-    function(property, parentType, source, isFinal) {
-  this.dbg_('processStep_: ' + goog.debug.expose(arguments));
-
-  var type = this.getStepType_(property);
-  if (type && !this.cache_[type])
-    throw new Error('Could not find ' + type + ' in the cache.');
-
-  var result;
-  // Children Entities
-  if (goog.string.endsWith(property, 'Entities')) {
-    this.dbg_('\tprocessStep_ Children Entities [' + type +
-        '] parentType [' + parentType + ']');
-    result = goog.array.filter(this.cache_[type], function(e) {
-      return e[parentType + 'ID'] === source['ID'];
-    }, this);
-  }
-  // Parent Entity
-  else if (!isFinal && property !== 'ID' &&
-      goog.string.endsWith(property, 'ID')) {
-    this.dbg_('\tprocessStep_ Parent Entity type [' + type + ']');
-    var getChild = goog.bind(function(sourceEntity) {
-      if (!sourceEntity) return null;
-      var id = sourceEntity[property];
-      return goog.array.find(this.cache_[type], function(child) {
-        return id === child['ID'];
-      }, this);
-    }, this);
-
-    if (goog.isArray(source)) {
-      result = goog.array.map(/** @type {Array} */ (source), getChild, this);
-    } else { result = getChild(source); }
-  }
-  // Simple Property
-  else {
-    this.dbg_('\tprocessStep_ Simple Property: ' + property);
-    var getVal = goog.bind(function(sourceEntity) {
-      return sourceEntity ? sourceEntity[property] : null;
-    }, this);
-
-    if (goog.isArray(source)) {
-      result = goog.array.map(/** @type {Array} */ (source), getVal, this);
-    } else { result = getVal(source); }
-  }
-  if (!goog.isArray(result)) { return result; }
-
-  return goog.array.filter(result, function(r) {
-    return goog.isDefAndNotNull(r);
-  });
-};
-
-
-/**
- * @private
- * @param {string} property The step property used to retreive the value from
- *    the current entity step.
- * @return {string} The type of the current property if its an entity. Otherwise
- *    returns empty string.
- */
-pn.data.EntityFilter.prototype.getStepType_ = function(property) {
-  if (goog.string.endsWith(property, 'Entities')) {
-    return goog.string.remove(property, 'Entities');
-  } else if (goog.string.endsWith(property, 'ID')) {
-    return property.substring(0, property.length - 2);
-  } else return '';
+  var res = fieldId.indexOf('.') > 0 ?
+      pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity)[0] :
+      entity[fieldId];
+  if (!res) return false;
+  if (res['ID']) { res = res['ID']; }
+  return this.matchesFilter_(res, filterValue, fieldId);
 };
 
 
@@ -178,22 +103,40 @@ pn.data.EntityFilter.prototype.getStepType_ = function(property) {
  * @private
  * @param {*} entityValue The value of the current entity(s) in the final step.
  * @param {string|Array.<string>} filterValue The filter value.
+ * @param {string} fieldId The filter/field id.
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.matchesFilter_ =
-    function(entityValue, filterValue) {
+    function(entityValue, filterValue, fieldId) {
   if (!goog.isDefAndNotNull(entityValue)) {
     this.dbg_('matchesFilter_ null entity value');
     return false;
   }
-  this.dbg_('matchesFilter_: ' + goog.debug.expose(arguments));
+  this.dbg_('matchesFilter_: ', arguments);
+  var FieldRenderers = pn.ui.edit.FieldRenderers;
+
   var matcher = function(ev, fv, exact) {
-    this.dbg_('matchesFilter_.matcher: ' + goog.debug.expose(arguments));
+    this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
+    var field = goog.array.find(this.spec_.searchConfig.fields, function(sf) {
+      return sf.id === fieldId;
+    });
+    if (field.renderer === FieldRenderers.dateRenderer) {
+      var min = parseInt(filterValue, 10);
+      var max = min + (24 * 60 * 60 * 1000);
+      return min <= ev && ev < max;
+    } else if (field.renderer === FieldRenderers.centsRenderer) {
+      ev = pn.convert.centsToCurrency(ev);
+    }
     var eval = ev.toString().toLowerCase();
-    if (exact) return eval === fv;
-    else return eval.indexOf(fv) >= 0;
+    var result = exact ? eval === fv : this.search_.matches(eval, fv);
+
+    this.dbg_('matchesFilter_.matcher result: ', result, ' eval: ', eval,
+        ' exact: ', exact, ' fv: ', fv);
+    return result;
   };
+
+
   if (goog.isArray(entityValue)) {
     return goog.array.findIndex(entityValue, function(entity) {
       return this.singleEntityMatches_(filterValue, entity, matcher);
@@ -216,7 +159,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 pn.data.EntityFilter.prototype.singleEntityMatches_ =
     function(filterVal, entityVal, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleEntityMatches_: ' + goog.debug.expose(arguments));
+  this.dbg_('singleEntityMatches_: ', arguments);
 
   if (goog.isArray(filterVal)) {
     return goog.array.findIndex(filterVal, function(fv) {
@@ -242,21 +185,28 @@ pn.data.EntityFilter.prototype.singleEntityMatches_ =
 pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
     function(filterVal, entityVal, exact, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleFilterValueMatches_: ' +
-      goog.debug.expose(arguments));
+  this.dbg_('singleFilterValueMatches_: ', arguments);
 
   if (!filterVal || filterVal === '0') return true;
-  filterVal = filterVal.toLowerCase();
   return predicate.call(this, entityVal, filterVal, exact);
 };
 
 
 /**
  * @private
- * @param {string} message The message to log if debug is enabled.
+ * @param {...*} args Any additional arguments to append to the message.
  */
-pn.data.EntityFilter.prototype.dbg_ = function(message) {
-  if (this.debug_) this.log_.finest(message);
+pn.data.EntityFilter.prototype.dbg_ = function(args) {
+  if (!this.debug_) return;
+  var format = function(arg) {
+    if (!goog.isString(arg) && arg && arg.length) {
+      return '[' + goog.array.map(arg, format).join(',') + ']';
+    } else if (goog.isObject(arg)) { return goog.debug.expose(arg); }
+    else return arg;
+  };
+
+  var strings = goog.array.map(arguments, format);
+  this.log_.finest(strings.join(''));
 };
 
 
@@ -265,7 +215,10 @@ pn.data.EntityFilter.prototype.disposeInternal = function() {
   pn.data.EntityFilter.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
+  goog.dispose(this.search_);
+
   delete this.cache_;
-  delete this.type_;
+  delete this.spec_;
+  delete this.search_;
   delete this.log_;
 };

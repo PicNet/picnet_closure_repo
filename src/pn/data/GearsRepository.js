@@ -1,7 +1,7 @@
-﻿goog.require('goog.array');
 
-goog.require('pn.Utils');
+goog.require('goog.array');
 goog.require('pn.data.AbstractSQLRepository');
+goog.require('pn.json');
 
 goog.provide('pn.data.GearsRepository');
 
@@ -83,7 +83,7 @@ pn.data.GearsRepository.prototype.saveList =
   this.db().execute('BEGIN');
   goog.array.forEach(list, function(item) {
     var itemid = typeof(item) === 'number' ? item : item.ID;
-    var str = typeof(item) !== 'number' ? pn.Utils.serialiseJson(item) : item;
+    var str = typeof(item) !== 'number' ? pn.json.serialiseJson(item) : item;
 
     this.db().execute(typepos !== -1 ?
         'INSERT OR REPLACE INTO [' + type.substring(0, typepos) +

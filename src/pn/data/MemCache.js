@@ -3,7 +3,7 @@ goog.provide('pn.data.MemCache');
 
 goog.require('goog.net.XhrManager');
 
-goog.require('pn.LogUtils');
+goog.require('pn.log');
 
 
 
@@ -45,7 +45,7 @@ pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.data.MemCache');
+  this.log_ = pn.log.getLogger('pn.data.MemCache');
 
   // Check every 10 seconds for invalid entities
   setInterval(goog.bind(this.invalidateCache_, this), 10000);
@@ -83,7 +83,7 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
  *    parentId match.
  * @param {number=} opt_parentId The optional parent id to check for a match.
  */
-pn.data.MemCache.prototype.getCachedLists =
+pn.data.MemCache.prototype.getLists =
     function(types, cb, opt_parentField, opt_parentId) {
   goog.asserts.assert(goog.isDefAndNotNull(types));
   goog.asserts.assert(cb);

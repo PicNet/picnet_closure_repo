@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.ui.SearchPanel');
+goog.provide('pn.ui.srch.SearchPanel');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
@@ -10,6 +10,7 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
@@ -26,7 +27,7 @@ goog.require('pn.ui.grid.Grid.EventType');
  * @param {!Object.<Array>} cache The entities cache used for showin parental
  *    properties in the filters.
  */
-pn.ui.SearchPanel = function(filters, cache) {
+pn.ui.srch.SearchPanel = function(filters, cache) {
   goog.asserts.assert(filters);
   goog.asserts.assert(cache);
 
@@ -120,23 +121,23 @@ pn.ui.SearchPanel = function(filters, cache) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.LogUtils.getLogger('pn.ui.SearchPanel');
+  this.log_ = pn.log.getLogger('pn.ui.srch.SearchPanel');
 };
-goog.inherits(pn.ui.SearchPanel, goog.ui.Component);
+goog.inherits(pn.ui.srch.SearchPanel, goog.ui.Component);
 
 
 /** @type {string} */
-pn.ui.SearchPanel.SEARCH = 'search';
+pn.ui.srch.SearchPanel.SEARCH = 'search';
 
 
 /** @inheritDoc */
-pn.ui.SearchPanel.prototype.createDom = function() {
+pn.ui.srch.SearchPanel.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /** @inheritDoc */
-pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
+pn.ui.srch.SearchPanel.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
   var visible = goog.net.cookies.get('search-panel-visible') !== 'false';
@@ -156,7 +157,7 @@ pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
  * @private
  * @param {!Element} parent The parent for this panel.
  */
-pn.ui.SearchPanel.prototype.createActionControls_ = function(parent) {
+pn.ui.srch.SearchPanel.prototype.createActionControls_ = function(parent) {
   this.controlsPanel_ = goog.dom.createDom('div', 'controls-panel');
   goog.dom.appendChild(parent, this.controlsPanel_);
 
@@ -173,7 +174,7 @@ pn.ui.SearchPanel.prototype.createActionControls_ = function(parent) {
 
 
 /** @private */
-pn.ui.SearchPanel.prototype.populateFieldSelect_ = function() {
+pn.ui.srch.SearchPanel.prototype.populateFieldSelect_ = function() {
   goog.dom.removeChildren(this.select_);
   goog.dom.appendChild(this.select_, goog.dom.createDom('option',
       {'value': ''}, 'Select a field to filter by'));
@@ -195,15 +196,15 @@ pn.ui.SearchPanel.prototype.populateFieldSelect_ = function() {
  * @private
  * @param {!Element} parent The parent for this panel.
  */
-pn.ui.SearchPanel.prototype.createFieldValueEdit_ = function(parent) {
+pn.ui.srch.SearchPanel.prototype.createFieldValueEdit_ = function(parent) {
   this.filtersPanel_ = goog.dom.createDom('div', 'filters-panel');
   goog.dom.appendChild(parent, this.filtersPanel_);
 };
 
 
 /** @inheritDoc */
-pn.ui.SearchPanel.prototype.enterDocument = function() {
-  pn.ui.SearchPanel.superClass_.enterDocument.call(this);
+pn.ui.srch.SearchPanel.prototype.enterDocument = function() {
+  pn.ui.srch.SearchPanel.superClass_.enterDocument.call(this);
 
   var et = goog.events.EventType;
   this.eh_.listen(this.toggle_, et.CLICK, this.toggleFiltersPanel_);
@@ -214,7 +215,7 @@ pn.ui.SearchPanel.prototype.enterDocument = function() {
 
 
 /** @private */
-pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
+pn.ui.srch.SearchPanel.prototype.toggleFiltersPanel_ = function() {
   var showing = this.toggle_.innerHTML === 'Show Filters';
   if (!showing) {
     this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
@@ -240,7 +241,7 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
 
 
 /** @private */
-pn.ui.SearchPanel.prototype.doSearch_ = function() {
+pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
   var filters = {};
   for (var cid in this.filtersControls_) {
     var control = this.filtersControls_[cid][0];
@@ -258,14 +259,14 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     }
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
-  var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
+  var event = new goog.events.Event(pn.ui.srch.SearchPanel.SEARCH, this);
   event.filters = filters;
   this.dispatchEvent(event);
 };
 
 
 /** @private */
-pn.ui.SearchPanel.prototype.doClear_ = function() {
+pn.ui.srch.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
   goog.object.forEach(this.filtersControls_, function(arr) {
     goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
@@ -278,21 +279,23 @@ pn.ui.SearchPanel.prototype.doClear_ = function() {
 
 
 /** @private */
-pn.ui.SearchPanel.prototype.filterSelected_ = function() {
+pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var option = this.select_.options[this.select_.selectedIndex];
   var val = option.value;
   if (!val) return;
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var spec = pn.ui.UiSpecsRegister.INSTANCE.get(specid);
+  var spec = pn.app.ctx.specs.get(specid);
   var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
-      spec.getSearchFields(), function(f) {
+      spec.searchConfig.fields, function(f) {
         return f.id === fieldId;
       }));
   if (!field) throw new Error('Could not find the specified field: ' + fieldId +
       ' in the searcheable fields of the ' + spec.id + ' spec');
   this.select_.selectedIndex = 0;
   this.addFieldToTheFiltersSearch_(spec, field, option);
+  goog.dispose(spec);
+
   goog.style.showElement(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
 };
@@ -305,28 +308,31 @@ pn.ui.SearchPanel.prototype.filterSelected_ = function() {
  * @param {pn.ui.edit.Field} f The field to add to the search.
  * @param {!Element} option The select option element representing this option.
  */
-pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
+pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     function(spec, f, option) {
   goog.asserts.assert(spec);
   goog.asserts.assert(f);
   goog.asserts.assert(option);
 
+  var FieldBuilder = pn.ui.edit.FieldBuilder;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
-  var name = spec.name + ' - ' + f.name;
+
+  var name = f.name;
   var lbl = goog.dom.createDom('label', { 'for': f.id }, name);
   var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
       lbl,
       remove);
   goog.dom.appendChild(this.filtersPanel_, dom);
   var input;
-  if (f.renderer === pn.ui.edit.FieldRenderers.readOnlyTextField &&
-      f.id !== 'ID') {
-    input = pn.ui.edit.FieldBuilder.createParentEntitySelect(
-        f, -1, this.cache_, true);
+  if (!f.renderer && pn.data.EntityUtils.isParentProperty(f.dataProperty)) {
+    input = FieldBuilder.createSearchParentFilter(f, this.cache_, {});
     goog.dom.appendChild(dom, input);
   } else {
-    input = pn.ui.edit.FieldBuilder.createAndAttach(
-        f, dom, null, this.cache_, true);
+    var srchFld = this.getSearchAppropriateFieldSpec_(f);
+    input = FieldBuilder.createAndAttach(srchFld, dom, {}, this.cache_);
+    if (input['type'] === 'text') {
+      input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
+    }
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 
@@ -342,9 +348,33 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 };
 
 
+/**
+ * @private
+ * @param {!pn.ui.edit.Field} field The field to make appropriate for searching.
+ * @return {!pn.ui.edit.Field} The search appropriate field.
+ */
+pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
+    function(field) {
+  if (!field.renderer) return field;
+  var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
+  var fr = pn.ui.edit.FieldRenderers;
+  var rr = pn.ui.edit.ReadOnlyFields;
+  var curr = field.renderer;
+  if (curr === fr.centsRenderer ||
+      curr === rr.centsField ||
+      curr === fr.timeRenderer ||
+      curr === rr.timeField ||
+      curr === fr.textAreaRenderer ||
+      curr === fr.hiddenTextField) {
+    sf.renderer = fr.standardTextSearchField;
+  }
+  return sf;
+};
+
+
 /** @inheritDoc */
-pn.ui.SearchPanel.prototype.disposeInternal = function() {
-  pn.ui.SearchPanel.superClass_.disposeInternal.call(this);
+pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
+  pn.ui.srch.SearchPanel.superClass_.disposeInternal.call(this);
 
   this.eh_.removeAll();
   goog.dispose(this.eh_);

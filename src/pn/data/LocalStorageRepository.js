@@ -1,8 +1,8 @@
-﻿goog.require('goog.array');
 
-goog.require('pn.Utils');
+goog.require('goog.array');
 goog.require('pn.data.AbstractRepository');
 goog.require('pn.data.IRepository');
+goog.require('pn.json');
 
 goog.provide('pn.data.LocalStorageRepository');
 
@@ -51,7 +51,7 @@ pn.data.LocalStorageRepository.prototype.getList =
   var json = window['localStorage'][type];
   if (json === '{}') { json = null; }
   if (json) {
-    json = /** @type {Array} */ (pn.Utils.parseJson(json));
+    json = /** @type {Array} */ (pn.json.parseJson(json));
   }
   callback.call(opt_handler || this, json || []);
 };
@@ -84,7 +84,7 @@ pn.data.LocalStorageRepository.prototype.getUnsyncLists =
   goog.array.forEach(this.types, function(type) {
     if (goog.isDefAndNotNull(window['localStorage'][typename + '|' + type]))
       var list = window['localStorage'][typename + '|' + type];
-    list = pn.Utils.parseJson(list);
+    list = pn.json.parseJson(list);
     if (list) dict[type] = list;
   }, this);
   callback.call(opt_handler || this, dict);
@@ -106,7 +106,7 @@ pn.data.LocalStorageRepository.prototype.saveList =
     goog.array.forEach(list, function(e) {
       this.updateListWithItem(arr, e);
     }, this);
-    window['localStorage'][type] = pn.Utils.serialiseJson(arr);
+    window['localStorage'][type] = pn.json.serialiseJson(arr);
     callback.call(opt_handler || this, true);
   }, this);
 };

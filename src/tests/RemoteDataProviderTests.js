@@ -1,7 +1,6 @@
 ﻿goog.require('goog.testing.AsyncTestCase');
 goog.require('goog.testing.jsunit');
 
-goog.require('pn.Utils');
 goog.require('pn.data.RemoteDataProvider');
 goog.require('pn.data.InMemoryRepository');
 goog.require('pn.data.AbstractRepository');

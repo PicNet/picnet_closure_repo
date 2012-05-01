@@ -5,22 +5,31 @@ goog.provide('pn.ui.edit.ValidateInfo');
 
 /**
  * @constructor
+ * @param {number=} opt_maxLength The optional max length of the field.
  */
-pn.ui.edit.ValidateInfo = function() {
+pn.ui.edit.ValidateInfo = function(opt_maxLength) {
+
   /** @type {boolean} */
   this.required = true;
+
   /** @type {number} */
   this.minLength = 1;
+
   /** @type {number} */
-  this.maxLength = 200;
+  this.maxLength = opt_maxLength || 0;
+
   /** @type {RegExp} */
   this.validateRegex = null;
+
   /** @type {number} */
-  this.minNumber;
+  this.minNumber = Number.NaN;
+
   /** @type {number} */
-  this.maxNumber;
+  this.maxNumber = Number.NaN;
+
   /** @type {boolean} */
   this.isNumber = false;
+
   /** @type {boolean} */
   this.unique = false;
 };
@@ -63,9 +72,8 @@ pn.ui.edit.ValidateInfo.createRangeValidator = function(min, max) {
  * @return {pn.ui.edit.ValidateInfo} requested ValidateInfo.
  */
 pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
-  var validator = pn.ui.edit.ValidateInfo.createNumberValidator();
+  var validator = new pn.ui.edit.ValidateInfo(opt_max);
   validator.minLength = min;
-  if (goog.isDefAndNotNull(opt_max)) validator.maxLength = opt_max;
   return validator;
 };
 
@@ -80,7 +88,7 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 pn.ui.edit.ValidateInfo.prototype.validateField =
     function(field, val, opt_entity, opt_all) {
   return this.validateItem(
-      field.id, field.name, !!field.source, val, opt_entity, opt_all);
+      field.id, field.name, !!field.displayPath, val, opt_entity, opt_all);
 };
 
 
@@ -95,7 +103,7 @@ pn.ui.edit.ValidateInfo.prototype.validateField =
  */
 pn.ui.edit.ValidateInfo.prototype.validateItem =
     function(id, name, isParent, val, opt_entity, opt_all) {
-  if (!goog.isDefAndNotNull(val) || !val.length || (isParent && val === '0')) {
+  if (!goog.isDefAndNotNull(val) || (isParent && val === '0')) {
     return this.required ? name + ' is required.' : '';
   }
 
@@ -107,10 +115,10 @@ pn.ui.edit.ValidateInfo.prototype.validateItem =
     return name + ' appears to be invalid.';
   if (this.isNumber && isNaN(val))
     return name + ' must be a number.';
-  if (this.minNumber !== undefined || this.maxNumber !== undefined) {
+  if (!isNaN(this.minNumber) || !isNaN(this.maxNumber)) {
     var valueNumber = parseFloat(val.toString());
-    if ((this.minNumber !== undefined && valueNumber < this.minNumber) ||
-        (this.maxNumber !== undefined && valueNumber > this.maxNumber)) {
+    if ((!isNaN(this.minNumber) && valueNumber < this.minNumber) ||
+        (!isNaN(this.maxNumber) && valueNumber > this.maxNumber)) {
       return name + ' must be between ' + this.minNumber + ' - ' +
           this.maxNumber + '.';
     }

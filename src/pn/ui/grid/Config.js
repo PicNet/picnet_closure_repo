@@ -1,35 +1,63 @@
 ﻿;
 goog.provide('pn.ui.grid.Config');
 
+goog.require('pn.ui.BaseConfig');
+
 
 
 /**
  * @constructor
- * @param {string} type The entity types of this grid.
+ * @extends {pn.ui.BaseConfig}
+ * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
+ *    columns to display in this grid.
+ * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
+ *    this grid.
  */
-pn.ui.grid.Config = function(type) {
-  /** @type {string} */
-  this.type = type;
+pn.ui.grid.Config = function(columns, commands) {
+  goog.asserts.assert(columns.length > 0);
+  goog.asserts.assert(commands);
+
+  pn.ui.BaseConfig.call(this, columns);
+
+  /** @type {!Array.<pn.ui.grid.Column>} */
+  this.columns = columns;
+
+  /** @type {!Array.<pn.ui.grid.Command>} */
+  this.commands = commands;
+
   /** @type {boolean} */
   this.readonly = false;
+
   /** @type {boolean} */
-  this.allowAdd = true;
-  /** @type {boolean} */
-  this.enableColumnReorder = false;
-  /** @type {boolean} */
-  this.forceFitColumns = true;
-  /** @type {boolean} */
-  this.multiSelect = false;
-  /** @type {boolean} */
-  this.editable = true;
-  /** @type {boolean} */
-  this.checkboxRowSelect = false;
+  this.allowEdit = true;
+
   /** @type {boolean} */
   this.enableQuickFilters = true;
-  /** @type {number} */
-  this.width = 0;
+
+  /** @type {string} */
+  this.defaultSortColumn = '';
+
   /** @type {boolean} */
-  this.syncColumnCellResize = true;
+  this.defaultSortAscending = true;
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Slick Grid Properties
+  //////////////////////////////////////////////////////////////////////////////
+
+  /** @type {boolean} */
+  this.enableColumnReorder = false;
+
+  /** @type {boolean} */
+  this.forceFitColumns = true;
+
+  /** @type {boolean} */
+  this.multiSelect = false;
+
+  /** @type {boolean} */
+  this.editable = true;
+
+  /** @type {boolean} */
+  this.syncColumnCellResize = true;  
 };
 
 
@@ -44,7 +72,8 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
     'editable': this.editable,
-    'showHeaderRow': this.enableQuickFilters
+    'showHeaderRow': this.enableQuickFilters,
+    'syncColumnCellResize': this.syncColumnCellResize
   });
   return cfg;
 };

@@ -22,11 +22,10 @@ goog.require('pn.ui.grid.Grid');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!Array.<pn.ui.edit.Command>} commands The commands to show in the
- *    edit page.
+ * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  */
-pn.ui.edit.CommandsComponent = function(commands) {
-  goog.asserts.assert(commands);
+pn.ui.edit.CommandsComponent = function(spec) {
+  goog.asserts.assert(spec);
 
   goog.ui.Component.call(this);
 
@@ -37,24 +36,24 @@ pn.ui.edit.CommandsComponent = function(commands) {
   this.eh = new goog.events.EventHandler(this);
 
   /**
-   * @private
-   * @type {!Array.<pn.ui.edit.Command>}
+   * @protected
+   * @type {!pn.ui.UiSpec}
    */
-  this.commands_ = commands;
+  this.spec = spec;
 
   /**
    * @private
-   * @type {!Array.<goog.ui.Button>}
+   * @type {!Array.<pn.ui.edit.Command>}
    */
-  this.buttons_ = [];
+  this.commands_ = spec.editConfig.commands;
+
+  /**
+   * @private
+   * @type {!Object.<goog.ui.Button>}
+   */
+  this.commandButtons_ = {};
 };
 goog.inherits(pn.ui.edit.CommandsComponent, goog.ui.Component);
-
-
-/** @inheritDoc */
-pn.ui.edit.CommandsComponent.prototype.createDom = function() {
-  this.decorateInternal(this.dom_.createElement('div'));
-};
 
 
 /**
@@ -66,9 +65,36 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 
 /**
  * @protected
+ * @return {!Array.<string>} Any errors in the form.
+ */
+pn.ui.edit.CommandsComponent.prototype.getFormErrors = goog.abstractMethod;
+
+
+/**
+ * @protected
  * @return {!Object} The current form data (Read from input controls).
  */
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
+
+
+/**
+ * @protected
+ * @param {pn.ui.edit.Command} command The command to fire.
+ * @param {Object} data The current form data.
+ */
+pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
+
+
+/** @inheritDoc */
+pn.ui.edit.CommandsComponent.prototype.createDom = function() {
+  this.decorateInternal(this.dom_.createElement('div'));
+};
+
+
+/** @return {!Object.<goog.ui.Button>} The command buttons. */
+pn.ui.edit.CommandsComponent.prototype.getCommandButtons = function() {
+  return this.commandButtons_;
+};
 
 
 /** @inheritDoc */
@@ -76,16 +102,16 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
   goog.asserts.assert(element);
 
   this.setElementInternal(element);
-  this.addCommandsPanel(element, 'commands-container');
+  this.addCommandsPanel_(element, 'commands-container');
 };
 
 
 /**
- * @protected
+ * @private
  * @param {!Element} parent The parent for this commands panel.
  * @param {string} className The name of the css class for this control.
  */
-pn.ui.edit.CommandsComponent.prototype.addCommandsPanel =
+pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
     function(parent, className) {
   goog.asserts.assert(parent);
   if (!this.commands_.length) return;
@@ -104,11 +130,11 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel =
  */
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
-    var button = new goog.ui.Button(c.name);
-    var className = goog.string.removeAll(c.name.toLowerCase(), '');
-    button.enableClassName(className, true);
-    button.render(parent);
-    this.buttons_.push(button);
+    var className = c.name.toLowerCase();
+    var button = goog.dom.createDom('button',
+        {'class': 'goog-button ' + className, 'id': c.name});
+    goog.dom.appendChild(parent, button);
+    this.commandButtons_[c.name] = button;
   }, this);
 };
 
@@ -117,29 +143,20 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
 pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.enterDocument.call(this);
 
-  goog.array.forEach(this.commands_, this.enterDocumentOnCommand_, this);
+  goog.array.forEach(this.commands_, this.doCommandEvent_, this);
 };
 
 
 /**
- * TODO: There is some very strange behaviour going on with this.  This is
- *    duplicate code with EditHandler.enterDocument.  Why 2 ways of handling
- *    commands/buttons?
  * @private
  * @param {pn.ui.edit.Command} command The command to attach events to.
  */
-pn.ui.edit.CommandsComponent.prototype.enterDocumentOnCommand_ =
-    function(command) {
-  var expClassName = goog.string.removeAll(command.name.toLowerCase(), '');
-  var buttons = goog.array.filter(this.buttons_, function(b) {
-    return goog.array.indexOf(b.getExtraClassNames(), expClassName) >= 0;
+pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(command) {
+  var button = this.commandButtons_[command.name];
+  this.eh.listen(button, goog.events.EventType.CLICK, function() {
+    if (!this.shouldFireCommandEvent(command)) { return; }
+    this.fireCommandEvent(command, this.getCurrentFormData());
   });
-  goog.array.forEach(buttons, function(button) {
-    this.eh.listen(button, goog.ui.Component.EventType.ACTION, function() {
-      if (!this.shouldFireCommandEvent(command)) { return; }
-      this.fireCommandEvent(command, this.getCurrentFormData());
-    });
-  }, this);
 };
 
 
@@ -158,14 +175,6 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 };
 
 
-/**
- * @protected
- * @param {pn.ui.edit.Command} command The command to fire.
- * @param {Object} data The current form data.
- */
-pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
-
-
 /** @inheritDoc */
 pn.ui.edit.CommandsComponent.prototype.exitDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.exitDocument.call(this);
@@ -180,10 +189,12 @@ pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
 
   this.eh.removeAll();
   goog.dispose(this.eh);
-  goog.array.forEach(this.buttons_, goog.dispose);
-  goog.object.forEach(this.commands_, goog.dispose);
+  goog.object.forEach(this.commandButtons_, goog.dispose);
+  goog.array.forEach(this.commands_, goog.dispose);
+  goog.dispose(this.spec);
 
   delete this.eh;
-  delete this.buttons_;
+  delete this.commandButtons_;
   delete this.commands_;
+  delete this.spec;
 };
