@@ -57,8 +57,9 @@ pn.ui.grid.Config = function(columns, commands) {
   this.editable = true;
 
   /** @type {boolean} */
-  this.syncColumnCellResize = true;  
+  this.syncColumnCellResize = true;
 };
+goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
 
 
 /**

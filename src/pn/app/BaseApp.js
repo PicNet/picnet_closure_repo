@@ -4,6 +4,7 @@ goog.require('goog.debug.Logger');
 goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
+goog.require('pn.app.schema.Schema');
 goog.require('pn.log');
 goog.require('pn.ui.UiSpecsRegister');
 
@@ -49,7 +50,9 @@ pn.app.BaseApp = function() {
 
   /** @type {pn.app.Router} */
   this.router = new pn.app.Router(this.getRoutes());
-  this.router.initialise(); // Parse and execute the first route
+
+  /** @type {pn.app.schema.Schema} */
+  this.schema = null;
 
   // Convenience delegates
   pn.app.ctx.pub = goog.bind(this.bus_.pub, this.bus_);
@@ -64,8 +67,15 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 pn.app.ctx = null;
 
 
-/** Start the application */
-pn.app.BaseApp.prototype.initialise = function() {
+/**
+ * Start the application by calling the first route.  Also sets the system
+ * schema to add default validation.
+ * @param {!Array} schema The schema describing the system database.
+ *  This is used to provide default validation.
+ */
+pn.app.BaseApp.prototype.initialise = function(schema) {
+  goog.asserts.assert(schema);
+  this.schema = new pn.app.schema.Schema(schema);
   this.router.initialise();
 };
 
