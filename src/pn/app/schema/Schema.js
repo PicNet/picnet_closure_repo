@@ -27,6 +27,51 @@ pn.app.schema.Schema = function(description) {
 
 
 /**
+ * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
+ *     validated.
+ * @param {*} value The value of the field in the current form.
+ * @return {!Array.<string>} Any errors (if any) for the specified field.
+ */
+pn.app.schema.Schema.prototype.getValidationErrors =
+    function(fieldSpec, value) {
+  var type = fieldSpec.entitySpec.type;
+  var prop = fieldSpec.dataProperty;
+  var field = this.entities_[type].fields[prop];
+  if (!field) throw new Error(
+      'Could not find a schema representation of ' + type + '.' + prop);
+
+  var validator = new pn.ui.edit.ValidateInfo();
+  validator.required = !field.allowNull;
+  if (field.length) {
+    validator.maxLength = field.length;
+  }
+  if (this.isNumericalTypeField_(field)) {
+    validator.isNumber = true;
+  }
+  var error = validator.validateField(fieldSpec, value);
+  return error ? [error] : [];
+};
+
+
+/**
+ * @private
+ * @param {!pn.app.schema.Field} field The field to determine wether its a
+ *    number type.
+ * @return {boolean} Wether the specified field is a number.
+ */
+pn.app.schema.Schema.prototype.isNumericalTypeField_ = function(field) {
+  var t = field.type;
+  return t === 'Byte ' ||
+      t === 'Int16' ||
+      t === 'Int32' ||
+      t === 'Int64' ||
+      t === 'Single' ||
+      t === 'Double' ||
+      t === 'Decimal';
+};
+
+
+/**
  * @private
  * @param {!Object} entity The description of the entity from the server (
  *   i.e. Use object property string identifiers.).

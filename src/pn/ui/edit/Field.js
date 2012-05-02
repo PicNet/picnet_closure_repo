@@ -49,7 +49,8 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    *    returns a string which represents the validation error (falsy
    *    represents no error).
    *
-   * @type {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.Field, *):string}
+   * @type {null|pn.ui.edit.ValidateInfo|
+   *       function(pn.ui.edit.Field,*,Object=,!Object.<!Array>):string}
    */
   this.validator = null;
 

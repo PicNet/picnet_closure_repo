@@ -254,11 +254,11 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
         errors = goog.array.concat(errors, error);
       }
     } else {
-      error = pn.ui.edit.FieldValidator.validateFieldValue(
-          f, val, this.data_, this.cache_[this.spec.type]);
-      if (error) {
-        this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + error);
-        errors.push(error);
+      var err = pn.ui.edit.FieldValidator.
+          validateFieldValue(f, val, this.data_, this.cache_);
+      if (err.length) {
+        errors = goog.array.concat(errors, err);
+        this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
       }
     }
   }, this);

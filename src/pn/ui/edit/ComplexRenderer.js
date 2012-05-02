@@ -91,7 +91,7 @@ pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 
 /**
  * Optional
- * @return {string|Array} Any error (if any) for the specified field.
+ * @return {string|Array.<string>} Any error (if any) for the specified field.
  */
 pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
 

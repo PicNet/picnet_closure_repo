@@ -3,11 +3,8 @@ goog.provide('pn.ui.edit.ValidateInfo');
 
 
 
-/**
- * @constructor
- * @param {number=} opt_maxLength The optional max length of the field.
- */
-pn.ui.edit.ValidateInfo = function(opt_maxLength) {
+/** @constructor */
+pn.ui.edit.ValidateInfo = function() {
 
   /** @type {boolean} */
   this.required = true;
@@ -16,7 +13,7 @@ pn.ui.edit.ValidateInfo = function(opt_maxLength) {
   this.minLength = 1;
 
   /** @type {number} */
-  this.maxLength = opt_maxLength || 0;
+  this.maxLength = 0;
 
   /** @type {RegExp} */
   this.validateRegex = null;
@@ -29,9 +26,6 @@ pn.ui.edit.ValidateInfo = function(opt_maxLength) {
 
   /** @type {boolean} */
   this.isNumber = false;
-
-  /** @type {boolean} */
-  this.unique = false;
 };
 
 
@@ -72,8 +66,9 @@ pn.ui.edit.ValidateInfo.createRangeValidator = function(min, max) {
  * @return {pn.ui.edit.ValidateInfo} requested ValidateInfo.
  */
 pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
-  var validator = new pn.ui.edit.ValidateInfo(opt_max);
+  var validator = new pn.ui.edit.ValidateInfo();
   validator.minLength = min;
+  if (opt_max) { validator.maxLength = opt_max; }
   return validator;
 };
 
@@ -81,28 +76,24 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 /**
  * @param {pn.ui.edit.Field} field The field config to validate.
  * @param {*} val The object value to validate.
- * @param {Object=} opt_entity The entity being validated.
- * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField =
-    function(field, val, opt_entity, opt_all) {
-  return this.validateItem(
-      field.id, field.name, !!field.displayPath, val, opt_entity, opt_all);
+pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
+  var isParent = pn.data.EntityUtils.isParentProperty(field.dataProperty);
+  return this.validateItem_(field.id, field.name, isParent, val);
 };
 
 
 /**
+ * @private
  * @param {string} id The id of this field.
  * @param {string} name The name of the field.
  * @param {boolean} isParent Wether this field is a parent field.
  * @param {*} val The object value to validate.
- * @param {Object=} opt_entity The entity being validated.
- * @param {Array.<Object>=} opt_all All entities of this type.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateItem =
-    function(id, name, isParent, val, opt_entity, opt_all) {
+pn.ui.edit.ValidateInfo.prototype.validateItem_ =
+    function(id, name, isParent, val) {
   if (!goog.isDefAndNotNull(val) || (isParent && val === '0')) {
     return this.required ? name + ' is required.' : '';
   }
@@ -122,14 +113,6 @@ pn.ui.edit.ValidateInfo.prototype.validateItem =
       return name + ' must be between ' + this.minNumber + ' - ' +
           this.maxNumber + '.';
     }
-  }
-  if (val && this.unique) {
-    if (!opt_all) throw new Error('Expected entities list to be provided');
-    if (!opt_entity) throw new Error('Expected entity to be provided');
-    var hasDuplicate = goog.array.findIndex(opt_all, function(e) {
-      return e[id] === val && opt_entity['ID'] !== e['ID'];
-    }) >= 0;
-    if (hasDuplicate) return name + ' must be unique';
   }
   return '';
 };

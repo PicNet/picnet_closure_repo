@@ -31,7 +31,6 @@ pn.ui.BaseField = function(id, entitySpec, opt_name) {
   this.id = id;
 
   /**
-   * @protected
    * @type {!pn.ui.UiSpec} The specifications of the entity
    *    being displayed (parent of this field).
    */
