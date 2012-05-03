@@ -28,18 +28,26 @@ pn.app.schema.Schema = function(description) {
 
 /**
  * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
+ *     queried.
+ * @return {pn.app.schema.Field} The field schema for the specified field.
+ */
+pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
+  var type = fieldSpec.entitySpec.type;
+  var prop = fieldSpec.dataProperty;
+  return this.entities_[type].fields[prop];
+};
+
+
+/**
+ * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
  *     validated.
  * @param {*} value The value of the field in the current form.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
 pn.app.schema.Schema.prototype.getValidationErrors =
     function(fieldSpec, value) {
-  var type = fieldSpec.entitySpec.type;
-  var prop = fieldSpec.dataProperty;
-  var field = this.entities_[type].fields[prop];
-  if (!field) throw new Error(
-      'Could not find a schema representation of ' + type + '.' + prop);
-
+  var field = this.getFieldSchema(fieldSpec);
+  if (!field) { throw new Error('Could not find the schema of ' + field.id); }
   var validator = new pn.ui.edit.ValidateInfo();
   validator.required = !field.allowNull;
   if (field.length) {

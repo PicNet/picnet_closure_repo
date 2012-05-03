@@ -33,7 +33,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
 
 
 /** @param {!pn.ui.edit.Field} field The field to change into readonly. */
-pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {  
+pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
@@ -46,8 +46,8 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
     [fr.centsRenderer, rr.centsField]
   ];
   field.readonly = true;
-  if (!curr) {  
-    if (goog.string.endsWith(field.dataProperty, 'Entities')) {  
+  if (!curr) {
+    if (goog.string.endsWith(field.dataProperty, 'Entities')) {
       field.renderer = rr.itemList;
     } else {
       field.renderer = rr.textField;
@@ -77,6 +77,7 @@ pn.ui.edit.ReadOnlyFields.textField = function(val, entity, parent) {
   return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
 };
 
+
 /**
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
@@ -87,6 +88,7 @@ pn.ui.edit.ReadOnlyFields.itemList = function(val, entity, parent) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.ITEM_LIST;
   return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
 };
+
 
 /**
  * @param {*} val The time number represented by hhmm format.
@@ -172,7 +174,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   switch (type) {
     case ft.DEFAULT: return value.toString();
-    case ft.ITEM_LIST: 
+    case ft.ITEM_LIST:
       if (!value) { return '<ul class="empty"><li>No items found.</li></ul>'; }
       var items = value.split(', ');
       return '<ul><li>' + items.join('</li><li>') + '</li></ul>';
@@ -216,8 +218,8 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
   else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
   else if (curr === fr.dateRenderer || curr === ro.dateField) return ft.DATE;
-  else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer 
-      || curr === ro.boolField) return ft.BOOLEAN;
+  else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer ||
+      curr === ro.boolField) return ft.BOOLEAN;
   else if (curr === fr.centsRenderer || curr === ro.centsField) return ft.CENTS;
   else return ft.DEFAULT;
 };

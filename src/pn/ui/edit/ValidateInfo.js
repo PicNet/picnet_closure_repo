@@ -78,9 +78,9 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
  * @param {*} val The object value to validate.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {  
+pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
   var isParent = pn.data.EntityUtils.isParentProperty(field.dataProperty);
-  var isYesNoRenderer = field.renderer === 
+  var isYesNoRenderer = field.renderer ===
       pn.ui.edit.FieldRenderers.yesNoRenderer;
   var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
 

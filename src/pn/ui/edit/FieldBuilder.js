@@ -12,7 +12,6 @@ goog.require('pn.ui.grid.Grid');
 
 /**
  * @param {string} id The id of this label/field.
- * @param {boolean} required Whether this field is required.
  * @param {string=} opt_name The text for this label. The id is used
  *  if ommitted.
  * @param {string=} opt_clazz An optional class name.  Will use 'field' if
@@ -20,14 +19,11 @@ goog.require('pn.ui.grid.Grid');
  * @return {!Element} The label element wrapped in a div.
  */
 pn.ui.edit.FieldBuilder.getFieldLabel =
-    function(id, required, opt_name, opt_clazz) {
+    function(id, opt_name, opt_clazz) {
   goog.asserts.assert(id);
-  var clazz = (opt_clazz || 'field') + (required ? ' required' : '');
-  var dom = goog.dom.createDom('div', {'id': id, 'class': clazz},
-      goog.dom.createDom('label', {
-        'for': id
-      }, opt_name || id));
-  return dom;
+  var clazz = (opt_clazz || 'field');
+  return goog.dom.createDom('div', {'id': id, 'class': clazz},
+      goog.dom.createDom('label', { 'for': id }, opt_name || id));
 };
 
 

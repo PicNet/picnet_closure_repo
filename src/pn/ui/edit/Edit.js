@@ -204,13 +204,15 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
-      var required = f.validator && f.validator.required;
-      fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
+      fieldParent = fb.getFieldLabel(f.id, f.name, f.className);
       this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
       }
       goog.dom.appendChild(fieldset, fieldParent);
+    }
+    if (this.isFieldRequired_(f)) {
+      goog.dom.classes.add(fieldParent, 'required');
     }
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
     this.disposables_.push(input);
@@ -222,6 +224,21 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         try { input.focus(); } catch (ex) {}
       }, 1); }
   }, this);
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.edit.Field} field The field to determine the required
+ *    property of.
+ * @return {boolean} Wether the specified field is required.
+ */
+pn.ui.edit.Edit.prototype.isFieldRequired_ = function(field) {
+  if (field.readonly) return false;
+  if (field.validator && field.validator.required) return true;
+
+  var fieldSchema = pn.app.ctx.schema.getFieldSchema(field);
+  return goog.isDefAndNotNull(fieldSchema) && !fieldSchema.allowNull;
 };
 
 
