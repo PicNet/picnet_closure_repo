@@ -33,7 +33,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
 
 
 /** @param {!pn.ui.edit.Field} field The field to change into readonly. */
-pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
+pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {  
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
@@ -42,11 +42,17 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
     [fr.timeRenderer, rr.timeField],
     [fr.dateRenderer, rr.dateField],
     [fr.boolRenderer, rr.boolField],
+    [fr.yesNoRenderer, rr.boolField],
     [fr.centsRenderer, rr.centsField]
   ];
   field.readonly = true;
-  if (!curr) field.renderer = rr.textField;
-  else if (curr.setReadOnly) curr.setReadOnly(true);
+  if (!curr) {  
+    if (goog.string.endsWith(field.dataProperty, 'Entities')) {  
+      field.renderer = rr.itemList;
+    } else {
+      field.renderer = rr.textField;
+    }
+  } else if (curr.setReadOnly) curr.setReadOnly(true);
   else {
     if (goog.array.findIndex(rendermap, function(trans) {
       if (curr === trans[0] || curr === trans[1]) {
@@ -71,6 +77,16 @@ pn.ui.edit.ReadOnlyFields.textField = function(val, entity, parent) {
   return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
 };
 
+/**
+ * @param {*} val The text to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @return {!Element} The readonly text field control.
+ */
+pn.ui.edit.ReadOnlyFields.itemList = function(val, entity, parent) {
+  var type = pn.ui.edit.ReadOnlyFields.FieldType_.ITEM_LIST;
+  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+};
 
 /**
  * @param {*} val The time number represented by hhmm format.
@@ -135,7 +151,8 @@ pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
   goog.asserts.assert(type);
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
-  var readonly = goog.dom.createDom('div', 'field', text);
+  var readonly = goog.dom.createDom('div', 'field');
+  readonly.innerHTML = text;
   readonly.value = value;
   goog.dom.appendChild(parent, readonly);
   return readonly;
@@ -155,6 +172,10 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   switch (type) {
     case ft.DEFAULT: return value.toString();
+    case ft.ITEM_LIST: 
+      if (!value) { return '<ul class="empty"><li>No items found.</li></ul>'; }
+      var items = value.split(', ');
+      return '<ul><li>' + items.join('</li><li>') + '</li></ul>';
     case ft.TIME:
       var hours = Math.floor(value / 100);
       var minutes = Math.floor(value % 100);
@@ -186,17 +207,25 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
   var curr = field.renderer;
   if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
       !field.tableType) throw new Error('Not Supported');
-  else if (!curr) return ft.DEFAULT;
+  else if (!curr) {
+    if (goog.string.endsWith(field.dataProperty, 'Entities')) {
+      return ft.ITEM_LIST;
+    }
+    return ft.DEFAULT;
+  }
   else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
   else if (curr === fr.dateRenderer || curr === ro.dateField) return ft.DATE;
-  else if (curr === fr.boolRenderer || curr === ro.boolField) return ft.BOOLEAN;
+  else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer 
+      || curr === ro.boolField) return ft.BOOLEAN;
   else if (curr === fr.centsRenderer || curr === ro.centsField) return ft.CENTS;
   else return ft.DEFAULT;
 };
 
 
 /**
+ * TODO: This violates the Open/Closed principle and leads to this ugly class.
+ *
  * @private
  * @enum {string}
  */
@@ -205,5 +234,6 @@ pn.ui.edit.ReadOnlyFields.FieldType_ = {
   TIME: 'time',
   BOOLEAN: 'boolean',
   CENTS: 'cents',
+  ITEM_LIST: 'itemlist',
   DEFAULT: 'default'
 };

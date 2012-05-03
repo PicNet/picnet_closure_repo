@@ -78,39 +78,29 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
  * @param {*} val The object value to validate.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
+pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {  
   var isParent = pn.data.EntityUtils.isParentProperty(field.dataProperty);
-  return this.validateItem_(field.id, field.name, isParent, val);
-};
+  var isYesNoRenderer = field.renderer === 
+      pn.ui.edit.FieldRenderers.yesNoRenderer;
+  var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
 
-
-/**
- * @private
- * @param {string} id The id of this field.
- * @param {string} name The name of the field.
- * @param {boolean} isParent Wether this field is a parent field.
- * @param {*} val The object value to validate.
- * @return {string} Any error that this field can have.
- */
-pn.ui.edit.ValidateInfo.prototype.validateItem_ =
-    function(id, name, isParent, val) {
-  if (!goog.isDefAndNotNull(val) || (isParent && val === '0')) {
-    return this.required ? name + ' is required.' : '';
+  if (!goog.isDefAndNotNull(val) || isEmptyParentOrYesNo) {
+    return this.required ? field.name + ' is required.' : '';
   }
 
   if (this.minLength && val.length < this.minLength)
-    return name + ' must be at least ' + this.minLength + ' chars.';
+    return field.name + ' must be at least ' + this.minLength + ' chars.';
   if (this.maxLength && val.length > this.maxLength)
-    return name + ' must be at most ' + this.maxLength + ' chars.';
+    return field.name + ' must be at most ' + this.maxLength + ' chars.';
   if (this.validateRegex && !val.match(this.validateRegex))
-    return name + ' appears to be invalid.';
+    return field.name + ' appears to be invalid.';
   if (this.isNumber && isNaN(val))
-    return name + ' must be a number.';
+    return field.name + ' must be a number.';
   if (!isNaN(this.minNumber) || !isNaN(this.maxNumber)) {
     var valueNumber = parseFloat(val.toString());
     if ((!isNaN(this.minNumber) && valueNumber < this.minNumber) ||
         (!isNaN(this.maxNumber) && valueNumber > this.maxNumber)) {
-      return name + ' must be between ' + this.minNumber + ' - ' +
+      return field.name + ' must be between ' + this.minNumber + ' - ' +
           this.maxNumber + '.';
     }
   }

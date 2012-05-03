@@ -102,6 +102,23 @@ pn.ui.edit.FieldRenderers.boolRenderer =
   return inp;
 };
 
+/**
+ * @param {*} val The boolean to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @return {!Element} The checkbox control.
+ */
+pn.ui.edit.FieldRenderers.yesNoRenderer =
+    function(val, entity, parent) {
+  var sel = goog.dom.createDom('select', 'yesno', 
+    goog.dom.createDom('option', {'value': '0'}, 'Select...'),
+    goog.dom.createDom('option', {'value': 'true'}, 'Yes'),
+    goog.dom.createDom('option', {'value': 'false'}, 'No')
+  );
+  sel.value = val.toString();
+  goog.dom.appendChild(parent, sel);
+  return sel;
+};
 
 /**
  * @param {*} val The text to display.
