@@ -226,8 +226,6 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
 
 
 /**
- * TODO: This violates the Open/Closed principle and leads to this ugly class.
- *
  * @private
  * @enum {string}
  */

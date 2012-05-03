@@ -132,7 +132,7 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
     var className = c.name.toLowerCase();
     var button = goog.dom.createDom('button',
-        {'class': 'goog-button ' + className, 'id': c.name});
+        {'class': 'goog-button ' + className, 'id': c.name, 'title': c.name});
     goog.dom.appendChild(parent, button);
     this.commandButtons_[c.name] = button;
   }, this);
