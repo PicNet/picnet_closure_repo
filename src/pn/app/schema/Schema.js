@@ -47,7 +47,10 @@ pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
 pn.app.schema.Schema.prototype.getValidationErrors =
     function(fieldSpec, value) {
   var field = this.getFieldSchema(fieldSpec);
-  if (!field) { throw new Error('Could not find the schema of ' + field.id); }
+  if (!field) {
+    var desc = fieldSpec.entitySpec.type + '.' + fieldSpec.id;
+    throw new Error('Could not find the schema of ' + desc);
+  }
   var validator = new pn.ui.edit.ValidateInfo();
   validator.required = !field.allowNull;
   if (field.length) {

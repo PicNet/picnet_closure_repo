@@ -116,7 +116,7 @@ pn.ui.edit.FieldRenderers.yesNoRenderer =
       goog.dom.createDom('option', {'value': 'true'}, 'Yes'),
       goog.dom.createDom('option', {'value': 'false'}, 'No')
       );
-  sel.value = val.toString();
+  sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
   goog.dom.appendChild(parent, sel);
   return sel;
 };
