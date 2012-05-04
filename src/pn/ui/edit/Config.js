@@ -39,6 +39,9 @@ pn.ui.edit.Config =
 
   /** @type {!pn.ui.edit.Interceptor} */
   this.interceptor = opt_interceptor || new pn.ui.edit.Interceptor();
+
+  /** @type {boolean} */
+  this.autoFocus = true;
 };
 goog.inherits(pn.ui.edit.Config, pn.ui.BaseConfig);
 

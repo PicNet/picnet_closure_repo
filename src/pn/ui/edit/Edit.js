@@ -184,7 +184,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fr = pn.ui.edit.FieldRenderers;
 
   var useTemplate = !!this.cfg_.template,
-      focusSet = false,
+      focusSet = !this.cfg_.autoFocus,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
       newEntity = !this.data_['ID'];
 
@@ -218,7 +218,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     this.disposables_.push(input);
     this.inputs_[f.id] = input;
 
-    if (!focusSet && input.focus && input.id) {
+    if (!focusSet && input.focus && !f.readonly) {
       focusSet = true;
       goog.Timer.callOnce(function() {
         try { input.focus(); } catch (ex) {}
