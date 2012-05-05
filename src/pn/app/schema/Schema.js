@@ -10,10 +10,13 @@ goog.require('pn.app.schema.Field');
 
 /**
  * @constructor
+ * @extends {goog.Disposable}
  * @param {!Array} description The description of the schema from the server (
  *   i.e. Use object property string identifiers.).
  */
 pn.app.schema.Schema = function(description) {
+  goog.Disposable.call(this);
+
   goog.asserts.assert(description);
 
   /**
@@ -24,7 +27,7 @@ pn.app.schema.Schema = function(description) {
 
   goog.array.forEach(description, this.parseEntity_, this);
 };
-
+goog.inherits(pn.app.schema.Schema, goog.Disposable);
 
 /**
  * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
@@ -113,4 +116,11 @@ pn.app.schema.Schema.prototype.parseField_ = function(f) {
   return new pn.app.schema.Field(
       f['name'], f['type'], f['allowNull'], f['length']);
 
+};
+
+/** @inheritDoc */
+pn.app.schema.Schema.prototype.disposeInternal = function() {
+  pn.app.schema.Schema.superClass_.disposeInternal.call(this);
+
+  delete this.entities_;
 };
