@@ -9,12 +9,12 @@ goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
 var testOrderByThrowsWhenKeySelectorIsNull = function() {
-  try { pn.seq([]).orderBy(null); assertFails('shouldFail'); }
+  try { pn.seq.Seq.create([]).orderBy(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
 
 var testOrderByDescendingThrowsWhenKeySelectorIsNull = function() {
-  try { pn.seq([]).orderByDescending(null); assertFails('shouldFail'); }
+  try { pn.seq.Seq.create([]).orderByDescending(null); assertFails('shouldFail'); }
   catch (ex) {}
 };
 
@@ -39,78 +39,78 @@ var testOrderedSeqThrowsIfComparerIsNull = function() {
 };
 
 var testOrderBySortsAndReturnsOrderedSeq = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).orderBy(function(x) { return x; }); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).orderBy(function(x) { return x; }); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testMultipleOrderBys = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }).toArray());
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }).toArray());  
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }));
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.orderBy(function(x) { return x; }));  
 };
 
 var testOrderByWithComparerSortsAndReturnsOrderedSeq = function() {
   var comparer = function(x, y) { return pn.seq.Seq.defaultComparer_(y, x); };
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).orderBy(function(x) { return x; }, comparer); 
-  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq.toArray());
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).orderBy(function(x) { return x; }, comparer); 
+  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testOrderByDescendingSortsAndReturnsOrderedSeq = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).orderByDescending(function(x) { return x; });   
-  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq.toArray());
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).orderByDescending(function(x) { return x; });   
+  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testOrderByDescendingWithComparerSortsAndReturnsOrderedSeq = function() {
   var comparer = function(x, y) { return pn.seq.Seq.defaultComparer_(y, x); };
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).orderByDescending(function(x) { return x; }, comparer); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).orderByDescending(function(x) { return x; }, comparer); 
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testThenBySortsAndReturnsOrderedSeq = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).
       orderBy(function(x) { return x; }).
       thenBy(function(x) { return -x; }); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testMultipleThenBySorts = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]);
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]);
   var result = seq.orderBy(function(x) { return x; }).
       thenBy(function(x) { return -x; }); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result.toArray());  
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result);  
   result = seq.orderBy(function(x) { return x; }).
       thenBy(function(x) { return -x; }); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result.toArray());
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], result);
 };
 
 var testThenByWithComparerSortsAndReturnsOrderedSeq = function() {
   var comparer = function(x, y) { return pn.seq.Seq.defaultComparer_(y, x); };
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).
     orderBy(function(x) { return x; }, comparer).
     thenBy(function(x) { return -x; }, comparer); ; 
-  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq.toArray());
+  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testThenByDescendingSortsAndReturnsOrderedSeq = function() {
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).
     orderByDescending(function(x) { return x; }).
     thenByDescending(function(x) { return -x; });   
-  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq.toArray());
+  assertArrayEquals([8, 8, 6, 5, 3, 2, 2, 2], seq);
   assertTrue(!!seq.thenBy);
 };
 
 var testThenByDescendingWithComparerSortsAndReturnsOrderedSeq = function() {
   var comparer = function(x, y) { return pn.seq.Seq.defaultComparer_(y, x); };
-  var seq = pn.seq([2, 6, 8,2, 3, 8, 5, 2]).
+  var seq = pn.seq.Seq.create([2, 6, 8,2, 3, 8, 5, 2]).
     orderByDescending(function(x) { return x; }, comparer).
     thenByDescending(function(x) { return -x; }, comparer); 
-  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq.toArray());
+  assertArrayEquals([2, 2, 2, 3, 5, 6, 8, 8], seq);
   assertTrue(!!seq.thenBy);
 };
     </script>    

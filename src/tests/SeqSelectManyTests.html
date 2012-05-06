@@ -11,38 +11,38 @@ goog.require('pn.seq.Seq');
 var setUp = function() {};
 
 var testSimpleSelectMany = function () {		
-  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
-  }).toArray(); 
+  }); 
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
 };
 
 var testMultipleSelectMany = function () {		
-  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
-  }).toArray(); 
+  }); 
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
   result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
-  }).toArray(); 
+  }); 
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
 };
 
 var testWithSelector = function  () {		
-  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {     
     return pn.seq.Seq.repeat(x, i);
   }, function(x, x2) {
     return x2 + x;
-  }).toArray(); 
+  }); 
   assertArrayEquals([6, 8, 8, 4, 4, 4, 16, 16, 16, 16, 2, 2, 2, 2, 2], result); 
 };
 
 var testNullSelectorThrowsError = function() {
   try { 
-    var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+    var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
     var result = source.selectMany(null); 
     assertFail('Should not allow null selector');
   } catch (ex) {};

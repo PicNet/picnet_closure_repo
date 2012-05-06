@@ -1,5 +1,5 @@
 
-goog.provide('pn.app.schema.AppConfig');
+goog.provide('pn.app.AppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
@@ -12,32 +12,32 @@ goog.require('pn.app.schema.Field');
  * @constructor
  * @extends {goog.Disposable}
  */
-pn.app.schema.AppConfig = function() {
+pn.app.AppConfig = function() {
   goog.Disposable.call(this);
 
   var fr = pn.ui.edit.FieldRenderers;
 
   /** @type {Object} */
   this.defaultRenderers = {
-    
-    /** @type {function(!*, !Object, !Element):undefined} */
-    this.bool = fr.boolRenderer;
 
-    /** @type {function(!*, !Object, !Element):undefined} */
-    this.date = fr.dateRenderer;
+    /** @type {pn.ui.edit.Field.Renderer} */
+    bool: fr.boolRenderer,
 
-    /** @type {function(!*, !Object, !Element):undefined} */
-    this.decimal = fr.centsRenderer;
+    /** @type {pn.ui.edit.Field.Renderer} */
+    date: fr.dateRenderer,
+
+    /** @type {pn.ui.edit.Field.Renderer} */
+    decimal: fr.centsRenderer,
 
     /** @type {number} */
-    this.textAreaLengthThreshold = 250;
-  };  
+    textAreaLengthThreshold: 250
+  };
 };
-goog.inherits(pn.app.schema.AppConfig, goog.Disposable);
+goog.inherits(pn.app.AppConfig, goog.Disposable);
 
 /** @inheritDoc */
-pn.app.schema.AppConfig.prototype.disposeInternal = function() {
-  pn.app.schema.AppConfig.superClass_.disposeInternal.call(this);
+pn.app.AppConfig.prototype.disposeInternal = function() {
+  pn.app.AppConfig.superClass_.disposeInternal.call(this);
 
   delete this.defaultRenderers;
 };

@@ -30,23 +30,23 @@ var testRepeatCountRequiresPositiveOr0Number = function () {
 };
 
 var testRangeEmpty = function () {		  
-  assertArrayEquals([], pn.seq.Seq.range(100, 0).toArray()); 
+  assertArrayEquals([], pn.seq.Seq.range(100, 0)); 
 };
 
 var testRange = function () {		  
-  assertArrayEquals([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], pn.seq.Seq.range(0, 10).toArray()); 
+  assertArrayEquals([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], pn.seq.Seq.range(0, 10)); 
 };
 
 var testRepeatEmpty = function () {		  
-  assertArrayEquals([], pn.seq.Seq.repeat(100, 0).toArray()); 
+  assertArrayEquals([], pn.seq.Seq.repeat(100, 0)); 
 };
 
 var testRepeat = function () {		  
-  assertArrayEquals([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], pn.seq.Seq.repeat(0, 10).toArray()); 
+  assertArrayEquals([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], pn.seq.Seq.repeat(0, 10)); 
 };
 
 var testEmpty = function () {		  
-  assertArrayEquals([], pn.seq.Seq.empty().toArray()); 
+  assertArrayEquals([], pn.seq.Seq.empty()); 
 };
     </script>    
   </body>

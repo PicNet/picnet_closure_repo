@@ -18,31 +18,31 @@ var arr = [
   {key:1, value:7}];
   
 var testMinWithoutProjection = function() {
-  assertEquals(1, pn.seq([1, 2, 3]).min());  
+  assertEquals(1, pn.seq.Seq.create([1, 2, 3]).min());  
 };
 
 var testMultipleMins = function() {
-  var seq = pn.seq([1, 2, 3]);
+  var seq = pn.seq.Seq.create([1, 2, 3]);
   assertEquals(1, seq.min());  
   assertEquals(1, seq.min());  
 };
 
 var testMinWithProjection = function() {
-  assertEquals(1, pn.seq(arr).min(function(v) { return v.value; }));  
+  assertEquals(1, pn.seq.Seq.create(arr).min(function(v) { return v.value; }));  
 };
 
 var testMaxWithoutProjection = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).max());  
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).max());  
 };
 
 var testMultipleMaxs = function() {
-  var seq = pn.seq([1, 2, 3]);
+  var seq = pn.seq.Seq.create([1, 2, 3]);
   assertEquals(3, seq.max());  
   assertEquals(3, seq.max());  
 };
 
 var testMaxWithProjection = function() {
-  assertEquals(7, pn.seq(arr).max(function(v) { return v.value; }));  
+  assertEquals(7, pn.seq.Seq.create(arr).max(function(v) { return v.value; }));  
 };
     </script>    
   </body>

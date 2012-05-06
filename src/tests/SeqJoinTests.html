@@ -10,7 +10,7 @@ goog.require('pn.seq.Seq');
 
 var testNullInnerThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).join(null, 
+    pn.seq.Seq.create([5, 3, 7]).join(null, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -19,10 +19,10 @@ var testNullInnerThrowsError = function() {
 };
 
 var testNullOuterSelectThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).join(inner, 
+    pn.seq.Seq.create([5, 3, 7]).join(inner, 
                          null, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -31,10 +31,10 @@ var testNullOuterSelectThrowsError = function() {
 };
 
 var testNullInnerSelectThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).join(inner, 
+    pn.seq.Seq.create([5, 3, 7]).join(inner, 
                          function(o) { return o; }, 
                          null, 
                          function(o, i) { return o + ':' + i; });                           
@@ -43,10 +43,10 @@ var testNullInnerSelectThrowsError = function() {
 };
 
 var testNullResultsSelectorThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).join(inner, 
+    pn.seq.Seq.create([5, 3, 7]).join(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          null);                           
@@ -56,31 +56,31 @@ var testNullResultsSelectorThrowsError = function() {
 
 var testDifferentSourceTypes = function() 
 { 
-  var outer = pn.seq([5, 3, 7]); 
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var outer = pn.seq.Seq.create([5, 3, 7]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   var query = outer.join(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                         
-  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query.toArray());  
+  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query);  
 };
 
 var testMultipleJoins = function() 
 { 
-  var outer = pn.seq([5, 3, 7]); 
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var outer = pn.seq.Seq.create([5, 3, 7]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   var query = outer.join(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                         
-  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query.toArray());  
+  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query);  
   query = outer.join(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                         
-  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query.toArray());  
+  assertArrayEquals(["5:tiger", "3:bee", "3:cat", "3:dog", "7:giraffe"], query);  
 };
 
     </script>    

@@ -10,32 +10,32 @@ goog.require('pn.seq.Seq');
 
 var testNullSecondThrows = function() {
   try {
-    pn.seq([1, 2, 3]).zip(null, function(x, y) { return x; });
+    pn.seq.Seq.create([1, 2, 3]).zip(null, function(x, y) { return x; });
     assertFails('Should fail');   
   } catch (ex) {}
 };
 
 var testNullResultsSelectorThrows = function() {
   try {
-    pn.seq([1, 2, 3]).zip(pn.seq([]), null);
+    pn.seq.Seq.create([1, 2, 3]).zip(pn.seq.Seq.create([]), null);
     assertFails('Should fail');   
   } catch (ex) {}
 };
 
 var testZipReturnsSmallestOf2SequnceSize = function() {
-  assertArrayEquals([2], pn.seq([1, 2, 3]).zip(pn.seq([1]), function(x, y) { return x + y; }).toArray());  
-  assertArrayEquals([4], pn.seq([2]).zip(pn.seq([2, 6, 8]), function(x, y) { return x + y; }).toArray());  
+  assertArrayEquals([2], pn.seq.Seq.create([1, 2, 3]).zip(pn.seq.Seq.create([1]), function(x, y) { return x + y; }));  
+  assertArrayEquals([4], pn.seq.Seq.create([2]).zip(pn.seq.Seq.create([2, 6, 8]), function(x, y) { return x + y; }));  
 };
 
 var testZipReturnsExpectedWithLargerLists = function() {
-  assertArrayEquals(['12', '24', '38'], pn.seq([1, 2, 3]).zip(pn.seq([2, 4, 8]), function(x, y) { return '' + x + y; }).toArray());    
+  assertArrayEquals(['12', '24', '38'], pn.seq.Seq.create([1, 2, 3]).zip(pn.seq.Seq.create([2, 4, 8]), function(x, y) { return '' + x + y; }));    
 };
 
 var testMultipleZips = function() {
-  var seq1 = pn.seq([1, 2, 3]);
-  var seq2 = pn.seq([2, 4, 8])
-  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }).toArray());    
-  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }).toArray());    
+  var seq1 = pn.seq.Seq.create([1, 2, 3]);
+  var seq2 = pn.seq.Seq.create([2, 4, 8])
+  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }));    
+  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }));    
 };
 
     </script>    

@@ -7,8 +7,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.ValidateInfo');
 
 goog.provide('pn.ui.edit.Field');
-
-
+goog.provide('pn.ui.edit.Field.Renderer');
 
 /**
  * The Field specification defines how a field should be captioned and how
@@ -37,8 +36,7 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    *    The 3 parameters are the the value to display, the entity being
    *    displayed and the parent Dom Element.
    *
-   * @type {pn.ui.edit.ComplexRenderer|function(*, Object, !Element):
-              !(Element|goog.ui.Component|Text)}
+   * @type {pn.ui.edit.Field.Renderer}
    */
   this.renderer = null;
 
@@ -135,3 +133,8 @@ pn.ui.edit.Field.prototype.extend = function(props) {
   }
   if (this.readonly) { pn.ui.edit.ReadOnlyFields.toReadOnlyField(this); }
 };
+
+
+/** @typedef {pn.ui.edit.ComplexRenderer|function(*, Object, !Element):
+              !(Element|goog.ui.Component|Text)} */
+pn.ui.edit.Field.Renderer;

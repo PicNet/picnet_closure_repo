@@ -10,124 +10,124 @@ goog.require('pn.seq.Seq');
 
 var testFirstWithEmptyThrowsError = function() {
   try {
-    pn.seq([]).first();
+    pn.seq.Seq.create([]).first();
     assertFail('Null sequence should throw an error');
   } catch (ex) {};
 };
 var testLastWithEmptyThrowsError = function() {
   try {
-    pn.seq([]).last();
+    pn.seq.Seq.create([]).last();
     assertFail('Null sequence should throw an error');
   } catch (ex) {};
 };
 var testSingleWithEmptyThrowsError = function() {
   try {
-    pn.seq([]).single();
+    pn.seq.Seq.create([]).single();
     assertFail('Null sequence should throw an error');
   } catch (ex) {};
 };
 
 var testFirstOrNullWithEmptyReturnsNull = function() {
-  assertNull(pn.seq([]).firstOrNull());    
+  assertNull(pn.seq.Seq.create([]).firstOrNull());    
 };
 var testLastOrNullWithEmptyReturnsNull = function() {
-  assertNull(pn.seq([]).lastOrNull());    
+  assertNull(pn.seq.Seq.create([]).lastOrNull());    
 };
 var testSingleOrNullWithEmptyReturnsNull = function() {
-  assertNull(pn.seq([]).singleOrNull());    
+  assertNull(pn.seq.Seq.create([]).singleOrNull());    
 };
 
 var testFirstWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).first());    
+  assertEquals(1, pn.seq.Seq.create([1]).first());    
 };
 
 var testLastWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).last());    
+  assertEquals(1, pn.seq.Seq.create([1]).last());    
 };
 
 var testSingleWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).single());    
+  assertEquals(1, pn.seq.Seq.create([1]).single());    
 };
 
 var testMultipleSingles = function() {
-  var seq = pn.seq([1]);
+  var seq = pn.seq.Seq.create([1]);
   assertEquals(1, seq.single());    
   assertEquals(1, seq.single());    
 };
 
 var testFirsOrNulltWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).firstOrNull());    
+  assertEquals(1, pn.seq.Seq.create([1]).firstOrNull());    
 };
 
 var testLastOrNullWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).lastOrNull());    
+  assertEquals(1, pn.seq.Seq.create([1]).lastOrNull());    
 };
 
 var testSingleOrNullWithSingleElementAndNoPredicateReturnsSingle = function() {
-  assertEquals(1, pn.seq([1]).singleOrNull());    
+  assertEquals(1, pn.seq.Seq.create([1]).singleOrNull());    
 };
 
 var testSingleWithPredicateReturnsSingleMatch = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).single(function(x) { return x > 2; }));    
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).single(function(x) { return x > 2; }));    
 };
 
 var testSingleOrNullWithPredicateReturnsSingleMatch = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).singleOrNull(function(x) { return x > 2; }));    
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).singleOrNull(function(x) { return x > 2; }));    
 };
 
 var testFirstWithMultipleElementAndNoPredicateReturnsFirst = function() {
-  assertEquals(1, pn.seq([1, 2, 3]).first());    
+  assertEquals(1, pn.seq.Seq.create([1, 2, 3]).first());    
 };
 
 var testMultipleFirsts = function() {
-  var seq = pn.seq([1, 2, 3]);
+  var seq = pn.seq.Seq.create([1, 2, 3]);
   assertEquals(1, seq.first());    
   assertEquals(1, seq.first());    
 };
 
 var testLastWithMultipleElementAndNoPredicateReturnsLast = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).last());    
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).last());    
 };
 
 var testSingleWithMultipleElementAndNoPredicateThrowsError = function() {
   try { 
-    pn.seq([1, 2, 3]).single();     
+    pn.seq.Seq.create([1, 2, 3]).single();     
     assertFail('Multiple matched');
   } catch (ex) {};
 };
 
 var testFirstWithMultipleElementAndWithPredicateReturnsFirst = function() {
-  assertEquals(2, pn.seq([1, 2, 3]).first(function(x) { return x > 1; }));     
+  assertEquals(2, pn.seq.Seq.create([1, 2, 3]).first(function(x) { return x > 1; }));     
 };
 
 var testLastWithMultipleElementAndWithPredicateReturnsLast = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).last(function(x) { return x > 1; }));       
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).last(function(x) { return x > 1; }));       
 };
 
 var testMultipleLasts = function() {
-  var seq = pn.seq([1, 2, 3]);
+  var seq = pn.seq.Seq.create([1, 2, 3]);
   assertEquals(3, seq.last());       
   assertEquals(3, seq.last());       
 };
 
 var testSingleWithMultipleElementAndWithPredicateThrowsError = function() {
   try { 
-    pn.seq([1, 2, 3]).single(function(x) { return x > 1; });     
+    pn.seq.Seq.create([1, 2, 3]).single(function(x) { return x > 1; });     
     assertFail('Multiple matched');
   } catch (ex) {};
 };
 
 var testFirstOrNullWithMultipleElementAndWithPredicateReturnsFirst = function() {
-  assertEquals(2, pn.seq([1, 2, 3]).firstOrNull(function(x) { return x > 1; }));     
+  assertEquals(2, pn.seq.Seq.create([1, 2, 3]).firstOrNull(function(x) { return x > 1; }));     
 };
 
 var testLastOrNullWithMultipleElementAndWithPredicateReturnsLast = function() {
-  assertEquals(3, pn.seq([1, 2, 3]).lastOrNull(function(x) { return x > 1; }));       
+  assertEquals(3, pn.seq.Seq.create([1, 2, 3]).lastOrNull(function(x) { return x > 1; }));       
 };
 
 var testSingleOrNullWithMultipleElementAndWithPredicateThrowsError = function() {
   try { 
-    pn.seq([1, 2, 3]).singleOrNull(function(x) { return x > 1; });     
+    pn.seq.Seq.create([1, 2, 3]).singleOrNull(function(x) { return x > 1; });     
     assertFail('Multiple matched');
   } catch (ex) {};
 };

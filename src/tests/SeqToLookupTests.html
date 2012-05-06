@@ -19,31 +19,31 @@ var arr = [
   
 var testToLookupRequiresKeySelector = function() {
   try {
-    pn.seq([]).toLookup();
+    pn.seq.Seq.create([]).toLookup();
     assertFail('keySelector should be required');
   } catch (ex) {};
 };
 
 var testToLookupWithoutElementSelector = function() {
-  var lu = pn.seq(arr).toLookup(function(o) { return o.key; });
+  var lu = pn.seq.Seq.create(arr).toLookup(function(o) { return o.key; });
   var keys = lu.getKeys();
   assertEquals(2, keys.length);
   var ret = lu.get(keys[0]);  
-  var arr1 = ret.select(function(o) { return o.value; }).toArray();
-  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  var arr1 = ret.select(function(o) { return o.value; });
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; });
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testMultipleToLookups = function() {
-  var seq = pn.seq(arr);
+  var seq = pn.seq.Seq.create(arr);
   var lu = seq.toLookup(function(o) { return o.key; });
   var keys = lu.getKeys();
   assertEquals(2, keys.length);
   var ret = lu.get(keys[0]);  
-  var arr1 = ret.select(function(o) { return o.value; }).toArray();
-  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  var arr1 = ret.select(function(o) { return o.value; });
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; });
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
@@ -52,35 +52,35 @@ var testMultipleToLookups = function() {
   var keys = lu.getKeys();
   assertEquals(2, keys.length);
   var ret = lu.get(keys[0]);  
-  var arr1 = ret.select(function(o) { return o.value; }).toArray();
-  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  var arr1 = ret.select(function(o) { return o.value; });
+  var arr2 = lu.get(keys[1]).select(function(o) { return o.value; });
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testToLookupWithElementSelector = function() {
-  var lu = pn.seq(arr).toLookup(
+  var lu = pn.seq.Seq.create(arr).toLookup(
       function(o) { return o.key; }, 
       function(o) { return o.value; });
   var keys = lu.getKeys();
   assertEquals(2, keys.length);
-  var arr1 = lu.get(keys[0]).toArray();
-  var arr2 = lu.get(keys[1]).toArray();
+  var arr1 = lu.get(keys[0]);
+  var arr2 = lu.get(keys[1]);
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testToLookupWithElementSelectorAndComparer = function() {
-  var lu = pn.seq(arr).toLookup(
+  var lu = pn.seq.Seq.create(arr).toLookup(
       function(o) { return o.key; }, 
       function(o) { return o.value; }, 
       function(a, b) { return a !== null && b !== null; });
       
   var keys = lu.getKeys();
   assertEquals(1, keys.length);
-  var arr1 = lu.get(keys[0]).toArray();  
+  var arr1 = lu.get(keys[0]);  
   
   assertArrayEquals([1, 2, 3, 4, 5, 6, 7], arr1);  
 };

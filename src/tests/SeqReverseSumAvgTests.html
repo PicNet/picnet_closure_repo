@@ -18,39 +18,39 @@ var arr = [
   {key:1, value:7}];
   
 var testReverse = function() {
-  assertArrayEquals([3, 2, 1], pn.seq([1, 2, 3]).reverse().toArray());  
+  assertArrayEquals([3, 2, 1], pn.seq.Seq.create([1, 2, 3]).reverse());  
 };
 
 var testMultipleReversii = function() {
-  var seq = pn.seq([1, 2, 3])
-  assertArrayEquals([3, 2, 1], seq.reverse().toArray());  
-  assertArrayEquals([3, 2, 1], seq.reverse().toArray());  
+  var seq = pn.seq.Seq.create([1, 2, 3])
+  assertArrayEquals([3, 2, 1], seq.reverse());  
+  assertArrayEquals([3, 2, 1], seq.reverse());  
 };
 
 var testSumWithoutProjection = function() {
-  assertEquals(6, pn.seq([1, 2, 3]).sum());  
+  assertEquals(6, pn.seq.Seq.create([1, 2, 3]).sum());  
 };
 
 var testMultipleSums = function() {
-  var seq = pn.seq([1, 2, 3]);
+  var seq = pn.seq.Seq.create([1, 2, 3]);
   assertEquals(6, seq.sum());  
   assertEquals(6, seq.sum());  
 };
 
 var testSumWithProjection = function() {
-  assertEquals(28, pn.seq(arr).sum(function(v) { return v.value; }));  
+  assertEquals(28, pn.seq.Seq.create(arr).sum(function(v) { return v.value; }));  
 };
 
 var testAvgWithoutProjection = function() {
-  assertEquals(2, pn.seq([1, 2, 3]).average());  
+  assertEquals(2, pn.seq.Seq.create([1, 2, 3]).average());  
 };
 
 var testAvgWithProjection = function() {
-  assertEquals(4, pn.seq(arr).average(function(v) { return v.value; }));  
+  assertEquals(4, pn.seq.Seq.create(arr).average(function(v) { return v.value; }));  
 };
 
 var testMultipleAvarages = function() {
-  var seq = pn.seq(arr);
+  var seq = pn.seq.Seq.create(arr);
   assertEquals(4, seq.average(function(v) { return v.value; }));  
   assertEquals(4, seq.average(function(v) { return v.value; }));  
 };

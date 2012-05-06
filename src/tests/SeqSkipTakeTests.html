@@ -9,70 +9,70 @@ goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
 var testMultipleSkips = function() {
-  var seq = pn.seq([1, 2, 3]);
-  assertArrayEquals([3], seq.skip(2).toArray());
-  assertArrayEquals([3], seq.skip(2).toArray());
+  var seq = pn.seq.Seq.create([1, 2, 3]);
+  assertArrayEquals([3], seq.skip(2));
+  assertArrayEquals([3], seq.skip(2));
 };
 
 var testMultipleTakes = function() {
-  var seq = pn.seq([1, 2, 3]);
-  assertArrayEquals([1, 2], seq.take(2).toArray());
-  assertArrayEquals([1, 2], seq.take(2).toArray());
+  var seq = pn.seq.Seq.create([1, 2, 3]);
+  assertArrayEquals([1, 2], seq.take(2));
+  assertArrayEquals([1, 2], seq.take(2));
 };
 
 var testSkipWithNullCountThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).skip(null);
+    pn.seq.Seq.create([5, 3, 7]).skip(null);
     assertFail('count should not be null');
   } catch (ex) {};
 };
 var testTakeWithNullCountThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).take(null);
+    pn.seq.Seq.create([5, 3, 7]).take(null);
     assertFail('count should not be null');
   } catch (ex) {};
 };
 var testSkipWhileWithNullPredicateThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).skipWhile(null);
+    pn.seq.Seq.create([5, 3, 7]).skipWhile(null);
     assertFail('predicate should not be null');
   } catch (ex) {};
 };
 var testTakeWhileWithNullPredicateThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).takeWhile(null);
+    pn.seq.Seq.create([5, 3, 7]).takeWhile(null);
     assertFail('predicate should not be null');
   } catch (ex) {};
 };
 
 var testSkipWithZero = function() {
-  assertArrayEquals([1, 2, 3], pn.seq([1, 2, 3]).skip(0).toArray());
+  assertArrayEquals([1, 2, 3], pn.seq.Seq.create([1, 2, 3]).skip(0));
 };
 
 var testTakeWithZero = function() {
-  assertArrayEquals([], pn.seq([1, 2, 3]).take(0).toArray());
+  assertArrayEquals([], pn.seq.Seq.create([1, 2, 3]).take(0));
 };
 
 var testSkipSomeElements = function() {
-  assertArrayEquals([3], pn.seq([1, 2, 3]).skip(2).toArray());
+  assertArrayEquals([3], pn.seq.Seq.create([1, 2, 3]).skip(2));
 };
 
 var testTakeSomeElements = function() {
-  assertArrayEquals([1, 2], pn.seq([1, 2, 3]).take(2).toArray());
+  assertArrayEquals([1, 2], pn.seq.Seq.create([1, 2, 3]).take(2));
 };
 
 var testSkipWhileWithAlwaysTruePredicate = function() {
-  assertArrayEquals([], pn.seq([1, 2, 3]).skipWhile(function() {return true;}).toArray());
+  assertArrayEquals([], pn.seq.Seq.create([1, 2, 3]).skipWhile(function() {return true;}));
 };
 var testTakeWhileWithAlwaysTruePredicate = function() {
-  assertArrayEquals([1, 2, 3], pn.seq([1, 2, 3]).takeWhile(function() {return true;}).toArray());
+  assertArrayEquals([1, 2, 3], pn.seq.Seq.create([1, 2, 3]).takeWhile(function() {return true;}));
 };
 
 var testSkipWhileSomeElements = function() {
-  assertArrayEquals([3], pn.seq([1, 2, 3]).skipWhile(function(e, i) { return e < 3;}).toArray());
+  assertArrayEquals([3], pn.seq.Seq.create([1, 2, 3]).skipWhile(function(e, i) { return e < 3;}));
 };
 var testTakeWhileSomeElements = function() {
-  assertArrayEquals([1, 2], pn.seq([1, 2, 3]).takeWhile(function(e, i) {return e < 3;}).toArray());
+  assertArrayEquals([1, 2], pn.seq.Seq.create([1, 2, 3]).takeWhile(function(e, i) {return e < 3;}));
 };
 
     </script>    

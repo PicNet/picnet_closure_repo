@@ -9,29 +9,29 @@ goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
 var testIfEmptySequenceResultHasOneNullItem = function() {
-  assertArrayEquals([null], pn.seq([]).defaultIfEmpty().toArray());
+  assertArrayEquals([null], pn.seq.Seq.create([]).defaultIfEmpty());
 };
 
 var testIfEmptyAndDefSpecifiedSequenceResultHasOneSpecifiedItem = function() {
-  assertArrayEquals([1], pn.seq([]).defaultIfEmpty(1).toArray());
+  assertArrayEquals([1], pn.seq.Seq.create([]).defaultIfEmpty(1));
 };
 
 var testIfNotEmptySequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertArrayEquals(arr, pn.seq(arr).defaultIfEmpty().toArray());
+  assertArrayEquals(arr, pn.seq.Seq.create(arr).defaultIfEmpty());
 };
 
 var testMultipleIfNotEmptySequences = function() {
   var arr = [1, 2, 3];
-  var seq = pn.seq(arr);
-  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
-  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
+  var seq = pn.seq.Seq.create(arr);
+  assertArrayEquals(arr, seq.defaultIfEmpty());
+  assertArrayEquals(arr, seq.defaultIfEmpty());
 };
 
 
 var testIfNotEmptyAndDefSpecifiedSequenceResultIsSame = function() {
   var arr = [1, 2, 3];
-  assertArrayEquals(arr, pn.seq(arr).defaultIfEmpty(1).toArray());
+  assertArrayEquals(arr, pn.seq.Seq.create(arr).defaultIfEmpty(1));
 };
     </script>    
   </body>

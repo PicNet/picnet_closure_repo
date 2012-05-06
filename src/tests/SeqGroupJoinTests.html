@@ -10,7 +10,7 @@ goog.require('pn.seq.Seq');
 
 var testNullInnerThrowsError = function() {    
   try {
-    pn.seq([5, 3, 7]).groupJoin(null, 
+    pn.seq.Seq.create([5, 3, 7]).groupJoin(null, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -19,10 +19,10 @@ var testNullInnerThrowsError = function() {
 };
 
 var testNullOuterSelectThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).groupJoin(inner, 
+    pn.seq.Seq.create([5, 3, 7]).groupJoin(inner, 
                          null, 
                          function(i) { return i.length; }, 
                          function(o, i) { return o + ':' + i; });                           
@@ -31,10 +31,10 @@ var testNullOuterSelectThrowsError = function() {
 };
 
 var testNullInnerSelectThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).groupJoin(inner, 
+    pn.seq.Seq.create([5, 3, 7]).groupJoin(inner, 
                          function(o) { return o; }, 
                          null, 
                          function(o, i) { return o + ':' + i; });                           
@@ -43,10 +43,10 @@ var testNullInnerSelectThrowsError = function() {
 };
 
 var testNullResultsSelectorThrowsError = function() {  
-  var inner = pn.seq(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
+  var inner = pn.seq.Seq.create(["bee", "giraffe", "tiger", "badger", "ox", "cat", "dog"]); 
 
   try {
-    pn.seq([5, 3, 7]).groupJoin(inner, 
+    pn.seq.Seq.create([5, 3, 7]).groupJoin(inner, 
                          function(o) { return o; }, 
                          function(i) { return i.length; }, 
                          null);                           
@@ -56,40 +56,40 @@ var testNullResultsSelectorThrowsError = function() {
 
 var testSimpleGroupJoin = function() 
 { 
-  var outer = pn.seq(["first", "second", "third"]); 
-  var inner = pn.seq(["essence", "offer", "eating", "psalm"]); 
+  var outer = pn.seq.Seq.create(["first", "second", "third"]); 
+  var inner = pn.seq.Seq.create(["essence", "offer", "eating", "psalm"]); 
 
   var query = outer.groupJoin(inner, 
     function(o) { return o[0]; }, 
     function(i) { return i[1]; }, 
     function(o, i) { 
       console.log('o : ' + o + ' i : ' + i);
-      return o + ':' + i.toArray().join(';'); });                         
+      return o + ':' + i.join(';'); });                         
                          
-  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query); 
 };
 
 var testMultipleGroupJoins = function() 
 { 
-  var outer = pn.seq(["first", "second", "third"]); 
-  var inner = pn.seq(["essence", "offer", "eating", "psalm"]); 
+  var outer = pn.seq.Seq.create(["first", "second", "third"]); 
+  var inner = pn.seq.Seq.create(["essence", "offer", "eating", "psalm"]); 
 
   var query = outer.groupJoin(inner, 
     function(o) { return o[0]; }, 
     function(i) { return i[1]; }, 
     function(o, i) { 
       console.log('o : ' + o + ' i : ' + i);
-      return o + ':' + i.toArray().join(';'); });                         
+      return o + ':' + i.join(';'); });                         
                          
-  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query); 
   query = outer.groupJoin(inner, 
     function(o) { return o[0]; }, 
     function(i) { return i[1]; }, 
     function(o, i) { 
       console.log('o : ' + o + ' i : ' + i);
-      return o + ':' + i.toArray().join(';'); });                         
+      return o + ':' + i.join(';'); });                         
                          
-  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query.toArray()); 
+  assertArrayEquals(["first:offer", "second:essence;psalm", "third:"], query); 
 };
 
     </script>    

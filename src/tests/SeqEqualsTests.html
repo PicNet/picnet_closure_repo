@@ -10,34 +10,34 @@ goog.require('pn.seq.Seq');
 
 var testNullSecondThrows = function() {
   try {
-    pn.seq([1, 2, 3]).sequenceEquals(null);
+    pn.seq.Seq.create([1, 2, 3]).sequenceEquals(null);
     assertFails('Should fail');   
   } catch (ex) {}
 };
 
 var testEqualsIsTrueWhenSame = function() {
-  assertTrue(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([1, 2, 3])));  
+  assertTrue(pn.seq.Seq.create([1, 2, 3]).sequenceEquals(pn.seq.Seq.create([1, 2, 3])));  
 };
 
 var testEqualsIsFalseWhenNotSame = function() {
-  assertFalse(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([1, 2, 4])));  
+  assertFalse(pn.seq.Seq.create([1, 2, 3]).sequenceEquals(pn.seq.Seq.create([1, 2, 4])));  
 };
 
 var testEqualsIsTrueWhenSameWithComparer = function() {
-  assertTrue(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([-1, -2, -3]), function(x, y) { return x === -y; }));  
+  assertTrue(pn.seq.Seq.create([1, 2, 3]).sequenceEquals(pn.seq.Seq.create([-1, -2, -3]), function(x, y) { return x === -y; }));  
 };
 
 var testMultipleEquals = function() {
-  var seq1 = pn.seq([1, 2, 3]);
-  var seq2 = pn.seq([1, 2, 3]);
+  var seq1 = pn.seq.Seq.create([1, 2, 3]);
+  var seq2 = pn.seq.Seq.create([1, 2, 3]);
   assertTrue(seq1.sequenceEquals(seq2));  
   assertTrue(seq1.sequenceEquals(seq2));  
-  assertArrayEquals([1, 2, 3], seq1.toArray());
-  assertArrayEquals([1, 2, 3], seq2.toArray());
+  assertArrayEquals([1, 2, 3], seq1);
+  assertArrayEquals([1, 2, 3], seq2);
 };
 
 var testEqualsIsFalseWhenNotSameWithComparer = function() {
-  assertFalse(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([-1, -2, -4]), function(x, y) { return x === -y; }));  
+  assertFalse(pn.seq.Seq.create([1, 2, 3]).sequenceEquals(pn.seq.Seq.create([-1, -2, -4]), function(x, y) { return x === -y; }));  
 };
     </script>    
   </body>

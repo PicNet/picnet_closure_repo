@@ -19,44 +19,44 @@ var arr = [
   
 var testToMapRequiresKeySelector = function() {
   try {
-    pn.seq([]).toMap();
+    pn.seq.Seq.create([]).toMap();
     assertFail('keySelector should be required');
   } catch (ex) {};
 };
 
 var testToMapWithoutElementSelector = function() {
-  var map = pn.seq(arr).toMap(function(o) { return o.key; });
+  var map = pn.seq.Seq.create(arr).toMap(function(o) { return o.key; });
   var keys = map.getKeys();
   assertEquals(2, keys.length);
-  var arr1 = map.get(keys[0]).select(function(o) { return o.value; }).toArray();
-  var arr2 = map.get(keys[1]).select(function(o) { return o.value; }).toArray();
+  var arr1 = map.get(keys[0]).select(function(o) { return o.value; });
+  var arr2 = map.get(keys[1]).select(function(o) { return o.value; });
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testToMapWithElementSelector = function() {
-  var map = pn.seq(arr).toMap(
+  var map = pn.seq.Seq.create(arr).toMap(
       function(o) { return o.key; }, 
       function(o) { return o.value; });
   var keys = map.getKeys();
   assertEquals(2, keys.length);
-  var arr1 = map.get(keys[0]).toArray();
-  var arr2 = map.get(keys[1]).toArray();
+  var arr1 = map.get(keys[0]);
+  var arr2 = map.get(keys[1]);
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testMultipleToMaps = function() {
-  var seq = pn.seq(arr);
+  var seq = pn.seq.Seq.create(arr);
   var map = seq.toMap(
       function(o) { return o.key; }, 
       function(o) { return o.value; });
   var keys = map.getKeys();
   assertEquals(2, keys.length);
-  var arr1 = map.get(keys[0]).toArray();
-  var arr2 = map.get(keys[1]).toArray();
+  var arr1 = map.get(keys[0]);
+  var arr2 = map.get(keys[1]);
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
@@ -65,22 +65,22 @@ var testMultipleToMaps = function() {
       function(o) { return o.value; });
   var keys = map.getKeys();
   assertEquals(2, keys.length);
-  var arr1 = map.get(keys[0]).toArray();
-  var arr2 = map.get(keys[1]).toArray();
+  var arr1 = map.get(keys[0]);
+  var arr2 = map.get(keys[1]);
   
   assertArrayEquals([1, 2, 3, 4], arr1);
   assertArrayEquals([5, 6, 7], arr2);
 };
 
 var testToMapWithElementSelectorAndComparer = function() {
-  var map = pn.seq(arr).toMap(
+  var map = pn.seq.Seq.create(arr).toMap(
       function(o) { return o.key; }, 
       function(o) { return o.value; }, 
       function(a, b) { return a !== null && b !== null; });
       
   var keys = map.getKeys();
   assertEquals(1, keys.length);
-  var arr1 = map.get(keys[0]).toArray();  
+  var arr1 = map.get(keys[0]);  
   
   assertArrayEquals([1, 2, 3, 4, 5, 6, 7], arr1);  
 };

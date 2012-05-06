@@ -8,8 +8,13 @@
 goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
 
+var testIsSeq = function() {
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);  
+  assertTrue(pn.seq.Seq.isSeq_(seq));
+};
+
 var testSimpleAggregation = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   var agg = seq.aggregate(0, function(current, value) {    
     return value + current;
   });
@@ -17,7 +22,7 @@ var testSimpleAggregation = function() {
 };
 
 var testMultipleAggregations = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   var agg = seq.aggregate(0, function(current, value) {    
     return value + current;
   });
@@ -29,7 +34,7 @@ var testMultipleAggregations = function() {
 };
 
 var testSimpleAggregationWithNonZeroSeed = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   var agg = seq.aggregate(10, function(current, value) {
     return value + current;
   });
@@ -37,7 +42,7 @@ var testSimpleAggregationWithNonZeroSeed = function() {
 };
 
 var testWithFinalProjection = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   var agg = seq.aggregate(10, function(current, value) {
     return value + current;
   }, function(x) { return x * 2; });
@@ -45,7 +50,7 @@ var testWithFinalProjection = function() {
 };
 
 var testSeedCannotBeNull = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   try {
     seq.aggregate(null, function(x) { return x; });
     assertFail('Seed cannot be null');
@@ -53,7 +58,7 @@ var testSeedCannotBeNull = function() {
 };
 
 var testAggregateFunctionCannotBeNull = function() {
-  var seq = pn.seq([-1, 1, 2, 3, 4, 5]);
+  var seq = pn.seq.Seq.create([-1, 1, 2, 3, 4, 5]);
   try {
     seq.aggregate(0, null);
     assertFail('Aggregate Function cannot be null');

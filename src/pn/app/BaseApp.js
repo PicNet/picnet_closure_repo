@@ -2,6 +2,7 @@
 goog.require('goog.Disposable');
 goog.require('goog.debug.Logger');
 goog.require('goog.pubsub.PubSub');
+goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.app.schema.Schema');
@@ -15,25 +16,25 @@ goog.provide('pn.app.BaseApp');
 /**
  * This is the main starting point to any pn.app application. Extend this class
  * and implement the following methods:
- * 
+ *
  * getRoutes: Returns a name/callback map that respond to the browser '#' hash
  *   changes and allows for bookmarking and proper history management.
- * 
+ *
  * getUiSpecs: Returns a set of types that implement pn.ui.UiSpec.  These are
  *   specs that leverage the pn.ui package.
- *   
- * getAppEventHandlers: Returns a name/callback map that respond to 
+ *
+ * getAppEventHandlers: Returns a name/callback map that respond to
  *   pn.app.ctx.pub calls.  These events/callbacks are not bookmarkable.
- *   
- * disposeInternal: Dispose any created entity here.  Ensure you call 
+ *
+ * disposeInternal: Dispose any created entity here.  Ensure you call
  *   superClass_.disposeInternal.
- *   
+ *
  * When the application is ready to begin just call the this.initialise method
  *   passing in a pn.app.schema.Schema object describing the data structure.
- *   
+ *
  * If any of the default settings need to be changed just change the appropriate
  *   setting in pn.app.ctx.cfg.
- * 
+ *
  * @constructor
  * @extends {goog.Disposable}
  */

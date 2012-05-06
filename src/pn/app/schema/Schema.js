@@ -29,6 +29,7 @@ pn.app.schema.Schema = function(description) {
 };
 goog.inherits(pn.app.schema.Schema, goog.Disposable);
 
+
 /**
  * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
  *     queried.
@@ -117,6 +118,7 @@ pn.app.schema.Schema.prototype.parseField_ = function(f) {
       f['name'], f['type'], f['allowNull'], f['length']);
 
 };
+
 
 /** @inheritDoc */
 pn.app.schema.Schema.prototype.disposeInternal = function() {

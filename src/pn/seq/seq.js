@@ -2,6 +2,7 @@
 goog.provide('pn.seq.Grouping');
 goog.provide('pn.seq.Lookup');
 goog.provide('pn.seq.OrderedSeq');
+goog.provide('pn.seq');
 goog.provide('pn.seq.Seq');
 
 goog.require('goog.array');
@@ -11,19 +12,23 @@ goog.require('pn.seq.CompoundComparer');
 goog.require('pn.seq.ProjectionComparer');
 goog.require('pn.seq.ReverseComparer');
 
-/** @type {function(!(Array|pn.seq.Seq)):!pn.seq.Seq} */
-pn.seq = function(source) {
-  if (source.select) return source; // Already a sequence
-  goog.object.extend(source, pn.seq.Seq);
-  return /** @type {!pn.seq.Seq} */ (source);
-};
+
 
 /**
+ * @constructor
  * @private
- * @const
- * @type {!pn.seq.Seq}
  */
-pn.seq.Seq.EMPTY_ = pn.seq([]);
+pn.seq.Seq = function() {};
+
+
+
+/**
+ * @constructor
+ * @const {!pn.seq.Seq}
+ * @private
+ */
+pn.seq.Seq.template_ = new pn.seq.Seq();
+
 
 /**
  * @private
@@ -31,9 +36,35 @@ pn.seq.Seq.EMPTY_ = pn.seq([]);
  * @return {Boolean} Wether the specified source or 'this' is a sequence.
  */
 pn.seq.Seq.isSeq_ = function(opt_src) {
+  console.trace();
   var src = opt_src || this;
-  return !!opt_src.select;
+  if (src.select) {
+    console.log('has');
+  } else {
+    console.log('not has');
+  }
+  return !!src.select;
 };
+
+
+/** @type {function(!(Array|pn.seq.Seq)):!pn.seq.Seq} */
+pn.seq.Seq.create = function(source) {
+  if (pn.seq.Seq.isSeq_(source)) return source;
+
+  for (var i in pn.seq.Seq.template_) {
+    if (source[i]) console.log('property ', i, 'already exists.');
+    else source[i] = pn.seq.Seq.template_[i];
+  }
+  return /** @type {!pn.seq.Seq} */ (source);
+};
+
+
+/**
+ * @private
+ * @const
+ * @type {!pn.seq.Seq}
+ */
+pn.seq.Seq.EMPTY_ = pn.seq.Seq.create([]);
 
 /**
  * @private
@@ -77,7 +108,7 @@ pn.seq.Seq.range = function(start, count) {
   var src = [],  
       idx = 0;
   while (true) {
-    if (idx++ >= count) return pn.seq(src);
+    if (idx++ >= count) return pn.seq.Seq.create(src);
     seq.push(start + (idx - 1));
   }
 };
@@ -93,7 +124,7 @@ pn.seq.Seq.range = function(start, count) {
 pn.seq.Seq.repeat = function(element, count) {
   goog.asserts.assert(count >= 0);
 
-  return pn.seq(goog.array.repeat(element, count));
+  return pn.seq.Seq.create(goog.array.repeat(element, count));
 };
 
 
@@ -115,7 +146,7 @@ pn.seq.Seq.prototype.where = function(predicate) {
   if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
   if (!predicate) throw new Error('predicate is required and was not provided');
 
-  return pn.seq(goog.array.filter(this, predicate));  
+  return pn.seq.Seq.create(goog.array.filter(this, predicate));  
 };
 
 
@@ -135,7 +166,7 @@ pn.seq.Seq.prototype.select = function(mutator) {
   if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
   if (!mutator) throw new Error('mutator is required and was not provided');
 
-  return pn.seq(goog.array.map(this, mutator));
+  return pn.seq.Seq.create(goog.array.map(this, mutator));
 };
 
 
@@ -165,7 +196,7 @@ pn.seq.Seq.prototype.concat = function(var_args) {
   var src = [];
   var args = goog.array.clone(argumets);
   goog.array.insertAt(args, this, 0);
-  return pn.seq(goog.array.concat.apply(null, args));
+  return pn.seq.Seq.create(goog.array.concat.apply(null, args));
 };
 
 
@@ -189,7 +220,7 @@ pn.seq.Seq.prototype.selectMany =
   for (var i = 0, len = this.length; i < len; i++) {
     inners.push(opt_resultSelector ? opt_resultSelector(this[i]) : this[i]);
   }
-  return pn.seq(goog.array.concat.apply(null, inners));
+  return pn.seq.Seq.create(goog.array.concat.apply(null, inners));
 };
 
 
@@ -221,7 +252,7 @@ pn.seq.Seq.prototype.all = function(predicate) {
   if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
   if (!predicate) throw new Error('predicate is required and was not provided');
 
-  return pn.seq(goog.array.every(this, predicate));
+  return pn.seq.Seq.create(goog.array.every(this, predicate));
 };
 
 
@@ -325,7 +356,7 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
 
   return this.length > 0 ? 
     this : 
-    pn.seq([goog.isDef(opt_default) ? opt_default : null]);
+    pn.seq.Seq.create([goog.isDef(opt_default) ? opt_default : null]);
 };
 
 
@@ -342,7 +373,10 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
  * @return {*} The aggregated value.
  */
 pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  console.trace();
+  if (!pn.seq.Seq.isSeq_()) {    
+    throw new Error('Source is not a pn.seq.Seq');
+  }
   if (!goog.isDefAndNotNull(seed)) 
     throw new Error('Seed is required and was not provided');
   if (!goog.isDefAndNotNull(accum))
@@ -368,7 +402,7 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
 
   if (!opt_comparer) {
     var distinct = [];  
-    return pn.seq(goog.array.removeDuplicates(this, distinct));
+    return pn.seq.Seq.create(goog.array.removeDuplicates(this, distinct));
   } 
   var filtered = [];
   for (var i = 0, len = this.length; i < len; i++) {
@@ -376,7 +410,7 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
     if (goog.array.indexOf(filtered, o, opt_comparer) >= 0) continue;
     filtered.push(o);
   }
-  return pn.seq(filtered);
+  return pn.seq.Seq.create(filtered);
 };
 
 
@@ -410,7 +444,7 @@ pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
       results.push(o);
     }
   }
-  return pn.seq(results);
+  return pn.seq.Seq.create(results);
 };
 
 
@@ -434,7 +468,7 @@ pn.seq.Seq.prototype.except = function(second, opt_comparer) {
       results.push(o);
     }
   }
-  return pn.seq(results);
+  return pn.seq.Seq.create(results);
 };
 
 
@@ -479,7 +513,7 @@ pn.seq.Seq.prototype.join =
       results.push(resultSelector(outerElement, innerElement));
     });
   });
-  return pn.seq(results);
+  return pn.seq.Seq.create(results);
 };
 
 
@@ -529,7 +563,7 @@ pn.seq.Seq.prototype.groupJoin =
     var key = outKeySelect(outerElement);
     results.push(resultSelector(outerElement, lu.get(key)));
   });
-  return pn.seq(results);
+  return pn.seq.Seq.create(results);
 };
 
 
@@ -565,7 +599,7 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
 
   var idx = goog.array.findIndex(this, predicate);
   if (idx < 0) return pn.seq.Seq.EMPTY_;
-  return pn.seq(goog.array.splice(this, 0, idx + 1));
+  return pn.seq.Seq.create(goog.array.splice(this, 0, idx + 1));
 };
 
 
@@ -583,7 +617,7 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
   var idx = goog.array.findIndex(this, predicate);
   if (idx < 0) return this;
   if (idx === this.length - 1) return pn.seq.Seq.EMPTY_;
-  return pn.seq(goog.array.splice(this, idx, this.length - idx));
+  return pn.seq.Seq.create(goog.array.splice(this, idx, this.length - idx));
 };
 
 
@@ -636,7 +670,7 @@ pn.seq.Seq.prototype.reverse = function() {
   if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
   var rev = goog.array.clone(this);
   rev.reverse();
-  return pn.seq(rev);
+  return pn.seq.Seq.create(rev);
 };
 
 
@@ -735,7 +769,7 @@ pn.seq.Seq.prototype.elementAt = function(index) {
  */
 pn.seq.Seq.prototype.elementAtOrNull = function(index) {
   if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
-  return index >= this.length ? return null : this[index];
+  return index >= this.length ? null : this[index];
 };
 
 
@@ -787,7 +821,7 @@ pn.seq.Seq.prototype.zip = function(second, resultSelector) {
   if (!pn.seq.Seq.isSeq_(second)) throw new Error('second is not a pn.seq.Seq');
   if (!resultSelector) throw new Error('resultSelector is required and was not provided');
 
-  var zipped = pn.seq(goog.array.map(
+  var zipped = pn.seq.Seq.create(goog.array.map(
       goog.array.zip(this, second), resultSelector));
 };
 
@@ -985,7 +1019,7 @@ pn.seq.Lookup.prototype.collapse_ = function() {
   for (var i = 0, limit = this.keys_.length; i < limit; i++) {
     var key = this.keys_[i];
     var arr2 = /** @type {!goog.iter.Iterable} */ (this.map_.get(key));
-    var seq = pn.seq(arr2);
+    var seq = pn.seq.Seq.create(arr2);
     this.map_.set(key, seq);
     arr.push(new pn.seq.Grouping(key, seq));
   }
