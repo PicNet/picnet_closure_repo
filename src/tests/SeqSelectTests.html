@@ -1,0 +1,60 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var setUp = function() {};
+
+var testSimpleSelect = function () {		
+  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.select(function(x) { return x + 1; }); 
+  assertArrayEquals([2, 4, 5, 3, 9, 2], result.toArray()); 
+};
+
+var testMultipleSelects = function () {		
+  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]);   
+  var seq = source.select(function(x) { return x + 1; });  
+  assertEquals('First Count', 6, seq.count()); 
+  assertArrayEquals('First toArray', [2, 4, 5, 3, 9, 2], seq.toArray()); 
+  assertArrayEquals('Second toArray', [2, 4, 5, 3, 9, 2], source.select(function(x) { return x + 1; }).toArray()); 
+  assertEquals('Second Count', 6, seq.count()); 
+  assertEquals('Second Count', 6, seq.count()); 
+};
+
+var testIndexBasedSelect = function () {		
+  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.select(function(x, i) { return x + i; }); 
+  assertArrayEquals([1, 4, 6, 5, 12, 6], result.toArray()); 
+};
+
+var testWhereSelect = function() {
+  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.
+      where(function(x, i) { return i <= 3; }).
+      select(function(x, i) { return x + i; }); 
+  assertArrayEquals([1, 4, 6, 5], result.toArray()); 
+};
+
+var testSelectWhere = function() {
+  var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+  var result = source.      
+      select(function(x, i) { return x + i; }).
+      where(function(x, i) { return i <= 3; });
+  assertArrayEquals([1, 4, 6, 5], result.toArray()); 
+};
+
+var testNullPredicateThrowsError = function() {
+  try { 
+    var source = pn.seq([ 1, 3, 4, 2, 8, 1 ]); 
+    var result = source.select(null); 
+    assertFail('Should not allow null predicate');
+  } catch (ex) {};
+};
+    </script>    
+  </body>
+</html>

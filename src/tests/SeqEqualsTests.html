@@ -1,0 +1,44 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testNullSecondThrows = function() {
+  try {
+    pn.seq([1, 2, 3]).sequenceEquals(null);
+    assertFails('Should fail');   
+  } catch (ex) {}
+};
+
+var testEqualsIsTrueWhenSame = function() {
+  assertTrue(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([1, 2, 3])));  
+};
+
+var testEqualsIsFalseWhenNotSame = function() {
+  assertFalse(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([1, 2, 4])));  
+};
+
+var testEqualsIsTrueWhenSameWithComparer = function() {
+  assertTrue(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([-1, -2, -3]), function(x, y) { return x === -y; }));  
+};
+
+var testMultipleEquals = function() {
+  var seq1 = pn.seq([1, 2, 3]);
+  var seq2 = pn.seq([1, 2, 3]);
+  assertTrue(seq1.sequenceEquals(seq2));  
+  assertTrue(seq1.sequenceEquals(seq2));  
+  assertArrayEquals([1, 2, 3], seq1.toArray());
+  assertArrayEquals([1, 2, 3], seq2.toArray());
+};
+
+var testEqualsIsFalseWhenNotSameWithComparer = function() {
+  assertFalse(pn.seq([1, 2, 3]).sequenceEquals(pn.seq([-1, -2, -4]), function(x, y) { return x === -y; }));  
+};
+    </script>    
+  </body>
+</html>

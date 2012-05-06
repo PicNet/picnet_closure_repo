@@ -1,0 +1,38 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testIfEmptySequenceResultHasOneNullItem = function() {
+  assertArrayEquals([null], pn.seq([]).defaultIfEmpty().toArray());
+};
+
+var testIfEmptyAndDefSpecifiedSequenceResultHasOneSpecifiedItem = function() {
+  assertArrayEquals([1], pn.seq([]).defaultIfEmpty(1).toArray());
+};
+
+var testIfNotEmptySequenceResultIsSame = function() {
+  var arr = [1, 2, 3];
+  assertArrayEquals(arr, pn.seq(arr).defaultIfEmpty().toArray());
+};
+
+var testMultipleIfNotEmptySequences = function() {
+  var arr = [1, 2, 3];
+  var seq = pn.seq(arr);
+  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
+  assertArrayEquals(arr, seq.defaultIfEmpty().toArray());
+};
+
+
+var testIfNotEmptyAndDefSpecifiedSequenceResultIsSame = function() {
+  var arr = [1, 2, 3];
+  assertArrayEquals(arr, pn.seq(arr).defaultIfEmpty(1).toArray());
+};
+    </script>    
+  </body>
+</html>

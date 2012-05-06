@@ -9,7 +9,7 @@ function getAllTests(callback) {
   fs.readdir(__dirname, function(err, files) {
     for (var i = 0, len = files.length; i < len; i++) {
       var f = files[i];
-      if (f.indexOf('.html') > 0 && f !== 'all_tests.html') {        
+      if (f.indexOf('.html') > 0 && f !== 'all_tests.html') {
         tests.push(f);
       }      
     }

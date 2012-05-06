@@ -1,0 +1,46 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn.seq.Seq');
+
+var testContainsReturnsFalseWhenSeqDoesNotContain = function() {
+  assertFalse(pn.seq([1, 2, 3]).contains(0));  
+  assertFalse(pn.seq([1, 2, 3]).contains(4));  
+  assertFalse(pn.seq([1, 2, 3]).contains('1'));  
+};
+
+var testContainsReturnsTrueWhenContains = function() {
+  assertTrue(pn.seq([1, 2, 3]).contains(1));  
+  assertTrue(pn.seq([1, 2, 3]).contains(2));  
+  assertTrue(pn.seq([1, 2, 3]).contains(3));  
+};
+
+var testMultipleContains = function() {
+  var seq = pn.seq([1, 2, 3]);
+  assertTrue(seq.contains(1));  
+  assertTrue(seq.contains(2));  
+  assertTrue(seq.contains(3));  
+};
+
+var testContainsReturnsFalseWhenSeqDoesNotContainWithComparer = function() {
+  var comparer = function(x, y) { return x === -y; };
+  assertFalse(pn.seq([1, 2, 3]).contains(1, comparer));  
+  //assertFalse(pn.seq([1, 2, 3]).contains(3, comparer));  
+  //assertFalse(pn.seq([1, 2, 3]).contains('1', comparer));  
+};
+
+var testContainsReturnsTrueWhenContainsWithComparer = function() {
+  var comparer = function(x, y) { return x === -y; };
+  assertTrue(pn.seq([1, 2, 3]).contains(-1, comparer));  
+  assertTrue(pn.seq([1, 2, 3]).contains(-2, comparer));  
+  assertTrue(pn.seq([1, 2, 3]).contains(-3, comparer));  
+};
+
+    </script>    
+  </body>
+</html>
