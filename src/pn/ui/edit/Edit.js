@@ -92,6 +92,8 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
  * @param {!Object} data The entity to normalize.
  */
 pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
+  // TODO: This code should not be here it should at best be part of the
+  // FieldRenderers.dateRenderer code, but definatelly not here.
   goog.array.forEach(this.getEditableFields_(), function(f) {
     if (f.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) return;
     var date = data[f.id];
@@ -210,6 +212,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       fieldParent = fb.getFieldLabel(f.id, f.name, f.className);
       this.disposables_.push(fieldParent);
+      // TODO: This is quite ugly, this code should be here:
+      // fr.hiddenTextField but not here.
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
       }
@@ -318,8 +322,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
-    return f.id.indexOf('.') < 0 &&
-        !f.readonly && !f.tableType && (f.showOnAdd || !newEntity);
+    return !f.readonly && !f.tableType && (f.showOnAdd || !newEntity);
   });
 };
 

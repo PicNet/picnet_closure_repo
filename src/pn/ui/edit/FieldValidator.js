@@ -11,6 +11,8 @@ goog.provide('pn.ui.edit.FieldValidator');
  */
 pn.ui.edit.FieldValidator.validateFieldValue =
     function(field, value, entity, cache) {
+  if (goog.string.endsWith(field.dataProperty, 'Entities')) { return []; }
+
   var arraytise = function(err, list) {
     if (!err) return list;
     if (goog.isArray(err)) {

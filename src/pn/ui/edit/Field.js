@@ -124,10 +124,12 @@ pn.ui.edit.Field.prototype.extend = function(props) {
   pn.ui.edit.Field.superClass_.extend.call(this, props);
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {
-    if (!this.tableType) {
+    if (!this.tableType && !this.renderer) {
       this.tableType = pn.data.EntityUtils.getTypeProperty(firstStep);
     }
-    if (!this.tableSpec) { this.tableSpec = this.tableType; }
+    if (!this.tableSpec && !this.renderer) {
+      this.tableSpec = this.tableType;
+    }
   }
 
   if (this.tableType && !this.tableParentField) {
@@ -137,6 +139,6 @@ pn.ui.edit.Field.prototype.extend = function(props) {
 };
 
 
-/** @typedef {pn.ui.edit.ComplexRenderer|function(*, Object, !Element):
-              !(Element|goog.ui.Component|Text)} */
+/** @typedef {pn.ui.edit.ComplexRenderer|function(*, Object, !Element,
+    !Object.<!Array>):!(Element|goog.ui.Component|Text)} */
 pn.ui.edit.Field.Renderer;

@@ -85,7 +85,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
       field.renderer.initialise(val, entity, cache, field);
       elem.decorate(parent);
     } else {
-      elem = field.renderer(val, entity, parent);
+      elem = field.renderer(val, entity, parent, cache);
     }
   } else if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
       !field.tableType) {

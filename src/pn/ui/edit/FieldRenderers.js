@@ -164,3 +164,35 @@ pn.ui.edit.FieldRenderers.standardTextSearchField =
   goog.dom.appendChild(parent, txt);
   return txt;
 };
+
+
+/**
+ * @param {string} mappingEntity The many-to-many entity table name.
+ * @param {string} parentIdField The field in the many-to-many table that
+ *    points to the parent entity (not the admin entity).
+ * @param {string} adminEntity The admin entity table name.
+ * @return {!pn.ui.edit.Field.Renderer} The many to many list box renderer.
+ */
+pn.ui.edit.FieldRenderers.createManyToManyRenderer =
+    function(mappingEntity, parentIdField, adminEntity) {
+  var renderer = function(val, entity, parent, cache) {
+    var aebes = goog.array.filter(cache[mappingEntity],
+        function(abrand) {
+          return abrand[parentIdField] === entity['ID'];
+        });
+    var select = goog.dom.createDom('select', {'multiple': 'multiple'});
+    goog.array.forEach(cache[adminEntity], function(b) {
+      var opt = goog.dom.createDom('option', {
+        'text': b[adminEntity + 'Name'],
+        'value': b['ID'],
+        'selected': goog.array.findIndex(aebes, function(aeb) {
+          return b['ID'] === aeb[adminEntity + 'ID'];
+        }) >= 0
+      });
+      select.options.add(opt);
+    });
+    goog.dom.appendChild(parent, select);
+    return select;
+  };
+  return renderer;
+};
