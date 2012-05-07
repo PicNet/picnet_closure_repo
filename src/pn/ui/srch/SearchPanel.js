@@ -336,7 +336,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 
-  this.eh_.listen(remove, goog.events.EventType.CLICK, function() {
+  var removeFilter = goog.bind(function() {
     goog.dom.removeNode(dom);
     var arr = this.filtersControls_[f.id];
     goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
@@ -344,7 +344,10 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     delete this.filtersControls_[f.id];
     goog.style.showElement(option, true);
     this.doSearch_();
-  });
+  }, this);
+
+  this.eh_.listen(input, goog.events.EventType.CHANGE, this.doSearch_);
+  this.eh_.listen(remove, goog.events.EventType.CLICK, removeFilter);
 };
 
 
