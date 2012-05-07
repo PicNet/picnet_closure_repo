@@ -1,8 +1,8 @@
 
+goog.provide('pn.seq');
 goog.provide('pn.seq.Grouping');
 goog.provide('pn.seq.Lookup');
 goog.provide('pn.seq.OrderedSeq');
-goog.provide('pn.seq');
 goog.provide('pn.seq.Seq');
 
 goog.require('goog.array');
@@ -15,39 +15,36 @@ goog.require('pn.seq.ReverseComparer');
 
 
 /**
+ * // TODO: This should really not be public.
  * @constructor
- * @private
  */
 pn.seq.Seq = function() {};
 
 
 
 /**
+ * @private
  * @constructor
  * @const {!pn.seq.Seq}
- * @private
  */
 pn.seq.Seq.template_ = new pn.seq.Seq();
 
 
 /**
  * @private
- * @param  {Object=} opt_src The object to test to see if its a sequence.
- * @return {Boolean} Wether the specified source or 'this' is a sequence.
+ * @param  {Object} src The object to test to see if its a sequence.
+ * @return {Boolean} Wether the specified source is a sequence.
  */
-pn.seq.Seq.isSeq_ = function(opt_src) {
-  console.trace();
-  var src = opt_src || this;
-  if (src.select) {
-    console.log('has');
-  } else {
-    console.log('not has');
-  }
+pn.seq.Seq.isSeq_ = function(src) {
   return !!src.select;
 };
 
 
-/** @type {function(!(Array|pn.seq.Seq)):!pn.seq.Seq} */
+/**
+ * @param {!(Array|pn.seq.Seq)} source The source sequence or array.
+ * @return {!pn.seq.Seq} The original sequence if it is a sequence or the
+ *    created sequence from the specified array.
+ */
 pn.seq.Seq.create = function(source) {
   if (pn.seq.Seq.isSeq_(source)) return source;
 
@@ -65,6 +62,7 @@ pn.seq.Seq.create = function(source) {
  * @type {!pn.seq.Seq}
  */
 pn.seq.Seq.EMPTY_ = pn.seq.Seq.create([]);
+
 
 /**
  * @private
@@ -105,7 +103,7 @@ pn.seq.Seq.range = function(start, count) {
   goog.asserts.assert(start >= 0);
   goog.asserts.assert(count >= 0);
 
-  var src = [],  
+  var src = [],
       idx = 0;
   while (true) {
     if (idx++ >= count) return pn.seq.Seq.create(src);
@@ -143,10 +141,10 @@ pn.seq.Seq.repeat = function(element, count) {
  *    never modified.
  */
 pn.seq.Seq.prototype.where = function(predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!predicate) throw new Error('predicate is required and was not provided');
 
-  return pn.seq.Seq.create(goog.array.filter(this, predicate));  
+  return pn.seq.Seq.create(goog.array.filter(this, predicate));
 };
 
 
@@ -163,7 +161,7 @@ pn.seq.Seq.prototype.where = function(predicate) {
  *    never modified.
  */
 pn.seq.Seq.prototype.select = function(mutator) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!mutator) throw new Error('mutator is required and was not provided');
 
   return pn.seq.Seq.create(goog.array.map(this, mutator));
@@ -178,7 +176,7 @@ pn.seq.Seq.prototype.select = function(mutator) {
  * @return {!number} The length of the sequence.
  */
 pn.seq.Seq.prototype.count = function(opt_predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   return this.length;
 };
@@ -191,7 +189,7 @@ pn.seq.Seq.prototype.count = function(opt_predicate) {
  * @return {!pn.seq.Seq} The concatenated sequences as one sequence.
  */
 pn.seq.Seq.prototype.concat = function(var_args) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var src = [];
   var args = goog.array.clone(argumets);
@@ -212,7 +210,7 @@ pn.seq.Seq.prototype.concat = function(var_args) {
  */
 pn.seq.Seq.prototype.selectMany =
     function(collectionSelector, opt_resultSelector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   goog.asserts.assert(collectionSelector);
 
   var idx = 0;
@@ -234,7 +232,7 @@ pn.seq.Seq.prototype.selectMany =
  *    a condition.
  */
 pn.seq.Seq.prototype.any = function(opt_predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');  
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   if (!opt_predicate) return this.length > 0;
   return goog.array.findIndex(this, opt_predicate) >= 0;
@@ -249,7 +247,7 @@ pn.seq.Seq.prototype.any = function(opt_predicate) {
  * @return {boolean} Whether all elements of a sequence satisfy a condition.
  */
 pn.seq.Seq.prototype.all = function(predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!predicate) throw new Error('predicate is required and was not provided');
 
   return pn.seq.Seq.create(goog.array.every(this, predicate));
@@ -264,7 +262,7 @@ pn.seq.Seq.prototype.all = function(predicate) {
  */
 pn.seq.Seq.prototype.first = function(opt_predicate) {
   var fon = this.firstOrNull(opt_predicate);
-  if (fon === null) throw new Error("No matching element found");
+  if (fon === null) throw new Error('No matching element found');
   return fon;
 };
 
@@ -276,7 +274,7 @@ pn.seq.Seq.prototype.first = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.firstOrNull = function(opt_predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (this.length === 0) throw new Error('Sequence is empty');
 
   if (!opt_predicate) { return this[0]; }
@@ -304,13 +302,13 @@ pn.seq.Seq.prototype.single = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!opt_predicate && this.length === 0) throw new Error('Sequence is empty');
-  if (!opt_predicate && this.length > 1) 
+  if (!opt_predicate && this.length > 1)
     throw new Error('More than a single element matched.');
   var filtered = !opt_predicate ? this : goog.array.filter(this, opt_predicate);
   if (filtered.length > 1) throw new Error('More than an element matched.');
-  
+
   return filtered.length === 0 ? null : filtered[0];
 };
 
@@ -323,7 +321,7 @@ pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.last = function(opt_predicate) {
   var lon = this.lastOrNull(opt_predicate);
-  if (lon === null) throw new Error("No matching element found");
+  if (lon === null) throw new Error('No matching element found');
   return lon;
 };
 
@@ -335,7 +333,7 @@ pn.seq.Seq.prototype.last = function(opt_predicate) {
  *    the predicate. Null if no element is matched.
  */
 pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (this.length === 0) throw new Error('Sequence is empty');
 
   if (!opt_predicate) { return this[0]; }
@@ -352,11 +350,11 @@ pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
  * @return {!pn.seq.Seq} The modified sequence.
  */
 pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
-  return this.length > 0 ? 
-    this : 
-    pn.seq.Seq.create([goog.isDef(opt_default) ? opt_default : null]);
+  return this.length > 0 ?
+      this :
+      pn.seq.Seq.create([goog.isDef(opt_default) ? opt_default : null]);
 };
 
 
@@ -374,10 +372,10 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
  */
 pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
   console.trace();
-  if (!pn.seq.Seq.isSeq_()) {    
+  if (!pn.seq.Seq.isSeq_(this)) {
     throw new Error('Source is not a pn.seq.Seq');
   }
-  if (!goog.isDefAndNotNull(seed)) 
+  if (!goog.isDefAndNotNull(seed))
     throw new Error('Seed is required and was not provided');
   if (!goog.isDefAndNotNull(accum))
     throw new Error('Accumulattor is required and was not provided');
@@ -398,12 +396,12 @@ pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
  * @return {!pn.seq.Seq} The modified sequence.
  */
 pn.seq.Seq.prototype.distinct = function(opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   if (!opt_comparer) {
-    var distinct = [];  
+    var distinct = [];
     return pn.seq.Seq.create(goog.array.removeDuplicates(this, distinct));
-  } 
+  }
   var filtered = [];
   for (var i = 0, len = this.length; i < len; i++) {
     var o = this[i];
@@ -422,7 +420,7 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
  * @return {!pn.seq.Seq} The union of the two sequences.
  */
 pn.seq.Seq.prototype.union = function(second, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   return this.concat(second).distinct(opt_comparer);
 };
 
@@ -435,7 +433,7 @@ pn.seq.Seq.prototype.union = function(second, opt_comparer) {
  * @return {!pn.seq.Seq} The intersection of the two sequences.
  */
 pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!second) throw new Error('second is required and was not provided');
   var results = [];
   for (var i = 0, len = this.length; i < len; i++) {
@@ -456,10 +454,10 @@ pn.seq.Seq.prototype.intersect = function(second, opt_comparer) {
  * @return {!pn.seq.Seq} The difference of the two sequences.
  */
 pn.seq.Seq.prototype.except = function(second, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!second) throw new Error('second is required and was not provided');
 
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!second) throw new Error('second is required and was not provided');
   var results = [];
   for (var i = 0, len = this.length; i < len; i++) {
@@ -483,10 +481,11 @@ pn.seq.Seq.prototype.except = function(second, opt_comparer) {
  */
 pn.seq.Seq.prototype.toLookup =
     function(keySelector, opt_elementSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!keySelector) throw new Error('keySelector was not provided');
 
-  return new pn.seq.Lookup(this.source_, keySelector, opt_elementSelector, opt_comparer);
+  return new pn.seq.Lookup(
+      this.source_, keySelector, opt_elementSelector, opt_comparer);
 };
 
 
@@ -503,7 +502,8 @@ pn.seq.Seq.prototype.toLookup =
  */
 pn.seq.Seq.prototype.join =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  this.joinValidate_(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
+  this.joinValidate_(
+      inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
 
   var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
   var results = [];
@@ -529,9 +529,12 @@ pn.seq.Seq.prototype.join =
  */
 pn.seq.Seq.prototype.groupBy =
     function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
-  if (!keySelect) throw new Error('keySelect is required and was not provided');
-  if (!elementSelect) throw new Error('elementSelect is required and was not provided');
+  if (!pn.seq.Seq.isSeq_(this))
+    throw new Error('Source is not a pn.seq.Seq');
+  if (!keySelect)
+    throw new Error('keySelect is required and was not provided');
+  if (!elementSelect)
+    throw new Error('elementSelect is required and was not provided');
 
   var lu = this.toLookup(keySelect, elementSelect, opt_comparer);
   return lu.select(function(group) {
@@ -554,7 +557,8 @@ pn.seq.Seq.prototype.groupBy =
  */
 pn.seq.Seq.prototype.groupJoin =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  this.joinValidate_(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
+  this.joinValidate_(
+      inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
 
   var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
   var results = [];
@@ -568,6 +572,7 @@ pn.seq.Seq.prototype.groupJoin =
 
 
 /**
+ * @private
  * @param {!pn.seq.Seq} inner The sequence to join to the first sequence.
  * @param {!function(*):*} outKeySelect The key of each element in the
  *    outer seq.
@@ -577,13 +582,14 @@ pn.seq.Seq.prototype.groupJoin =
  */
 pn.seq.Seq.prototype.joinValidate_ =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!pn.seq.Seq.isSeq_(inner)) throw new Error('inner is not a pn.seq.Seq');
-
-  if (!inner) throw new Error('inner is required and was not provided');
-  if (!outKeySelect) throw new Error('outKeySelect is required and was not provided');
-  if (!inKeySelect) throw new Error('inKeySelect is required and was not provided');
-  if (!resultSelector) throw new Error('resultSelector is required and was not provided');  
+  if (!outKeySelect)
+    throw new Error('outKeySelect is required and was not provided');
+  if (!inKeySelect)
+    throw new Error('inKeySelect is required and was not provided');
+  if (!resultSelector)
+    throw new Error('resultSelector is required and was not provided');
 };
 
 
@@ -595,7 +601,7 @@ pn.seq.Seq.prototype.joinValidate_ =
  */
 pn.seq.Seq.prototype.takeWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is required and was not provided');
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var idx = goog.array.findIndex(this, predicate);
   if (idx < 0) return pn.seq.Seq.EMPTY_;
@@ -611,9 +617,9 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
  */
 pn.seq.Seq.prototype.skipWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is required and was not provided');
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
-  var inverted = function(e, idx) { return !predicate(e, idx); };  
+  var inverted = function(e, idx) { return !predicate(e, idx); };
   var idx = goog.array.findIndex(this, predicate);
   if (idx < 0) return this;
   if (idx === this.length - 1) return pn.seq.Seq.EMPTY_;
@@ -628,7 +634,7 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
  * @return {!pn.seq.Seq} The sequence.
  */
 pn.seq.Seq.prototype.take = function(count) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!goog.isNumber(count) || count < 0)
     throw new Error('count is required and was not provided');
 
@@ -648,6 +654,7 @@ pn.seq.Seq.prototype.skip = function(count) {
   return this.skipWhile(function(e, idx) { return idx < count; });
 };
 
+
 /**
  * @param {function(*):*!} keySelector The key selector.
  * @param {function(*):*=} opt_elemSelector The optional element selector.
@@ -656,7 +663,7 @@ pn.seq.Seq.prototype.skip = function(count) {
  */
 pn.seq.Seq.prototype.toMap =
     function(keySelector, opt_elemSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   return this.toLookup(keySelector, opt_elemSelector, opt_comparer).getMap();
 };
@@ -667,7 +674,7 @@ pn.seq.Seq.prototype.toMap =
  * @return {!pn.seq.Seq} The reversed sequence.
  */
 pn.seq.Seq.prototype.reverse = function() {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   var rev = goog.array.clone(this);
   rev.reverse();
   return pn.seq.Seq.create(rev);
@@ -681,7 +688,7 @@ pn.seq.Seq.prototype.reverse = function() {
  * @return {number} The aggregate amount.
  */
 pn.seq.Seq.prototype.sum = function(opt_selector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   return /** @type {number} */ (this.aggregate(0, function(tot, curr) {
     var i = opt_selector ? opt_selector(curr) : curr;
@@ -697,7 +704,7 @@ pn.seq.Seq.prototype.sum = function(opt_selector) {
  * @return {number} The aggregate amount.
  */
 pn.seq.Seq.prototype.average = function(opt_selector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var acumm = {sum: 0, count: 0};
   this.aggregate(acumm, function(tot, curr) {
@@ -717,7 +724,7 @@ pn.seq.Seq.prototype.average = function(opt_selector) {
  * @return {number} The aggregate amount.
  */
 pn.seq.Seq.prototype.min = function(opt_selector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var min = 0;
   for (var i = 0, len = this.length; i < len; i++) {
@@ -737,7 +744,7 @@ pn.seq.Seq.prototype.min = function(opt_selector) {
  * @return {number} The aggregate amount.
  */
 pn.seq.Seq.prototype.max = function(opt_selector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var max = 0;
   for (var i = 0, len = this.length; i < len; i++) {
@@ -756,7 +763,7 @@ pn.seq.Seq.prototype.max = function(opt_selector) {
  * @return {*} The element at the given index.
  */
 pn.seq.Seq.prototype.elementAt = function(index) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   return this[index];
 };
 
@@ -768,7 +775,7 @@ pn.seq.Seq.prototype.elementAt = function(index) {
  * @return {*} The element at the given index.
  */
 pn.seq.Seq.prototype.elementAtOrNull = function(index) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   return index >= this.length ? null : this[index];
 };
 
@@ -780,7 +787,7 @@ pn.seq.Seq.prototype.elementAtOrNull = function(index) {
  * @return {boolean} Wether the specified value was found in the sequence.
  */
 pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var comparer = function(e) {
     return opt_comparer ?
@@ -803,7 +810,7 @@ pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
  * @return {boolean} Wether the sequences are equal.
  */
 pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');  
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!second) throw new Error('second is required and was not provided');
   return goog.array.equals(this, second, opt_comparer);
 };
@@ -817,11 +824,14 @@ pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
  * @return {!pn.seq.Seq} The resulting sequence with items 'zipped'.
 */
 pn.seq.Seq.prototype.zip = function(second, resultSelector) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
-  if (!pn.seq.Seq.isSeq_(second)) throw new Error('second is not a pn.seq.Seq');
-  if (!resultSelector) throw new Error('resultSelector is required and was not provided');
+  if (!pn.seq.Seq.isSeq_(this))
+    throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(second))
+    throw new Error('second is not a pn.seq.Seq');
+  if (!resultSelector)
+    throw new Error('resultSelector is required and was not provided');
 
-  var zipped = pn.seq.Seq.create(goog.array.map(
+  return pn.seq.Seq.create(goog.array.map(
       goog.array.zip(this, second), resultSelector));
 };
 
@@ -832,7 +842,7 @@ pn.seq.Seq.prototype.zip = function(second, resultSelector) {
  * @return {!pn.seq.OrderedSeq} The ordered sequence.
  */
 pn.seq.Seq.prototype.orderBy = function(keySelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   return this.orderByImpl_(keySelector, false, opt_comparer);
 };
@@ -844,7 +854,7 @@ pn.seq.Seq.prototype.orderBy = function(keySelector, opt_comparer) {
  * @return {!pn.seq.OrderedSeq} The ordered sequence.
  */
 pn.seq.Seq.prototype.orderByDescending = function(keySelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   return this.orderByImpl_(keySelector, true, opt_comparer);
 };
@@ -859,7 +869,7 @@ pn.seq.Seq.prototype.orderByDescending = function(keySelector, opt_comparer) {
  */
 pn.seq.Seq.prototype.orderByImpl_ =
     function(keySelector, descending, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   if (!keySelector) throw new Error('keySelector was not provided');
 
   var comparer = opt_comparer || pn.seq.Seq.defaultComparer_;
@@ -876,9 +886,10 @@ pn.seq.Seq.prototype.orderByImpl_ =
  *    each item in the sequence.
  */
 pn.seq.Seq.prototype.forEach = function(evaluator) {
-  if (!pn.seq.Seq.isSeq_()) throw new Error('Source is not a pn.seq.Seq');
+  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   goog.array.forEach(this, evaluator);
 };
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1051,7 +1062,9 @@ pn.seq.Lookup.prototype.indexOfKey_ = function(key) {
 /**
  * @return {!Array.<*>} The array of keys the lookup contains.
  */
-pn.seq.Lookup.prototype.getKeys = function() { return goog.array.clone(this.keys_); };
+pn.seq.Lookup.prototype.getKeys = function() {
+  return goog.array.clone(this.keys_);
+};
 
 
 /**
@@ -1110,7 +1123,8 @@ pn.seq.Lookup.prototype.getMap = function() { return this.map_; };
  * @constructor
  * @extends {pn.seq.Seq}
  * @param {*} key The key of this group.
- * @param {!goog.iter.Iterable|!pn.seq.Seq} iter The iterable sequence in this group.
+ * @param {!goog.iter.Iterable|!pn.seq.Seq} iter The iterable sequence
+ *    in this group.
  */
 pn.seq.Grouping = function(key, iter) {
   pn.seq.Seq.call(this, iter);
