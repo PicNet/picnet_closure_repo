@@ -83,6 +83,12 @@ pn.app.Router.prototype.back = function() {
 };
 
 
+/** @return {string} the top of the history stack (if any). */
+pn.app.Router.prototype.pop = function() {
+  return this.historyStack_.pop();
+};
+
+
 /**
  * @param {!string} path The full route path to navigate to.
  * @param {boolean=} opt_add Wether to add the path to the history stack.

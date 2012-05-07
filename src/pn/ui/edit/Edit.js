@@ -115,7 +115,11 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
     var orig = this.data_[f.dataProperty];
     var curr = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
 
-    if ((curr === '0' || !curr) && (orig === '0' || !orig)) { return false; }
+    var isFalseEquivalunt = function(val) {
+      return !val || val === '0' || val === 'false';
+    };
+    // Handle tricky falsies
+    if (isFalseEquivalunt(curr) && isFalseEquivalunt(orig)) { return false; }
 
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
     // differenctly adding a keycode 13,10 rather than just 10
