@@ -96,7 +96,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
   } else {
-    elem = goog.dom.createDom('input', { 'type': 'text', 'value': val || '' });
+    val = goog.isDef(val) ? val : '';
+    elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
     goog.dom.appendChild(parent, elem);
   }
   return elem;
@@ -114,7 +115,6 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
     function(field, cache, entity) {
   var steps = field.displayPath.split('.');
   var entityType = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
-  var textField = steps[steps.length - 1];
 
   var list = cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +
