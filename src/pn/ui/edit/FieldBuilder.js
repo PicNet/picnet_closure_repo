@@ -74,7 +74,6 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   }
 
   var elem;
-
   if (field.renderer) {
     if (field.displayPath) {
       var path = field.displayPath;

@@ -73,8 +73,25 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.ReadOnlyFields.textField = function(val, entity, parent) {
+  if (!val) val = '';
+  if (goog.isString(val)) {
+    val = pn.ui.edit.ReadOnlyFields.toHtmlText(val);
+  }
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DEFAULT;
   return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+};
+
+
+/**
+ * @param {string} text The text to replace any new lines and tabs with html
+ *    equivalents.
+ * @return {string} The html representation of the server side text.
+ */
+pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
+  goog.asserts.assert(goog.isString(text));
+  return text.
+      replace(/\n/g, '<br/>').
+      replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 };
 
 

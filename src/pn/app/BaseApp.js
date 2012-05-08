@@ -106,21 +106,6 @@ pn.app.BaseApp.prototype.initialise = function(schema) {
 
 
 /**
- * A template method used to get all required routes.  This method should
- *    return a routes map in the format:
- *    {
- *      'route-name1': callback1,
- *      'route-name2': callback2
- *    }
- * The first route is considered the default route.
- *
- * @return {!Object.<!Function>} The routes for this application. The first
- *    route is considered the default route.
- */
-pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
-
-
-/**
  * A template method used to get all required UiSpecs.  This method should
  *    return an array with types such as:
  *    [
@@ -132,6 +117,24 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  *    application. The first route is considered the default route.
  */
 pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
+
+
+/**
+ * A template method used to get all required routes.  This method should
+ *    return a routes map in the format:
+ *    {
+ *      'route-name1': callback1,
+ *      'route-name2': callback2
+ *    }
+ * The first route is considered the default route.
+ *
+ * To navigate to a rounte simple call
+ *    pn.app.ctx.router.navigate('path/including/args')
+ *
+ * @return {!Object.<!Function>} The routes for this application. The first
+ *    route is considered the default route.
+ */
+pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
 
 
 /**
