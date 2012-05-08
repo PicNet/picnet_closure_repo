@@ -10,7 +10,7 @@ pn.ui.edit.ValidateInfo = function() {
   this.required = true;
 
   /** @type {number} */
-  this.minLength = 1;
+  this.minLength = 0;
 
   /** @type {number} */
   this.maxLength = 0;
@@ -84,7 +84,7 @@ pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
       pn.ui.edit.FieldRenderers.yesNoRenderer;
   var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
 
-  if (!goog.isDefAndNotNull(val) || isEmptyParentOrYesNo) {
+  if (!goog.isDefAndNotNull(val) || val === '' || isEmptyParentOrYesNo) {
     return this.required ? field.name + ' is required.' : '';
   }
 
