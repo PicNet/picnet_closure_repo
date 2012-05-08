@@ -192,7 +192,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var useTemplate = !!this.cfg_.template,
       focusSet = !this.cfg_.autoFocus,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
-      newEntity = !this.data_['ID'];
+      newEntity = this.data_['ID'] <= 0;
 
   if (fieldset) {
     this.disposables_.push(fieldset);
@@ -320,7 +320,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<pn.ui.edit.Field>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  var newEntity = !this.data_['ID'];
+  var newEntity = this.data_['ID'] <= 0;
   return goog.array.filter(this.fields_, function(f) {
     return !f.readonly && !f.tableType && (f.showOnAdd || !newEntity);
   });
@@ -339,7 +339,7 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
-  if (this.data_['ID']) {
+  if (this.data_['ID'] > 0) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
   this.cfg_.interceptor.postInit();

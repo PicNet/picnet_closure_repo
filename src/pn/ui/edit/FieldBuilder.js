@@ -62,7 +62,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache) {
   var fb = pn.ui.edit.FieldBuilder;
-  var useDefault = !entity['ID'] && field.defaultValue;
+  var useDefault = entity['ID'] <= 0 && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
   if (useDefault && field.dataProperty !== 'ID' &&
       goog.string.endsWith(field.dataProperty, 'ID')) {
@@ -89,8 +89,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   } else if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
       !field.tableType) {
     elem = field.readonly ?
-        fb.createReadOnlyParentEntitySelect(field, cache, entity) :
-        fb.createParentEntitySelect(field, cache, entity);
+        fb.createReadOnlyParentEntitySelect_(field, cache, entity) :
+        fb.createParentEntitySelect_(field, cache, val);
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
@@ -104,14 +104,15 @@ pn.ui.edit.FieldBuilder.createAndAttach =
 
 
 /**
+ * @private
  * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity.
+ * @param {number} val The selected value.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect =
-    function(field, cache, entity) {
+pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
+    function(field, cache, val) {
   var steps = field.displayPath.split('.');
   var entityType = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
 
@@ -119,7 +120,6 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var selTxt = 'Select ' + field.name + ' ...';
-  var id = entity[steps[0]];
   steps.shift();
   var path = steps.join('.');
   list = goog.array.map(list, function(e) {
@@ -128,7 +128,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
       'Name': pn.data.EntityUtils.getEntityDisplayValue(cache, path, e)
     };
   });
-  return pn.ui.edit.FieldBuilder.createDropDownList(selTxt, list, id);
+  return pn.ui.edit.FieldBuilder.createDropDownList(selTxt, list, val);
 };
 
 
@@ -136,13 +136,12 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
  * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity.
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createSearchParentFilter =
-    function(field, cache, entity) {
+    function(field, cache) {
   var sel = pn.ui.edit.FieldBuilder.
-      createParentEntitySelect(field, cache, entity);
+      createParentEntitySelect_(field, cache, 0);
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
@@ -150,13 +149,14 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter =
 
 
 /**
+ * @private
  * @param {!pn.ui.BaseField} field The field/column to create a
  *    dom tree for.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @param {!Object} entity The current entity.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect =
+pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
     function(field, cache, entity) {
   var path = field.displayPath;
   var val = pn.data.EntityUtils.
@@ -231,7 +231,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
     function(field, parent, entity, cache) {
   goog.asserts.assert(entity);
   goog.asserts.assert(field.tableType);
-  goog.asserts.assert(entity['ID'], 'Entity not saved.');
+  goog.asserts.assert(entity['ID'] > 0, 'Entity not saved.');
 
   var parentId = entity['ID'];
 
