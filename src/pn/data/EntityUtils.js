@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.data.EntityUtils');
 
+
 /**
  * @param {!Object} entity The entity to check for newness.
  * @return {boolean} Wether the specified entity is new.
@@ -8,6 +9,7 @@ goog.provide('pn.data.EntityUtils');
 pn.data.EntityUtils.isNew = function(entity) {
   return entity['ID'] <= 0;
 };
+
 
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.

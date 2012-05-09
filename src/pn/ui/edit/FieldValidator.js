@@ -32,6 +32,10 @@ pn.ui.edit.FieldValidator.validateFieldValue =
   };
 
   var errors = pn.app.ctx.schema.getValidationErrors(field, value);
+  // Always return schema issues before checking other errors as other
+  // validations may conflic or duplicate these errors.
+  if (errors.length) { return errors; }
+
   // TODO: See if we can replace this with instanceof pn.ui.edit.ComplexRenderer
   if (!field.validator && field.renderer && field.renderer.validate) {
     // ComplexRenderer

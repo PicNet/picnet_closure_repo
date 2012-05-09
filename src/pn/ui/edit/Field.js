@@ -55,7 +55,7 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
   this.validator = null;
 
   /**
-   * If the pn.data.EntityUtils.isNew(entity) then any showOnAdd=false 
+   * If the pn.data.EntityUtils.isNew(entity) then any showOnAdd=false
    *    fields will not be shown.
    *
    * @type {boolean}
