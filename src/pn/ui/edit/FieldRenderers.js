@@ -131,7 +131,7 @@ pn.ui.edit.FieldRenderers.yesNoRenderer =
 pn.ui.edit.FieldRenderers.textAreaRenderer =
     function(val, entity, parent) {
   var textarea = goog.dom.createDom('textarea',
-      {'rows': '5', 'value': val || ''});
+      {'rows': '5', 'cols': '34' , 'value': val || ''});
   goog.dom.appendChild(parent, textarea);
   return textarea;
 };
@@ -180,8 +180,8 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
         function(abrand) {
           return abrand[parentIdField] === entity['ID'];
         });
-    var adminIDs = goog.array.map(manyToManys, function(mm) { 
-      return mm[adminEntity + 'ID']; 
+    var adminIDs = goog.array.map(manyToManys, function(mm) {
+      return mm[adminEntity + 'ID'];
     });
     // TODO: Set the value in the dataProperty of the field so that dirty
     // checking handles fields with many to many lists.

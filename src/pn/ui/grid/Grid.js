@@ -202,7 +202,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     }, this);
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
-  var width = pn.dom.getComputedPixelWidth(/** @type {!Element} */ (element));
+  var width = $(element).width();
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
@@ -291,7 +291,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
   // Selecting
-  if (!this.cfg_.readonly && this.commands_.length) {
+  if (!this.cfg_.readonly) {
     if (this.cfg_.allowEdit) {
       this.slick_.setSelectionModel(new Slick.RowSelectionModel());
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
