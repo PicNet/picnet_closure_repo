@@ -192,7 +192,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var useTemplate = !!this.cfg_.template,
       focusSet = !this.cfg_.autoFocus,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
-      newEntity = this.data_['ID'] <= 0;
+      newEntity = pn.data.EntityUtils.isNew(this.data_);
 
   if (fieldset) {
     this.disposables_.push(fieldset);
@@ -203,8 +203,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     // Do not do child tables on new entities
     var fieldParent = useTemplate ? pn.dom.getElement(f.id) : fieldset;
 
-    var isChildTable = f.tableType;
-    if (newEntity && (isChildTable || !f.showOnAdd)) {
+    if (newEntity && !f.showOnAdd) {
       goog.style.showElement(fieldParent, false);
       return;
     }
@@ -320,7 +319,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<pn.ui.edit.Field>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  var newEntity = this.data_['ID'] <= 0;
+  var newEntity = pn.data.EntityUtils.isNew(this.data_);
   return goog.array.filter(this.fields_, function(f) {
     return !f.readonly && !f.tableType && (f.showOnAdd || !newEntity);
   });
@@ -339,9 +338,7 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
-  if (this.data_['ID'] > 0) {
-    goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
-  }
+  goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   this.cfg_.interceptor.postInit();
 };
 
@@ -351,8 +348,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  * @param {pn.ui.edit.Field} field The field to attach events to.
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
-  var table = field.tableType;
-  if (!table || field.readonly) return;
+  if (!field.tableType || field.readonly) return;
 
   var grid = this.inputs_[field.id];
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {

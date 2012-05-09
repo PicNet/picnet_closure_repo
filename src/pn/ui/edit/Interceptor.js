@@ -64,7 +64,7 @@ pn.ui.edit.Interceptor.prototype.init =
   this.fields = fields;
   this.commands = commands;
 
-  if (this.entity['ID'] <= 0) {
+  if (pn.data.EntityUtils.isNew(this.entity)) {
     this.showCommand('Delete', false);
     this.showCommand('Clone', false);
   }

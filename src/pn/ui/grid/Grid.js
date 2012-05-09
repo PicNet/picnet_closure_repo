@@ -202,7 +202,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     }, this);
   }
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
-  var width = $(element).width();
+  var width = pn.dom.getComputedPixelWidth(element);
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',

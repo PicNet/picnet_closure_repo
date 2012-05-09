@@ -62,7 +62,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache) {
   var fb = pn.ui.edit.FieldBuilder;
-  var useDefault = entity['ID'] <= 0 && field.defaultValue;
+  var useDefault = pn.data.EntityUtils.isNew(entity) && field.defaultValue;
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
   if (useDefault && field.dataProperty !== 'ID' &&
       goog.string.endsWith(field.dataProperty, 'ID')) {
@@ -231,7 +231,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
     function(field, parent, entity, cache) {
   goog.asserts.assert(entity);
   goog.asserts.assert(field.tableType);
-  goog.asserts.assert(entity['ID'] > 0, 'Entity not saved.');
+  goog.asserts.assert(entity['ID'] != 0);
 
   var parentId = entity['ID'];
 
