@@ -176,17 +176,23 @@ pn.ui.edit.FieldRenderers.standardTextSearchField =
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity) {
   var renderer = function(val, entity, parent, cache) {
-    var aebes = goog.array.filter(cache[mappingEntity],
+    var manyToManys = goog.array.filter(cache[mappingEntity],
         function(abrand) {
           return abrand[parentIdField] === entity['ID'];
         });
+    var adminIDs = goog.array.map(manyToManys, function(mm) { 
+      return mm[adminEntity + 'ID']; 
+    });
+    // TODO: Set the value in the dataProperty of the field so that dirty
+    // checking handles fields with many to many lists.
+    entity[mappingEntity + 'Entities'] = adminIDs;
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
-    goog.array.forEach(cache[adminEntity], function(b) {
+    goog.array.forEach(cache[adminEntity], function(ae) {
       var opt = goog.dom.createDom('option', {
-        'text': b[adminEntity + 'Name'],
-        'value': b['ID'],
-        'selected': goog.array.findIndex(aebes, function(aeb) {
-          return b['ID'] === aeb[adminEntity + 'ID'];
+        'text': ae[adminEntity + 'Name'],
+        'value': ae['ID'],
+        'selected': goog.array.findIndex(adminIDs, function(adminID) {
+          return ae['ID'] === adminID;
         }) >= 0
       });
       select.options.add(opt);
