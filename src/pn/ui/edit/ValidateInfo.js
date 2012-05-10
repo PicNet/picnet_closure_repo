@@ -83,8 +83,10 @@ pn.ui.edit.ValidateInfo.prototype.validateField = function(field, val) {
   var isYesNoRenderer = field.renderer ===
       pn.ui.edit.FieldRenderers.yesNoRenderer;
   var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
-
-  if (!goog.isDefAndNotNull(val) || val === '' || isEmptyParentOrYesNo) {
+  var isNullDate = field.renderer ===
+      pn.ui.edit.FieldRenderers.dateRenderer && val === 0;
+  if (!goog.isDefAndNotNull(val) || val === '' ||
+      isEmptyParentOrYesNo || isNullDate) {
     return this.required ? field.name + ' is required.' : '';
   }
 
