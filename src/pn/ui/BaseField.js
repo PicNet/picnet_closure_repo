@@ -69,7 +69,7 @@ pn.ui.BaseField = function(id, entitySpec, opt_name) {
    * The source entity type(s) path for the display of this field. This is an
    *    intelligent path to the source entity.  For instance:
    *    displayPath: 'Parent.GrandParent.GrandParentName' is a valid path.
-   *    displayPath: 'Parent.ChildrenEntities.ChildEntityName' should also be
+   *    displayPath: 'Parent.ChildrenEntities.ChildEntityName' is also be
    *      supported.
    *
    *    If the displayPath ends with ID then we will append a path step to the
@@ -115,7 +115,8 @@ pn.ui.BaseField.prototype.extend = function(props) {
   }
 
   if (!this.dataProperty) { this.dataProperty = steps[0]; }
-  if (!this.displayPath) {
+  if (!this.displayPath &&
+      pn.data.EntityUtils.isRelationshipProperty(steps[0])) {
     this.displayPath = this.id;
     var last = steps[steps.length - 1];
     var type = pn.data.EntityUtils.getTypeProperty(last);

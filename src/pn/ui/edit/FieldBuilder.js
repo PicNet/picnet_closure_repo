@@ -62,17 +62,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache) {
   var fb = pn.ui.edit.FieldBuilder;
-  var useDefault = pn.data.EntityUtils.isNew(entity) && field.defaultValue;
-  var val = useDefault ? field.defaultValue : entity[field.dataProperty];
-  if (useDefault && field.dataProperty !== 'ID' &&
-      goog.string.endsWith(field.dataProperty, 'ID')) {
-    var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
-    var list = cache[type];
-    val = goog.array.find(list, function(e) {
-      return e[type + 'Name'] === field.defaultValue;
-    })['ID'];
-  }
-
+  var val = fb.transEntityToFieldValue(field, entity, cache);
   var elem;
   if (field.renderer) {
     if (field.displayPath) {
@@ -90,7 +80,7 @@ pn.ui.edit.FieldBuilder.createAndAttach =
       !field.tableType) {
     elem = field.readonly ?
         fb.createReadOnlyParentEntitySelect_(field, cache, entity) :
-        fb.createParentEntitySelect_(field, cache, val);
+        fb.createParentEntitySelect_(field, cache, /** @type {number} */ (val));
     goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
@@ -100,6 +90,28 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     goog.dom.appendChild(parent, elem);
   }
   return elem;
+};
+
+
+/**
+ * @param {!pn.ui.edit.Field} field The field spec to determine the field UI
+ *    control appropriate value for.
+ * @param {!Object} entity The entity being displayed.
+ * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @return {*} The UI control appropriate value.
+ */
+pn.ui.edit.FieldBuilder.transEntityToFieldValue =
+    function(field, entity, cache) {
+  var useDefault = pn.data.EntityUtils.isNew(entity) && !!field.defaultValue;
+  var val = useDefault ? field.defaultValue : entity[field.dataProperty];
+  if (useDefault && pn.data.EntityUtils.isParentProperty(field.dataProperty)) {
+    var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
+    var list = cache[type];
+    val = goog.array.find(list, function(e) {
+      return e[type + 'Name'] === field.defaultValue;
+    })['ID'];
+  }
+  return val;
 };
 
 

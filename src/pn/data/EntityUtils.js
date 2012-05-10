@@ -122,6 +122,21 @@ pn.data.EntityUtils.getTypeProperty = function(property) {
 
 /**
  * @param {string} property The entity property to check if it points to a
+ *    parent or child relationship field.
+ * @return {boolean} Wether the specified property is a parent or child
+ *    property.
+ */
+pn.data.EntityUtils.isRelationshipProperty = function(property) {
+  goog.asserts.assert(property);
+
+  return property !== 'ID' &&
+      (goog.string.endsWith(property, 'ID') ||
+      goog.string.endsWith(property, 'Entities'));
+};
+
+
+/**
+ * @param {string} property The entity property to check if it points to a
  *    parent relationship field.
  * @return {boolean} Wether the specified property is a parent property.
  */

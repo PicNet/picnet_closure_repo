@@ -114,14 +114,15 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 
   return goog.array.findIndex(this.getEditableFields_(), function(f) {
     if (!this.cfg_.interceptor.isShown(f.id)) { return false; }
-    var orig = this.data_[f.dataProperty];
-    var curr = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    var fb = pn.ui.edit.FieldBuilder;
+    var orig = fb.transEntityToFieldValue(f, this.data_, this.cache_);
+    var curr = fb.getFieldValue(this.inputs_[f.id]);
 
-    var isFalseEquivalunt = function(val) {
+    var isFalseEquivalent = function(val) {
       return !val || val === '0' || val === 'false';
     };
     // Handle tricky falsies
-    if (isFalseEquivalunt(curr) && isFalseEquivalunt(orig)) { return false; }
+    if (isFalseEquivalent(curr) && isFalseEquivalent(orig)) { return false; }
 
     // goog.string.canonicalizeNewlines required for IE7 which handles newlines
     // differenctly adding a keycode 13,10 rather than just 10
