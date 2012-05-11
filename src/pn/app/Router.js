@@ -2,6 +2,7 @@
 goog.provide('pn.app.Router');
 
 goog.require('goog.History');
+goog.require('goog.asserts');
 goog.require('goog.events.EventHandler');
 goog.require('goog.history.EventType');
 goog.require('pn.log');
@@ -11,15 +12,12 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Object.<function(?):undefined>} routes The registered routes.
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
  * @param {boolean=} opt_invisible True to use hidden history states instead
  *    of the user-visible location hash.
  */
-pn.app.Router = function(routes, opt_defaultRoute, opt_invisible) {
-  goog.asserts.assert(routes);
-
+pn.app.Router = function(opt_defaultRoute, opt_invisible) {
   goog.Disposable.call(this);
 
   /**
@@ -30,15 +28,15 @@ pn.app.Router = function(routes, opt_defaultRoute, opt_invisible) {
 
   /**
    * @private
-   * @type {!Object.<function(?):undefined>}
+   * @type {Object.<function(?):undefined>}
    */
-  this.routes_ = routes;
+  this.routes_ = null;
 
   /**
    * @private
    * @type {!string}
    */
-  this.defaultRoute_ = opt_defaultRoute || goog.object.getKeys(this.routes_)[0];
+  this.defaultRoute_ = opt_defaultRoute || '';
 
   /**
    * @private
@@ -67,8 +65,18 @@ pn.app.Router = function(routes, opt_defaultRoute, opt_invisible) {
 goog.inherits(pn.app.Router, goog.Disposable);
 
 
-/** Enable the router and parse the first history token */
-pn.app.Router.prototype.initialise = function() {
+/**
+ * Enable the router and parse the first history token
+ * @param {!Object.<function(?):undefined>} routes The routes to use in this
+ *    application.
+ */
+pn.app.Router.prototype.initialise = function(routes) {
+  goog.asserts.assert(routes);
+
+  this.routes_ = routes;
+  if (!this.defaultRoute_) {
+    this.defaultRoute_ = goog.object.getKeys(this.routes_)[0];
+  }
   this.history_.setEnabled(true);
 };
 

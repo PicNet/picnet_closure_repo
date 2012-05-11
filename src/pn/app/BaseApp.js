@@ -36,51 +36,45 @@ goog.provide('pn.app.BaseApp');
  *   setting in pn.app.ctx.cfg.
  *
  * @constructor
+ * @param {pn.app.AppConfig=} opt_cfg The configuration options for the
+ *    application. If this is not specified then the default AppConfig is used.
  * @extends {goog.Disposable}
  */
-pn.app.BaseApp = function() {
+pn.app.BaseApp = function(opt_cfg) {
   goog.Disposable.call(this);
 
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
 
-  pn.log.initialise();
-  /** @type {goog.debug.Logger} */
+  /**
+   * @protected
+   * @type {goog.debug.Logger}
+   */
   this.log = pn.log.getLogger('pn.app.BaseApp');
   this.log.info('Creating Application');
 
   /** @type {pn.ui.UiSpecsRegister} */
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.specs = null;
 
-  /**
-   * @private
-   * @const
-   * @type {boolean}
-   */
-  this.asyncPubSub_ = false;
+  /** @type {!pn.app.Router} */
+  this.router = new pn.app.Router();
+
+  /** @type {!pn.app.AppConfig} */
+  this.cfg = opt_cfg || new pn.app.AppConfig();
+
+  /** @type {pn.app.schema.Schema} */
+  this.schema = null;
 
   /**
    * @private
    * @type {!pn.app.EventBus}
    */
-  this.bus_ = new pn.app.EventBus(false);
+  this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
+
+  // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
+  this.pub = goog.bind(this.bus_.pub, this.bus_);
 
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
-
-  var events = this.getAppEventHandlers();
-  for (var event in events) { this.bus_.sub(event, events[event]); }
-
-  /** @type {pn.app.Router} */
-  this.router = new pn.app.Router(this.getRoutes());
-
-  /** @type {pn.app.AppConfig} */
-  this.cfg = new pn.app.AppConfig();
-
-  /** @type {pn.app.schema.Schema} */
-  this.schema = null;
-
-  // Convenience delegates
-  pn.app.ctx.pub = goog.bind(this.bus_.pub, this.bus_);
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -100,8 +94,16 @@ pn.app.ctx = null;
  */
 pn.app.BaseApp.prototype.initialise = function(schema) {
   goog.asserts.assert(schema);
+
   this.schema = new pn.app.schema.Schema(schema);
-  this.router.initialise();
+
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+
+  var eventBusEvents = this.getAppEventHandlers();
+  for (var event in eventBusEvents) {
+    this.bus_.sub(event, eventBusEvents[event]);
+  }
+  this.router.initialise(this.getRoutes());
 };
 
 

@@ -25,9 +25,20 @@ pn.log.isExclusive_ = false;
 
 
 /**
+ * @private
+ * @type {boolean}
+ */
+pn.log.isInitialised_ = false;
+
+
+/**
+ * @private
  * Initialised the log utilities
  */
-pn.log.initialise = function() {
+pn.log.initialise_ = function() {
+  goog.asserts.assert(!pn.log.isInitialised_);
+  pn.log.isInitialised_ = true;
+
   new goog.debug.Console().setCapturing(true);
   // var ie7window = new goog.debug.FancyWindow('IE7 Logger');
   // ie7window.setEnabled(true);
@@ -43,6 +54,8 @@ pn.log.initialise = function() {
  * @return {!goog.debug.Logger} The logger create with the specified name.
  */
 pn.log.getLogger = function(name, opt_exclusive) {
+  if (!pn.log.isInitialised_) { pn.log.initialise_(); }
+
   if (pn.log.OFF_ || pn.log.isExclusive_) {
     return pn.log.getLoggerImpl_(name,
         goog.debug.Logger.Level.OFF); }

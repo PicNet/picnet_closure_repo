@@ -17,6 +17,9 @@ pn.app.AppConfig = function() {
 
   var fr = pn.ui.edit.FieldRenderers;
 
+  /** @type {boolean} */
+  this.useAsyncEventBus = false;
+
   /** @type {Object} */
   this.defaultRenderers = {
 
