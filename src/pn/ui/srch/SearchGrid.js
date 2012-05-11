@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.ui.SearchGrid');
+goog.provide('pn.ui.srch.SearchGrid');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
@@ -21,7 +21,7 @@ goog.require('pn.ui.srch.SearchPanel');
  * @param {!Array} list The entities to display.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.SearchGrid = function(spec, list, cache) {
+pn.ui.srch.SearchGrid = function(spec, list, cache) {
   goog.asserts.assert(list);
   goog.asserts.assert(cache);
 
@@ -69,13 +69,13 @@ pn.ui.SearchGrid = function(spec, list, cache) {
    */
   this.filter_ = new pn.data.EntityFilter(this.cache_, spec);
 };
-goog.inherits(pn.ui.SearchGrid, goog.ui.Component);
+goog.inherits(pn.ui.srch.SearchGrid, goog.ui.Component);
 
 
 /**
  * @param {!Object.<string>} filters The filters to use to filter the list by.
  */
-pn.ui.SearchGrid.prototype.filterList = function(filters) {
+pn.ui.srch.SearchGrid.prototype.filterList = function(filters) {
   goog.asserts.assert(filters);
   this.grid_.filter(goog.bind(function(rc) {
     return this.filter_.filterEntity(rc, filters);
@@ -84,13 +84,13 @@ pn.ui.SearchGrid.prototype.filterList = function(filters) {
 
 
 /** @inheritDoc */
-pn.ui.SearchGrid.prototype.createDom = function() {
+pn.ui.srch.SearchGrid.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /** @inheritDoc */
-pn.ui.SearchGrid.prototype.decorateInternal = function(element) {
+pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
   var parentDiv = goog.dom.createDom('div', 'filterable-list-container');
@@ -104,9 +104,6 @@ pn.ui.SearchGrid.prototype.decorateInternal = function(element) {
 
   this.grid_ = new pn.ui.grid.Grid(this.spec_, this.list_, this.cache_);
   this.grid_.decorate(rightDiv);
-  // Allow all grid events to pass through 'this' Event Target.  This
-  // allows anyone to listen to the grid events by listening to this class
-  this.grid_.dispatchEvent = goog.bind(this.dispatchEvent, this);
 };
 
 
@@ -114,7 +111,7 @@ pn.ui.SearchGrid.prototype.decorateInternal = function(element) {
  * @private
  * @param {Element} parent The parent to attach the search panel to.
  */
-pn.ui.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
+pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
   var filters = {};
   var showPrefix = this.spec_.searchConfig.showTypePrefixes;
   goog.array.forEach(this.spec_.searchConfig.fields, function(field) {
@@ -130,8 +127,8 @@ pn.ui.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
 
 
 /** @inheritDoc */
-pn.ui.SearchGrid.prototype.enterDocument = function() {
-  pn.ui.SearchGrid.superClass_.enterDocument.call(this);
+pn.ui.srch.SearchGrid.prototype.enterDocument = function() {
+  pn.ui.srch.SearchGrid.superClass_.enterDocument.call(this);
 
   var searchEvent = pn.ui.srch.SearchPanel.SEARCH;
   this.eh_.listen(this.searchPanel_, searchEvent, function(e) {
@@ -141,8 +138,8 @@ pn.ui.SearchGrid.prototype.enterDocument = function() {
 
 
 /** @inheritDoc */
-pn.ui.SearchGrid.prototype.disposeInternal = function() {
-  pn.ui.SearchGrid.superClass_.disposeInternal.call(this);
+pn.ui.srch.SearchGrid.prototype.disposeInternal = function() {
+  pn.ui.srch.SearchGrid.superClass_.disposeInternal.call(this);
 
   this.eh_.removeAll();
   goog.dispose(this.eh_);

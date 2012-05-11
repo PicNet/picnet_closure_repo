@@ -9,6 +9,7 @@ goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('pn.app.AppEvents');
 goog.require('pn.data.EntityUtils');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
@@ -300,7 +301,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     goog.array.forEach(this.commands_, function(c) {
       this.eh_.listen(c, c.eventType, function(e) {
         e.target = this;
-        this.dispatchEvent(e);
+        this.publishEvent_(e);
       });
     }, this);
   }
@@ -434,7 +435,36 @@ pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
   var selected = this.dataView_.getItem(idx);
   var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
   e.selected = selected;
-  this.dispatchEvent(e);
+  this.publishEvent_(e);
+};
+
+
+/**
+ * @private
+ * @param {!goog.events.Event} e The event to publish using the pn.app.ctx.pub
+ *    mechanism.
+ */
+pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
+  if (!this.cfg_.publishEventBusEvents) {
+    this.dispatchEvent(e);
+    return;
+  }
+  var ae = pn.app.AppEvents;
+  switch (e.type) {
+    case pn.ui.grid.Grid.EventType.ROW_SELECTED:
+      var id = e.selected['ID'];
+      pn.app.ctx.pub(ae.ENTITY_SELECT, this.spec_.type, id);
+      break;
+    case pn.ui.grid.Grid.EventType.ADD:
+      pn.app.ctx.pub(ae.ENTITY_ADD, this.spec_.type);
+      break;
+    case pn.ui.grid.Grid.EventType.EXPORT_DATA:
+      var data = e.target.getGridData();
+      var format = e.exportFormat;
+      pn.app.ctx.pub(ae.LIST_EXPORT, this.spec_.type, format, data);
+      break;
+    default: throw new Error('Event: ' + e.type + ' is not supported');
+  }
 };
 
 

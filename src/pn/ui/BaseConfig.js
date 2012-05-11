@@ -19,6 +19,13 @@ pn.ui.BaseConfig = function(fields) {
    * @type {!Array.<pn.ui.BaseField>}
    */
   this.fields_ = fields;
+
+  /**
+   * The Grid and Edit controls will use pn.app.ctx.pub to publish events if
+   *    this is true.  Otherwise traditional goog.events.Event will be used.
+   * @type {boolean}
+   */
+  this.publishEventBusEvents = true;
 };
 goog.inherits(pn.ui.BaseConfig, goog.Disposable);
 

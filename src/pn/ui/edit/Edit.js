@@ -257,7 +257,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
     var et = pn.ui.edit.Edit.EventType.VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
     event.errors = errors;
-    this.dispatchEvent(event);
+    this.publishEvent_(event);
   }
 
   return !errors.length;
@@ -331,7 +331,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
   var event = new goog.events.Event(command.eventType, this);
   event.data = data;
-  this.dispatchEvent(event);
+  this.publishEvent_(event);
 };
 
 
@@ -357,7 +357,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
     e.parent = this.data_;
     e.entityType = field.tableType;
     e.parentField = field.tableParentField;
-    this.dispatchEvent(e);
+    this.publishEvent_(e);
   });
   this.eh.listen(grid, pn.ui.grid.Grid.EventType.ROW_SELECTED, function(ev) {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
@@ -365,8 +365,38 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
     e.parent = this.data_;
     e.entityType = field.tableType;
     e.parentField = field.tableParentField;
-    this.dispatchEvent(e);
+    this.publishEvent_(e);
   });
+};
+
+
+/**
+ * @private
+ * @param {!goog.events.Event} e The event to publish using the pn.app.ctx.pub
+ *    mechanism.
+ */
+pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
+  if (!this.cfg_.publishEventBusEvents) {
+    this.dispatchEvent(e);
+    return;
+  }
+
+  var ae = pn.app.AppEvents;
+  var args;
+  switch (e.type) {
+    case pn.ui.edit.Edit.EventType.ADD_CHILD:
+      args = [ae.CHILD_ENTITY_ADD, e.parent, e.entityType, e.parentField];
+      break;
+    case pn.ui.edit.Edit.EventType.EDIT_CHILD:
+      args = [ae.ENTITY_SELECT, e.entityType, e.entityId];
+      break;
+    case pn.ui.edit.Edit.EventType.VALIDATION_ERROR:
+      args = [ae.ENTITY_VALIDATION_ERROR, e.errors];
+      break;
+    default:
+      args = ['entity-' + e.type, this.spec.type, e.data];
+  }
+  pn.app.ctx.pub.apply(null, args);
 };
 
 
