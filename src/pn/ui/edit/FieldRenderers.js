@@ -147,6 +147,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField =
     function(val, entity, parent) {
 
   var inp = goog.dom.createDom('input', {'type': 'hidden', 'value': val || ''});
+  goog.style.showElement(parent, false);
   goog.dom.appendChild(parent, inp);
   return inp;
 };

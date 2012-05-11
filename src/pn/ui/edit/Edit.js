@@ -212,11 +212,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     if (!useTemplate && (!f.renderer || f.renderer.showLabel !== false)) {
       fieldParent = fb.getFieldLabel(f.id, f.name, f.className);
       this.disposables_.push(fieldParent);
-      // TODO: This is quite ugly, this code should be here:
-      // fr.hiddenTextField but not here.
-      if (fr.hiddenTextField === f.renderer) {
-        goog.style.showElement(fieldParent, false);
-      }
       goog.dom.appendChild(fieldset, fieldParent);
     }
     if (this.isFieldRequired_(f)) {
