@@ -49,8 +49,7 @@ pn.seq.Seq.create = function(source) {
   if (pn.seq.Seq.isSeq_(source)) return source;
 
   for (var i in pn.seq.Seq.template_) {
-    if (source[i]) console.log('property ', i, 'already exists.');
-    else source[i] = pn.seq.Seq.template_[i];
+    source[i] = pn.seq.Seq.template_[i];
   }
   return /** @type {!pn.seq.Seq} */ (source);
 };
@@ -103,10 +102,10 @@ pn.seq.Seq.range = function(start, count) {
   goog.asserts.assert(start >= 0);
   goog.asserts.assert(count >= 0);
 
-  var src = [],
+  var seq = [],
       idx = 0;
   while (true) {
-    if (idx++ >= count) return pn.seq.Seq.create(src);
+    if (idx++ >= count) return pn.seq.Seq.create(seq);
     seq.push(start + (idx - 1));
   }
 };
@@ -178,7 +177,8 @@ pn.seq.Seq.prototype.select = function(mutator) {
 pn.seq.Seq.prototype.count = function(opt_predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
-  return this.length;
+  if (!opt_predicate) return this.length;
+  return goog.array.filter(this, opt_predicate).length;
 };
 
 
@@ -192,7 +192,7 @@ pn.seq.Seq.prototype.concat = function(var_args) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var src = [];
-  var args = goog.array.clone(argumets);
+  var args = goog.array.clone(arguments);
   goog.array.insertAt(args, this, 0);
   return pn.seq.Seq.create(goog.array.concat.apply(null, args));
 };
@@ -216,9 +216,11 @@ pn.seq.Seq.prototype.selectMany =
   var idx = 0;
   var inners = [];
   for (var i = 0, len = this.length; i < len; i++) {
-    inners.push(opt_resultSelector ? opt_resultSelector(this[i]) : this[i]);
+    var item = collectionSelector ? collectionSelector(this[i], i) : this[i];
+    inners.push(item);
   }
-  return pn.seq.Seq.create(goog.array.concat.apply(null, inners));
+  var joined = pn.seq.Seq.create(goog.array.concat.apply(null, inners));  
+  return opt_resultSelector ? joined.select(opt_resultSelector) : joined;
 };
 
 
@@ -275,10 +277,12 @@ pn.seq.Seq.prototype.first = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.firstOrNull = function(opt_predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (this.length === 0) throw new Error('Sequence is empty');
-
-  if (!opt_predicate) { return this[0]; }
-  return goog.array.find(this, opt_predicate);
+  if (!opt_predicate) { return this.length === 0 ? null : this[0]; }
+  for (var i = 0, len = this.length; i < len; i++) {
+    var o = this[i];
+    if (opt_predicate(o, i)) { return o; }
+  }
+  return null;
 };
 
 
@@ -303,7 +307,7 @@ pn.seq.Seq.prototype.single = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.singleOrNull = function(opt_predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (!opt_predicate && this.length === 0) throw new Error('Sequence is empty');
+  if (!opt_predicate && this.length === 0) return null;
   if (!opt_predicate && this.length > 1)
     throw new Error('More than a single element matched.');
   var filtered = !opt_predicate ? this : goog.array.filter(this, opt_predicate);
@@ -334,10 +338,12 @@ pn.seq.Seq.prototype.last = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (this.length === 0) throw new Error('Sequence is empty');
-
-  if (!opt_predicate) { return this[0]; }
-  return goog.array.findRight(this, opt_predicate);
+  if (!opt_predicate) { return this.length === 0 ? null : this[this.length - 1]; }
+  for (var len = this.length, i = len - 1; i >= 0; i--) {
+    var o = this[i];
+    if (opt_predicate(o)) return o;
+  }
+  return null;
 };
 
 
@@ -400,13 +406,13 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
 
   if (!opt_comparer) {
     var distinct = [];
-    return pn.seq.Seq.create(goog.array.removeDuplicates(this, distinct));
+    goog.array.removeDuplicates(this, distinct);
+    return pn.seq.Seq.create(distinct);
   }
-  var filtered = [];
+  var filtered = pn.seq.Seq.create([]);
   for (var i = 0, len = this.length; i < len; i++) {
-    var o = this[i];
-    if (goog.array.indexOf(filtered, o, opt_comparer) >= 0) continue;
-    filtered.push(o);
+    if (filtered.contains(this[i], opt_comparer)) continue;
+    filtered.push(this[i]);
   }
   return pn.seq.Seq.create(filtered);
 };
@@ -764,7 +770,7 @@ pn.seq.Seq.prototype.max = function(opt_selector) {
  */
 pn.seq.Seq.prototype.elementAt = function(index) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  return this[index];
+  return index < 0 || index >= this.length ? null : this[index];
 };
 
 
@@ -776,7 +782,7 @@ pn.seq.Seq.prototype.elementAt = function(index) {
  */
 pn.seq.Seq.prototype.elementAtOrNull = function(index) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  return index >= this.length ? null : this[index];
+  return index < 0 || index >= this.length ? null : this[index];
 };
 
 
@@ -788,13 +794,13 @@ pn.seq.Seq.prototype.elementAtOrNull = function(index) {
  */
 pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-
   var comparer = function(e) {
     return opt_comparer ?
         opt_comparer(e, value) :
         pn.seq.Seq.defaultEquality_(e, value);
   };
-  for (var i = 0, len = this.lengh; i < len; i++) {
+
+  for (var i = 0, len = this.length; i < len; i++) {
     if (comparer(this[i])) { return true; }
   }
   return false;
