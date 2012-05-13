@@ -102,7 +102,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
  */
 pn.ui.edit.FieldBuilder.transEntityToFieldValue =
     function(field, entity, cache) {
-  var useDefault = pn.data.EntityUtils.isNew(entity) && !!field.defaultValue;
+  var useDefault = pn.data.EntityUtils.isNew(entity) && 
+      goog.isDef(field.defaultValue);
   var val = useDefault ? field.defaultValue : entity[field.dataProperty];
   if (useDefault && pn.data.EntityUtils.isParentProperty(field.dataProperty)) {
     var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
