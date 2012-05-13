@@ -11,16 +11,16 @@ goog.require('pn.seq.Seq');
 var testForEach = function() {
   var seq = pn.seq.Seq.create([1, 2, 3, 4]);
   var count = 0;
-  seq.forEach(function(x, i) {count += x; })
+  seq.doForEach(function(x, i) {count += x; })
   assertEquals(10, count);  
 };
 
 var testMultipleForEach = function() {
   var seq = pn.seq.Seq.create([1, 2, 3, 4]);
   var count = 0;
-  seq.forEach(function(x, i) {count += x; })
+  seq.doForEach(function(x, i) {count += x; })
   assertEquals(10, count);  
-  seq.forEach(function(x, i) {count += x; })
+  seq.doForEach(function(x, i) {count += x; })
   assertEquals(20, count);  
 };
     </script>    

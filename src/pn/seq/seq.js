@@ -36,7 +36,7 @@ pn.seq.Seq.template_ = new pn.seq.Seq();
  * @return {Boolean} Wether the specified source is a sequence.
  */
 pn.seq.Seq.isSeq_ = function(src) {
-  return !!src.select;
+  return !!src && !!src.select;
 };
 
 
@@ -49,6 +49,7 @@ pn.seq.Seq.create = function(source) {
   if (pn.seq.Seq.isSeq_(source)) return source;
 
   for (var i in pn.seq.Seq.template_) {
+    if (source[i]) { throw new Error('source already contains function "' + i +'".'); }
     source[i] = pn.seq.Seq.template_[i];
   }
   return /** @type {!pn.seq.Seq} */ (source);
@@ -184,11 +185,11 @@ pn.seq.Seq.prototype.count = function(opt_predicate) {
 
 /**
  * Creates a new sequance by concatenating 2 or more sequences
- * @param {...goog.iter.Iterable} var_args The arrays or sequences to
+ * @param {...(Array|pn.seq.Seq)} var_args The arrays or sequences to
  *    concatenate.
  * @return {!pn.seq.Seq} The concatenated sequences as one sequence.
  */
-pn.seq.Seq.prototype.concat = function(var_args) {
+pn.seq.Seq.prototype.concatenate = function(var_args) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var src = [];
@@ -377,7 +378,6 @@ pn.seq.Seq.prototype.defaultIfEmpty = function(opt_default) {
  * @return {*} The aggregated value.
  */
 pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
-  console.trace();
   if (!pn.seq.Seq.isSeq_(this)) {
     throw new Error('Source is not a pn.seq.Seq');
   }
@@ -386,7 +386,7 @@ pn.seq.Seq.prototype.aggregate = function(seed, accum, opt_projection) {
   if (!goog.isDefAndNotNull(accum))
     throw new Error('Accumulattor is required and was not provided');
 
-  return goog.iter.reduce(this, function(acc, x) {
+  return goog.array.reduce(this, function(acc, x) {
     x = opt_projection ? opt_projection(x) : x;
     return accum(acc, x);
   }, seed);
@@ -421,13 +421,13 @@ pn.seq.Seq.prototype.distinct = function(opt_comparer) {
 /**
  * Produces the set union of two sequences.
  *
- * @param {!goog.iter.Iterator} second The second sequence.
+ * @param {!(Array|pn.seq.Seq)} second The second sequence.
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
  * @return {!pn.seq.Seq} The union of the two sequences.
  */
 pn.seq.Seq.prototype.union = function(second, opt_comparer) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  return this.concat(second).distinct(opt_comparer);
+  return this.concatenate(second).distinct(opt_comparer);
 };
 
 
@@ -506,7 +506,7 @@ pn.seq.Seq.prototype.toLookup =
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
  * @return {!pn.seq.Seq} The joined sequence.
  */
-pn.seq.Seq.prototype.join =
+pn.seq.Seq.prototype.joinTo =
     function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
   this.joinValidate_(
       inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
@@ -679,7 +679,7 @@ pn.seq.Seq.prototype.toMap =
  * Reverses the sequence
  * @return {!pn.seq.Seq} The reversed sequence.
  */
-pn.seq.Seq.prototype.reverse = function() {
+pn.seq.Seq.prototype.reverseSeq = function() {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   var rev = goog.array.clone(this);
   rev.reverse();
@@ -811,7 +811,7 @@ pn.seq.Seq.prototype.contains = function(value, opt_comparer) {
  * Wether this sequence is equivalent to the given 'second' sequence.
  *    Equivalence is determined if the items in the sequence are in the same
  *    order and are equal between both sequences.
- * @param {!goog.iter.Iterable} second The second sequence to compare.
+ * @param {!(Array|pn.seq.Seq)} second The second sequence to compare.
  * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
  * @return {boolean} Wether the sequences are equal.
  */
@@ -825,20 +825,23 @@ pn.seq.Seq.prototype.sequenceEquals = function(second, opt_comparer) {
 /**
  * Applies a specified function to the corresponding elements of two
  *    sequences, producing a sequence of the results.
- * @param {!goog.iter.Iterable} second The second sequence to zip.
+ * @param {!(Array|pn.seq.Seq)} second The second sequence to zip.
  * @param {!function(*,*):*} resultSelector The results projection.
  * @return {!pn.seq.Seq} The resulting sequence with items 'zipped'.
 */
 pn.seq.Seq.prototype.zip = function(second, resultSelector) {
   if (!pn.seq.Seq.isSeq_(this))
     throw new Error('Source is not a pn.seq.Seq');
-  if (!pn.seq.Seq.isSeq_(second))
-    throw new Error('second is not a pn.seq.Seq');
+  if (!second)
+    throw new Error('second is required');
   if (!resultSelector)
     throw new Error('resultSelector is required and was not provided');
 
-  return pn.seq.Seq.create(goog.array.map(
-      goog.array.zip(this, second), resultSelector));
+  var zipped = goog.array.zip(this, second);
+  var tupleSelector = function(tup) {
+    return resultSelector.apply(null, tup);
+  };  
+  return pn.seq.Seq.create(goog.array.map(zipped,  tupleSelector));
 };
 
 
@@ -881,7 +884,7 @@ pn.seq.Seq.prototype.orderByImpl_ =
   var comparer = opt_comparer || pn.seq.Seq.defaultComparer_;
   var projComparer = new pn.seq.ProjectionComparer(keySelector, comparer);
   if (descending) projComparer = new pn.seq.ReverseComparer(projComparer);
-  return new pn.seq.OrderedSeq(this.iter_(), projComparer);
+  return new pn.seq.OrderedSeq(this, projComparer);
 };
 
 
@@ -891,7 +894,7 @@ pn.seq.Seq.prototype.orderByImpl_ =
  * @param {!function(*, number):undefined} evaluator The evaluator to run for
  *    each item in the sequence.
  */
-pn.seq.Seq.prototype.forEach = function(evaluator) {
+pn.seq.Seq.prototype.doForEach = function(evaluator) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   goog.array.forEach(this, evaluator);
 };
@@ -903,7 +906,7 @@ pn.seq.Seq.prototype.forEach = function(evaluator) {
 ////////////////////////////////////////////////////////////////////////////////
 /**
  * @constructor
- * @param {!goog.iter.Iterable} source The source array.
+ * @param {!(Array|pn.seq.Seq)} source The source array.
  * @param {!pn.seq.IComparer} comparer The sequence ordering comparer.
  * @extends {pn.seq.Seq}
  */
@@ -963,16 +966,7 @@ pn.seq.OrderedSeq.prototype.appendComparer_ =
   var secondComparer = new pn.seq.ProjectionComparer(keySelector, comparer);
   if (descending) secondComparer = new pn.seq.ReverseComparer(secondComparer);
   secondComparer = new pn.seq.CompoundComparer(this.comparer_, secondComparer);
-  return new pn.seq.OrderedSeq(this.iter_(), secondComparer);
-};
-
-
-/** @inheritDoc */
-pn.seq.OrderedSeq.prototype.toArray = function() {
-  var arr = goog.iter.toArray(this.iter_());
-  var comparer = goog.bind(this.comparer_.compare, this.comparer_);
-  goog.array.sort(arr, comparer);
-  return arr;
+  return new pn.seq.OrderedSeq(this, secondComparer);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1011,38 +1005,13 @@ goog.inherits(pn.seq.Lookup, pn.seq.Seq);
 
 /** @private */
 pn.seq.Lookup.prototype.init_ = function() {
-  var idx = 0;
-  try {
-    var iter = this.iter_();
-    while (true) {
-      var e = iter.next();
-      var key = this.keySelector_(e);
-      var elem = this.elemSelector_(e, idx++);
-      this.set(key, elem);
-    }
-  } catch (ex) {
-    if (ex !== goog.iter.StopIteration) throw ex;
-    this.collapse_();
+  for (var i = 0, len = this.length; i < len; i++) {  
+    var e = this[i];
+    var key = this.keySelector_(e);
+    var elem = this.elemSelector_(e, idx++);
+    this.set(key, elem);
   }
 };
-
-
-/**
- * Collapses the seqence. I.e. Sets the internal source_ property
- * @private
- */
-pn.seq.Lookup.prototype.collapse_ = function() {
-  var arr = [];
-  for (var i = 0, limit = this.keys_.length; i < limit; i++) {
-    var key = this.keys_[i];
-    var arr2 = /** @type {!goog.iter.Iterable} */ (this.map_.get(key));
-    var seq = pn.seq.Seq.create(arr2);
-    this.map_.set(key, seq);
-    arr.push(new pn.seq.Grouping(key, seq));
-  }
-  this.source_ = arr;
-};
-
 
 /**
  * @param {*} key The key to find.

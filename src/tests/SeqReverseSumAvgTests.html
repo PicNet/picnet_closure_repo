@@ -18,13 +18,13 @@ var arr = [
   {key:1, value:7}];
   
 var testReverse = function() {
-  assertArrayEquals([3, 2, 1], pn.seq.Seq.create([1, 2, 3]).reverse());  
+  assertArrayEquals([3, 2, 1], pn.seq.Seq.create([1, 2, 3]).reverseSeq());  
 };
 
 var testMultipleReversii = function() {
   var seq = pn.seq.Seq.create([1, 2, 3])
-  assertArrayEquals([3, 2, 1], seq.reverse());  
-  assertArrayEquals([3, 2, 1], seq.reverse());  
+  assertArrayEquals([3, 2, 1], seq.reverseSeq());  
+  assertArrayEquals([3, 2, 1], seq.reverseSeq());  
 };
 
 var testSumWithoutProjection = function() {

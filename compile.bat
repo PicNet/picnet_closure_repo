@@ -1,6 +1,6 @@
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\depswriter.py ^
-  --root_with_prefix="src\ ../../../picnet_closure_repo_dev/src/" ^
+  --root_with_prefix="src\ ../../../picnet_closure_repo/src/" ^
   --root_with_prefix="..\tablefilter\src\ ../../../tablefilter/src/" ^
   --output_file=src\deps.js && ^
 c:\Python27\python.exe ^

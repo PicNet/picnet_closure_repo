@@ -7,6 +7,7 @@
     <script>
 goog.require('goog.testing.jsunit');
 goog.require('pn.seq.Seq');
+goog.require('goog.functions');
 
 var testNullSecondThrows = function() {
   try {
@@ -23,21 +24,26 @@ var testNullResultsSelectorThrows = function() {
 };
 
 var testZipReturnsSmallestOf2SequnceSize = function() {
-  assertArrayEquals([2], pn.seq.Seq.create([1, 2, 3]).zip(pn.seq.Seq.create([1]), function(x, y) { return x + y; }));  
-  assertArrayEquals([4], pn.seq.Seq.create([2]).zip(pn.seq.Seq.create([2, 6, 8]), function(x, y) { return x + y; }));  
+  assertTrue(pn.seq.Seq.create([1, 2, 3]).
+    zip(pn.seq.Seq.create([1]), function(x, y) { return x + y; }).
+    sequenceEquals([2]));  
+  assertTrue(pn.seq.Seq.create([2]).
+    zip(pn.seq.Seq.create([2, 6, 8]), function(x, y) { return x + y; }).
+    sequenceEquals([4]));  
 };
 
 var testZipReturnsExpectedWithLargerLists = function() {
-  assertArrayEquals(['12', '24', '38'], pn.seq.Seq.create([1, 2, 3]).zip(pn.seq.Seq.create([2, 4, 8]), function(x, y) { return '' + x + y; }));    
+  assertTrue(pn.seq.Seq.create([1, 2, 3]).
+    zip(pn.seq.Seq.create([2, 4, 8]), function(x, y) { return '' + x + y; }).
+    sequenceEquals(['12', '24', '38']));    
 };
 
 var testMultipleZips = function() {
   var seq1 = pn.seq.Seq.create([1, 2, 3]);
   var seq2 = pn.seq.Seq.create([2, 4, 8])
-  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }));    
-  assertArrayEquals(['12', '24', '38'], seq1.zip(seq2, function(x, y) { return '' + x + y; }));    
+  assertTrue(seq1.zip(seq2, function(x, y) { return '' + x + y; }).sequenceEquals(['12', '24', '38']));    
+  assertTrue(seq1.zip(seq2, function(x, y) { return '' + x + y; }).sequenceEquals(['12', '24', '38']));    
 };
-
     </script>    
   </body>
 </html>

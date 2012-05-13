@@ -256,7 +256,7 @@ function getSampleCode(sample) {
 '     Except: seq.take(10).except(seq.skip(7).take(10)).count()}]);';
     case 'groupby': return 'seq.groupBy(function(p) { return p.category; }, function(p) { return p; }).\n' +
 '     select(function(group) { return {Category: group.key, Items: group.count()}; });';    
-    case 'zip': return 'seq.zip(seq.reverse(), function(a, b) { \n' +
+    case 'zip': return 'seq.zip(seq.reverseSeq(), function(a, b) { \n' +
 '       return {ProductA: a.productName, ProductB: b.productName}; \n' +
 '     }).take(10)';
   }            
