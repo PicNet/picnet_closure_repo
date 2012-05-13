@@ -104,6 +104,21 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
   }
 };
 
+/**
+ * @param {!Object.<Array.<!Object>>} cache The cache to search for the entity.
+ * @param {string} type The type of entity to find.
+ * @param {*} val The value (default to ID) to match
+ * @param {string=} opt_prop The property to match 'ID' if not specified.
+ * @return {Object} The matched entity (or null).
+ */
+pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
+  var entities = cache[type];
+  var prop = opt_prop || 'ID';
+  return /** @type {Object} */ (goog.array.find(entities, function(e) {
+    return e[prop] === val;
+  }));
+};
+
 
 /**
  * @param {string} property The entity property to convert to a type name if
