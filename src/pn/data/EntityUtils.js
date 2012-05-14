@@ -14,7 +14,7 @@ pn.data.EntityUtils.isNew = function(entity) {
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
- * @param {!(!Object|Array.<!Object>)} target The current entity or entity
+ * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
@@ -39,7 +39,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
- * @param {!(!Object|Array.<!Object>)} target The current entity or entity
+ * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
