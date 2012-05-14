@@ -31,7 +31,8 @@ pn.ui.edit.FieldValidator.validateFieldValue =
     throw new Error('Err of type: ' + typeof(err) + ' is not supported.');
   };
 
-  var errors = pn.app.ctx.schema.getValidationErrors(field, value);
+  var errors = goog.string.startsWith(field.id, '_') ?
+      [] : pn.app.ctx.schema.getValidationErrors(field, value);
   // Always return schema issues before checking other errors as other
   // validations may conflic or duplicate these errors.
   if (errors.length) { return errors; }

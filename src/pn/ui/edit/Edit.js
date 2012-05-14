@@ -267,19 +267,11 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 
     var input = this.inputs_[f.id];
     var val = pn.ui.edit.FieldBuilder.getFieldValue(input);
-    var error;
-    if (f.renderer && f.renderer.validate) {
-      error = f.renderer.validate();
-      if (goog.isArrayLike(error)) {
-        errors = goog.array.concat(errors, error);
-      }
-    } else {
-      var err = pn.ui.edit.FieldValidator.
-          validateFieldValue(f, val, this.data_, this.cache_);
-      if (err.length) {
-        errors = goog.array.concat(errors, err);
-        this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
-      }
+    var err = pn.ui.edit.FieldValidator.
+        validateFieldValue(f, val, this.data_, this.cache_);
+    if (err.length) {
+      errors = goog.array.concat(errors, err);
+      this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
     }
   }, this);
   return errors;
