@@ -172,10 +172,13 @@ pn.ui.edit.FieldRenderers.standardTextSearchField =
  * @param {string} parentIdField The field in the many-to-many table that
  *    points to the parent entity (not the admin entity).
  * @param {string} adminEntity The admin entity table name.
+ * @param {function(Object):string=} opt_displayStrategy A function that
+ *    returns a string to display as the select box option item for the given
+ *    entity.
  * @return {!pn.ui.edit.Field.Renderer} The many to many list box renderer.
  */
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
-    function(mappingEntity, parentIdField, adminEntity) {
+    function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(val, entity, parent, cache) {
     var manyToManys = goog.array.filter(cache[mappingEntity],
         function(abrand) {
@@ -189,8 +192,11 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     entity[mappingEntity + 'Entities'] = adminIDs;
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
     goog.array.forEach(cache[adminEntity], function(ae) {
+      var text = opt_displayStrategy ?
+          opt_displayStrategy(ae) :
+          ae[adminEntity + 'Name'];
       var opt = goog.dom.createDom('option', {
-        'text': ae[adminEntity + 'Name'],
+        'text': text,
         'value': ae['ID'],
         'selected': goog.array.findIndex(adminIDs, function(adminID) {
           return ae['ID'] === adminID;

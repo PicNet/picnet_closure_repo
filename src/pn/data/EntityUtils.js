@@ -30,7 +30,6 @@ pn.data.EntityUtils.getEntityDisplayValue =
   goog.asserts.assert(path);
   goog.asserts.assert(target);
 
-  var steps = path.split('.');
   target = pn.data.EntityUtils.
       getTargetEntity(cache, path, target, opt_parentField);
   return target.length > 1 ? target.join(', ') : target[0];
@@ -104,10 +103,11 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
   }
 };
 
+
 /**
  * @param {!Object.<Array.<!Object>>} cache The cache to search for the entity.
  * @param {string} type The type of entity to find.
- * @param {*} val The value (default to ID) to match
+ * @param {*} val The value (default to ID) to match.
  * @param {string=} opt_prop The property to match 'ID' if not specified.
  * @return {Object} The matched entity (or null).
  */

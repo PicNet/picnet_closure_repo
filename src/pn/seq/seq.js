@@ -49,7 +49,9 @@ pn.seq.Seq.create = function(source) {
   if (pn.seq.Seq.isSeq_(source)) return source;
 
   for (var i in pn.seq.Seq.template_) {
-    if (source[i]) { throw new Error('source already contains function "' + i +'".'); }
+    if (source[i]) {
+      throw new Error('source already contains function "' + i + '".');
+    }
     source[i] = pn.seq.Seq.template_[i];
   }
   return /** @type {!pn.seq.Seq} */ (source);
@@ -220,7 +222,7 @@ pn.seq.Seq.prototype.selectMany =
     var item = collectionSelector ? collectionSelector(this[i], i) : this[i];
     inners.push(item);
   }
-  var joined = pn.seq.Seq.create(goog.array.concat.apply(null, inners));  
+  var joined = pn.seq.Seq.create(goog.array.concat.apply(null, inners));
   return opt_resultSelector ? joined.select(opt_resultSelector) : joined;
 };
 
@@ -339,7 +341,9 @@ pn.seq.Seq.prototype.last = function(opt_predicate) {
  */
 pn.seq.Seq.prototype.lastOrNull = function(opt_predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (!opt_predicate) { return this.length === 0 ? null : this[this.length - 1]; }
+  if (!opt_predicate) {
+    return this.length === 0 ? null : this[this.length - 1];
+  }
   for (var len = this.length, i = len - 1; i >= 0; i--) {
     var o = this[i];
     if (opt_predicate(o)) return o;
@@ -840,8 +844,8 @@ pn.seq.Seq.prototype.zip = function(second, resultSelector) {
   var zipped = goog.array.zip(this, second);
   var tupleSelector = function(tup) {
     return resultSelector.apply(null, tup);
-  };  
-  return pn.seq.Seq.create(goog.array.map(zipped,  tupleSelector));
+  };
+  return pn.seq.Seq.create(goog.array.map(zipped, tupleSelector));
 };
 
 
@@ -1005,13 +1009,14 @@ goog.inherits(pn.seq.Lookup, pn.seq.Seq);
 
 /** @private */
 pn.seq.Lookup.prototype.init_ = function() {
-  for (var i = 0, len = this.length; i < len; i++) {  
+  for (var i = 0, len = this.length; i < len; i++) {
     var e = this[i];
     var key = this.keySelector_(e);
     var elem = this.elemSelector_(e, idx++);
     this.set(key, elem);
   }
 };
+
 
 /**
  * @param {*} key The key to find.
