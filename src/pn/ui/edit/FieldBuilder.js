@@ -67,7 +67,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   if (field.renderer) {
     if (field.displayPath) {
       var path = field.displayPath;
-      val = pn.data.EntityUtils.getEntityDisplayValue(cache, path, entity);
+      val = pn.data.EntityUtils.getEntityDisplayValue(
+          cache, path, entity, field.tableParentField);
     }
     if (typeof (field.renderer) === 'object') { // Complex Renderer
       elem = field.renderer;

@@ -37,7 +37,6 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
-
   var rendermap = [
     [fr.timeRenderer, rr.timeField],
     [fr.dateRenderer, rr.dateField],
@@ -46,13 +45,10 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
     [fr.centsRenderer, rr.centsField]
   ];
   field.readonly = true;
-  if (!curr) {
-    if (goog.string.endsWith(field.dataProperty, 'Entities')) {
-      field.renderer = rr.itemList;
-    } else {
-      field.renderer = rr.textField;
-    }
-  } else if (curr.setReadOnly) curr.setReadOnly(true);
+  if (goog.string.endsWith(field.dataProperty, 'Entities')) {
+    field.renderer = rr.itemList;
+  } else if (!curr) { field.renderer = rr.textField; }
+  else if (curr.setReadOnly) curr.setReadOnly(true);
   else {
     if (goog.array.findIndex(rendermap, function(trans) {
       if (curr === trans[0] || curr === trans[1]) {
@@ -224,14 +220,14 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   var ro = pn.ui.edit.ReadOnlyFields;
   var curr = field.renderer;
+  var dataProp = field.dataProperty;
+  var isList = goog.string.endsWith(dataProp, 'Entities');
+
   if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
       !field.tableType) throw new Error('Not Supported');
-  else if (!curr) {
-    if (goog.string.endsWith(field.dataProperty, 'Entities')) {
-      return ft.ITEM_LIST;
-    }
-    return ft.DEFAULT;
-  }
+
+  if (isList) return ft.ITEM_LIST;
+  else if (!curr) return ft.DEFAULT;
   else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
   else if (curr === fr.dateRenderer || curr === ro.dateField) return ft.DATE;
