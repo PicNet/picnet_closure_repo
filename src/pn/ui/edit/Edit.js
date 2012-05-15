@@ -119,7 +119,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
     var curr = fb.getFieldValue(this.inputs_[f.id]);
 
     var isFalseEquivalent = function(val) {
-      return !val || val === '0' || val === 'false';
+      return !val || val === '0' || val === 'false' || val === '{}';
     };
     // Handle tricky falsies
     if (isFalseEquivalent(curr) && isFalseEquivalent(orig)) { return false; }
@@ -188,7 +188,6 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
  */
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
-  var fr = pn.ui.edit.FieldRenderers;
 
   var useTemplate = !!this.cfg_.template,
       focusSet = !this.cfg_.autoFocus,
