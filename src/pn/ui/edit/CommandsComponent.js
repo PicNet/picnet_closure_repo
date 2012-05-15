@@ -64,6 +64,14 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 
 
 /**
+ * Adds or removes a 'required' class to all required fields.
+ * @protected
+ */
+pn.ui.edit.CommandsComponent.prototype.updateRequiredClasses =
+    goog.abstractMethod;
+
+
+/**
  * @protected
  * @return {!Array.<string>} Any errors in the form.
  */

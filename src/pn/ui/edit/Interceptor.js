@@ -14,6 +14,12 @@ pn.ui.edit.Interceptor = function() {
 
   /**
    * @protected
+   * @type {pn.ui.edit.CommandsComponent}
+   */
+  this.component = null;
+
+  /**
+   * @protected
    * @type {!Object} The entity being edited.
    */
   this.entity = {};
@@ -52,13 +58,16 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  *    inherited. Currently only called by Edit.js to initialise the spec
  *    to allow documentEntered functionality.
  *
+ * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
+ *    currently being shown.
  * @param {!Object} entity The entity that was just decorated.
  * @param {!Object.<Array>} cache The cache with all related entities.
  * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
-    function(entity, cache, fields, commands) {
+    function(component, entity, cache, fields, commands) {
+  this.component = component;
   this.entity = entity;
   this.cache = cache;
   this.fields = fields;

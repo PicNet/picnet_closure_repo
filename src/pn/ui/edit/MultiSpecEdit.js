@@ -88,6 +88,14 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 
 
 /** @inheritDoc */
+pn.ui.edit.MultiSpecEdit.prototype.updateRequiredClasses = function() {
+  goog.array.forEach(this.edits, function(c) {
+    c.edit.updateRequiredClasses();
+  });
+};
+
+
+/** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.edits, function(c) {
@@ -153,7 +161,8 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   }, this);
 
   goog.object.forEach(this.specs, function(spec) {
-    spec.editConfig.interceptor.init(this.entity, this.cache, fields, commands);
+    spec.editConfig.interceptor.init(
+        this, this.entity, this.cache, fields, commands);
   }, this);
 
   goog.object.forEach(this.specs, function(spec) {
