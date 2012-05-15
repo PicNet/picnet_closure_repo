@@ -233,6 +233,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.fields_, function(f) {
     var parent = this.parents_[f.id];
+    if (!parent) return; // Not shown, such as fields not shown on add
+
     if (this.isFieldRequired_(f)) {
       goog.dom.classes.add(parent, 'required');
     } else {
