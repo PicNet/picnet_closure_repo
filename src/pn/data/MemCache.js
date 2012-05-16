@@ -54,6 +54,15 @@ goog.inherits(pn.data.MemCache, goog.Disposable);
 
 
 /**
+ * @param {string} type The type of entity list to retreive.
+ * @return {Array} The cached list or null/undefined if its not cached.
+ */
+pn.data.MemCache.prototype.getCachedList = function(type) {
+  return this.cache_[type];
+};
+
+
+/**
  * @param {string} type The type of entity list to load.
  */
 pn.data.MemCache.prototype.invalidateCache = function(type) {
