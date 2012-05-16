@@ -33,18 +33,19 @@ goog.inherits(pn.ui.BaseConfig, goog.Disposable);
 /** @return {!Array.<string>} The list of types related to this entity. */
 pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
   var types = [];
-
+  var addIfType = function(f) {
+    if (!f) return;
+    var type = pn.data.EntityUtils.getTypeProperty(f);
+    if (type !== f) types.push(type);
+  };
   goog.array.forEach(this.fields_, function(field) {
     var additional = field.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
 
     if (field.displayPath) {
-      var steps = field.displayPath.split('.');
-      goog.array.forEach(steps, function(step) {
-        var type = pn.data.EntityUtils.getTypeProperty(step);
-        if (type !== step) types.push(type);
-      });
+      goog.array.forEach(field.displayPath.split('.'), addIfType);
     }
+    addIfType(field.dataProperty);
     if (field.tableSpec) {
       var spec = pn.app.ctx.specs.get(field.tableSpec);
       var related = spec.gridConfig.getRelatedTypes();

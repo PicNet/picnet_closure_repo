@@ -66,11 +66,12 @@ pn.data.EntityUtils.getTargetEntity =
   if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     step = pn.data.EntityUtils.getTypeProperty(step);
-    next = /** @type {!Array.<!Object>} */ (goog.array.filter(cache[step],
+    var entities = pn.data.EntityUtils.getFromCache_(cache, step);
+    next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
         function(e) { return goog.array.contains(ids, e['ID']); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
     step = pn.data.EntityUtils.getTypeProperty(step);
-    next = cache[step];
+    next = pn.data.EntityUtils.getFromCache_(cache, step);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
       next = goog.array.filter(next, function(e) {
@@ -112,7 +113,7 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
  * @return {Object} The matched entity (or null).
  */
 pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
-  var entities = cache[type];
+  var entities = pn.data.EntityUtils.getFromCache_(cache, type);
   var prop = opt_prop || 'ID';
   return /** @type {Object} */ (goog.array.find(entities, function(e) {
     return e[prop] === val;
@@ -158,4 +159,17 @@ pn.data.EntityUtils.isRelationshipProperty = function(property) {
 pn.data.EntityUtils.isParentProperty = function(property) {
   goog.asserts.assert(property);
   return property !== 'ID' && goog.string.endsWith(property, 'ID');
+};
+
+
+/**
+ * @private
+ * @param {!Object.<!Array.<!Object>>} cache The cache to search for the
+ *    specified type.
+ * @param {string} type The type to get.
+ * @return {!Array.<!Object>} The objects of the specified type.
+ */
+pn.data.EntityUtils.getFromCache_ = function(cache, type) {
+  if (type in cache) return cache[type];
+  throw new Error('Could not find "' + type + '" in the cache.');
 };
