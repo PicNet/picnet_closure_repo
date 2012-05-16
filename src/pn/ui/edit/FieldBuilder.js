@@ -103,15 +103,21 @@ pn.ui.edit.FieldBuilder.createAndAttach =
  */
 pn.ui.edit.FieldBuilder.transEntityToFieldValue =
     function(field, entity, cache) {
+  var prop = field.dataProperty;
   var useDefault = pn.data.EntityUtils.isNew(entity) &&
       goog.isDef(field.defaultValue);
-  var val = useDefault ? field.defaultValue : entity[field.dataProperty];
-  if (useDefault && pn.data.EntityUtils.isParentProperty(field.dataProperty)) {
-    var type = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
+  var val = useDefault ? field.defaultValue : entity[prop];
+  if (useDefault && pn.data.EntityUtils.isParentProperty(prop)) {
+    var type = pn.data.EntityUtils.getTypeProperty(prop);
     var list = cache[type];
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === field.defaultValue;
     })['ID'];
+  }
+  if (goog.string.endsWith(prop, 'Entities') && val && val.length) {
+    // Controls always return sorted IDs so here we ensure we never throw a
+    // dirty error if for somereason the original value is not sorted.
+    val.sort();
   }
   return val;
 };
