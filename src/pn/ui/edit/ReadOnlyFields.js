@@ -17,7 +17,9 @@ pn.ui.edit.ReadOnlyFields.getText = function(field, value) {
   if (!goog.isDefAndNotNull(value)) return '';
 
   if (goog.isString(value)) return value;
-  else if (goog.isArray(value)) return value.join(', ');
+  else if (goog.isArray(value)) {
+    return goog.array.filter(value, function(v) { return !!v; }).join(',');
+  }
 
   var type = pn.ui.edit.ReadOnlyFields.getFieldType_(field);
   return pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
