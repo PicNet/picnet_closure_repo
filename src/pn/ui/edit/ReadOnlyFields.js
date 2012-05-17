@@ -46,6 +46,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
   ];
   field.readonly = true;
   if (goog.string.endsWith(field.dataProperty, 'Entities')) {
+    if (field.renderer === null) return; // Leave grids alone
     field.renderer = rr.itemList;
   } else if (!curr) { field.renderer = rr.textField; }
   else if (curr.setReadOnly) curr.setReadOnly(true);
