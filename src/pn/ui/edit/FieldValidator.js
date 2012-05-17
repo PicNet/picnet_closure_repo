@@ -11,8 +11,10 @@ goog.provide('pn.ui.edit.FieldValidator');
  */
 pn.ui.edit.FieldValidator.validateFieldValue =
     function(field, value, entity, cache) {
-  if (goog.string.endsWith(field.dataProperty, 'Entities')) { return []; }
-
+  var isSchemaField = function() {
+    return !goog.string.startsWith(field.id, '_') &&
+        !goog.string.endsWith(field.dataProperty, 'Entities');
+  };
   var arraytise = function(err, list) {
     if (!err) return list;
     if (goog.isArray(err)) {
@@ -35,8 +37,8 @@ pn.ui.edit.FieldValidator.validateFieldValue =
     return arraytise(field.renderer.validate(), []);
   }
 
-  var errors = goog.string.startsWith(field.id, '_') ?
-      [] : pn.app.ctx.schema.getValidationErrors(field, value);
+  var errors = isSchemaField() ?
+      pn.app.ctx.schema.getValidationErrors(field, value) : [];
   // Always return schema issues before checking other errors as other
   // validations may conflic or duplicate these errors.
   if (errors.length || !field.validator) { return errors; }
