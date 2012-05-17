@@ -288,6 +288,8 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
       this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
     }
   }, this);
+  var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
+  errors = goog.array.concat(errors, errors2);
   return errors;
 };
 

@@ -89,6 +89,17 @@ pn.ui.edit.Interceptor.prototype.postInit = function() {};
 
 
 /**
+ * Override this method to do custom validation checking.  These errors are
+ *    in addition to the standard field based error checking done by Edit.js.
+ * @return {!Array} An array of any errors found in the form in addition to
+ *    the standard error checks done by Edit.js.
+ */
+pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function() {
+  return [];
+};
+
+
+/**
  * @protected
  * @param {string} id The id of the field (and its label) to check
  *    for visibility.

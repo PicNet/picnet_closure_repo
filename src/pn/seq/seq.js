@@ -851,7 +851,7 @@ pn.seq.Seq.prototype.zip = function(second, resultSelector) {
 /**
  * @param {!function(*):*} keySelector The selector of the compare key.
  * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
+ * @return {!pn.seq.Seq} The ordered sequence.
  */
 pn.seq.Seq.prototype.orderBy = function(keySelector, opt_comparer) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
@@ -863,7 +863,7 @@ pn.seq.Seq.prototype.orderBy = function(keySelector, opt_comparer) {
 /**
  * @param {!function(*):*} keySelector The selector of the compare key.
  * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
+ * @return {!pn.seq.Seq} The ordered sequence.
  */
 pn.seq.Seq.prototype.orderByDescending = function(keySelector, opt_comparer) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
@@ -877,7 +877,7 @@ pn.seq.Seq.prototype.orderByDescending = function(keySelector, opt_comparer) {
  * @param {!function(*):*} keySelector The selector of the compare key.
  * @param {boolean} descending Wether we are reversing the given comparer.
  * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
+ * @return {!pn.seq.Seq} The ordered sequence.
  */
 pn.seq.Seq.prototype.orderByImpl_ =
     function(keySelector, descending, opt_comparer) {
@@ -886,8 +886,11 @@ pn.seq.Seq.prototype.orderByImpl_ =
 
   var comparer = opt_comparer || pn.seq.Seq.defaultComparer_;
   var projComparer = new pn.seq.ProjectionComparer(keySelector, comparer);
-  if (descending) projComparer = new pn.seq.ReverseComparer(projComparer);
-  return new pn.seq.OrderedSeq(this, projComparer);
+  if (descending) { projComparer = new pn.seq.ReverseComparer(projComparer); }
+
+  var unsorted = goog.array.clone(this);
+  goog.array.sort(unsorted, goog.bind(projComparer.compare, projComparer));
+  return pn.seq.Seq.create(unsorted);
 };
 
 
@@ -902,75 +905,6 @@ pn.seq.Seq.prototype.doForEach = function(evaluator) {
   goog.array.forEach(this, evaluator);
 };
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// OrderedEnumerable
-////////////////////////////////////////////////////////////////////////////////
-/**
- * @constructor
- * @param {!(Array|pn.seq.Seq)} source The source array.
- * @param {!pn.seq.IComparer} comparer The sequence ordering comparer.
- * @extends {pn.seq.Seq}
- */
-pn.seq.OrderedSeq = function(source, comparer) {
-  if (!source) throw new Error('source is required and was not provided');
-  pn.seq.Seq.call(this);
-
-  /**
-   * @private
-   * @type {goog.iter.Iterator}
-   */
-  this.orderedIterator_ = null;
-
-  /**
-   * @private
-   * @type {!pn.seq.IComparer}
-   */
-  this.comparer_ = comparer;
-};
-goog.inherits(pn.seq.OrderedSeq, pn.seq.Seq);
-
-
-/**
- * @param {!function(*):*} keySelector The selector of the compare key.
- * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
- */
-pn.seq.OrderedSeq.prototype.thenBy = function(keySelector, opt_comparer) {
-  if (!keySelector) throw new Error('keySelector was not provided');
-  return this.appendComparer_(keySelector, false, opt_comparer);
-};
-
-
-/**
- * @param {!function(*):*} keySelector The selector of the compare key.
- * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
- */
-pn.seq.OrderedSeq.prototype.thenByDescending =
-    function(keySelector, opt_comparer) {
-  if (!keySelector) throw new Error('keySelector was not provided');
-  return this.appendComparer_(keySelector, true, opt_comparer);
-};
-
-
-/**
- * @private
- * @param {!function(*):*} keySelector The selector of the compare key.
- * @param {boolean} descending Wether we are reversing the given comparer.
- * @param {function(*,*):number=} opt_comparer The comparer.
- * @return {!pn.seq.OrderedSeq} The ordered sequence.
- */
-pn.seq.OrderedSeq.prototype.appendComparer_ =
-    function(keySelector, descending, opt_comparer) {
-  if (!keySelector) throw new Error('keySelector was not provided');
-  var comparer = opt_comparer || pn.seq.Seq.defaultComparer_;
-  var secondComparer = new pn.seq.ProjectionComparer(keySelector, comparer);
-  if (descending) secondComparer = new pn.seq.ReverseComparer(secondComparer);
-  secondComparer = new pn.seq.CompoundComparer(this.comparer_, secondComparer);
-  return new pn.seq.OrderedSeq(this, secondComparer);
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // LOOKUP

@@ -83,7 +83,11 @@ pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
-  return !this.getFormErrors().length;
+  var errors = this.getFormErrors();
+  if (errors.length) {
+    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_VALIDATION_ERROR, errors);
+  }
+  return !errors.length;
 };
 
 
@@ -103,6 +107,10 @@ pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
       errors = goog.array.concat(errors, c.edit.getFormErrors());
     }
   });
+  goog.object.forEach(this.specs, function(spec) {
+    var customErrors = spec.editConfig.interceptor.getCustomValidationErrors();
+    errors = goog.array.concat(errors, customErrors);
+  }, this);
   return errors;
 };
 

@@ -193,15 +193,16 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       var items = value.split(', ');
       return '<ul><li>' + items.join('</li><li>') + '</li></ul>';
     case ft.TIME:
-      var hours = Math.floor(value / 100);
-      var minutes = Math.floor(value % 100);
+      var hours = Math.floor(value / 60);
+      var minutes = Math.floor(value % 60);
       var displayHr = goog.string.padNumber((hours % 12) + 1, 2);
       var displayMin = goog.string.padNumber(minutes, 2);
       return displayHr + ':' + displayMin + ' ' + (hours < 12 ? ' AM' : ' PM');
     case ft.DATE:
       var date = !value ? null : new Date(value);
       return !date ? '' : pn.date.dateFormat.format(date);
-    case ft.BOOLEAN: return value === true ? 'yes' : 'no';
+    case ft.BOOLEAN:
+      return value === true ? 'yes' : 'no';
     case ft.CENTS:
       return pn.convert.centsToCurrency(/** @type {number} */ (value));
   }
