@@ -44,6 +44,12 @@ pn.ui.edit.ComplexRenderer = function() {
   this.readonly = false;
 
   /**
+   * @protected
+   * @type {boolean}
+   */
+  this.required = false;
+
+  /**
    * @type {boolean}
    */
   this.showLabel = true;
@@ -80,6 +86,12 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
 /** @param {boolean} readonly Wether this should be rendered as readonly. */
 pn.ui.edit.ComplexRenderer.prototype.setReadOnly = function(readonly) {
   this.readonly = readonly;
+};
+
+
+/** @param {boolean} required Wether this value should be required. */
+pn.ui.edit.ComplexRenderer.prototype.setIsRequired = function(required) {
+  this.required = required;
 };
 
 
