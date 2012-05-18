@@ -3,8 +3,8 @@ goog.provide('pn.seq');
 goog.provide('pn.seq.Seq');
 
 goog.require('goog.array');
-goog.require('goog.object');
 goog.require('goog.asserts');
+goog.require('goog.object');
 goog.require('pn.seq.ProjectionComparer');
 goog.require('pn.seq.ReverseComparer');
 
@@ -475,6 +475,7 @@ pn.seq.Seq.prototype.except = function(second, opt_comparer) {
   return pn.seq.Seq.create(results);
 };
 
+
 /**
  * Takes entries in the sequence until the predicate return false.
  *
@@ -487,8 +488,8 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
 
   var inverted = function(e, idx) { return !predicate(e, idx); };
   var idx = goog.array.findIndex(this, inverted);
-  if (idx < 0) return this;  
-  if (idx === this.length) return pn.seq.Seq.EMPTY_;    
+  if (idx < 0) return this;
+  if (idx === this.length) return pn.seq.Seq.EMPTY_;
   return pn.seq.Seq.create(goog.array.slice(this, 0, idx));
 };
 
@@ -505,8 +506,8 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
 
   var inverted = function(e, idx) { return !predicate(e, idx); };
   var idx = goog.array.findIndex(this, inverted);
-  if (idx < 0) return pn.seq.Seq.EMPTY_;  
-  if (idx === this.length) return this;    
+  if (idx < 0) return pn.seq.Seq.EMPTY_;
+  if (idx === this.length) return this;
   return pn.seq.Seq.create(goog.array.slice(this, idx));
 };
 
