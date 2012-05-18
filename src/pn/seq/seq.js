@@ -1,14 +1,10 @@
 
 goog.provide('pn.seq');
-goog.provide('pn.seq.Grouping');
-goog.provide('pn.seq.Lookup');
-goog.provide('pn.seq.OrderedSeq');
 goog.provide('pn.seq.Seq');
 
 goog.require('goog.array');
+goog.require('goog.object');
 goog.require('goog.asserts');
-goog.require('goog.structs.Map');
-goog.require('pn.seq.CompoundComparer');
 goog.require('pn.seq.ProjectionComparer');
 goog.require('pn.seq.ReverseComparer');
 
@@ -479,129 +475,6 @@ pn.seq.Seq.prototype.except = function(second, opt_comparer) {
   return pn.seq.Seq.create(results);
 };
 
-
-/**
- * Creates a pn.seq.Lookup given a keySelector
- *
- * @param {!function(*):*} keySelect The key of each element in the seq.
- * @param {function(*):*=} opt_elementSelector The optional element from
- *    each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq.Lookup} The lookup.
- */
-pn.seq.Seq.prototype.toLookup =
-    function(keySelect, opt_elementSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (!keySelect) throw new Error('keySelector was not provided');
-
-  return new pn.seq.Lookup(this, keySelect, opt_elementSelector, opt_comparer);
-};
-
-
-/**
- * Correlates the elements of two sequences based on matching keys
- *
- * @param {!pn.seq.Seq} inner The sequence to join to the first sequence.
- * @param {!function(*):*} outKeySelect The key of each element in the
- *    outer seq.
- * @param {!function(*):*} inKeySelect The key of each element in the inner seq.
- * @param {function(*, *):*} resultSelector The element from each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq.Seq} The joined sequence.
- */
-pn.seq.Seq.prototype.joinTo =
-    function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  this.joinValidate_(
-      inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
-
-  var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
-  var results = [];
-  this.forEach(function(outerElement) {
-    var key = outKeySelect(outerElement);
-    lu.get(key).forEach(function(innerElement) {
-      results.push(resultSelector(outerElement, innerElement));
-    });
-  });
-  return pn.seq.Seq.create(results);
-};
-
-
-/**
- * Groups the elements of a sequence.
- *
- * @param {!function(*):*} keySelect The key of each element in the seq.
- * @param {!function(*):*} elementSelect The element of each element in the seq.
- * @param {function(*, pn.seq.Seq):*=} opt_resultSelect The optional element
- *    from each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq.Seq} The joined sequence.
- */
-pn.seq.Seq.prototype.groupBy =
-    function(keySelect, elementSelect, opt_resultSelect, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_(this))
-    throw new Error('Source is not a pn.seq.Seq');
-  if (!keySelect)
-    throw new Error('keySelect is required and was not provided');
-  if (!elementSelect)
-    throw new Error('elementSelect is required and was not provided');
-
-  var lu = this.toLookup(keySelect, elementSelect, opt_comparer);
-  return lu.select(function(group) {
-    return opt_resultSelect ? opt_resultSelect(group.key, group) : group;
-  });
-};
-
-
-/**
- * Correlates the elements of two sequences based on key equality, and
- *    groups the results
- *
- * @param {!pn.seq.Seq} inner The sequence to join to the first sequence.
- * @param {!function(*):*} outKeySelect The key of each element in the
- *    outer seq.
- * @param {!function(*):*} inKeySelect The key of each element in the inner seq.
- * @param {function(*, *):*} resultSelector The element from each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!pn.seq.Seq} The joined sequence.
- */
-pn.seq.Seq.prototype.groupJoin =
-    function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  this.joinValidate_(
-      inner, outKeySelect, inKeySelect, resultSelector, opt_comparer);
-
-  var lu = inner.toLookup(inKeySelect, undefined, opt_comparer);
-  var results = [];
-
-  this.forEach(function(outerElement) {
-    var key = outKeySelect(outerElement);
-    results.push(resultSelector(outerElement, lu.get(key)));
-  });
-  return pn.seq.Seq.create(results);
-};
-
-
-/**
- * @private
- * @param {!pn.seq.Seq} inner The sequence to join to the first sequence.
- * @param {!function(*):*} outKeySelect The key of each element in the
- *    outer seq.
- * @param {!function(*):*} inKeySelect The key of each element in the inner seq.
- * @param {function(*, *):*} resultSelector The element from each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- */
-pn.seq.Seq.prototype.joinValidate_ =
-    function(inner, outKeySelect, inKeySelect, resultSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-  if (!pn.seq.Seq.isSeq_(inner)) throw new Error('inner is not a pn.seq.Seq');
-  if (!outKeySelect)
-    throw new Error('outKeySelect is required and was not provided');
-  if (!inKeySelect)
-    throw new Error('inKeySelect is required and was not provided');
-  if (!resultSelector)
-    throw new Error('resultSelector is required and was not provided');
-};
-
-
 /**
  * Takes entries in the sequence until the predicate return false.
  *
@@ -612,9 +485,11 @@ pn.seq.Seq.prototype.takeWhile = function(predicate) {
   if (!predicate) throw new Error('predicate is required and was not provided');
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
-  var idx = goog.array.findIndex(this, predicate);
-  if (idx < 0) return pn.seq.Seq.EMPTY_;
-  return pn.seq.Seq.create(goog.array.splice(this, 0, idx + 1));
+  var inverted = function(e, idx) { return !predicate(e, idx); };
+  var idx = goog.array.findIndex(this, inverted);
+  if (idx < 0) return this;  
+  if (idx === this.length) return pn.seq.Seq.EMPTY_;    
+  return pn.seq.Seq.create(goog.array.slice(this, 0, idx));
 };
 
 
@@ -629,10 +504,10 @@ pn.seq.Seq.prototype.skipWhile = function(predicate) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
 
   var inverted = function(e, idx) { return !predicate(e, idx); };
-  var idx = goog.array.findIndex(this, predicate);
-  if (idx < 0) return this;
-  if (idx === this.length - 1) return pn.seq.Seq.EMPTY_;
-  return pn.seq.Seq.create(goog.array.splice(this, idx, this.length - idx));
+  var idx = goog.array.findIndex(this, inverted);
+  if (idx < 0) return pn.seq.Seq.EMPTY_;  
+  if (idx === this.length) return this;    
+  return pn.seq.Seq.create(goog.array.slice(this, idx));
 };
 
 
@@ -661,20 +536,6 @@ pn.seq.Seq.prototype.skip = function(count) {
   if (!goog.isNumber(count) || count < 0)
     throw new Error('count is required and was not provided');
   return this.skipWhile(function(e, idx) { return idx < count; });
-};
-
-
-/**
- * @param {function(*):*!} keySelector The key selector.
- * @param {function(*):*=} opt_elemSelector The optional element selector.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- * @return {!goog.structs.Map} The sequence as a map.
- */
-pn.seq.Seq.prototype.toMap =
-    function(keySelector, opt_elemSelector, opt_comparer) {
-  if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
-
-  return this.toLookup(keySelector, opt_elemSelector, opt_comparer).getMap();
 };
 
 
@@ -904,145 +765,3 @@ pn.seq.Seq.prototype.doForEach = function(evaluator) {
   if (!pn.seq.Seq.isSeq_(this)) throw new Error('Source is not a pn.seq.Seq');
   goog.array.forEach(this, evaluator);
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-// LOOKUP
-////////////////////////////////////////////////////////////////////////////////
-
-
-
-/**
- * @constructor
- * @extends {pn.seq.Seq}
- * @param {!goog.iter.Iterable} iter The iterable source.
- * @param {!function(*):*} keySelector The key of each element in the seq.
- * @param {function(*, number=):*=} opt_elementSelector The optional element
- *    from each element.
- * @param {function(*, *):boolean=} opt_comparer The optional equality comparer.
- */
-pn.seq.Lookup = function(iter, keySelector, opt_elementSelector, opt_comparer) {
-  if (!iter) throw new Error('iter is required and was not provided');
-  if (!keySelector) throw new Error('keySelector was not provided');
-  pn.seq.Seq.call(this);
-
-  this.keySelector_ = keySelector;
-  this.elemSelector_ = opt_elementSelector || function(e) { return e; };
-  this.comparer_ = opt_comparer || pn.seq.Seq.defaultEquality_;
-  this.lookupIterator_ = null;
-
-  // Perhaps lookup should extend Map?
-  this.map_ = new goog.structs.Map();
-  this.keys_ = [];
-
-  this.init_();
-};
-goog.inherits(pn.seq.Lookup, pn.seq.Seq);
-
-
-/** @private */
-pn.seq.Lookup.prototype.init_ = function() {
-  for (var i = 0, len = this.length; i < len; i++) {
-    var e = this[i];
-    var key = this.keySelector_(e);
-    var elem = this.elemSelector_(e, i);
-    this.set(key, elem);
-  }
-};
-
-
-/**
- * @param {*} key The key to find.
- * @return {boolean} Wether the lookup contains the given key.
- */
-pn.seq.Lookup.prototype.containsKey = function(key) {
-  return this.indexOfKey_(key) >= 0;
-};
-
-
-/**
- * @private
- * @param {*} key The key to find.
- * @return {number} The index of the key.
- */
-pn.seq.Lookup.prototype.indexOfKey_ = function(key) {
-  return goog.array.findIndex(this.keys_, function(k) {
-    return this.comparer_(k, key);
-  }, this);
-};
-
-
-/**
- * @return {!Array.<*>} The array of keys the lookup contains.
- */
-pn.seq.Lookup.prototype.getKeys = function() {
-  return goog.array.clone(this.keys_);
-};
-
-
-/**
- * @param {*} key The key to find.
- * @return {!pn.seq.Seq} The sequence in the specified key (empty if key
- *    not found).
- */
-pn.seq.Lookup.prototype.get = function(key) {
-  var kidx = this.indexOfKey_(key);
-  if (kidx < 0) return pn.seq.Seq.empty();
-  return /** @type {!pn.seq.Seq} */ (this.map_.get(this.keys_[kidx]));
-};
-
-
-/**
- * @param {*} key The key to find.
- * @param {!pn.seq.Seq} value The sequence to set in the specified key.
- */
-pn.seq.Lookup.prototype.set = function(key, value) {
-  var kidx = this.indexOfKey_(key);
-  if (kidx >= 0) {
-    var arr = this.map_.get(this.keys_[kidx]);
-    arr.push(value);
-    return;
-  }
-  this.keys_.push(key);
-  this.map_.set(key, [value]);
-};
-
-
-/**
- * @private
- * @param {*} key The key to find.
- * @return {*} The first key that matches the comparer.
- */
-pn.seq.Lookup.prototype.getCompatibleExistingKey_ = function(key) {
-  var idx = goog.array.findIndex(this.keys_, function(k) {
-    return this.comparer_(k, key);
-  }, this);
-  return idx >= 0 ? this.keys_[idx] : key;
-};
-
-
-/**
- * @return {!goog.structs.Map} The internal Map.
- */
-pn.seq.Lookup.prototype.getMap = function() { return this.map_; };
-
-////////////////////////////////////////////////////////////////////////////////
-// GROUPING
-////////////////////////////////////////////////////////////////////////////////
-
-
-
-/**
- * @constructor
- * @extends {pn.seq.Seq}
- * @param {*} key The key of this group.
- * @param {!goog.iter.Iterable|!pn.seq.Seq} iter The iterable sequence
- *    in this group.
- */
-pn.seq.Grouping = function(key, iter) {
-  pn.seq.Seq.call(this);
-
-  /** @type {*} */
-  this.key = key;
-};
-goog.inherits(pn.seq.Grouping, pn.seq.Seq);

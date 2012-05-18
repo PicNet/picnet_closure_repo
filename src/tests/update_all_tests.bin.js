@@ -1,26 +1,37 @@
 var fs = require('fs');
 
-getAllTests(function(tests) {
-  writeAllTestsJSFile(tests);
+getAllTests(function(all, seq) {
+  writeAllTestsJSFile(all, seq);
 });
 
 function getAllTests(callback) {
-  var tests = [];
+  var all = [];
+  var seq = [];
   fs.readdir(__dirname, function(err, files) {
     for (var i = 0, len = files.length; i < len; i++) {
       var f = files[i];
       if (f.indexOf('.html') > 0 && f !== 'all_tests.html') {
-        tests.push(f);
+        all.push(f);
+        if (f.indexOf('Seq') === 0) {
+          seq.push(f)
+        }
       }      
     }
-    callback(tests);
+    callback(all, seq);
   });  
 };
 
-function writeAllTestsJSFile(allFiles) {
-  var contents = "var all_tests = ['" + allFiles.join("','") + "'];";  
-  fs.writeFile('all_tests.js', contents, function(err) {    
+function writeAllTestsJSFile(all, seq) {
+
+  var all_contents = "var all_tests = ['" + all.join("','") + "'];";  
+  var seq_contents = "var all_tests = ['" + seq.join("','") + "'];";  
+  writeContents(all_contents, 'all_tests.js')  
+  writeContents(seq_contents, 'all_seq_tests.js')  
+};
+
+function writeContents(contents, file) {  
+  fs.writeFile(file, contents, function(err) {    
     if (err)throw err;
-    else { console.log('Successfuly updated the all_tests.js file with all tests in this directory'); }
+    else { console.log('Successfuly updated the ' + file +' file with corresponding tests'); }
   });  
 };

@@ -34,10 +34,10 @@ var testWithSelector = function  () {
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {     
     return pn.seq.Seq.repeat(x, i);
-  }, function(x, x2) {
-    return x2 + x;
+  }, function(x, i2) {    
+    return x + i2;    
   }); 
-  assertArrayEquals([6, 8, 8, 4, 4, 4, 16, 16, 16, 16, 2, 2, 2, 2, 2], result); 
+  assertArrayEquals([3,5,6,5,6,7,14,15,16,17,11,12,13,14,15], result); 
 };
 
 var testNullSelectorThrowsError = function() {
