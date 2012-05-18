@@ -92,10 +92,10 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer =
  *    the renderer property in the column it needs to be wrapped so that
  *    the parentField and opt_childType parameters are set. I.e:
  *  <code>
- *  this.createColumn('AcccEntryBrandEntities', 'Brands', {
+ *  this.createColumn('ParentChildEntities', 'Children Label', {
  *      renderer: function(e, cache, v, col) {
  *       return pn.ui.grid.ColumnRenderers.
- *           entitiesCsvRenderer(e, cache, v, col, 'AcccEntryID', 'Brand');
+ *           entitiesCsvRenderer(e, cache, v, col, 'ParentID', 'Child');
  *     }
  *   })
  *  </code>
