@@ -115,6 +115,15 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    * @type {string}
    */
   this.tableParentField = '';
+
+  /**
+   * Any additional properties required by the validator or renderer.  This
+   *    can be an object with any property values and is intended to be used
+   *    with custom renderers/validators to enhance existing funcitonality.
+   *
+   * @type {!Object}
+   */
+  this.additionalProperties = {};
 };
 goog.inherits(pn.ui.edit.Field, pn.ui.BaseField);
 

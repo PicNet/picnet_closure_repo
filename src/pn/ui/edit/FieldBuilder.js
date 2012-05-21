@@ -148,7 +148,9 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
       'Name': pn.data.EntityUtils.getEntityDisplayValue(cache, path, e)
     };
   });
-  return pn.ui.edit.FieldBuilder.createDropDownList(selTxt, list, val);
+  var sort = field.additionalProperties.sortedValues;
+  if (!goog.isDef(sort)) sort = true;
+  return pn.ui.edit.FieldBuilder.createDropDownList_(selTxt, list, val, sort);
 };
 
 
@@ -189,14 +191,16 @@ pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
 
 
 /**
+ * @private
  * @param {string} selectTxt The message to display in the first element of the
  *    list.
  * @param {!Array.<Object>} list The list of entities.
  * @param {*} selValue The selected value in the 'ID' field.
+ * @param {boolean} sort Wether the list should display sorted.
  * @return {!Element} The select box.
  */
-pn.ui.edit.FieldBuilder.createDropDownList =
-    function(selectTxt, list, selValue) {
+pn.ui.edit.FieldBuilder.createDropDownList_ =
+    function(selectTxt, list, selValue, sort) {
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
@@ -210,8 +214,10 @@ pn.ui.edit.FieldBuilder.createDropDownList =
     goog.asserts.assert(txt !== undefined);
     if (txt) options.push(goog.dom.createDom('option', opts, txt));
   });
-  goog.array.sortObjectsByKey(options, 'innerHTML',
-      goog.string.caseInsensitiveCompare);
+  if (sort) {
+    goog.array.sortObjectsByKey(options, 'innerHTML',
+        goog.string.caseInsensitiveCompare);
+  }
   goog.array.forEach(options, function(o) {
     goog.dom.appendChild(select, o);
   });
