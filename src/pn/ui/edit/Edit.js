@@ -60,20 +60,10 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @private
    * @type {!Array.<pn.ui.edit.Field>}
    */
-  this.fields_ = this.cfg_.fields;
-
-  /**
-   * @private
-   * @type {!Object.<!Element|!goog.ui.Component>}
-   */
-  this.inputs_ = {};
-
-  /**
-   * @private
-   * @type {!Object.<!Element>}
-   */
-  this.parents_ = {};
-
+  this.fields_ = goog.array.map(this.cfg_.fields, function(fs) {
+    return new pn.ui.edit.FieldCtx(fs, data, cache);
+  }, this);
+  
   /**
    * @private
    * @type {goog.debug.Logger}
