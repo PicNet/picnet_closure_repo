@@ -70,18 +70,19 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.textField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.textField = function(field) {
+  var val = field.getEntityValue();
   if (!val) val = '';
   if (goog.isString(val)) {
     val = pn.ui.edit.ReadOnlyFields.toHtmlText(val);
   }
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DEFAULT;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  var div = pn.ui.edit.ReadOnlyFields.field_(field, type);
+  div.innerHTML = val;
+  return div;
 };
 
 
@@ -99,84 +100,73 @@ pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.itemList = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.itemList = function(field) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.ITEM_LIST;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(field, type);
 };
 
 
 /**
- * @param {*} val The time number represented by hhmm format.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The time field.
  */
-pn.ui.edit.ReadOnlyFields.timeField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.timeField = function(field) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.TIME;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(field, type);
 };
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The readonly cents field.
  */
-pn.ui.edit.ReadOnlyFields.centsField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.centsField = function(field) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.CENTS;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(field, type);
 };
 
 
 /**
- * @param {*} val The boolean to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.ReadOnlyFields.boolField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.boolField = function(field) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.BOOLEAN;
-  var field = pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
-  field.checked = field.value;
-  return field;
+  var ctl = pn.ui.edit.ReadOnlyFields.field_(field, type);
+  ctl.checked = field.value;
+  return ctl;
 };
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @return {!Element} The readonly
  *    text field control.
  */
-pn.ui.edit.ReadOnlyFields.dateField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.dateField = function(field) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DATE;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(field, type);
 };
 
 
 /**
  * @private
- * @param {*} value The field value.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} field The field to create a control for.
  * @param {!pn.ui.edit.ReadOnlyFields.FieldType_} type The type of this field.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
-  goog.asserts.assert(parent);
+pn.ui.edit.ReadOnlyFields.field_ = function(field, type) {
   goog.asserts.assert(type);
 
-  var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
+  var val = field.getEntityValue();
+  var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
   var readonly = goog.dom.createDom('div', 'field');
   readonly.innerHTML = text;
-  readonly.value = value;
-  goog.dom.appendChild(parent, readonly);
+  readonly.value = val;
+  goog.dom.appendChild(field.parentComponent, readonly);  
   return readonly;
 };
 

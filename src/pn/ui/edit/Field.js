@@ -152,6 +152,6 @@ pn.ui.edit.Field.prototype.extend = function(props) {
 };
 
 
-/** @typedef {pn.ui.edit.ComplexRenderer|function(*, Object, !Element,
-    !Object.<!Array>):!(Element|goog.ui.Component|Text)} */
+/** @typedef {pn.ui.edit.ComplexRenderer|function(!pn.ui.FieldCtx):
+    !(Element|goog.ui.Component|Text)} */
 pn.ui.edit.Field.Renderer;

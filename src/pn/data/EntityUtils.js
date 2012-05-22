@@ -3,7 +3,7 @@ goog.provide('pn.data.EntityUtils');
 
 
 /**
- * @param {!Object} entity The entity to check for newness.
+ * @param {Object} entity The entity to check for newness.
  * @return {boolean} Wether the specified entity is new.
  */
 pn.data.EntityUtils.isNew = function(entity) {

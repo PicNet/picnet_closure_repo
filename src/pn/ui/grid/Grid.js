@@ -11,7 +11,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.app.AppEvents');
 goog.require('pn.data.EntityUtils');
-goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFind');
 
@@ -49,21 +48,18 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    */
   this.cfg_ = this.spec_.gridConfig;
 
-  var cols = this.cfg_.columns;
-  var uniqueColIds = goog.array.map(cols, function(c) {
-    return c.id;
+  /** @type {!Array.<!pn.ui.FieldCtx>} */
+  var cols = goog.array.map(this.cfg_.columns, function(c) {
+    return new pn.ui.FieldCtx(c, null, cache); 
   });
-  goog.array.removeDuplicates(uniqueColIds);
-  goog.asserts.assert(cols.length === uniqueColIds.length,
-      'All column IDs should be unique. Grid type: ' + this.spec_.id);
 
   /**
    * @private
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(uniqueColIds,
-      function(acc, f) { return acc + f; }, ''));
+  this.hash_ = /** @type {string} */ (goog.array.reduce(cols,
+      function(acc, f) { return acc + f.id; }, ''));
 
   /**
    * @private
@@ -80,16 +76,17 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.grid.Column>}
+   * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(this.cfg_.columns);
+  this.cols_ = this.getColumnsWithInitialState_(cols);
 
   /**
    * @private
-   * @type {!Array.<pn.ui.grid.Column>}
+   * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.totalColumns_ =
-      goog.array.filter(this.cols_, function(c) { return c.total; });
+  this.totalColumns_ = goog.array.filter(this.cols_, function(c) { 
+    return c.spec.total; 
+  });
 
   /**
    * @private
@@ -236,8 +233,8 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
 /**
  * @private
- * @param {!Array.<pn.ui.grid.Column>} cols The unsorted columns.
- * @return {!Array.<pn.ui.grid.Column>} The sorted columns with savewd widths.
+ * @param {!Array.<!pn.ui.FieldCtx>} cols The unsorted columns.
+ * @return {!Array.<!pn.ui.FieldCtx>} The sorted columns with saved widths.
  */
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   var state = goog.net.cookies.get(this.hash_);
@@ -247,14 +244,13 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var colidx = goog.array.findIndex(cols, function(c) {
-      return c.id === id;
-    });
-    var col = cols[colidx];
-    delete cols[colidx];
-    col.width = widths[idx];
+    var cidx = goog.array.findIndex(cols, function(c) { return c.id === id; });
+    var col = cols[cidx];
+    delete cols[cidx];
+    col.spec.width = widths[idx];
     ordered.push(col);
   });
+
   // Add remaining columns (if any)
   goog.array.forEach(cols, ordered.push);
   return ordered;
@@ -275,9 +271,10 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
 
     for (var col = 0; col < lencol; col++) {
-      var cc = this.cols_[col];
-      var val = rowData[cc.dataProperty];
-      var txt = cc.renderer ? cc.renderer(rowData, this.cache_, val, cc) : val;
+      var field = this.cols_[col];      
+      field.entity = rowData;
+      var val = rowData[field.spec.dataProperty];
+      var txt = field.spec.renderer ? field.spec.renderer(field) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);

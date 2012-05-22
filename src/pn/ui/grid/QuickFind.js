@@ -61,18 +61,17 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {
       var filterVal = this.filters_[columnId];
-      var col = /** @type {pn.ui.grid.Column} */
-          (goog.array.find(this.cols_,
+      var val = '';
+      var field = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.cols_,
               function(col) { return col.id === columnId; }));
-      var val = entity[col.dataProperty];
-      if (col.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
+      field.entity = entity;
+      if (field.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, col.displayPath, entity) || '').toString() :
-            '';
-      } else if (col.renderer) {
-        val = col.renderer(entity, this.cache_, val, col);
-      }
+            this.cache_, field.spec.displayPath, field.entity) || '').
+                toString() : '';
+      } else if (field.renderer) { val = field.renderer(field); }
       if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
+
       if (!this.search_.matches(val, filterVal)) { return false; }
     }
   }

@@ -329,7 +329,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     goog.dom.appendChild(dom, input);
   } else {
     var srchFld = this.getSearchAppropriateFieldSpec_(f);
-    input = FieldBuilder.createAndAttach(srchFld, dom, {}, this.cache_);
+    input = FieldBuilder.createAndAttach(srchFld, dom);
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }

@@ -61,8 +61,7 @@ pn.ui.grid.Column = function(id, entitySpec, opt_name) {
    *    to this Column specifications.  The renderer then returns a html string
    *    of the value to display.
    *
-   * @type {null|function(
-   *   !Object,!Object.<!Array>,*,!pn.ui.grid.Column):string}
+   * @type {null|function(!pn.ui.FieldCtx):string}
    */
   this.renderer = null;
 

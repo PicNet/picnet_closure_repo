@@ -53,65 +53,53 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 
 
 /**
- * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {!Element} parent The parent to attach this input control to.
- * @param {!Object} entity The entity being displayed.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.ui.FieldCtx} field The field to create a dom tree for.
  * @return {!(Element|goog.ui.Component|Text)} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createAndAttach =
-    function(field, parent, entity, cache) {
+pn.ui.edit.FieldBuilder.createAndAttach = function(field) {
   var fb = pn.ui.edit.FieldBuilder;
-  var val = fb.transEntityToFieldValue(field, entity, cache);
+  var val = fb.transEntityToFieldValue(field);
   var elem;
-  if (field.renderer) {
-    if (field.displayPath) {
-      var path = field.displayPath;
-      val = pn.data.EntityUtils.getEntityDisplayValue(
-          cache, path, entity, field.tableParentField);
-    }
-    if (typeof (field.renderer) === 'object') { // Complex Renderer
-      elem = field.renderer;
-      field.renderer.initialise(val, entity, cache, field);
-      elem.decorate(parent);
+  if (field.spec.renderer) {
+    if (typeof (field.spec.renderer) === 'object') { // Complex Renderer
+      elem = field.spec.renderer;
+      field.spec.renderer.initialise(field);
+      elem.decorate(field.parentComponent);
     } else {
-      elem = field.renderer(val, entity, parent, cache);
+      elem = field.spec.renderer(field);
     }
-  } else if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
-      !field.tableType) {
-    elem = field.readonly ?
-        fb.createReadOnlyParentEntitySelect_(field, cache, entity) :
-        fb.createParentEntitySelect_(field, cache, /** @type {number} */ (val));
-    goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
+  } else if (pn.data.EntityUtils.isParentProperty(field.spec.dataProperty) &&
+      !field.spec.tableType) {
+    elem = field.spec.readonly ?
+        fb.createReadOnlyParentEntitySelect_(field) :
+        fb.createParentEntitySelect_(field);
+    goog.dom.appendChild(field.parentComponent, /** @type {!Node} */ (elem));
   } else if (field.tableType) {
-    elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
+    elem = fb.createChildEntitiesSelectTable_(field);
   } else {
     val = goog.isDef(val) ? val : '';
     elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
-    goog.dom.appendChild(parent, elem);
+    goog.dom.appendChild(field.parentComponent, elem);
   }
   return elem;
 };
 
 
 /**
- * @param {!pn.ui.edit.Field} field The field spec to determine the field UI
+ * @param {!pn.ui.FieldCtx} field The field spec to determine the field UI
  *    control appropriate value for.
- * @param {!Object} entity The entity being displayed.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @return {*} The UI control appropriate value.
  */
-pn.ui.edit.FieldBuilder.transEntityToFieldValue =
-    function(field, entity, cache) {
-  var prop = field.dataProperty;
-  var useDefault = pn.data.EntityUtils.isNew(entity) &&
-      goog.isDef(field.defaultValue);
-  var val = useDefault ? field.defaultValue : entity[prop];
+pn.ui.edit.FieldBuilder.transEntityToFieldValue = function(field) {
+  var prop = field.spec.dataProperty;
+  var useDefault = pn.data.EntityUtils.isNew(field.entity) &&
+      goog.isDef(field.spec.defaultValue);
+  var val = useDefault ? field.spec.defaultValue : field.entity[prop];
   if (useDefault && pn.data.EntityUtils.isParentProperty(prop)) {
     var type = pn.data.EntityUtils.getTypeProperty(prop);
-    var list = cache[type];
+    var list = field.cache[type];
     val = goog.array.find(list, function(e) {
-      return e[type + 'Name'] === field.defaultValue;
+      return e[type + 'Name'] === field.spec.defaultValue;
     })['ID'];
   }
   if (goog.string.endsWith(prop, 'Entities') && val && val.length) {
@@ -125,45 +113,39 @@ pn.ui.edit.FieldBuilder.transEntityToFieldValue =
 
 /**
  * @private
- * @param {!pn.ui.BaseField} field The field/column to create a
- *    dom tree for.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {number} val The selected value.
+ * @param {!pn.ui.FieldCtx} field The field/column to create a dom tree.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect_ =
-    function(field, cache, val) {
-  var steps = field.displayPath.split('.');
-  var entityType = pn.data.EntityUtils.getTypeProperty(field.dataProperty);
+pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(field) {
+  var steps = field.spec.displayPath.split('.');
+  var entityType = pn.data.EntityUtils.getTypeProperty(field.spec.dataProperty);
 
-  var list = cache[entityType];
+  var list = field.cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
-  var selTxt = 'Select ' + field.name + ' ...';
+  var selTxt = 'Select ' + field.spec.name + ' ...';
   steps.shift();
   var path = steps.join('.');
   list = goog.array.map(list, function(e) {
     return {
       'ID': e['ID'],
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(cache, path, e)
+      'Name': pn.data.EntityUtils.getEntityDisplayValue(field.cache, path, e)
     };
   });
-  var sort = field.additionalProperties.sortedValues;
+  var sort = field.spec.additionalProperties.sortedValues;
   if (!goog.isDef(sort)) sort = true;
-  return pn.ui.edit.FieldBuilder.createDropDownList_(selTxt, list, val, sort);
+  return pn.ui.edit.FieldBuilder.createDropDownList_(
+      selTxt, list, field.getEntityValue(), sort);
 };
 
 
 /**
- * @param {!pn.ui.BaseField} field The field/column to create a
+ * @param {!pn.ui.FieldCtx} field The field/column to create a
  *    dom tree for.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createSearchParentFilter =
-    function(field, cache) {
-  var sel = pn.ui.edit.FieldBuilder.
-      createParentEntitySelect_(field, cache, 0);
+pn.ui.edit.FieldBuilder.createSearchParentFilter = function(field) {
+  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect_(field);
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
@@ -172,20 +154,16 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter =
 
 /**
  * @private
- * @param {!pn.ui.BaseField} field The field/column to create a
- *    dom tree for.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Object} entity The current entity.
+ * @param {!pn.ui.FieldCtx} field The field to create parent select.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
-    function(field, cache, entity) {
-  var path = field.displayPath;
+pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ = function(field) {
+  var path = field.spec.displayPath;
   var val = pn.data.EntityUtils.
-      getEntityDisplayValue(cache, path, entity) || '';
+      getEntityDisplayValue(field.cache, path, field.entity) || '';
 
   var div = goog.dom.createDom('div', 'field', val.toString());
-  div.value = entity[path.split('.')[0]];
+  div.value = field.entity[path.split('.')[0]];
   return div;
 };
 
@@ -247,29 +225,24 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
 
 /**
  * @private
- * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {!Element} parent The parent to attach this input control to.
- * @param {Object} entity The entity being displayed.  Cannot be null.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.ui.FieldCtx} field The field to create a dom tree for.
  * @return {!Element|!goog.ui.Component} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
-    function(field, parent, entity, cache) {
-  goog.asserts.assert(entity);
-  goog.asserts.assert(field.tableType);
-  goog.asserts.assert(entity['ID'] != 0);
+pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ = function(field) {
+  goog.asserts.assert(field.spec.tableType);
+  goog.asserts.assert(field.entity['ID'] != 0);
 
-  var parentId = entity['ID'];
+  var parentId = field.entity['ID'];
 
-  var parentField = field.tableParentField;
-  var list = cache[field.tableType];
-  if (!list) list = cache[goog.string.remove(field['id'], 'Entities')];
-  if (!list) throw new Error('Expected access to "' + field.tableType +
+  var parentField = field.spec.tableParentField;
+  var list = field.cache[field.spec.tableType];
+  if (!list) list = field.cache[goog.string.remove(field['id'], 'Entities')];
+  if (!list) throw new Error('Expected access to "' + field.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(field));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.app.ctx.specs.get(field.tableSpec);
-  var g = new pn.ui.grid.Grid(spec, data, cache);
-  g.decorate(parent);
+  var spec = pn.app.ctx.specs.get(field.spec.tableSpec);
+  var g = new pn.ui.grid.Grid(spec, data, field.cache);
+  g.decorate(field.parentComponent);
   return g;
 };

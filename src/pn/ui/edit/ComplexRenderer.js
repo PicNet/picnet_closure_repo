@@ -15,43 +15,27 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /**
    * @protected
-   * @type {*}
+   * @type {pn.ui.FieldCtx}
    */
-  this.val = null;
+  this.field = null;
 
   /**
-   * @protected
-   * @type {Object}
-   */
-  this.entity = null;
-
-  /**
-   * @protected
-   * @type {!Object.<!Array>}
-   */
-  this.cache = {};
-
-  /**
-   * @protected
-   * @type {pn.ui.BaseField}
-   */
-  this.spec = null;
-
-  /**
+   * TODO: Can we replace this with field.spec.readonly
+   *
    * @protected
    * @type {boolean}
    */
   this.readonly = false;
 
   /**
+   * TODO: Can we replace this with field.spec.required
+   *
    * @protected
    * @type {boolean}
    */
   this.required = false;
 
-  /**
-   * @type {boolean}
-   */
+  /** @type {boolean} */
   this.showLabel = true;
 
   /**
@@ -63,23 +47,10 @@ pn.ui.edit.ComplexRenderer = function() {
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
 
-/**
- * @param {*} val The value to display in this field.
- * @param {Object} entity The entity being displayed.
- * @param {!Object.<Array>} cache The admin cache for entities related to the
- *    current entity.
- * @param {!pn.ui.BaseField} spec The field spec.
- */
-pn.ui.edit.ComplexRenderer.prototype.initialise =
-    function(val, entity, cache, spec) {
-  goog.asserts.assert(cache);
-  goog.asserts.assert(spec);
-
+/** @param {!pn.ui.FieldCtx} field The field context object. */
+pn.ui.edit.ComplexRenderer.prototype.initialise = function(field) {
   this.eh = new goog.events.EventHandler(this);
-  this.val = val;
-  this.entity = entity;
-  this.cache = cache;
-  this.spec = spec;
+  this.field = field;
 };
 
 
@@ -95,9 +66,7 @@ pn.ui.edit.ComplexRenderer.prototype.setIsRequired = function(required) {
 };
 
 
-/**
- * @return {*} Gets the value in the current editor.
- */
+/** @return {*} Gets the value in the current editor. */
 pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 
 
@@ -109,8 +78,7 @@ pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
 
 
 /** @inheritDoc */
-pn.ui.edit.ComplexRenderer.prototype.createDom =
-    function() {
+pn.ui.edit.ComplexRenderer.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
@@ -125,8 +93,5 @@ pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   }
 
   delete this.eh;
-  delete this.val;
-  delete this.entity;
-  delete this.cache;
-  delete this.spec;
+  delete this.field;
 };

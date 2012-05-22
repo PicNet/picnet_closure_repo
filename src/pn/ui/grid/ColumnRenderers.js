@@ -9,51 +9,44 @@ goog.require('pn.ui.BaseField');
 
 
 /**
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {boolean} val The value currently in this cell.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(entity, cache, val) {
-  return val === true ? 'Y' : 'N';
+pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(field) {
+  return field.getEntityValue() === true ? 'Y' : 'N';
 };
 
 
 /**
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {number|Date|goog.date.Date} val The value currently in this cell.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.dateRenderer = function(entity, cache, val) {
+pn.ui.grid.ColumnRenderers.dateRenderer = function(field) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      entity, cache, val, pn.date.dateFormat);
+      field, pn.date.dateFormat);
 };
 
 
 /**
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {number|Date|goog.date.Date} val The value currently in this cell.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(entity, cache, val) {
+pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(field) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      entity, cache, val, pn.date.dateTimeFormat);
+      field, pn.date.dateTimeFormat);
 };
 
 
 /**
  * @private
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {number|Date|goog.date.Date} val The value currently in this cell.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
  *    this time/date value;.
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
-    function(entity, cache, val, formatter) {
+    function(field, formatter) {
+  var val = field.getEntityValue();
   if (val && goog.isNumber(val)) val = new Date(val);
   if (val && val.getFullYear() <= 1970) { val = null; }
   return val ? formatter.format(/** @type {Date} */ (val)) : '';
@@ -61,28 +54,23 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
 
 
 /**
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {number} val The value currently in this cell.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.centsRenderer = function(entity, cache, val) {
+pn.ui.grid.ColumnRenderers.centsRenderer = function(field) {
+  var val = /** @type {number} */ (field.getEntityValue());
   return pn.convert.centsToCurrency(val);
 };
 
 
 /**
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {*} val The value currently in this cell.
- * @param {!pn.ui.grid.Column} col The column specification for
- *    the current column.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.parentColumnRenderer =
-    function(entity, cache, val, col) {
-  return (pn.data.EntityUtils.
-      getEntityDisplayValue(cache, col.displayPath, entity) || '').toString();
+pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field) {
+
+  return (pn.data.EntityUtils.getEntityDisplayValue(
+      field.cache, field.spec.displayPath, field.entity) || '').toString();
 };
 
 
@@ -100,21 +88,17 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer =
  *   })
  *  </code>
  *
- * @param {!Object} entity The entity in the current row.
- * @param {!Object.<!Array>} cache An in memory database with required entities.
- * @param {*} val The value currently in this cell.
- * @param {!pn.ui.grid.Column} col The column specification for
- *    the current column.
+ * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @param {!string} parentField The child field used to match this
  *    entities children.
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
-    function(entity, cache, val, col, parentField) {
-  goog.asserts.assert(entity);
-  goog.asserts.assert(col.id.indexOf('Entities') >= 0);
+    function(field, parentField) {
+  goog.asserts.assert(field.entity);
+  goog.asserts.assert(field.spec.id.indexOf('Entities') >= 0);
 
-  var path = col.displayPath;
-  return (pn.data.EntityUtils.
-      getEntityDisplayValue(cache, path, entity, parentField) || '').toString();
+  return (pn.data.EntityUtils.getEntityDisplayValue(
+      field.cache, field.spec.displayPath, field.entity, parentField) || '').
+      toString();
 };
