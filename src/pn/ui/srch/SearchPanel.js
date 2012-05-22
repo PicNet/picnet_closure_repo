@@ -141,8 +141,11 @@ pn.ui.srch.SearchPanel.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
   var visible = goog.net.cookies.get('search-panel-visible') !== 'false';
-  var msg = visible ? 'Hide Filters' : 'Show Filters';
-  this.toggle_ = goog.dom.createDom('a', 'search-toggle', msg);
+  var msg = (visible ? 'Hide' : 'Show') + ' Filters';
+  var title = 'Click to ' + (visible ? 'hide' : 'show') + ' the filters panel.';
+  this.toggle_ = goog.dom.createDom('a', {
+    'class': 'search-toggle',
+    'title': title}, msg);
   this.searchPanel_ = goog.dom.createDom('div', 'search-panel');
   goog.style.setHeight(this.searchPanel_, visible ? 'auto' : 0);
 
@@ -168,13 +171,12 @@ pn.ui.srch.SearchPanel.prototype.createActionControls_ = function(parent) {
   this.clear_ = goog.dom.createDom('div', {
     'class': 'button clear-filters',
     'title': 'Clear all filters'
-  });
-  goog.dom.appendChild(this.controlsPanel_, this.clear_);
-
+  }, 'Clear');
   this.go_ = goog.dom.createDom('div', {
     'class': 'button go-filters',
     'title': 'Go!'
-  });
+  }, 'Go');
+  goog.dom.appendChild(this.controlsPanel_, this.clear_);
   goog.dom.appendChild(this.controlsPanel_, this.go_);
 };
 
