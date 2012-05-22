@@ -50,7 +50,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
   var cols = goog.array.map(this.cfg_.columns, function(c) {
-    return new pn.ui.FieldCtx(c, null, cache); 
+    return new pn.ui.FieldCtx(c, null, cache);
   });
 
   /**
@@ -84,8 +84,8 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.cols_, function(c) { 
-    return c.spec.total; 
+  this.totalColumns_ = goog.array.filter(this.cols_, function(c) {
+    return c.spec.total;
   });
 
   /**
@@ -271,7 +271,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
 
     for (var col = 0; col < lencol; col++) {
-      var field = this.cols_[col];      
+      var field = this.cols_[col];
       field.entity = rowData;
       var val = rowData[field.spec.dataProperty];
       var txt = field.spec.renderer ? field.spec.renderer(field) : val;

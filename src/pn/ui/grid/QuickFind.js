@@ -63,7 +63,7 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       var filterVal = this.filters_[columnId];
       var val = '';
       var field = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.cols_,
-              function(col) { return col.id === columnId; }));
+          function(col) { return col.id === columnId; }));
       field.entity = entity;
       if (field.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(

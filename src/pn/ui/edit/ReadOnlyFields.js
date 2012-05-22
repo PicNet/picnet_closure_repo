@@ -166,7 +166,7 @@ pn.ui.edit.ReadOnlyFields.field_ = function(field, type) {
   var readonly = goog.dom.createDom('div', 'field');
   readonly.innerHTML = text;
   readonly.value = val;
-  goog.dom.appendChild(field.parentComponent, readonly);  
+  goog.dom.appendChild(field.parentComponent, readonly);
   return readonly;
 };
 

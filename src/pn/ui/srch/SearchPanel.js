@@ -165,10 +165,16 @@ pn.ui.srch.SearchPanel.prototype.createActionControls_ = function(parent) {
   goog.dom.appendChild(this.controlsPanel_, this.select_);
 
   this.populateFieldSelect_();
-  this.clear_ = goog.dom.createDom('div', 'button clear-filters', 'Clear');
+  this.clear_ = goog.dom.createDom('div', {
+    'class': 'button clear-filters',
+    'title': 'Clear all filters'
+  });
   goog.dom.appendChild(this.controlsPanel_, this.clear_);
 
-  this.go_ = goog.dom.createDom('div', 'button go-filters', 'Go!');
+  this.go_ = goog.dom.createDom('div', {
+    'class': 'button go-filters',
+    'title': 'Go!'
+  });
   goog.dom.appendChild(this.controlsPanel_, this.go_);
 };
 
