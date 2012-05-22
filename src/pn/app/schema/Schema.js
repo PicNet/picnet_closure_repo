@@ -3,8 +3,8 @@ goog.provide('pn.app.schema.Schema');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.app.schema.Entity');
-goog.require('pn.app.schema.Field');
+goog.require('pn.app.schema.EntityDef');
+goog.require('pn.app.schema.FieldDef');
 
 
 
@@ -21,7 +21,7 @@ pn.app.schema.Schema = function(description) {
 
   /**
    * @private
-   * @type {!Object.<!pn.app.schema.Entity>}
+   * @type {!Object.<!pn.app.schema.EntityDef>}
    */
   this.entities_ = {};
 
@@ -33,7 +33,7 @@ goog.inherits(pn.app.schema.Schema, goog.Disposable);
 /**
  * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
  *     queried.
- * @return {pn.app.schema.Field} The field schema for the specified field.
+ * @return {pn.app.schema.FieldDef} The field schema for the specified field.
  */
 pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
   var type = fieldSpec.entitySpec.type;
@@ -70,7 +70,7 @@ pn.app.schema.Schema.prototype.getValidationErrors =
 
 /**
  * @private
- * @param {!pn.app.schema.Field} field The field to determine wether its a
+ * @param {!pn.app.schema.FieldDef} field The field to determine wether its a
  *    number type.
  * @return {boolean} Wether the specified field is a number.
  */
@@ -100,7 +100,7 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
     var field = this.parseField_(f);
     fields[field.name] = field;
   }, this);
-  var e = new pn.app.schema.Entity(name, fields);
+  var e = new pn.app.schema.EntityDef(name, fields);
   this.entities_[name] = e;
 };
 
@@ -109,12 +109,12 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
  * @private
  * @param {!Object} f The description of the field from the server (
  *   i.e. Use object property string identifiers.).
- * @return {!pn.app.schema.Field} The parsed field.
+ * @return {!pn.app.schema.FieldDef} The parsed field.
  */
 pn.app.schema.Schema.prototype.parseField_ = function(f) {
   goog.asserts.assert(f);
 
-  return new pn.app.schema.Field(
+  return new pn.app.schema.FieldDef(
       f['name'], f['type'], f['allowNull'], f['length']);
 
 };
