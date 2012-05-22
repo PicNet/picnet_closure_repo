@@ -265,8 +265,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
         errors = goog.array.concat(errors, error);
       }
     } else {
-      error = pn.ui.edit.FieldValidator.validateFieldValue(
-          f, val, this.data_, this.cache_[this.cfg_.type]);
+      error = pn.ui.edit.FieldValidator.validateFieldValue(f, val);
       if (error) errors.push(error);
     }
   }, this);
