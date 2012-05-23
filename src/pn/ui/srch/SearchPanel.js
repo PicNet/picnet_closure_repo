@@ -286,22 +286,23 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
 
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
+  var spec = pn.app.ctx.specs.get(specid);
+  var fctx = null;
   try {
-    var spec = pn.app.ctx.specs.get(specid);
-    var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
-        spec.searchConfig.fields, function(f) {
-          return f.id === fieldId;
+    var fieldSpec = /** @type {pn.ui.edit.Field} */ (goog.array.find(
+        spec.searchConfig.fields, function(fieldSpec1) {
+          return fieldSpec1.id === fieldId;
         }));
-    if (!field) {
+    if (!fieldSpec) {
       throw new Error('Could not find the specified field: ' + fieldId +
           ' in the searcheable fields of the ' + spec.id + ' spec');
     }
-    var ctx = new pn.ui.FieldCtx(field, {}, this.cache_);
+    fctx = new pn.ui.FieldCtx(fieldSpec, {}, this.cache_);
     this.select_.selectedIndex = 0;
-    this.addFieldToTheFiltersSearch_(ctx, option);
+    this.addFieldToTheFiltersSearch_(fctx, option);
   } finally {
     goog.dispose(spec);
-    goog.dispose(ctx);
+    goog.dispose(fctx);
   }
 
   goog.style.showElement(option, false);
@@ -311,44 +312,44 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} field The field context.
+ * @param {!pn.ui.FieldCtx} fctx The field context.
  * @param {!Element} option The select option element representing this option.
  */
 pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
-    function(field, option) {
-  goog.asserts.assert(field);
+    function(fctx, option) {
+  goog.asserts.assert(fctx);
   goog.asserts.assert(option);
 
   var FieldBuilder = pn.ui.edit.FieldBuilder;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
 
-  var name = field.spec.name;
-  var lbl = goog.dom.createDom('label', { 'for': field.id }, name);
-  field.parentComponent = goog.dom.createDom('div', {
-    'class': field.spec.className || 'field'
+  var name = fctx.spec.name;
+  var lbl = goog.dom.createDom('label', { 'for': fctx.id }, name);
+  fctx.parentComponent = goog.dom.createDom('div', {
+    'class': fctx.spec.className || 'field'
   }, lbl, remove);
-  goog.dom.appendChild(this.filtersPanel_, field.parentComponent);
+  goog.dom.appendChild(this.filtersPanel_, fctx.parentComponent);
 
   var input;
-  if (!field.spec.renderer &&
-      pn.data.EntityUtils.isParentProperty(field.spec.dataProperty)) {
-    input = FieldBuilder.createSearchParentFilter(field);
-    goog.dom.appendChild(field.parentComponent, input);
+  if (!fctx.spec.renderer &&
+      pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty)) {
+    input = FieldBuilder.createSearchParentFilter(fctx);
+    goog.dom.appendChild(fctx.parentComponent, input);
   } else {
-    var srchFld = this.getSearchAppropriateFieldSpec_(field);
+    var srchFld = this.getSearchAppropriateFieldSpec_(fctx);
     input = FieldBuilder.createAndAttach(srchFld);
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }
   }
-  this.filtersControls_[field.id] = [input, remove, lbl, field.parentComponent];
+  this.filtersControls_[fctx.id] = [input, remove, lbl, fctx.parentComponent];
 
   var removeFilter = goog.bind(function() {
-    goog.dom.removeNode(field.parentComponent);
-    var arr = this.filtersControls_[field.id];
+    goog.dom.removeNode(fctx.parentComponent);
+    var arr = this.filtersControls_[fctx.id];
     goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
     goog.array.forEach(arr, goog.dispose);
-    delete this.filtersControls_[field.id];
+    delete this.filtersControls_[fctx.id];
     goog.style.showElement(option, true);
     this.doSearch_();
   }, this);
@@ -360,17 +361,17 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} field The field context to make appropriate for
+ * @param {!pn.ui.FieldCtx} fctx The field context to make appropriate for
  *    searching.
  * @return {!pn.ui.FieldCtx} The search appropriate field.
  */
 pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
-    function(field) {
-  if (!field.spec.renderer) return field;
-  var sf = /** @type {!pn.ui.FieldCtx} */ (goog.object.clone(field));
+    function(fctx) {
+  if (!fctx.spec.renderer) return fctx;
+  var sf = /** @type {!pn.ui.FieldCtx} */ (goog.object.clone(fctx));
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
-  var curr = field.spec.renderer;
+  var curr = fctx.spec.renderer;
   if (curr === fr.centsRenderer ||
       curr === rr.centsField ||
       curr === fr.timeRenderer ||

@@ -49,7 +49,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.cfg_ = this.spec_.gridConfig;
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
-  var cols = goog.array.map(this.cfg_.columns,
+  var fctxs = goog.array.map(this.cfg_.columns,
       /** @param {!pn.ui.grid.Column} c The column. */
       function(c) {
         return new pn.ui.FieldCtx(c, {}, cache);
@@ -60,7 +60,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(cols,
+  this.hash_ = /** @type {string} */ (goog.array.reduce(fctxs,
       function(acc, f) { return acc + f.id; }, ''));
 
   /**
@@ -80,15 +80,15 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.cols_ = this.getColumnsWithInitialState_(cols);
+  this.fctxs_ = this.getColumnsWithInitialState_(fctxs);
 
   /**
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.cols_,
-      /** @param {!pn.ui.FieldCtx} c The field context. */
-      function(c) { return c.spec.total; });
+  this.totalColumns_ = goog.array.filter(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) { return !!fctx.spec.total; });
 
   /**
    * @private
@@ -217,13 +217,13 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
-      goog.array.map(this.cols_,
-          /** @param {!pn.ui.FieldCtx} c The field context. */
-          function(c) {
-        return c.spec.toSlick(!c.spec.renderer ? null :
+      goog.array.map(this.fctxs_,
+          /** @param {!pn.ui.FieldCtx} fctx The field context. */
+          function(fctx) {
+        return fctx.spec.toSlick(!fctx.spec.renderer ? null :
             goog.bind(function(row, cell, value, col, item) {
-              c.entity = item;
-              return c.spec.renderer(c);
+              fctx.entity = item;
+              return fctx.spec.renderer(fctx);
             }, this));
       }, this), this.cfg_.toSlick());
   if (this.totalColumns_.length) {
@@ -238,28 +238,28 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
 /**
  * @private
- * @param {!Array.<!pn.ui.FieldCtx>} cols The unsorted columns.
+ * @param {!Array.<!pn.ui.FieldCtx>} fctxs The unsorted columns.
  * @return {!Array.<!pn.ui.FieldCtx>} The sorted columns with saved widths.
  */
-pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
+pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
   var state = goog.net.cookies.get(this.hash_);
-  if (!state) return cols;
+  if (!state) return fctxs;
   var data = goog.json.unsafeParse(state);
   var ids = data['ids'];
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(cols,
-        /** @param {!pn.ui.FieldCtx} c The field context. */
-        function(c) { return c.id === id; });
-    var col = cols[cidx];
-    delete cols[cidx];
-    col.spec.width = widths[idx];
-    ordered.push(col);
+    var cidx = goog.array.findIndex(fctxs,
+        /** @param {!pn.ui.FieldCtx} fctx The field context. */
+        function(fctx) { return fctx.id === id; });
+    var fctx = fctxs[cidx];
+    delete fctxs[cidx];
+    fctx.spec.width = widths[idx];
+    ordered.push(fctx);
   });
 
   // Add remaining columns (if any)
-  goog.array.forEach(cols, ordered.push);
+  goog.array.forEach(fctxs, ordered.push);
   return ordered;
 };
 
@@ -269,20 +269,20 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
  *    exporting the grid contents.
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
-  var headers = goog.array.map(this.cols_,
-      /** @param {!pn.ui.FieldCtx} c The field context. */
-      function(c) { return c.spec.name; }, this);
+  var headers = goog.array.map(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) { return fctx.spec.name; });
   var gridData = [headers];
-  var lencol = this.cols_.length;
+  var lencol = this.fctxs_.length;
   for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
     var rowData = this.dataView_.getItem(row);
     var rowTxt = [];
 
-    for (var col = 0; col < lencol; col++) {
-      var field = this.cols_[col];
-      field.entity = rowData;
-      var val = rowData[field.spec.dataProperty];
-      var txt = field.spec.renderer ? field.spec.renderer(field) : val;
+    for (var cidx = 0; cidx < lencol; cidx++) {
+      var fctx = this.fctxs_[cidx];
+      fctx.entity = rowData;
+      var val = rowData[fctx.spec.dataProperty];
+      var txt = fctx.spec.renderer ? fctx.spec.renderer(fctx) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -348,7 +348,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Quick Filters
   if (this.cfg_.enableQuickFilters) {
     this.quickFind_ = new pn.ui.grid.QuickFind(
-        this.cache_, this.cols_, this.slick_);
+        this.cache_, this.fctxs_, this.slick_);
     this.quickFind_.init();
   }
 
@@ -375,7 +375,7 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
     asc = data['sort']['asc'];
   } else if (this.cfg_.defaultSortColumn) {
     col = this.cfg_.defaultSortColumn;
-    col = this.cfg_.defaultSortAscending;
+    asc = this.cfg_.defaultSortAscending;
   }
   if (col) {
     this.dataView_.fastSort(col, asc);
@@ -392,28 +392,28 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   var total = goog.array.reduce(items,
       function(acc, item) {
         goog.array.forEach(this.totalColumns_,
-            /** @param {!pn.ui.FieldCtx} c The field context. */
-            function(c) {
-              if (acc[c.id] === undefined) acc[c.id] = 0;
-              var itemVal = item[c.id];
-              if (itemVal) acc[c.id] += itemVal;
+            /** @param {!pn.ui.FieldCtx} fctx The field context. */
+            function(fctx) {
+              if (acc[fctx.id] === undefined) acc[fctx.id] = 0;
+              var itemVal = item[fctx.id];
+              if (itemVal) acc[fctx.id] += itemVal;
             }, this);
         return acc;
       }, {}, this);
   var html = [];
   for (var field in total) {
-    var col = /** @type {!pn.ui.FieldCtx} */ (
+    var fctx = /** @type {!pn.ui.FieldCtx} */ (
         goog.array.find(this.totalColumns_,
-            /** @param {!pn.ui.FieldCtx} c The field context. */
-            function(c) {
-          return c.id === field;
+            /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+            function(fctx1) {
+          return fctx1.id === field;
         }));
     var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
-    if (col.spec.renderer) { val = col.spec.renderer(mockEntity); }
+    if (fctx.spec.renderer) { val = fctx.spec.renderer(mockEntity); }
     else { val = parseInt(total[field], 10); }
-    html.push('Total ' + col.spec.name + ': ' + val || '0');
+    html.push('Total ' + fctx.spec.name + ': ' + val || '0');
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
       html.join('</li><li>') + '</li>';
@@ -487,7 +487,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
   goog.array.forEach(this.commands_, goog.dispose);
-  goog.array.forEach(this.cols_, goog.dispose);
+  goog.array.forEach(this.fctxs_, goog.dispose);
   goog.dispose(this.cfg_);
   if (this.slick_) this.slick_.destroy();
   goog.dispose(this.slick_);
@@ -509,7 +509,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.log_;
   delete this.totalsLegend_;
   delete this.list_;
-  delete this.cols_;
+  delete this.fctxs_;
   delete this.totalColumns_;
   delete this.cfg_;
   delete this.cache_;

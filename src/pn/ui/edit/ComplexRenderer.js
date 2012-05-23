@@ -17,7 +17,7 @@ pn.ui.edit.ComplexRenderer = function() {
    * @protected
    * @type {pn.ui.FieldCtx}
    */
-  this.field = null;
+  this.fctx = null;
 
   /**
    * TODO: Can we replace this with field.spec.readonly
@@ -47,10 +47,10 @@ pn.ui.edit.ComplexRenderer = function() {
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
 
-/** @param {!pn.ui.FieldCtx} field The field context object. */
-pn.ui.edit.ComplexRenderer.prototype.initialise = function(field) {
+/** @param {!pn.ui.FieldCtx} fctx The field context object. */
+pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
   this.eh = new goog.events.EventHandler(this);
-  this.field = field;
+  this.fctx = fctx;
 };
 
 
@@ -93,5 +93,5 @@ pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   }
 
   delete this.eh;
-  delete this.field;
+  delete this.fctx;
 };

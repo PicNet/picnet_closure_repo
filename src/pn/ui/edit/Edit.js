@@ -60,8 +60,8 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @private
    * @type {!Array.<pn.ui.FieldCtx>}
    */
-  this.fields_ = goog.array.map(this.cfg_.fields, function(fs) {
-    return new pn.ui.FieldCtx(fs, data, cache);
+  this.fctxs_ = goog.array.map(this.cfg_.fields, function(fieldSpec) {
+    return new pn.ui.FieldCtx(fieldSpec, data, cache);
   }, this);
 
   /**
@@ -85,16 +85,18 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
   // TODO: This code should not be here it should at best be part of the
   // FieldRenderers.dateRenderer code, but definatelly not here.
   goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        if (f.spec.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) return;
-        var date = data[f.id];
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
+        if (fctx.spec.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) {
+          return;
+        }
+        var date = data[fctx.id];
         if (!date) return;
         var dt = new goog.date.Date();
         dt.setTime(/** @type {number} */ (date));
         var trimmed = new goog.date.Date(
             dt.getYear(), dt.getMonth(), dt.getDate());
-        data[f.id] = trimmed.getTime();
+        data[fctx.id] = trimmed.getTime();
       }, this);
 };
 
@@ -106,12 +108,12 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   if (!this.data_) return false;
 
   return goog.array.findIndex(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        if (!this.cfg_.interceptor.isShown(f.id)) { return false; }
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
+        if (!this.cfg_.interceptor.isShown(fctx.id)) { return false; }
         var fb = pn.ui.edit.FieldBuilder;
-        var orig = fb.transEntityToFieldValue(f);
-        var curr = fb.getFieldValue(f.component);
+        var orig = fb.transEntityToFieldValue(fctx);
+        var curr = fctx.getControlValue();
 
         var isFalseEquivalent = function(val) {
           return !val || val === '0' || val === 'false' || val === '{}';
@@ -127,7 +129,8 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
         orig = orig ? goog.string.canonicalizeNewlines(orig.toString()) : '';
 
         if (curr !== orig) {
-          this.log_.info('Dirty: ' + f.id + ' 1[' + orig + '] 2[' + curr + ']');
+          this.log_.info(
+              'Dirty ' + fctx.id + ' 1[' + orig + '] 2[' + curr + ']');
           return true;
         }
       }, this) >= 0;
@@ -141,7 +144,7 @@ pn.ui.edit.Edit.prototype.resetDirty = function() {
 
 
 /** @return {!Array.<!pn.ui.FieldCtx>} All fields. */
-pn.ui.edit.Edit.prototype.getFields = function() { return this.fields_; };
+pn.ui.edit.Edit.prototype.getFields = function() { return this.fctxs_; };
 
 
 /** @inheritDoc */
@@ -168,9 +171,9 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 
   var cmds = this.getCommandButtons();
   var inputs = {};
-  goog.array.forEach(this.fields_,
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) { inputs[f.id] = f.component; });
+  goog.array.forEach(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) { inputs[fctx.id] = fctx.component; });
   this.cfg_.interceptor.init(this, this.data_, this.cache_, inputs, cmds);
 };
 
@@ -189,31 +192,32 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.fields_,
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
+  goog.array.forEach(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
         // Do not do child tables on new entities
-        f.parentComponent = useTemplate ? pn.dom.getElement(f.id) : fieldset;
+        fctx.parentComponent = useTemplate ?
+            pn.dom.getElement(fctx.id) : fieldset;
 
-        if (newEntity && !f.spec.showOnAdd) {
-          goog.style.showElement(f.parentComponent, false);
+        if (newEntity && !fctx.spec.showOnAdd) {
+          goog.style.showElement(fctx.parentComponent, false);
           return;
         }
         if (!useTemplate &&
-            (!f.spec.renderer || f.spec.renderer.showLabel !== false)) {
-          f.parentComponent = fb.getFieldLabel(f);
-          goog.dom.appendChild(fieldset, f.parentComponent);
+            (!fctx.spec.renderer || fctx.spec.renderer.showLabel !== false)) {
+          fctx.parentComponent = fb.getFieldLabel(fctx);
+          goog.dom.appendChild(fieldset, fctx.parentComponent);
         }
-        var input = fb.createAndAttach(f);
+        var input = fb.createAndAttach(fctx);
         // If this is a private '_' field, like an attachment control and we
         // are using a complex renderer, lets set the initial value on the
         // current entity so we can use this later for dirty checking.
-        if (goog.string.startsWith(f.id, '_') && input.getValue) {
-          this.data_[f.id] = input.getValue();
+        if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
+          this.data_[fctx.id] = input.getValue();
         }
-        f.component = input;
+        fctx.component = input;
 
-        if (!focusSet && input.focus && !f.spec.readonly) {
+        if (!focusSet && input.focus && !fctx.spec.readonly) {
           focusSet = true;
           goog.Timer.callOnce(function() {
             try { input.focus(); } catch (ex) {}
@@ -224,13 +228,13 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.fields_,
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        var parent = f.parentComponent;
+  goog.array.forEach(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
+        var parent = fctx.parentComponent;
         if (!parent) return; // Not shown, such as fields not shown on add
 
-        if (f.isRequired()) {
+        if (fctx.isRequired()) {
           goog.dom.classes.add(parent, 'required');
         } else {
           goog.dom.classes.remove(parent, 'required');
@@ -257,15 +261,16 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        if (!this.cfg_.interceptor.isShown(f.id)) return;
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
+        if (!this.cfg_.interceptor.isShown(fctx.id)) return;
 
-        var err = pn.ui.edit.FieldValidator.validateFieldValue(f);
+        var err = pn.ui.edit.FieldValidator.validateFieldValue(fctx);
         if (err.length) {
           errors = goog.array.concat(errors, err);
-          var val = f.getControlValue();
-          this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
+          var val = fctx.getControlValue();
+          this.log_.info(
+              'Field: ' + fctx.id + ' val: ' + val + ' error: ' + err);
         }
       }, this);
   var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
@@ -291,10 +296,10 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
   goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        var val = pn.ui.edit.FieldBuilder.getFieldValue(f.component);
-        if (val !== undefined) current[f.spec.dataProperty] = val;
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) {
+        var val = fctx.getControlValue();
+        if (val !== undefined) current[fctx.spec.dataProperty] = val;
       }, this);
   return current;
 };
@@ -305,11 +310,9 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<!pn.ui.FieldCtx>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  return goog.array.filter(this.fields_,
-      /** @param {!pn.ui.FieldCtx} f The field context. */
-      function(f) {
-        return f.isEditable();
-      });
+  return goog.array.filter(this.fctxs_,
+      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+      function(fctx) { return fctx.isEditable(); });
 };
 
 
@@ -325,27 +328,27 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
-  goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
+  goog.array.forEach(this.fctxs_, this.enterDocumentOnChildrenField_, this);
   this.cfg_.interceptor.postInit();
 };
 
 
 /**
  * @private
- * @param {pn.ui.FieldCtx} field The field to attach events to.
+ * @param {pn.ui.FieldCtx} fctx The field to attach events to.
  */
-pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
-  var spec = field.spec;
+pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
+  var spec = fctx.spec;
   if (!spec.tableType || spec.readonly) return;
 
-  this.eh.listen(field.component, pn.ui.grid.Grid.EventType.ADD, function() {
+  this.eh.listen(fctx.component, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.data_;
     e.entityType = spec.tableType;
     e.parentField = spec.tableParentField;
     this.publishEvent_(e);
   });
-  this.eh.listen(field.component, pn.ui.grid.Grid.EventType.ROW_SELECTED,
+  this.eh.listen(fctx.component, pn.ui.grid.Grid.EventType.ROW_SELECTED,
       function(ev) {
         var e = new goog.events.Event(
             pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
@@ -393,9 +396,9 @@ pn.ui.edit.Edit.prototype.disposeInternal = function() {
   pn.ui.edit.Edit.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
-  goog.array.forEach(this.fields_, goog.dispose);
+  goog.array.forEach(this.fctxs_, goog.dispose);
 
-  delete this.fields_;
+  delete this.fctxs_;
   delete this.cfg_;
   delete this.log_;
 };
