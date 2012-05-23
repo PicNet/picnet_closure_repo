@@ -57,7 +57,7 @@ pn.ui.FieldCtx.prototype.isEditable = function() {
 
 /** @return {boolean} Wether this field is required. */
 pn.ui.FieldCtx.prototype.isRequired = function() {
-  if (!this.spec.readonly) return false;
+  if (this.spec.readonly) return false;
   return (this.spec.validator && this.spec.validator.required) ||
       (this.schema != null && !this.schema.allowNull);
 };
@@ -71,8 +71,37 @@ pn.ui.FieldCtx.prototype.getControlValue = function() {
 
 /** @return {*} The value of  this field. */
 pn.ui.FieldCtx.prototype.getEntityValue = function() {
-  if (!goog.isDefAndNotNull(this.entity)) return null;
-  return this.entity[this.spec.dataProperty];
+  if (pn.data.EntityUtils.isNew(this.entity)) {
+    if (goog.isDefAndNotNull(this.spec.defaultValue)) {
+      return this.getDefaultFieldValue_();
+    }
+    return undefined;
+  }
+  var v = this.entity[this.spec.dataProperty];
+  if (goog.string.endsWith(this.spec.dataProperty, 'Entities') && v.length) {
+    // Controls always return sorted IDs so here we ensure we never throw a
+    // dirty error if for somereason the original value is not sorted.
+    v.sort();
+  }
+  return v;
+};
+
+
+/**
+ * @private
+ * @return {*} The default value of  this field.
+ */
+pn.ui.FieldCtx.prototype.getDefaultFieldValue_ = function() {
+  goog.asserts.assert(goog.isDefAndNotNull(this.spec.defaultValue));
+  var val = this.spec.defaultValue;
+  if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
+    var type = pn.data.EntityUtils.getTypeProperty(this.spec.dataProperty);
+    var list = this.cache[type];
+    val = goog.array.find(list, function(e) {
+      return e[type + 'Name'] === this.spec.defaultValue;
+    }, this)['ID'];
+  }
+  return val;
 };
 
 

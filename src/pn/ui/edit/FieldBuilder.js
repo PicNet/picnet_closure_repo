@@ -11,19 +11,14 @@ goog.require('pn.ui.grid.Grid');
 
 
 /**
- * @param {string} id The id of this label/field.
- * @param {string=} opt_name The text for this label. The id is used
- *  if ommitted.
- * @param {string=} opt_clazz An optional class name.  Will use 'field' if
- *    not specified.
+ * @param {!pn.ui.FieldCtx} field The field to create a label for.
  * @return {!Element} The label element wrapped in a div.
  */
-pn.ui.edit.FieldBuilder.getFieldLabel =
-    function(id, opt_name, opt_clazz) {
-  goog.asserts.assert(id);
-  var clazz = (opt_clazz || 'field');
-  return goog.dom.createDom('div', {'id': id, 'class': clazz},
-      goog.dom.createDom('label', { 'for': id }, opt_name || id));
+pn.ui.edit.FieldBuilder.getFieldLabel = function(field) {
+  var className = (field.spec.className || 'field');
+  var id = field.id;
+  return goog.dom.createDom('div', {'id': id, 'class': className},
+      goog.dom.createDom('label', { 'for': id }, field.spec.name || id));
 };
 
 
@@ -58,7 +53,6 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(field) {
   var fb = pn.ui.edit.FieldBuilder;
-  var val = fb.transEntityToFieldValue(field);
   var elem;
   if (field.spec.renderer) {
     if (typeof (field.spec.renderer) === 'object') { // Complex Renderer
@@ -77,7 +71,7 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(field) {
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field);
   } else {
-    val = goog.isDef(val) ? val : '';
+    var val = field.getEntityValue() || '';
     elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
     goog.dom.appendChild(field.parentComponent, elem);
   }

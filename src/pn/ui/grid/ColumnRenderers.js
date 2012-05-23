@@ -58,7 +58,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.centsRenderer = function(field) {
-  var val = /** @type {number} */ (field.getEntityValue());
+  var val = /** @type {number} */ (field.getEntityValue());  
   return pn.convert.centsToCurrency(val);
 };
 

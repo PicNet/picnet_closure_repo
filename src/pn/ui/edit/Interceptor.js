@@ -67,7 +67,7 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  */
 pn.ui.edit.Interceptor.prototype.init =
     function(component, entity, cache, fields, commands) {
-  
+
   /** @type {!pn.ui.edit.CommandsComponent} */
   this.component = component;
 

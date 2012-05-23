@@ -36,9 +36,10 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
 
 /** @param {!pn.ui.edit.Field} field The field to change into readonly. */
 pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
-  if (field.renderer && field.renderer.readonly) {
-    return; // Field is already readonly.
-  }
+  // If field is already readonly then no need to change.  This is useful
+  // when custom renderers are themselves readonly, just set readonly to true
+  // in the field definition and they will not be touched.
+  if (field.renderer && field.renderer.readonly) { return; }
 
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
