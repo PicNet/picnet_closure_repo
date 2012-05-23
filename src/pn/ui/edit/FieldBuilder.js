@@ -80,32 +80,6 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(field) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field spec to determine the field UI
- *    control appropriate value for.
- * @return {*} The UI control appropriate value.
- */
-pn.ui.edit.FieldBuilder.transEntityToFieldValue = function(field) {
-  var prop = field.spec.dataProperty;
-  var useDefault = pn.data.EntityUtils.isNew(field.entity) &&
-      goog.isDef(field.spec.defaultValue);
-  var val = useDefault ? field.spec.defaultValue : field.entity[prop];
-  if (useDefault && pn.data.EntityUtils.isParentProperty(prop)) {
-    var type = pn.data.EntityUtils.getTypeProperty(prop);
-    var list = field.cache[type];
-    val = goog.array.find(list, function(e) {
-      return e[type + 'Name'] === field.spec.defaultValue;
-    })['ID'];
-  }
-  if (goog.string.endsWith(prop, 'Entities') && val && val.length) {
-    // Controls always return sorted IDs so here we ensure we never throw a
-    // dirty error if for somereason the original value is not sorted.
-    val.sort();
-  }
-  return val;
-};
-
-
-/**
  * @private
  * @param {!pn.ui.FieldCtx} field The field/column to create a dom tree.
  * @return {!Element} The created dom element.

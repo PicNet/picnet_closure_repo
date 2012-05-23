@@ -105,35 +105,9 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
  * @return {boolean} Wether the current edit screen is dirty.
  */
 pn.ui.edit.Edit.prototype.isDirty = function() {
-  if (!this.data_) return false;
-
-  return goog.array.findIndex(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        if (!this.cfg_.interceptor.isShown(fctx.id)) { return false; }
-        var fb = pn.ui.edit.FieldBuilder;
-        var orig = fb.transEntityToFieldValue(fctx);
-        var curr = fctx.getControlValue();
-
-        var isFalseEquivalent = function(val) {
-          return !val || val === '0' || val === 'false' || val === '{}';
-        };
-        // Handle tricky falsies
-        if (isFalseEquivalent(curr) && isFalseEquivalent(orig)) {
-          return false;
-        }
-
-        // goog.string.canonicalizeNewlines required for IE7 which handles
-        // newlines differently adding a keycode 13,10 rather than just 10
-        curr = curr ? goog.string.canonicalizeNewlines(curr.toString()) : '';
-        orig = orig ? goog.string.canonicalizeNewlines(orig.toString()) : '';
-
-        if (curr !== orig) {
-          this.log_.info(
-              'Dirty ' + fctx.id + ' 1[' + orig + '] 2[' + curr + ']');
-          return true;
-        }
-      }, this) >= 0;
+  return goog.array.findIndex(this.getEditableFields_(), function(fctx) {
+    return this.cfg_.interceptor.isShown(fctx.id) && fctx.isDirty();
+  }) >= 0;
 };
 
 
@@ -199,8 +173,13 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         fctx.parentComponent = useTemplate ?
             pn.dom.getElement(fctx.id) : fieldset;
 
-        if (newEntity && !fctx.spec.showOnAdd) {
-          goog.style.showElement(fctx.parentComponent, false);
+        if ((newEntity && !fctx.spec.showOnAdd) ||
+            (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
+          if (useTemplate) {
+            // Hide the parent only if using templates, otherwise it will try
+            // to hide the parent fieldset which may include other fields.
+            goog.style.showElement(fctx.parentComponent, false);
+          }
           return;
         }
         if (!useTemplate &&
@@ -264,14 +243,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) {
         if (!this.cfg_.interceptor.isShown(fctx.id)) return;
-
-        var err = pn.ui.edit.FieldValidator.validateFieldValue(fctx);
-        if (err.length) {
-          errors = goog.array.concat(errors, err);
-          var val = fctx.getControlValue();
-          this.log_.info(
-              'Field: ' + fctx.id + ' val: ' + val + ' error: ' + err);
-        }
+        errors = goog.array.concat(errors, fctx.validate());
       }, this);
   var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
   errors = goog.array.concat(errors, errors2);

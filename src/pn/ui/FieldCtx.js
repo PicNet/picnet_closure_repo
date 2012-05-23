@@ -42,6 +42,12 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
 
   /** @type {Element} */
   this.parentComponent = null;
+
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
 };
 goog.inherits(pn.ui.FieldCtx, goog.Disposable.call);
 
@@ -78,12 +84,53 @@ pn.ui.FieldCtx.prototype.getEntityValue = function() {
     return undefined;
   }
   var v = this.entity[this.spec.dataProperty];
-  if (goog.string.endsWith(this.spec.dataProperty, 'Entities') && v.length) {
+  if (goog.string.endsWith(this.spec.dataProperty, 'Entities') &&
+      goog.isArray(v)) {
     // Controls always return sorted IDs so here we ensure we never throw a
     // dirty error if for somereason the original value is not sorted.
     v.sort();
   }
   return v;
+};
+
+
+/**
+ * @return {boolean} Wether this field is currently dirty (i.e. The control is
+ *    different than the entity value).
+ */
+pn.ui.FieldCtx.prototype.isDirty = function() {
+  var orig = this.getEntityValue();
+  var curr = this.getControlValue();
+
+  // Handle tricky falsies
+  var isFalseEquivalent = function(val) {
+    return !val || val === '0' || val === 'false' || val === '{}';
+  };
+  if (isFalseEquivalent(curr) && isFalseEquivalent(orig)) { return false; }
+
+  // goog.string.canonicalizeNewlines required for IE7 which handles
+  // newlines differently adding a keycode 13,10 rather than just 10
+  curr = curr ? goog.string.canonicalizeNewlines(curr.toString()) : '';
+  orig = orig ? goog.string.canonicalizeNewlines(orig.toString()) : '';
+
+  if (curr !== orig) {
+    this.log_.info('Dirty ' + this.id + ' 1[' + orig + '] 2[' + curr + ']');
+  }
+  return curr !== orig;
+};
+
+
+/**
+ * @return {!Array.<string>} An error list of all validation errors (empty if
+ *    no errors found).
+ */
+pn.ui.FieldCtx.prototype.validate = function() {
+  var errs = pn.ui.edit.FieldValidator.validateFieldValue(this);
+  if (errs.length) {
+    var val = this.getControlValue();
+    this.log_.info('Field: ' + this.id + ' val: ' + val + ' error: ' + errs);
+  }
+  return errs;
 };
 
 
@@ -119,10 +166,12 @@ pn.ui.FieldCtx.prototype.getDisplayValue = function() {
 pn.ui.FieldCtx.prototype.disposeInternal = function() {
   pn.ui.FieldCtx.superClass_.disposeInternal.call(this);
 
+  goog.dispose(this.log_);
   goog.dispose(this.component);
   goog.dispose(this.parentComponent);
   if (this.spec.renderer) goog.dispose(this.spec.renderer);
 
+  delete this.log_;
   delete this.component;
   delete this.parentComponent;
 };

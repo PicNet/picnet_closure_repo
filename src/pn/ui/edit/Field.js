@@ -70,6 +70,13 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
   this.readonly = false;
 
   /**
+   * Wether this field is displayed when readonly. This fieldSpec is readonly.
+   *
+   * @type {boolean}
+   */
+  this.showOnReadOnly = true;
+
+  /**
    * The default value to apply to the specified field.  This is only used
    *    when creating a new entity.
    *
