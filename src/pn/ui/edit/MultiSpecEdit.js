@@ -163,7 +163,7 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
     if (edit.edit.getFields) {
       goog.array.forEach(edit.edit.getFields(), function(f) {
         if (f.id in fields) return;
-        fields[f.id] = f;
+        fields[f.id] = f.component;
       });
     }
     if (edit.edit.getCommandButtons) {

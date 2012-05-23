@@ -59,7 +59,7 @@ pn.ui.FieldCtx.prototype.isEditable = function() {
 pn.ui.FieldCtx.prototype.isRequired = function() {
   if (!this.spec.readonly) return false;
   return (this.spec.validator && this.spec.validator.required) ||
-      !this.schema.allowNull;
+      (this.schema != null && !this.schema.allowNull);
 };
 
 

@@ -61,16 +61,26 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
  *    currently being shown.
  * @param {!Object} entity The entity that was just decorated.
- * @param {!Object.<Array>} cache The cache with all related entities.
+ * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
  * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
     function(component, entity, cache, fields, commands) {
+  
+  /** @type {!pn.ui.edit.CommandsComponent} */
   this.component = component;
+
+  /** @type {!Object} */
   this.entity = entity;
+
+  /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
+
+  /** @type {!Object.<Element|goog.ui.Component>} */
   this.fields = fields;
+
+  /** @type {!Object.<goog.ui.Button>} */
   this.commands = commands;
 
   if (pn.data.EntityUtils.isNew(this.entity)) {
