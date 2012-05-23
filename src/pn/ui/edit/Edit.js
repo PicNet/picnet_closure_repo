@@ -62,36 +62,8 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.ui.edit.Edit');
-
-  this.normaliseDateOnlyFields_(entity);
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
-
-
-/**
- * This is required so that fields with date only (no time) renderers don't
- *    throw 'dirty' checks when nothing has changed (just time is lost)
- * @private
- * @param {!Object} entity The entity to normalize.
- */
-pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(entity) {
-  // TODO: This code should not be here it should at best be part of the
-  // FieldRenderers.dateRenderer code, but definatelly not here.
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        if (fctx.spec.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) {
-          return;
-        }
-        var date = entity[fctx.id];
-        if (!date) return;
-        var dt = new goog.date.Date();
-        dt.setTime(/** @type {number} */ (date));
-        var trimmed = new goog.date.Date(
-            dt.getYear(), dt.getMonth(), dt.getDate());
-        entity[fctx.id] = trimmed.getTime();
-      }, this);
-};
 
 
 /**
@@ -303,14 +275,14 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
  * @param {pn.ui.FieldCtx} fctx The field to attach events to.
  */
 pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
-  var spec = fctx.spec;
-  if (!spec.tableType || spec.readonly) return;
+  var fieldSpec = fctx.spec;
+  if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
   this.eh.listen(fctx.component, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.entity;
-    e.entityType = spec.tableType;
-    e.parentField = spec.tableParentField;
+    e.entityType = fieldSpec.tableType;
+    e.parentField = fieldSpec.tableParentField;
     this.publishEvent_(e);
   });
   this.eh.listen(fctx.component, pn.ui.grid.Grid.EventType.ROW_SELECTED,
@@ -319,8 +291,8 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
             pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
         e.entityId = ev.selected['ID'];
         e.parent = this.entity;
-        e.entityType = spec.tableType;
-        e.parentField = spec.tableParentField;
+        e.entityType = fieldSpec.tableType;
+        e.parentField = fieldSpec.tableParentField;
         this.publishEvent_(e);
       });
 };

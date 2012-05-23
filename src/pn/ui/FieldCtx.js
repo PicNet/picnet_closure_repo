@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.FieldCtx');
 
+goog.require('goog.date.Date');
 goog.require('pn.ui.BaseFieldSpec');
 
 
@@ -48,8 +49,27 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
+
+  if (spec.renderer === pn.ui.edit.FieldRenderers.dateRenderer) {
+    this.normaliseDateField_();
+  }
 };
 goog.inherits(pn.ui.FieldCtx, goog.Disposable.call);
+
+
+/**
+ * This is required so that fields with date only (no time) renderers don't
+ *    throw 'dirty' checks when nothing has changed (just time is lost)
+ * @private
+ */
+pn.ui.FieldCtx.prototype.normaliseDateField_ = function() {
+  var date = this.entity[this.id];
+  if (!goog.isNumber(date)) return;
+  var dt = new goog.date.Date();
+  dt.setTime(/** @type {number} */ (date));
+  var trimmed = new goog.date.Date(dt.getYear(), dt.getMonth(), dt.getDate());
+  this.entity[this.id] = trimmed.getTime();
+};
 
 
 /** @return {boolean} Wether this field is editable. */

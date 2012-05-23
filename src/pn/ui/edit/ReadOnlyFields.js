@@ -42,7 +42,8 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
   // If field is already readonly then no need to change.  This is useful
   // when custom renderers are themselves readonly, just set readonly to true
   // in the field definition and they will not be touched.
-  if (fieldSpec.renderer && fieldSpec.renderer.readonly) { return; }
+  if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer && 
+      fieldSpec.readonly) { return; }
 
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
@@ -59,7 +60,6 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
     if (fieldSpec.renderer === null) return; // Leave grids alone
     fieldSpec.renderer = rr.itemList;
   } else if (!curr) { fieldSpec.renderer = rr.textField; }
-  else if (curr.setReadOnly) curr.setReadOnly(true);
   else {
     if (goog.array.findIndex(rendermap, function(trans) {
       if (curr === trans[0] || curr === trans[1]) {
@@ -230,7 +230,6 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(fieldSpec) {
 
   if (isList) return ft.ITEM_LIST;
   else if (!curr) return ft.DEFAULT;
-  else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
   else if (curr === fr.dateRenderer || curr === ro.dateField) return ft.DATE;
   else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer ||

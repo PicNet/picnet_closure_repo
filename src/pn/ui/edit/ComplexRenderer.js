@@ -20,14 +20,6 @@ pn.ui.edit.ComplexRenderer = function() {
   this.fctx = null;
 
   /**
-   * TODO: Can we replace this with field.spec.readonly
-   *
-   * @protected
-   * @type {boolean}
-   */
-  this.readonly = false;
-
-  /**
    * TODO: Can we replace this with field.spec.required
    *
    * @protected
@@ -51,12 +43,6 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
   this.eh = new goog.events.EventHandler(this);
   this.fctx = fctx;
-};
-
-
-/** @param {boolean} readonly Wether this should be rendered as readonly. */
-pn.ui.edit.ComplexRenderer.prototype.setReadOnly = function(readonly) {
-  this.readonly = readonly;
 };
 
 
