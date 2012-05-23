@@ -43,27 +43,25 @@ pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
 
 
 /**
- * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
- *     validated.
- * @param {*} value The value of the field in the current form.
+ * @param {!pn.ui.FieldCtx} field The field context for the field being
+ *    validated.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.app.schema.Schema.prototype.getValidationErrors =
-    function(fieldSpec, value) {
-  var field = this.getFieldSchema(fieldSpec);
-  if (!field) {
-    var desc = fieldSpec.entitySpec.type + '.' + fieldSpec.id;
+pn.app.schema.Schema.prototype.getValidationErrors = function(field) {
+  var schema = this.getFieldSchema(field.spec);
+  if (!schema) {
+    var desc = field.spec.entitySpec.type + '.' + field.id;
     throw new Error('Could not find the schema of ' + desc);
   }
   var validator = new pn.ui.edit.ValidateInfo();
-  validator.required = !field.allowNull;
+  validator.required = !schema.allowNull;
   if (field.length) {
-    validator.maxLength = field.length;
+    validator.maxLength = schema.length;
   }
-  if (this.isNumericalTypeField_(field)) {
+  if (this.isNumericalTypeField_(schema)) {
     validator.isNumber = true;
   }
-  var error = validator.validateField(fieldSpec, value);
+  var error = validator.validateField(field);
   return error ? [error] : [];
 };
 

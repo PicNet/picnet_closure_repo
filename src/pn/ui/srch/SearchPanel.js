@@ -293,16 +293,23 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   if (!val) return;
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var spec = pn.app.ctx.specs.get(specid);
-  var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
-      spec.searchConfig.fields, function(f) {
-        return f.id === fieldId;
-      }));
-  if (!field) throw new Error('Could not find the specified field: ' + fieldId +
-      ' in the searcheable fields of the ' + spec.id + ' spec');
-  this.select_.selectedIndex = 0;
-  this.addFieldToTheFiltersSearch_(spec, field, option);
-  goog.dispose(spec);
+  try {
+    var spec = pn.app.ctx.specs.get(specid);
+    var field = /** @type {pn.ui.edit.Field} */ (goog.array.find(
+        spec.searchConfig.fields, function(f) {
+          return f.id === fieldId;
+        }));
+    if (!field) {
+      throw new Error('Could not find the specified field: ' + fieldId +
+          ' in the searcheable fields of the ' + spec.id + ' spec');
+    }
+    var ctx = new pn.ui.FieldCtx(field, null, this.cache_);
+    this.select_.selectedIndex = 0;
+    this.addFieldToTheFiltersSearch_(ctx, option);
+  } finally {
+    goog.dispose(spec);
+    goog.dispose(ctx);
+  }
 
   goog.style.showElement(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
@@ -311,45 +318,44 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
 
 /**
  * @private
- * @param {!pn.ui.UiSpec} spec The spec (tab) of the selected
- *    filter.
- * @param {pn.ui.edit.Field} f The field to add to the search.
+ * @param {!pn.ui.FieldCtx} field The field context.
  * @param {!Element} option The select option element representing this option.
  */
 pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
-    function(spec, f, option) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(f);
+    function(field, option) {
+  goog.asserts.assert(field);
   goog.asserts.assert(option);
 
   var FieldBuilder = pn.ui.edit.FieldBuilder;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');
 
-  var name = f.name;
-  var lbl = goog.dom.createDom('label', { 'for': f.id }, name);
-  var dom = goog.dom.createDom('div', { 'class': f.className || 'field' },
-      lbl,
-      remove);
-  goog.dom.appendChild(this.filtersPanel_, dom);
+  var name = field.spec.name;
+  var lbl = goog.dom.createDom('label', { 'for': field.id }, name);
+  field.parentComponent = goog.dom.createDom('div', {
+    'class': field.spec.className || 'field'
+  }, lbl, remove);
+  goog.dom.appendChild(this.filtersPanel_, field.parentComponent);
+
   var input;
-  if (!f.renderer && pn.data.EntityUtils.isParentProperty(f.dataProperty)) {
-    input = FieldBuilder.createSearchParentFilter(f, this.cache_);
-    goog.dom.appendChild(dom, input);
+  if (!field.spec.renderer &&
+      pn.data.EntityUtils.isParentProperty(field.spec.dataProperty)) {
+    input = FieldBuilder.createSearchParentFilter(field);
+    goog.dom.appendChild(field.parentComponent, input);
   } else {
-    var srchFld = this.getSearchAppropriateFieldSpec_(f);
-    input = FieldBuilder.createAndAttach(srchFld, dom);
+    var srchFld = this.getSearchAppropriateFieldSpec_(field);
+    input = FieldBuilder.createAndAttach(srchFld);
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }
   }
-  this.filtersControls_[f.id] = [input, remove, lbl, dom];
+  this.filtersControls_[field.id] = [input, remove, lbl, field.parentComponent];
 
   var removeFilter = goog.bind(function() {
-    goog.dom.removeNode(dom);
-    var arr = this.filtersControls_[f.id];
+    goog.dom.removeNode(field.parentComponent);
+    var arr = this.filtersControls_[field.id];
     goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
     goog.array.forEach(arr, goog.dispose);
-    delete this.filtersControls_[f.id];
+    delete this.filtersControls_[field.id];
     goog.style.showElement(option, true);
     this.doSearch_();
   }, this);
@@ -361,16 +367,17 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
 /**
  * @private
- * @param {!pn.ui.edit.Field} field The field to make appropriate for searching.
- * @return {!pn.ui.edit.Field} The search appropriate field.
+ * @param {!pn.ui.FieldCtx} field The field context to make appropriate for
+ *    searching.
+ * @return {!pn.ui.FieldCtx} The search appropriate field.
  */
 pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
     function(field) {
-  if (!field.renderer) return field;
-  var sf = /** @type {!pn.ui.edit.Field} */ (goog.object.clone(field));
+  if (!field.spec.renderer) return field;
+  var sf = /** @type {!pn.ui.FieldCtx} */ (goog.object.clone(field));
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
-  var curr = field.renderer;
+  var curr = field.spec.renderer;
   if (curr === fr.centsRenderer ||
       curr === rr.centsField ||
       curr === fr.timeRenderer ||

@@ -49,7 +49,9 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.cfg_ = this.spec_.gridConfig;
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
-  var cols = goog.array.map(this.cfg_.columns, function(c) {
+  var cols = goog.array.map(this.cfg_.columns, 
+      /** @param {!pn.ui.grid.Column} c */
+      function(c) {
     return new pn.ui.FieldCtx(c, null, cache);
   });
 
@@ -84,9 +86,9 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.cols_, function(c) {
-    return c.spec.total;
-  });
+  this.totalColumns_ = goog.array.filter(this.cols_, 
+    /** @param {!pn.ui.FieldCtx} c */
+    function(c) { return c.spec.total; });
 
   /**
    * @private
@@ -215,10 +217,13 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
-      goog.array.map(this.cols_, function(c) {
-        return c.toSlick(!c.renderer ? null :
+      goog.array.map(this.cols_, 
+          /** @param {!pn.ui.FieldCtx} c */
+          function(c) {
+        return c.spec.toSlick(!c.spec.renderer ? null :
             goog.bind(function(row, cell, value, col, item) {
-              return c.renderer(item, this.cache_, value, col);
+              c.entity = item;
+              return c.spec.renderer(c);
             }, this));
       }, this), this.cfg_.toSlick());
   if (this.totalColumns_.length) {
@@ -244,7 +249,9 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(cols, function(c) { return c.id === id; });
+    var cidx = goog.array.findIndex(cols, 
+        /** @param {!pn.ui.FieldCtx} c */
+        function(c) { return c.id === id; });
     var col = cols[cidx];
     delete cols[cidx];
     col.spec.width = widths[idx];
@@ -263,14 +270,15 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cols_,
-      function(c) { return c.name; }, this);
+      /** @param {!pn.ui.FieldCtx} c */
+      function(c) { return c.spec.name; }, this);
   var gridData = [headers];
   var lencol = this.cols_.length;
   for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
     var rowData = this.dataView_.getItem(row);
     var rowTxt = [];
 
-    for (var col = 0; col < lencol; col++) {
+    for (var col = 0; col < lencol; col++) {      
       var field = this.cols_[col];
       field.entity = rowData;
       var val = rowData[field.spec.dataProperty];
@@ -294,7 +302,9 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
-    goog.array.forEach(this.commands_, function(c) {
+    goog.array.forEach(this.commands_, 
+        /** @param {!pn.ui.grid.Command} c */
+        function(c) {
       this.eh_.listen(c, c.eventType, function(e) {
         e.target = this;
         this.publishEvent_(e);
@@ -377,10 +387,13 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
 /** @private */
 pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   if (!this.totalColumns_.length) return;
+
   var items = this.dataView_.getItems();
   var total = goog.array.reduce(items,
       function(acc, item) {
-        goog.array.forEach(this.totalColumns_, function(c) {
+        goog.array.forEach(this.totalColumns_, 
+            /** @param {!pn.ui.FieldCtx} c */
+            function(c) {
           if (acc[c.id] === undefined) acc[c.id] = 0;
           var itemVal = item[c.id];
           if (itemVal) acc[c.id] += itemVal;
@@ -389,13 +402,18 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       }, {}, this);
   var html = [];
   for (var field in total) {
-    var col = goog.array.find(this.totalColumns_, function(c) {
+    var col = /** @type {!pn.ui.FieldCtx} */ (
+        goog.array.find(this.totalColumns_, 
+            /** @param {!pn.ui.FieldCtx} c */
+            function(c) {
       return c.id === field;
-    });
-    var val = total[field];
-    if (col.renderer) { val = col.renderer({}, this.cache_, val, col); }
-    else { val = parseInt(val, 10); }
-    html.push('Total ' + col.name + ': ' + val || '0');
+    }));
+    var val;    
+    var mockEntity = {};
+    mockEntity[field] = total[field];
+    if (col.spec.renderer) { val = col.spec.renderer(mockEntity); }
+    else { val = parseInt(total[field], 10); }
+    html.push('Total ' + col.spec.name + ': ' + val || '0');
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
       html.join('</li><li>') + '</li>';
@@ -413,8 +431,8 @@ pn.ui.grid.Grid.prototype.exitDocument = function() {
 pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
   var data = {
-    'ids': goog.array.map(columns, function(c) { return c.id; }),
-    'widths': goog.array.map(columns, function(c) { return c.width; }),
+    'ids': goog.array.map(columns, function(c) { return c['id']; }),
+    'widths': goog.array.map(columns, function(c) { return c['width']; }),
     'sort': this.sort_
   };
   goog.net.cookies.set(this.hash_, goog.json.serialize(data));

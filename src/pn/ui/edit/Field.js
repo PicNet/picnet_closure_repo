@@ -49,8 +49,7 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    *    returns a string which represents the validation error (falsy
    *    represents no error).
    *
-   * @type {null|pn.ui.edit.ValidateInfo|
-   *       function(pn.ui.edit.Field,*,Object=,!Object.<!Array>):string}
+   * @type {pn.ui.edit.Field.Validator}
    */
   this.validator = null;
 
@@ -155,3 +154,7 @@ pn.ui.edit.Field.prototype.extend = function(props) {
 /** @typedef {pn.ui.edit.ComplexRenderer|function(!pn.ui.FieldCtx):
     !(Element|goog.ui.Component|Text)} */
 pn.ui.edit.Field.Renderer;
+
+
+/** @typedef {null|pn.ui.edit.ValidateInfo|function(pn.ui.FieldCtx):string} */
+pn.ui.edit.Field.Validator;

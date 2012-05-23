@@ -248,11 +248,10 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
   goog.array.forEach(this.getEditableFields_(), function(f) {
     if (!this.cfg_.interceptor.isShown(f.id)) return;
 
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(f.component);
-    var err = pn.ui.edit.FieldValidator.
-        validateFieldValue(f, val, this.data_, this.cache_);
+    var err = pn.ui.edit.FieldValidator.validateFieldValue(f);
     if (err.length) {
       errors = goog.array.concat(errors, err);
+      var val = f.getControlValue();
       this.log_.info('Field: ' + f.id + ' val: ' + val + ' error: ' + err);
     }
   }, this);
@@ -288,7 +287,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
 
 /**
  * @private
- * @return {!Array.<pn.ui.FieldCtx>} All editable fields.
+ * @return {!Array.<!pn.ui.FieldCtx>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   return goog.array.filter(this.fields_, function(f) {

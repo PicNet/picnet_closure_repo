@@ -28,7 +28,7 @@ pn.ui.edit.FieldBuilder.getFieldLabel =
 
 
 /**
- * @param {!(Element|goog.ui.Component)} inp The input field.
+ * @param {Element|goog.ui.Component} inp The input field.
  * @return {string} The value in the specified field.
  */
 pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
@@ -54,7 +54,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp) {
 
 /**
  * @param {!pn.ui.FieldCtx} field The field to create a dom tree for.
- * @return {!(Element|goog.ui.Component|Text)} The created dom element.
+ * @return {Element|goog.ui.Component|Text} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(field) {
   var fb = pn.ui.edit.FieldBuilder;

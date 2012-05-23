@@ -62,6 +62,12 @@ pn.ui.FieldCtx.prototype.isRequired = function() {
 };
 
 
+/** @return {*} The current control value of this field. */
+pn.ui.FieldCtx.prototype.getControlValue = function() {
+  return pn.ui.edit.FieldBuilder.getFieldValue(this.component);
+};
+
+
 /** @return {*} The value of this field. */
 pn.ui.FieldCtx.prototype.getEntityValue = function() {
   return this.entity[this.spec.dataProperty];
