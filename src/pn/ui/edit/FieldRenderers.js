@@ -168,7 +168,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     var adminIDs = goog.array.map(manyToManys, function(mm) {
       return mm[adminEntity + 'ID'];
     });
-    
+
     // Setting the value in the dataProperty of the field so that dirty
     // checking handles fields with many to many lists.
     field.entity[mappingEntity + 'Entities'] = adminIDs;
