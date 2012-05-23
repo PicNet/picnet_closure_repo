@@ -49,11 +49,11 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.cfg_ = this.spec_.gridConfig;
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
-  var cols = goog.array.map(this.cfg_.columns, 
-      /** @param {!pn.ui.grid.Column} c */
+  var cols = goog.array.map(this.cfg_.columns,
+      /** @param {!pn.ui.grid.Column} c The column. */
       function(c) {
-    return new pn.ui.FieldCtx(c, null, cache);
-  });
+        return new pn.ui.FieldCtx(c, null, cache);
+      });
 
   /**
    * @private
@@ -86,9 +86,9 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.cols_, 
-    /** @param {!pn.ui.FieldCtx} c */
-    function(c) { return c.spec.total; });
+  this.totalColumns_ = goog.array.filter(this.cols_,
+      /** @param {!pn.ui.FieldCtx} c The field context. */
+      function(c) { return c.spec.total; });
 
   /**
    * @private
@@ -217,8 +217,8 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
-      goog.array.map(this.cols_, 
-          /** @param {!pn.ui.FieldCtx} c */
+      goog.array.map(this.cols_,
+          /** @param {!pn.ui.FieldCtx} c The field context. */
           function(c) {
         return c.spec.toSlick(!c.spec.renderer ? null :
             goog.bind(function(row, cell, value, col, item) {
@@ -249,8 +249,8 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(cols, 
-        /** @param {!pn.ui.FieldCtx} c */
+    var cidx = goog.array.findIndex(cols,
+        /** @param {!pn.ui.FieldCtx} c The field context. */
         function(c) { return c.id === id; });
     var col = cols[cidx];
     delete cols[cidx];
@@ -270,7 +270,7 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cols) {
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cols_,
-      /** @param {!pn.ui.FieldCtx} c */
+      /** @param {!pn.ui.FieldCtx} c The field context. */
       function(c) { return c.spec.name; }, this);
   var gridData = [headers];
   var lencol = this.cols_.length;
@@ -278,7 +278,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowData = this.dataView_.getItem(row);
     var rowTxt = [];
 
-    for (var col = 0; col < lencol; col++) {      
+    for (var col = 0; col < lencol; col++) {
       var field = this.cols_[col];
       field.entity = rowData;
       var val = rowData[field.spec.dataProperty];
@@ -302,14 +302,14 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
-    goog.array.forEach(this.commands_, 
-        /** @param {!pn.ui.grid.Command} c */
+    goog.array.forEach(this.commands_,
+        /** @param {!pn.ui.grid.Command} c The command. */
         function(c) {
-      this.eh_.listen(c, c.eventType, function(e) {
-        e.target = this;
-        this.publishEvent_(e);
-      });
-    }, this);
+          this.eh_.listen(c, c.eventType, function(e) {
+            e.target = this;
+            this.publishEvent_(e);
+          });
+        }, this);
   }
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {
@@ -391,24 +391,24 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   var items = this.dataView_.getItems();
   var total = goog.array.reduce(items,
       function(acc, item) {
-        goog.array.forEach(this.totalColumns_, 
-            /** @param {!pn.ui.FieldCtx} c */
+        goog.array.forEach(this.totalColumns_,
+            /** @param {!pn.ui.FieldCtx} c The field context. */
             function(c) {
-          if (acc[c.id] === undefined) acc[c.id] = 0;
-          var itemVal = item[c.id];
-          if (itemVal) acc[c.id] += itemVal;
-        }, this);
+              if (acc[c.id] === undefined) acc[c.id] = 0;
+              var itemVal = item[c.id];
+              if (itemVal) acc[c.id] += itemVal;
+            }, this);
         return acc;
       }, {}, this);
   var html = [];
   for (var field in total) {
     var col = /** @type {!pn.ui.FieldCtx} */ (
-        goog.array.find(this.totalColumns_, 
-            /** @param {!pn.ui.FieldCtx} c */
+        goog.array.find(this.totalColumns_,
+            /** @param {!pn.ui.FieldCtx} c The field context. */
             function(c) {
-      return c.id === field;
-    }));
-    var val;    
+          return c.id === field;
+        }));
+    var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
     if (col.spec.renderer) { val = col.spec.renderer(mockEntity); }

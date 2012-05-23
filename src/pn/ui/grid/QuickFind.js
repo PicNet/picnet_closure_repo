@@ -61,18 +61,19 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {
       var filterVal = this.filters_[columnId];
-      var val = '';
       var field = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.cols_,
           function(col) { return col.id === columnId; }));
       field.entity = entity;
-      if (field.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
+      var val = field.getEntityValue();
+      if (field.spec.renderer ===
+          pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
             this.cache_, field.spec.displayPath, field.entity) || '').
                 toString() : '';
-      } else if (field.renderer) { val = field.renderer(field); }
-      if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
-
-      if (!this.search_.matches(val, filterVal)) { return false; }
+      } else if (field.spec.renderer) { val = field.spec.renderer(field); }
+      var strval = '';
+      if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
+      if (!this.search_.matches(strval, filterVal)) { return false; }
     }
   }
   return true;
