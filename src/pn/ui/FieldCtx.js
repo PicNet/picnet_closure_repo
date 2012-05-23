@@ -9,11 +9,12 @@ goog.require('pn.ui.BaseField');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.BaseField} spec The field specifications.
- * @param {Object} entity The current entity being rendererd.
+ * @param {!Object} entity The current entity being rendererd.
  * @param {!Object.<!Array.<!Object>>} cache The current cache.
  */
 pn.ui.FieldCtx = function(spec, entity, cache) {
   goog.asserts.assert(spec);
+  goog.asserts.assert(entity);
   goog.asserts.assert(cache);
 
   goog.Disposable.call(this);
@@ -68,8 +69,9 @@ pn.ui.FieldCtx.prototype.getControlValue = function() {
 };
 
 
-/** @return {*} The value of this field. */
+/** @return {*} The value of  this field. */
 pn.ui.FieldCtx.prototype.getEntityValue = function() {
+  if (!goog.isDefAndNotNull(this.entity)) return null;
   return this.entity[this.spec.dataProperty];
 };
 

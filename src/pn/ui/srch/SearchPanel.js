@@ -147,10 +147,12 @@ pn.ui.srch.SearchPanel.prototype.decorateInternal = function(element) {
     'class': 'search-toggle',
     'title': title}, msg);
   this.searchPanel_ = goog.dom.createDom('div', 'search-panel');
+  this.filtersPanel_ = goog.dom.createDom('div', 'filters-panel');
   goog.style.setHeight(this.searchPanel_, visible ? 'auto' : 0);
 
   this.createActionControls_(this.searchPanel_);
-  this.createFieldValueEdit_(this.searchPanel_);
+
+  goog.dom.appendChild(this.searchPanel_, this.filtersPanel_);
   goog.dom.appendChild(element, this.searchPanel_);
   goog.dom.appendChild(element, this.toggle_);
 };
@@ -197,16 +199,6 @@ pn.ui.srch.SearchPanel.prototype.populateFieldSelect_ = function() {
   goog.array.forEach(options, function(o) {
     goog.dom.appendChild(this.select_, o);
   }, this);
-};
-
-
-/**
- * @private
- * @param {!Element} parent The parent for this panel.
- */
-pn.ui.srch.SearchPanel.prototype.createFieldValueEdit_ = function(parent) {
-  this.filtersPanel_ = goog.dom.createDom('div', 'filters-panel');
-  goog.dom.appendChild(parent, this.filtersPanel_);
 };
 
 
@@ -291,6 +283,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var option = this.select_.options[this.select_.selectedIndex];
   var val = option.value;
   if (!val) return;
+
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
   try {
@@ -303,7 +296,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
       throw new Error('Could not find the specified field: ' + fieldId +
           ' in the searcheable fields of the ' + spec.id + ' spec');
     }
-    var ctx = new pn.ui.FieldCtx(field, null, this.cache_);
+    var ctx = new pn.ui.FieldCtx(field, {}, this.cache_);
     this.select_.selectedIndex = 0;
     this.addFieldToTheFiltersSearch_(ctx, option);
   } finally {
@@ -384,7 +377,7 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
       curr === rr.timeField ||
       curr === fr.textAreaRenderer ||
       curr === fr.hiddenTextField) {
-    sf.renderer = fr.standardTextSearchField;
+    sf.spec.renderer = fr.standardTextSearchField;
   }
   return sf;
 };

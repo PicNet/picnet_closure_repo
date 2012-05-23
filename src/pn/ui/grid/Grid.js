@@ -52,7 +52,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   var cols = goog.array.map(this.cfg_.columns,
       /** @param {!pn.ui.grid.Column} c The column. */
       function(c) {
-        return new pn.ui.FieldCtx(c, null, cache);
+        return new pn.ui.FieldCtx(c, {}, cache);
       });
 
   /**
