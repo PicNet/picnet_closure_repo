@@ -37,6 +37,9 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 
   pn.ui.edit.CommandsComponent.call(this, spec, entity);
 
+  /** @type {boolean} */
+  this.fireInterceptorEvents = true;
+
   /**
    * @private
    * @type {!Object.<!Array>}
@@ -108,6 +111,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.decorateFields_(div);
   this.updateRequiredClasses();
 
+  if (!this.fireInterceptorEvents) return;
   var cmds = this.getCommandButtons();
   var inputs = {};
   goog.array.forEach(this.fctxs_,
@@ -210,8 +214,10 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
         if (!this.cfg_.interceptor.isShown(fctx.id)) return;
         errors = goog.array.concat(errors, fctx.validate());
       }, this);
-  var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
-  errors = goog.array.concat(errors, errors2);
+  if (this.fireInterceptorEvents) {
+    var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
+    errors = goog.array.concat(errors, errors2);
+  }
   return errors;
 };
 
@@ -264,8 +270,9 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
-
   goog.array.forEach(this.fctxs_, this.enterDocumentOnChildrenField_, this);
+
+  if (!this.fireInterceptorEvents) return;
   this.cfg_.interceptor.postInit();
 };
 
