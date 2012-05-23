@@ -114,10 +114,10 @@ pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
 pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
   var filters = {};
   var showPrefix = this.spec_.searchConfig.showTypePrefixes;
-  goog.array.forEach(this.spec_.searchConfig.fields, function(field) {
-    if (field.tableType) { return; } // Ignore inner tables
-    var filterid = this.spec_.id + '.' + field.id;
-    var txt = (showPrefix ? this.spec_.name + ' - ' : '') + field.name;
+  goog.array.forEach(this.spec_.searchConfig.fieldSpecs, function(fieldSpec) {
+    if (fieldSpec.tableType) { return; } // Ignore inner tables
+    var filterid = this.spec_.id + '.' + fieldSpec.id;
+    var txt = (showPrefix ? this.spec_.name + ' - ' : '') + fieldSpec.name;
     filters[filterid] = txt;
   }, this);
 

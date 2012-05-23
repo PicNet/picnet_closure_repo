@@ -1,5 +1,5 @@
 
-goog.provide('pn.app.schema.FieldDef');
+goog.provide('pn.app.schema.FieldSchema');
 
 
 
@@ -11,7 +11,7 @@ goog.provide('pn.app.schema.FieldDef');
  * @param {number} length The length of this field (only applicable to
  *     string fields).
  */
-pn.app.schema.FieldDef = function(name, type, allowNull, length) {
+pn.app.schema.FieldSchema = function(name, type, allowNull, length) {
 
   /**
    * The name of this field

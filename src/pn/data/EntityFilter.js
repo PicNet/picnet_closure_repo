@@ -118,14 +118,13 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
-    var field = goog.array.find(this.spec_.searchConfig.fields, function(sf) {
-      return sf.id === fieldId;
-    });
-    if (field.renderer === FieldRenderers.dateRenderer) {
+    var fieldSpec = goog.array.find(this.spec_.searchConfig.fieldSpecs,
+        function(sf) { return sf.id === fieldId; });
+    if (fieldSpec.renderer === FieldRenderers.dateRenderer) {
       var min = parseInt(filterValue, 10);
       var max = min + (24 * 60 * 60 * 1000);
       return min <= ev && ev < max;
-    } else if (field.renderer === FieldRenderers.centsRenderer) {
+    } else if (fieldSpec.renderer === FieldRenderers.centsRenderer) {
       ev = pn.convert.centsToCurrency(ev);
     }
     var eval = ev.toString().toLowerCase();

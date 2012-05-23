@@ -34,7 +34,7 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
-  /** @type {pn.app.schema.FieldDef} */
+  /** @type {pn.app.schema.FieldSchema} */
   this.schema = pn.app.ctx.schema.getFieldSchema(spec);
 
   /** @type {(Element|goog.ui.Component)} */

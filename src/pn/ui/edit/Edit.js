@@ -60,7 +60,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @private
    * @type {!Array.<pn.ui.FieldCtx>}
    */
-  this.fctxs_ = goog.array.map(this.cfg_.fields, function(fieldSpec) {
+  this.fctxs_ = goog.array.map(this.cfg_.fieldSpecs, function(fieldSpec) {
     return new pn.ui.FieldCtx(fieldSpec, data, cache);
   }, this);
 

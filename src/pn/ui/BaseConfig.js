@@ -6,11 +6,11 @@ goog.provide('pn.ui.BaseConfig');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Array.<pn.ui.BaseField>} fields The fields being displayed by
+ * @param {!Array.<pn.ui.BaseField>} fieldSpecs The fields being displayed by
  *    this config.
  */
-pn.ui.BaseConfig = function(fields) {
-  goog.asserts.assert(fields);
+pn.ui.BaseConfig = function(fieldSpecs) {
+  goog.asserts.assert(fieldSpecs);
 
   goog.Disposable.call(this);
 
@@ -18,7 +18,7 @@ pn.ui.BaseConfig = function(fields) {
    * @private
    * @type {!Array.<pn.ui.BaseField>}
    */
-  this.fields_ = fields;
+  this.fieldSpecs_ = fieldSpecs;
 
   /**
    * The Grid and Edit controls will use pn.app.ctx.pub to publish events if
@@ -38,16 +38,16 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
     var type = pn.data.EntityUtils.getTypeProperty(f);
     if (type !== f) types.push(type);
   };
-  goog.array.forEach(this.fields_, function(field) {
-    var additional = field.additionalCacheTypes;
+  goog.array.forEach(this.fieldSpecs_, function(fSpec) {
+    var additional = fSpec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
 
-    if (field.displayPath) {
-      goog.array.forEach(field.displayPath.split('.'), addIfType);
+    if (fSpec.displayPath) {
+      goog.array.forEach(fSpec.displayPath.split('.'), addIfType);
     }
-    addIfType(field.dataProperty);
-    if (field.tableSpec) {
-      var spec = pn.app.ctx.specs.get(field.tableSpec);
+    addIfType(fSpec.dataProperty);
+    if (fSpec.tableSpec) {
+      var spec = pn.app.ctx.specs.get(fSpec.tableSpec);
       var related = spec.gridConfig.getRelatedTypes();
       types = goog.array.concat(types, related);
       goog.dispose(spec);
@@ -62,5 +62,5 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
 pn.ui.BaseConfig.prototype.disposeInternal = function() {
   pn.ui.BaseConfig.superClass_.disposeInternal.call(this);
 
-  delete this.fields_;
+  delete this.fieldSpecs_;
 };

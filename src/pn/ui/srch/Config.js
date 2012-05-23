@@ -9,14 +9,14 @@ goog.require('pn.ui.BaseConfig');
  * @constructor
  * @extends {pn.ui.BaseConfig}
  * @param {string} type The type of the entity being searched.
- * @param {!Array.<pn.ui.edit.Field>} fields An array of field specifications
- *    that describes all fields to be searched.
+ * @param {!Array.<pn.ui.edit.Field>} fieldSpecs An array of field meta
+ *    specifications that describes all fields to be searched.
  */
-pn.ui.srch.Config = function(type, fields) {
+pn.ui.srch.Config = function(type, fieldSpecs) {
   goog.asserts.assert(type);
-  goog.asserts.assert(fields.length > 0);
+  goog.asserts.assert(fieldSpecs.length > 0);
 
-  pn.ui.BaseConfig.call(this, fields);
+  pn.ui.BaseConfig.call(this, fieldSpecs);
 
   /**
    * @private
@@ -25,7 +25,7 @@ pn.ui.srch.Config = function(type, fields) {
   this.type_ = type;
 
   /** @type {!Array.<pn.ui.edit.Field>} */
-  this.fields = fields;
+  this.fieldSpecs = fieldSpecs;
 
   /** @type {boolean} */
   this.showTypePrefixes = false;

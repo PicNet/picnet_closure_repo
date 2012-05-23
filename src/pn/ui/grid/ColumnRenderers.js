@@ -5,7 +5,6 @@ goog.require('goog.string');
 goog.require('pn.convert');
 goog.require('pn.data.EntityUtils');
 goog.require('pn.date');
-goog.require('pn.ui.BaseField');
 
 
 /**

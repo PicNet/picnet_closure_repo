@@ -29,7 +29,7 @@ pn.ui.edit.ReadOnlyFields.getText = function(fieldSpec, value) {
 /** @param {!pn.ui.UiSpec} spec This specs that will be made readonly. */
 pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
   if (!spec.editConfig) return;
-  goog.array.forEach(spec.editConfig.fields,
+  goog.array.forEach(spec.editConfig.fieldSpecs,
       pn.ui.edit.ReadOnlyFields.toReadOnlyField);
 };
 

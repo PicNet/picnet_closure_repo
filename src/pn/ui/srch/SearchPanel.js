@@ -290,7 +290,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var fctx = null;
   try {
     var fieldSpec = /** @type {pn.ui.edit.Field} */ (goog.array.find(
-        spec.searchConfig.fields, function(fieldSpec1) {
+        spec.searchConfig.fieldSpecs, function(fieldSpec1) {
           return fieldSpec1.id === fieldId;
         }));
     if (!fieldSpec) {
