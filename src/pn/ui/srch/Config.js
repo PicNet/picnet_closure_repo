@@ -9,7 +9,7 @@ goog.require('pn.ui.BaseConfig');
  * @constructor
  * @extends {pn.ui.BaseConfig}
  * @param {string} type The type of the entity being searched.
- * @param {!Array.<pn.ui.edit.Field>} fieldSpecs An array of field meta
+ * @param {!Array.<pn.ui.edit.FieldSpec>} fieldSpecs An array of field meta
  *    specifications that describes all fields to be searched.
  */
 pn.ui.srch.Config = function(type, fieldSpecs) {
@@ -24,7 +24,7 @@ pn.ui.srch.Config = function(type, fieldSpecs) {
    */
   this.type_ = type;
 
-  /** @type {!Array.<pn.ui.edit.Field>} */
+  /** @type {!Array.<pn.ui.edit.FieldSpec>} */
   this.fieldSpecs = fieldSpecs;
 
   /** @type {boolean} */

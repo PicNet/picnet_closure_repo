@@ -31,7 +31,7 @@ goog.inherits(pn.app.schema.Schema, goog.Disposable);
 
 
 /**
- * @param {!pn.ui.BaseField} fieldSpec The field spec for the field being
+ * @param {!pn.ui.BaseFieldSpec} fieldSpec The field spec for the field being
  *     queried.
  * @return {pn.app.schema.FieldSchema} The field schema for the specified field.
  */

@@ -4,7 +4,7 @@ goog.provide('pn.ui.grid.QuickFind');
 goog.require('goog.events.EventHandler');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 
 
 

@@ -1,11 +1,11 @@
 ﻿;
-goog.provide('pn.ui.BaseField');
+goog.provide('pn.ui.BaseFieldSpec');
 
 
 
 /**
- * The BaseField is inherited by pn.ui.edit.Field and pn.ui.grid.Column and
- *    provides the base functionality required for defining fields and
+ * The BaseField is inherited by pn.ui.edit.FieldSpec and pn.ui.grid.ColumnSpec
+ *    and provides the base functionality required for defining fields and
  *    columns.
  *
  * BaseField types (Field / Column) should be constructed using the
@@ -18,7 +18,7 @@ goog.provide('pn.ui.BaseField');
  * @param {string=} opt_name The optional name/caption of this column. If the
  *    name is omitted the the field id will be used (parsing cammel casing).
  */
-pn.ui.BaseField = function(id, entitySpec, opt_name) {
+pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
   goog.asserts.assert(id);
   goog.asserts.assert(entitySpec);
 
@@ -97,7 +97,7 @@ pn.ui.BaseField = function(id, entitySpec, opt_name) {
  *    we will also apply default values to any field that was not
  *    explicitally set.
  */
-pn.ui.BaseField.prototype.extend = function(props) {
+pn.ui.BaseFieldSpec.prototype.extend = function(props) {
   goog.asserts.assert(goog.isObject(props));
 
   goog.object.extend(this, props);

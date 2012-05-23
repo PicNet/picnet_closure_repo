@@ -17,7 +17,7 @@ goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.FieldBuilder');
 goog.require('pn.ui.edit.FieldValidator');
 goog.require('pn.ui.edit.Interceptor');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 
@@ -35,7 +35,7 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(entity);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, spec, entity);  
+  pn.ui.edit.CommandsComponent.call(this, spec, entity);
 
   /**
    * @private

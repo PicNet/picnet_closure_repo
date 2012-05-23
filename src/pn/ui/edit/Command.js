@@ -17,19 +17,19 @@ pn.ui.edit.Command = function(name, eventType, opt_validate) {
 
   /** @type {string} */
   this.name = name;
-  
+
   /** @type {string} */
   this.eventType = eventType;
-  
+
   /** @type {boolean} */
   this.validate = opt_validate === true;
-  
+
   /** @type {null|function(Object=):boolean} Wether to
     continue with the command. */
   this.preclick = null;
-  
+
   /** @type {null|function(string,Object):undefined} The command handler. */
-  this.click = null;  
+  this.click = null;
 
   /** @type {boolean} Wether to display this command on new entitis. */
   this.showOnNew = true;

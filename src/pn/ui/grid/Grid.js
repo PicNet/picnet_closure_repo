@@ -50,7 +50,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
   var fctxs = goog.array.map(this.cfg_.columns,
-      /** @param {!pn.ui.grid.Column} c The column. */
+      /** @param {!pn.ui.grid.ColumnSpec} c The column. */
       function(c) {
         return new pn.ui.FieldCtx(c, {}, cache);
       });

@@ -1,14 +1,14 @@
 ﻿;
 goog.provide('pn.ui.FieldCtx');
 
-goog.require('pn.ui.BaseField');
+goog.require('pn.ui.BaseFieldSpec');
 
 
 
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!pn.ui.BaseField} spec The field specifications.
+ * @param {!pn.ui.BaseFieldSpec} spec The field specifications.
  * @param {!Object} entity The current entity being rendererd.
  * @param {!Object.<!Array.<!Object>>} cache The current cache.
  */
@@ -19,7 +19,7 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
 
   goog.Disposable.call(this);
 
-  /** @type {!pn.ui.BaseField} */
+  /** @type {!pn.ui.BaseFieldSpec} */
   this.spec = spec;
 
   /** @type {Object} */

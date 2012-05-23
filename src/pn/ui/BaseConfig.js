@@ -6,8 +6,8 @@ goog.provide('pn.ui.BaseConfig');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Array.<pn.ui.BaseField>} fieldSpecs The fields being displayed by
- *    this config.
+ * @param {!Array.<pn.ui.BaseFieldSpec>} fieldSpecs The fields being
+ *    displayed by this config.
  */
 pn.ui.BaseConfig = function(fieldSpecs) {
   goog.asserts.assert(fieldSpecs);
@@ -16,7 +16,7 @@ pn.ui.BaseConfig = function(fieldSpecs) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.BaseField>}
+   * @type {!Array.<pn.ui.BaseFieldSpec>}
    */
   this.fieldSpecs_ = fieldSpecs;
 

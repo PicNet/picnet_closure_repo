@@ -156,7 +156,7 @@ pn.ui.edit.FieldRenderers.standardTextSearchField = function(field) {
  * @param {function(Object):string=} opt_displayStrategy A function that
  *    returns a string to display as the select box option item for the given
  *    entity.
- * @return {!pn.ui.edit.Field.Renderer} The many to many list box renderer.
+ * @return {!pn.ui.edit.FieldSpec.Renderer} The many to many list box renderer.
  */
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {

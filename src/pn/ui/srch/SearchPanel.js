@@ -11,7 +11,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.FieldBuilder');
 goog.require('pn.ui.filter.GenericListFilterOptions');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 goog.require('pn.ui.grid.Grid.EventType');
@@ -289,7 +289,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var spec = pn.app.ctx.specs.get(specid);
   var fctx = null;
   try {
-    var fieldSpec = /** @type {pn.ui.edit.Field} */ (goog.array.find(
+    var fieldSpec = /** @type {pn.ui.edit.FieldSpec} */ (goog.array.find(
         spec.searchConfig.fieldSpecs, function(fieldSpec1) {
           return fieldSpec1.id === fieldId;
         }));

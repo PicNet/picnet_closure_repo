@@ -9,7 +9,8 @@ goog.provide('pn.ui.edit.ReadOnlyFields');
 
 
 /**
- * @param {!pn.ui.edit.Field} fieldSpec The field wholse display value we want.
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field wholse display value we
+ *    want.
  * @param {!*} value The value on the non-readonly field.
  * @return {string} The text of the display value.
  */
@@ -34,7 +35,9 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
 };
 
 
-/** @param {!pn.ui.edit.Field} fieldSpec The field to change into readonly. */
+/**
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
+ */
 pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
   // If field is already readonly then no need to change.  This is useful
   // when custom renderers are themselves readonly, just set readonly to true
@@ -209,8 +212,8 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
 
 /**
  * @private
- * @param {!pn.ui.edit.Field} fieldSpec The field specifications whose type we
- *    need.
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field specifications whose type
+ *    we need.
  * @return {!pn.ui.edit.ReadOnlyFields.FieldType_} The field type for the given
  *    specifications.
  */

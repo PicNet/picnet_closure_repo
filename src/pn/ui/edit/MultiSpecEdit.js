@@ -14,9 +14,9 @@ goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Edit');
-goog.require('pn.ui.edit.Field');
+goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.ReadOnlyFields');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 goog.require('pn.ui.grid.Grid.EventType');
@@ -38,7 +38,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   goog.asserts.assert(entity);
   goog.asserts.assert(specs);
   goog.asserts.assert(mainSpecId);
-  
+
 
   /**
    * @protected

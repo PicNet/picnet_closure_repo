@@ -8,7 +8,7 @@ goog.require('pn.ui.BaseConfig');
 /**
  * @constructor
  * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
+ * @param {!Array.<pn.ui.grid.ColumnSpec>} columns The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
@@ -19,7 +19,7 @@ pn.ui.grid.Config = function(columns, commands) {
 
   pn.ui.BaseConfig.call(this, columns);
 
-  /** @type {!Array.<pn.ui.grid.Column>} */
+  /** @type {!Array.<pn.ui.grid.ColumnSpec>} */
   this.columns = columns;
 
   /** @type {!Array.<pn.ui.grid.Command>} */

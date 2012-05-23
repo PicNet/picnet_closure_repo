@@ -10,10 +10,10 @@ goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
-goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.FieldValidator');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 

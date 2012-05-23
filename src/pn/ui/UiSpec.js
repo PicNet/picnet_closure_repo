@@ -6,8 +6,8 @@ goog.require('goog.events.EventType');
 goog.require('goog.style');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.Edit.EventType');
-goog.require('pn.ui.edit.Field');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.edit.FieldSpec');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Command');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.ExportCommand');
@@ -106,12 +106,12 @@ pn.ui.UiSpec.prototype.getGridConfig = function() { return null; };
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
- * @return {!pn.ui.grid.Column} The created column.
+ * @return {!pn.ui.grid.ColumnSpec} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn =
     function(field, opt_captionOrProps, opt_props) {
-  return /** @type {!pn.ui.grid.Column} */ (this.createDisplayItem_(
-      field, pn.ui.grid.Column, opt_captionOrProps, opt_props));
+  return /** @type {!pn.ui.grid.ColumnSpec} */ (this.createDisplayItem_(
+      field, pn.ui.grid.ColumnSpec, opt_captionOrProps, opt_props));
 };
 
 
@@ -122,19 +122,19 @@ pn.ui.UiSpec.prototype.createColumn =
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this field.
- * @return {!pn.ui.edit.Field} The field created.
+ * @return {!pn.ui.edit.FieldSpec} The field created.
  */
 pn.ui.UiSpec.prototype.createField =
     function(id, opt_captionOrProps, opt_props) {
-  return /** @type {!pn.ui.edit.Field} */ (this.createDisplayItem_(
-      id, pn.ui.edit.Field, opt_captionOrProps, opt_props));
+  return /** @type {!pn.ui.edit.FieldSpec} */ (this.createDisplayItem_(
+      id, pn.ui.edit.FieldSpec, opt_captionOrProps, opt_props));
 };
 
 
 /**
  * @private
  * @param {string} field The field in the data representing this column.
- * @param {function(new:pn.ui.BaseField,string,pn.ui.UiSpec!,string)} typeConst
+ * @param {function(new:pn.ui.BaseFieldSpec,string,pn.ui.UiSpec!,string)} typeConst
  *    The constructor for the display item we are creating.  Expects a
  *    constructor with the 'field' and 'caption' params.
  * @param {(string|Object)=} opt_captionOrProps The optional header caption for
@@ -142,7 +142,7 @@ pn.ui.UiSpec.prototype.createField =
  *    will be used (parsing cammel casing).
  * @param {Object=} opt_props Any additional properties
  *    for this column.
- * @return {!pn.ui.BaseField} The created column or field.
+ * @return {!pn.ui.BaseFieldSpec} The created column or field.
  */
 pn.ui.UiSpec.prototype.createDisplayItem_ =
     function(field, typeConst, opt_captionOrProps, opt_props) {

@@ -11,7 +11,7 @@ goog.require('pn.ui.edit.DeleteCommand');
 /**
  * @constructor
  * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.edit.Field>} fieldSpecs An array of field meta
+ * @param {!Array.<pn.ui.edit.FieldSpec>} fieldSpecs An array of field meta
  *    specifications that describe how each of the display fields should be
  *    displayed, captioned and validated.
  * @param {Array.<pn.ui.edit.Command>=} opt_commands An optional commands array
@@ -28,7 +28,7 @@ pn.ui.edit.Config =
 
   pn.ui.BaseConfig.call(this, fieldSpecs);
 
-  /** @type {!Array.<pn.ui.edit.Field>} */
+  /** @type {!Array.<pn.ui.edit.FieldSpec>} */
   this.fieldSpecs = fieldSpecs;
 
   /** @type {!Array.<pn.ui.edit.Command>} */
