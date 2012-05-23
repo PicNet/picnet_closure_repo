@@ -23,9 +23,11 @@ goog.require('pn.ui.grid.Grid');
  * @constructor
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
+ * @param {!Object} entity The entity being edited.
  */
-pn.ui.edit.CommandsComponent = function(spec) {
+pn.ui.edit.CommandsComponent = function(spec, entity) {
   goog.asserts.assert(spec);
+  goog.asserts.assert(entity);
 
   goog.ui.Component.call(this);
 
@@ -40,6 +42,12 @@ pn.ui.edit.CommandsComponent = function(spec) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec = spec;
+
+  /**
+   * @protected
+   * @type {!Object}
+   */
+  this.entity = entity;
 
   /**
    * @private
@@ -138,6 +146,8 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
  */
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
+    if (pn.data.EntityUtils.isNew(this.entity) && !c.showOnNew) return;
+
     var className = c.name.toLowerCase();
     var button = goog.dom.createDom('button',
         {'class': 'goog-button ' + className, 'id': c.name, 'title': c.name});

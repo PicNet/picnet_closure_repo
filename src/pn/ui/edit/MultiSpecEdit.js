@@ -38,12 +38,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   goog.asserts.assert(entity);
   goog.asserts.assert(specs);
   goog.asserts.assert(mainSpecId);
-
-  /**
-   * @protected
-   * @type {!Object}
-   */
-  this.entity = entity;
+  
 
   /**
    * @protected
@@ -63,7 +58,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
    */
   this.edits = [];
 
-  pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId]);
+  pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId], entity);
 };
 goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 

@@ -27,22 +27,15 @@ goog.require('pn.ui.grid.Grid');
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
- * @param {!Object} data The data object to edit, null for new entity.
+ * @param {!Object} entity The entity object to edit, {} for new entity.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.edit.Edit = function(spec, data, cache) {
+pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(spec);
-  goog.asserts.assert(data);
+  goog.asserts.assert(entity);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, spec);
-
-  /**
-   * @private
-   * @type {!Object}
-   */
-  this.data_ = data;
-
+  pn.ui.edit.CommandsComponent.call(this, spec, entity);  
 
   /**
    * @private
@@ -61,7 +54,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    * @type {!Array.<pn.ui.FieldCtx>}
    */
   this.fctxs_ = goog.array.map(this.cfg_.fieldSpecs, function(fieldSpec) {
-    return new pn.ui.FieldCtx(fieldSpec, data, cache);
+    return new pn.ui.FieldCtx(fieldSpec, entity, cache);
   }, this);
 
   /**
@@ -70,7 +63,7 @@ pn.ui.edit.Edit = function(spec, data, cache) {
    */
   this.log_ = pn.log.getLogger('pn.ui.edit.Edit');
 
-  this.normaliseDateOnlyFields_(data);
+  this.normaliseDateOnlyFields_(entity);
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
@@ -79,9 +72,9 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
  * This is required so that fields with date only (no time) renderers don't
  *    throw 'dirty' checks when nothing has changed (just time is lost)
  * @private
- * @param {!Object} data The entity to normalize.
+ * @param {!Object} entity The entity to normalize.
  */
-pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
+pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(entity) {
   // TODO: This code should not be here it should at best be part of the
   // FieldRenderers.dateRenderer code, but definatelly not here.
   goog.array.forEach(this.getEditableFields_(),
@@ -90,13 +83,13 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
         if (fctx.spec.renderer !== pn.ui.edit.FieldRenderers.dateRenderer) {
           return;
         }
-        var date = data[fctx.id];
+        var date = entity[fctx.id];
         if (!date) return;
         var dt = new goog.date.Date();
         dt.setTime(/** @type {number} */ (date));
         var trimmed = new goog.date.Date(
             dt.getYear(), dt.getMonth(), dt.getDate());
-        data[fctx.id] = trimmed.getTime();
+        entity[fctx.id] = trimmed.getTime();
       }, this);
 };
 
@@ -107,13 +100,13 @@ pn.ui.edit.Edit.prototype.normaliseDateOnlyFields_ = function(data) {
 pn.ui.edit.Edit.prototype.isDirty = function() {
   return goog.array.findIndex(this.getEditableFields_(), function(fctx) {
     return this.cfg_.interceptor.isShown(fctx.id) && fctx.isDirty();
-  }) >= 0;
+  }, this) >= 0;
 };
 
 
 /** Resets the dirty state of the current view */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
-  this.data_ = this.getCurrentFormData();
+  this.entity = this.getCurrentFormData();
 };
 
 
@@ -136,7 +129,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
   if (this.cfg_.template) {
-    var html = this.cfg_.template(this.data_);
+    var html = this.cfg_.template(this.entity);
     var templateDiv = goog.dom.htmlToDocumentFragment(html);
     goog.dom.appendChild(div, templateDiv);
   }
@@ -148,7 +141,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   goog.array.forEach(this.fctxs_,
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) { inputs[fctx.id] = fctx.component; });
-  this.cfg_.interceptor.init(this, this.data_, this.cache_, inputs, cmds);
+  this.cfg_.interceptor.init(this, this.entity, this.cache_, inputs, cmds);
 };
 
 
@@ -162,7 +155,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var useTemplate = !!this.cfg_.template,
       focusSet = !this.cfg_.autoFocus,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
-      newEntity = pn.data.EntityUtils.isNew(this.data_);
+      newEntity = pn.data.EntityUtils.isNew(this.entity);
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
@@ -192,7 +185,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         // are using a complex renderer, lets set the initial value on the
         // current entity so we can use this later for dirty checking.
         if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
-          this.data_[fctx.id] = input.getValue();
+          this.entity[fctx.id] = input.getValue();
         }
         fctx.component = input;
 
@@ -254,7 +247,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
-  goog.object.extend(current, this.data_);
+  goog.object.extend(current, this.entity);
   goog.object.extend(current, this.getFormData());
 
   return current;
@@ -263,7 +256,7 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
 
 /**
  * @return {!Object.<*>} The values of each field in the current form.  This
- *    does not include the base data object (this.data_) information.
+ *    does not include the base data object (this.entity) information.
  */
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
@@ -315,7 +308,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
 
   this.eh.listen(fctx.component, pn.ui.grid.Grid.EventType.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
-    e.parent = this.data_;
+    e.parent = this.entity;
     e.entityType = spec.tableType;
     e.parentField = spec.tableParentField;
     this.publishEvent_(e);
@@ -325,7 +318,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
         var e = new goog.events.Event(
             pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
         e.entityId = ev.selected['ID'];
-        e.parent = this.data_;
+        e.parent = this.entity;
         e.entityType = spec.tableType;
         e.parentField = spec.tableParentField;
         this.publishEvent_(e);
