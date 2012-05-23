@@ -19,14 +19,6 @@ pn.ui.edit.ComplexRenderer = function() {
    */
   this.fctx = null;
 
-  /**
-   * TODO: Can we replace this with field.spec.required
-   *
-   * @protected
-   * @type {boolean}
-   */
-  this.required = false;
-
   /** @type {boolean} */
   this.showLabel = true;
 
@@ -43,12 +35,6 @@ goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
   this.eh = new goog.events.EventHandler(this);
   this.fctx = fctx;
-};
-
-
-/** @param {boolean} required Wether this value should be required. */
-pn.ui.edit.ComplexRenderer.prototype.setIsRequired = function(required) {
-  this.required = required;
 };
 
 
