@@ -86,18 +86,21 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
  */
 pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
   var steps = fctx.spec.displayPath.split('.');
-  var entityType = pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
+  var cascading = !!fctx.spec.tableType;
+  var entityType = cascading ?
+      fctx.spec.tableType :
+      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
 
-  var list = fctx.cache[entityType];  
+  var list = fctx.cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
-  var path = steps.join('.');
+  var namePath = cascading ? entityType + 'Name' : steps.join('.');
   list = goog.array.map(list, function(e) {
     return {
       'ID': e['ID'],
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, path, e)
+      'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
     };
   });
   var sort = fctx.spec.additionalProperties.sortedValues;

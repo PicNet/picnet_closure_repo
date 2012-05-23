@@ -163,6 +163,17 @@ pn.data.EntityUtils.isParentProperty = function(property) {
 
 
 /**
+ * @param {string} property The entity property to check if it points to a
+ *    children relationship field.
+ * @return {boolean} Wether the specified property is a children property.
+ */
+pn.data.EntityUtils.isChildrenProperty = function(property) {
+  goog.asserts.assert(property);
+  return goog.string.endsWith(property, 'Entities');
+};
+
+
+/**
  * @private
  * @param {!Object.<!Array.<!Object>>} cache The cache to search for the
  *    specified type.
