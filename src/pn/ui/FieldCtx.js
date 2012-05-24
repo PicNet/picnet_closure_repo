@@ -114,6 +114,29 @@ pn.ui.FieldCtx.prototype.getEntityValue = function() {
 };
 
 
+/** @return {*} The display value of this field. */
+pn.ui.FieldCtx.prototype.getDisplayValue = function() {
+  return pn.data.EntityUtils.getEntityDisplayValue(
+      this.cache,
+      this.spec.displayPath,
+      this.entity,
+      this.spec.tableParentField);
+};
+
+
+/**
+ * @return {*} The compareable value of this field, suitable for sorting, etc.
+ */
+pn.ui.FieldCtx.prototype.getCompareableValue = function() {
+  var useRealValue =
+      !this.spec.renderer ||
+      this.spec.renderer === pn.ui.grid.ColumnRenderers.dateRenderer ||
+      this.spec.renderer === pn.ui.grid.ColumnRenderers.dateTimeRenderer ||
+      this.spec.renderer === pn.ui.grid.ColumnRenderers.centsRenderer;
+  return useRealValue ? this.getEntityValue() : this.spec.renderer(this);
+};
+
+
 /**
  * @return {boolean} Wether this field is currently dirty (i.e. The control is
  *    different than the entity value).
@@ -169,16 +192,6 @@ pn.ui.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     }, this)['ID'];
   }
   return val;
-};
-
-
-/** @return {*} The display value of this field. */
-pn.ui.FieldCtx.prototype.getDisplayValue = function() {
-  return pn.data.EntityUtils.getEntityDisplayValue(
-      this.cache,
-      this.spec.displayPath,
-      this.entity,
-      this.spec.tableParentField);
 };
 
 

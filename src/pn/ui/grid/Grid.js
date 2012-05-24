@@ -270,8 +270,8 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) { return fctx.spec.name; });
+      /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+      function(fctx1) { return fctx1.spec.name; });
   var gridData = [headers];
   var lencol = this.fctxs_.length;
   for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
@@ -317,9 +317,14 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       'colid': args['sortCol']['id'],
       'asc': args['sortAsc']
     };
+    var fctx = goog.array.find(this.fctxs_, function(fctx1) {
+      return fctx1.id === args['sortCol']['id'];
+    });
     this.dataView_.sort(function(a, b) {
-      var x = a[args['sortCol']['field']],
-          y = b[args['sortCol']['field']];
+      fctx.entity = a;
+      var x = fctx.getCompareableValue();
+      fctx.entity = b;
+      var y = fctx.getCompareableValue();
       return (x === y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
     this.saveGridState_();
