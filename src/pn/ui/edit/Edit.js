@@ -157,9 +157,10 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
           goog.dom.appendChild(fieldset, fctx.parentComponent);
         }
         var input = fb.createAndAttach(fctx);
+        // TODO: This code should not be here, perhaps in FildCtx?
         // If this is a private '_' field, like an attachment control and we
         // are using a complex renderer, lets set the initial value on the
-        // current entity so we can use this later for dirty checking.
+        // current entity so we can use this later for dirty comparison.
         if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
           this.entity[fctx.id] = input.getValue();
         }

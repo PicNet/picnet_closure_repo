@@ -97,13 +97,13 @@ pn.ui.FieldCtx.prototype.getControlValue = function() {
 
 /** @return {*} The value of  this field. */
 pn.ui.FieldCtx.prototype.getEntityValue = function() {
+  var v = this.entity[this.spec.dataProperty];
   if (pn.data.EntityUtils.isNew(this.entity)) {
     if (goog.isDefAndNotNull(this.spec.defaultValue)) {
       return this.getDefaultFieldValue_();
     }
-    return undefined;
+    return v;
   }
-  var v = this.entity[this.spec.dataProperty];
   if (goog.string.endsWith(this.spec.dataProperty, 'Entities') &&
       goog.isArray(v)) {
     // Controls always return sorted IDs so here we ensure we never throw a
