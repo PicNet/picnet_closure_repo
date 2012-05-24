@@ -39,11 +39,10 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
  * @param {!pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
  */
 pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
-  // If field is already readonly then no need to change.  This is useful
-  // when custom renderers are themselves readonly, just set readonly to true
-  // in the field definition and they will not be touched.
-  if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer &&
-      fieldSpec.readonly) { return; }
+  fieldSpec.readonly = true;
+  
+  // Complex renderers should know how to handle their own readonlyness
+  if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer) { return; }
 
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
@@ -54,8 +53,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
     [fr.boolRenderer, rr.boolField],
     [fr.yesNoRenderer, rr.boolField],
     [fr.centsRenderer, rr.centsField]
-  ];
-  fieldSpec.readonly = true;
+  ];  
   if (goog.string.endsWith(fieldSpec.dataProperty, 'Entities')) {
     if (fieldSpec.renderer === null) return; // Leave grids alone
     fieldSpec.renderer = rr.itemList;
@@ -78,7 +76,9 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.ReadOnlyFields.textField = function(fctx) {
-  var val = fctx.getEntityValue();
+  var val = fctx.spec.displayPath ? 
+      fctx.getDisplayValue() : 
+      fctx.getEntityValue();
   if (!val) val = '';
   if (goog.isString(val)) {
     val = pn.ui.edit.ReadOnlyFields.toHtmlText(val);
