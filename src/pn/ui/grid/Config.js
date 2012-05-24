@@ -78,3 +78,14 @@ pn.ui.grid.Config.prototype.toSlick = function() {
   });
   return cfg;
 };
+
+
+/** @inheritDoc */
+pn.ui.grid.Config.prototype.disposeInternal = function() {
+  pn.ui.grid.Config.superClass_.disposeInternal.call(this);
+
+  goog.array.forEach(this.commands, goog.dispose);
+
+  delete this.columns;
+  delete this.commands;
+};

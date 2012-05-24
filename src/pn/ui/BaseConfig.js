@@ -62,5 +62,6 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
 pn.ui.BaseConfig.prototype.disposeInternal = function() {
   pn.ui.BaseConfig.superClass_.disposeInternal.call(this);
 
+  goog.array.forEach(this.fieldSpecs_, goog.dispose);
   delete this.fieldSpecs_;
 };

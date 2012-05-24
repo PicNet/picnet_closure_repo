@@ -65,10 +65,11 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
 pn.ui.edit.Config.prototype.disposeInternal = function() {
   pn.ui.edit.Config.superClass_.disposeInternal.call(this);
 
+  goog.array.forEach(this.commands, goog.dispose);
+  goog.dispose(this.interceptor);
+
   delete this.fieldSpecs;
   delete this.commands;
   delete this.template;
-
-  goog.dispose(this.interceptor);
   delete this.interceptor;
 };

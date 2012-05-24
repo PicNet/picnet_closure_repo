@@ -202,9 +202,13 @@ pn.ui.FieldCtx.prototype.disposeInternal = function() {
   goog.dispose(this.log_);
   goog.dispose(this.component);
   goog.dispose(this.parentComponent);
-  if (this.spec.renderer) goog.dispose(this.spec.renderer);
 
   delete this.log_;
+  delete this.spec;
+  delete this.entity;
+  delete this.cache;
+  delete this.entitySpec;
+  delete this.schema;
   delete this.component;
   delete this.parentComponent;
 };

@@ -269,7 +269,8 @@ pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
 pn.ui.srch.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
   goog.object.forEach(this.filtersControls_, function(arr) {
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
+    this.eh_.unlisten(arr[0], goog.events.EventType.CHANGE);
+    this.eh_.unlisten(arr[1], goog.events.EventType.CLICK);
     goog.array.forEach(arr, goog.dispose);
   }, this);
   this.filtersControls_ = {};
@@ -287,23 +288,19 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
   var spec = pn.app.ctx.specs.get(specid);
-  var fctx = null;
-  try {
-    var fieldSpec = /** @type {pn.ui.edit.FieldSpec} */ (goog.array.find(
-        spec.searchConfig.fieldSpecs, function(fieldSpec1) {
-          return fieldSpec1.id === fieldId;
-        }));
-    if (!fieldSpec) {
-      throw new Error('Could not find the specified field: ' + fieldId +
-          ' in the searcheable fields of the ' + spec.id + ' spec');
-    }
-    fctx = new pn.ui.FieldCtx(fieldSpec, {}, this.cache_);
-    this.select_.selectedIndex = 0;
-    this.addFieldToTheFiltersSearch_(fctx, option);
-  } finally {
-    goog.dispose(spec);
-    goog.dispose(fctx);
+  var fctx;
+  var fieldSpec = /** @type {pn.ui.edit.FieldSpec} */ (goog.array.find(
+      spec.searchConfig.fieldSpecs, function(fieldSpec1) {
+        return fieldSpec1.id === fieldId;
+      }));
+  if (!fieldSpec) {
+    throw new Error('Could not find the specified field: ' + fieldId +
+        ' in the searcheable fields of the ' + spec.id + ' spec');
   }
+  fctx = new pn.ui.FieldCtx(fieldSpec, {}, this.cache_);
+  this.select_.selectedIndex = 0;
+  this.addFieldToTheFiltersSearch_(fctx, option);
+  goog.dispose(fctx);
 
   goog.style.showElement(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
@@ -336,21 +333,26 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     input = FieldBuilder.createSearchParentFilter(fctx);
     goog.dom.appendChild(fctx.parentComponent, input);
   } else {
-    var srchFld = this.getSearchAppropriateFieldSpec_(fctx);
-    input = FieldBuilder.createAndAttach(srchFld);
+    var srchFctx = this.getSearchAppropriateFieldSpec_(fctx);
+    input = FieldBuilder.createAndAttach(srchFctx);
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }
   }
   this.filtersControls_[fctx.id] = [input, remove, lbl, fctx.parentComponent];
 
+  // fctx will be disposed before here so lets grab references for the closure.
+  var fieldParent = fctx.parentComponent;
+  var fieldId = fctx.id;
   var removeFilter = goog.bind(function() {
-    goog.dom.removeNode(fctx.parentComponent);
-    var arr = this.filtersControls_[fctx.id];
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
-    goog.array.forEach(arr, goog.dispose);
-    delete this.filtersControls_[fctx.id];
+    delete this.filtersControls_[fieldId];
+
+    goog.dom.removeNode(fieldParent);
     goog.style.showElement(option, true);
+
+    this.eh_.unlisten(input, goog.events.EventType.CHANGE);
+    this.eh_.unlisten(remove, goog.events.EventType.CLICK);
+
     this.doSearch_();
   }, this);
 

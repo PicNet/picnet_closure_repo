@@ -175,5 +175,6 @@ pn.ui.edit.Interceptor.prototype.disposeInternal = function() {
   delete this.eh;
   delete this.entity;
   delete this.cache;
+  delete this.component;
   delete this.components;
 };

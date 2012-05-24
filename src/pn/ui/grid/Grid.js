@@ -494,9 +494,10 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.array.forEach(this.commands_, goog.dispose);
   goog.array.forEach(this.fctxs_, goog.dispose);
   goog.dispose(this.cfg_);
-  if (this.slick_) this.slick_.destroy();
-  goog.dispose(this.slick_);
-  goog.dispose(this.dataView_);
+  if (this.slick_) {
+    this.slick_.invalidate();
+    this.slick_.destroy();
+  }
   this.eh_.removeAll();
   goog.dispose(this.eh_);
   goog.dispose(this.log_);
