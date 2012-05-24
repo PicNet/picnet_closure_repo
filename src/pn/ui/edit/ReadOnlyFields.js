@@ -40,7 +40,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
  */
 pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
   fieldSpec.readonly = true;
-  
+
   // Complex renderers should know how to handle their own readonlyness
   if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer) { return; }
 
@@ -53,7 +53,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
     [fr.boolRenderer, rr.boolField],
     [fr.yesNoRenderer, rr.boolField],
     [fr.centsRenderer, rr.centsField]
-  ];  
+  ];
   if (goog.string.endsWith(fieldSpec.dataProperty, 'Entities')) {
     if (fieldSpec.renderer === null) return; // Leave grids alone
     fieldSpec.renderer = rr.itemList;
@@ -76,8 +76,8 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.ReadOnlyFields.textField = function(fctx) {
-  var val = fctx.spec.displayPath ? 
-      fctx.getDisplayValue() : 
+  var val = fctx.spec.displayPath ?
+      fctx.getDisplayValue() :
       fctx.getEntityValue();
   if (!val) val = '';
   if (goog.isString(val)) {
@@ -164,8 +164,11 @@ pn.ui.edit.ReadOnlyFields.dateField = function(fctx) {
  */
 pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type) {
   goog.asserts.assert(type);
+  var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
+  var val = type === ft.ITEM_LIST ?
+      fctx.getDisplayValue() :
+      fctx.getEntityValue();
 
-  var val = fctx.getEntityValue();
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
   var readonly = goog.dom.createDom('div', 'field');
   readonly.innerHTML = text;
