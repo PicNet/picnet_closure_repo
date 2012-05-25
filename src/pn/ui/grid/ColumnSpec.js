@@ -93,8 +93,8 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
  *    COMPILE mode.
  */
 pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
-  var col = /** @type {pn.ui.grid.ColumnSpec} */ (goog.object.clone(this));
-  goog.object.extend(col, {
+  // Need to copy twice as we need this to also work in compiled mode.
+  var col = /** @type {pn.ui.grid.ColumnSpec} */ ({
     'id': this.id,
     'dataColumn': this.dataProperty,
     'field': this.id,
@@ -109,5 +109,28 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
     'formatter': formatter,
     'source': this.displayPath
   });
+  col.id = this.id;
+  col.dataColumn = this.dataProperty;
+  col.field = this.id;
+  col.name = this.name;
+  col.resizable = this.resizable;
+  col.sortable = this.sortable;
+  col.minWidth = this.minWidth;
+  col.width = this.width;
+  col.rerenderOnResize = this.rerenderOnResize;
+  col.headerCssClass = this.headerCssClass;
+  col.behavior = this.behavior;
+  col.formatter = formatter;
+  col.source = this.displayPath;
   return col;
+};
+
+
+/** @inheritDoc */
+pn.ui.grid.ColumnSpec.prototype.disposeInternal = function() {
+  pn.ui.grid.ColumnSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.renderer);
+
+  delete this.renderer;
 };

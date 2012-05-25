@@ -54,7 +54,7 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
     this.normaliseDateField_();
   }
 };
-goog.inherits(pn.ui.FieldCtx, goog.Disposable.call);
+goog.inherits(pn.ui.FieldCtx, goog.Disposable);
 
 
 /**
@@ -202,6 +202,7 @@ pn.ui.FieldCtx.prototype.disposeInternal = function() {
   goog.dispose(this.log_);
   goog.dispose(this.component);
   goog.dispose(this.parentComponent);
+  goog.dispose(this.spec);
 
   delete this.log_;
   delete this.spec;

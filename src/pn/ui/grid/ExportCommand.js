@@ -83,4 +83,7 @@ pn.ui.grid.ExportCommand.prototype.exitDocument = function() {
 pn.ui.grid.ExportCommand.prototype.disposeInternal = function() {
   goog.dispose(this.select_);
   goog.dispose(this.eh_);
+
+  delete this.select_;
+  delete this.eh_;
 };

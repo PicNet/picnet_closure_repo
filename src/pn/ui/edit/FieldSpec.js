@@ -1,7 +1,4 @@
 ﻿;
-goog.require('goog.date.Date');
-goog.require('goog.ui.InputDatePicker');
-goog.require('goog.ui.LabelInput');
 goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.ValidateInfo');
@@ -155,6 +152,18 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
     throw new Error('Complex renderers cannot have validators, ' +
         'please review field definition "' + this.id + '"');
   }
+};
+
+
+/** @inheritDoc */
+pn.ui.edit.FieldSpec.prototype.disposeInternal = function() {
+  pn.ui.edit.FieldSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.renderer);
+  goog.dispose(this.validator);
+
+  delete this.renderer;
+  delete this.validator;
 };
 
 

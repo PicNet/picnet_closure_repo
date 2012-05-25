@@ -12,6 +12,7 @@ goog.provide('pn.ui.BaseFieldSpec');
  *    convenience methods in UiSpec.
  *
  * @constructor
+ * @extends {goog.Disposable}
  * @param {string} id The id of this column.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
@@ -19,6 +20,8 @@ goog.provide('pn.ui.BaseFieldSpec');
  *    name is omitted the the field id will be used (parsing cammel casing).
  */
 pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
+  goog.Disposable.call(this);
+
   goog.asserts.assert(id);
   goog.asserts.assert(entitySpec);
 
@@ -90,6 +93,7 @@ pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
    */
   this.additionalCacheTypes = [];
 };
+goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
 
 
 /**
@@ -125,4 +129,15 @@ pn.ui.BaseFieldSpec.prototype.extend = function(props) {
       this.displayPath = steps.join('.');
     }
   }
+};
+
+
+/** @inheritDoc */
+pn.ui.BaseFieldSpec.prototype.disposeInternal = function() {
+  pn.ui.BaseFieldSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.entitySpec);
+
+  delete this.entitySpec;
+  delete this.additionalCacheTypes;
 };

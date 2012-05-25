@@ -67,8 +67,8 @@ goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
  *    in COMPILE mode.
  */
 pn.ui.grid.Config.prototype.toSlick = function() {
-  var cfg = /** @type {pn.ui.grid.Config} */ (goog.object.clone(this));
-  goog.object.extend(cfg, {
+  // Need to copy twice as we need this to also work in compiled mode.
+  var cfg = /** @type {pn.ui.grid.Config} */ ({
     'enableColumnReorder': this.enableColumnReorder,
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
@@ -76,6 +76,12 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'showHeaderRow': this.enableQuickFilters,
     'syncColumnCellResize': this.syncColumnCellResize
   });
+  cfg.enableColumnReorder = this.enableColumnReorder;
+  cfg.forceFitColumns = this.forceFitColumns;
+  cfg.multiSelect = this.multiSelect;
+  cfg.editable = this.editable;
+  cfg.showHeaderRow = this.enableQuickFilters;
+  cfg.syncColumnCellResize = this.syncColumnCellResize;
   return cfg;
 };
 

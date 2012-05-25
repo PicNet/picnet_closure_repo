@@ -250,8 +250,8 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
     var cidx = goog.array.findIndex(fctxs,
-        /** @param {!pn.ui.FieldCtx} fctx The field context. */
-        function(fctx) { return fctx.id === id; });
+        /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+        function(fctx1) { return fctx1.id === id; });
     var fctx = fctxs[cidx];
     delete fctxs[cidx];
     fctx.spec.width = widths[idx];
@@ -491,13 +491,14 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
+  if (this.slick_) {
+    // this.slick_.invalidate();
+    this.slick_.destroy();
+  }
   goog.array.forEach(this.commands_, goog.dispose);
   goog.array.forEach(this.fctxs_, goog.dispose);
   goog.dispose(this.cfg_);
-  if (this.slick_) {
-    this.slick_.invalidate();
-    this.slick_.destroy();
-  }
+
   this.eh_.removeAll();
   goog.dispose(this.eh_);
   goog.dispose(this.log_);

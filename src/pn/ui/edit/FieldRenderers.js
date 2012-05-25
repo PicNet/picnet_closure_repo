@@ -4,6 +4,7 @@ goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
 goog.require('pn.convert');
 goog.require('pn.date');
+
 goog.provide('pn.ui.edit.FieldRenderers');
 
 
@@ -20,9 +21,9 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(field) {
     if (dt.getFullYear() <= 1970) dt = null;
   }
 
+  // fieldLabelInput not being disposed
   var fieldLabelInput = new goog.ui.LabelInput('DD/MMM/YYYY');
   fieldLabelInput.render(field.parentComponent);
-  field.parentComponent.labelInput_ = fieldLabelInput;
 
   var idp = new goog.ui.InputDatePicker(pn.date.dateFormat, pn.date.dateParser);
   idp.getDatePicker().setShowWeekNum(false);
