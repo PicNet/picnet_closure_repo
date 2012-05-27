@@ -44,7 +44,7 @@ pn.ui.edit.FieldRenderers.timeRenderer = function(field) {
 
   for (var h = 5; h < 22; h++) {
     var displayHr = goog.string.padNumber((h % 12) + 1, 2);
-    var amPm = h < 12 ? ' AM' : 'PM';
+    var amPm = h < 11 ? ' AM' : ' PM';
     for (var m = 0; m < 60; m += 15) {
       var value = h * 60 + m;
       var opt = goog.dom.createDom('option',

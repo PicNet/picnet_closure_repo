@@ -128,6 +128,9 @@ pn.ui.edit.Interceptor.prototype.isShown = function(id) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
+  goog.asserts.assert(this.components[id],
+      'Could not find a component for field: ' + id);
+
   var el = this.getFieldContainer_(this.components[id], id);
   goog.style.showElement(el, visible);
 };
@@ -157,7 +160,7 @@ pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
  * @return {!Element} The parent container of the speicified field id.
  */
 pn.ui.edit.Interceptor.prototype.getFieldContainer_ = function(el, id) {
-  goog.asserts.assert(el);
+  goog.asserts.assert(el, 'el is null - id: ' + id);
 
   var element = el.getElement ? el.getElement() : el;
   while (element.id !== id) { element = element.parentNode; }

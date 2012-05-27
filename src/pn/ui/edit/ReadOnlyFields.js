@@ -197,7 +197,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       var minutes = Math.floor(value % 60);
       var displayHr = goog.string.padNumber((hours % 12) + 1, 2);
       var displayMin = goog.string.padNumber(minutes, 2);
-      return displayHr + ':' + displayMin + ' ' + (hours < 12 ? ' AM' : ' PM');
+      return displayHr + ':' + displayMin + ' ' + (hours < 11 ? ' AM' : ' PM');
     case ft.DATE:
       var date = !value ? null : new Date(value);
       return !date ? '' : pn.date.dateFormat.format(date);
