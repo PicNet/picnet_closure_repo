@@ -242,7 +242,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) {
-        var val = fctx.getControlValue();
+        var val = fctx.getControlValue(current);
         if (val !== undefined) current[fctx.spec.dataProperty] = val;
       }, this);
   return current;

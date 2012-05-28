@@ -38,7 +38,11 @@ pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
 };
 
 
-/** @return {*} Gets the value in the current editor. */
+/**
+ * @param {Object=} opt_target The optional 'entity' target to inject values
+ *    into if required.
+ * @return {*} Gets the value in the current editor.
+ */
 pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 
 

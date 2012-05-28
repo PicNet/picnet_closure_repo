@@ -89,9 +89,13 @@ pn.ui.FieldCtx.prototype.isRequired = function() {
 };
 
 
-/** @return {*} The current control value of this field. */
-pn.ui.FieldCtx.prototype.getControlValue = function() {
-  return pn.ui.edit.FieldBuilder.getFieldValue(this.component);
+/**
+ * @param {Object=} opt_target The optional 'entity' target to inject values
+ *    into if required.
+ * @return {*} The current control value of this field.
+ */
+pn.ui.FieldCtx.prototype.getControlValue = function(opt_target) {
+  return pn.ui.edit.FieldBuilder.getFieldValue(this.component, opt_target);
 };
 
 
