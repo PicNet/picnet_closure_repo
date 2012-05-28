@@ -33,7 +33,7 @@ pn.log.isInitialised_ = false;
 
 /**
  * @private
- * Initialised the log utilities
+ * Initialised the log utilities.  This is done lazily internally.
  */
 pn.log.initialise_ = function() {
   goog.asserts.assert(!pn.log.isInitialised_);
