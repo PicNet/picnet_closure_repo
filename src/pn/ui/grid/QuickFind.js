@@ -4,7 +4,7 @@ goog.provide('pn.ui.grid.QuickFind');
 goog.require('goog.events.EventHandler');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 
 
 
@@ -12,10 +12,10 @@ goog.require('pn.ui.grid.Column');
  * @constructor
  * @extends {goog.events.EventHandler}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Array.<pn.ui.grid.Column>} cols The column specs being displayed.
+ * @param {!Array.<!pn.ui.FieldCtx>} fctxs The column specs being displayed.
  * @param {!Slick.Grid} slick The instance of the slick grid.
  */
-pn.ui.grid.QuickFind = function(cache, cols, slick) {
+pn.ui.grid.QuickFind = function(cache, fctxs, slick) {
   goog.events.EventHandler.call(this, this);
 
   /**
@@ -26,9 +26,9 @@ pn.ui.grid.QuickFind = function(cache, cols, slick) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.grid.Column>}
+   * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.cols_ = cols;
+  this.fctxs_ = fctxs;
 
   /**
    * @private
@@ -61,19 +61,19 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {
       var filterVal = this.filters_[columnId];
-      var col = /** @type {pn.ui.grid.Column} */
-          (goog.array.find(this.cols_,
-              function(col) { return col.id === columnId; }));
-      var val = entity[col.dataProperty];
-      if (col.renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
+      var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
+          function(fctx1) { return fctx1.id === columnId; }));
+      fctx.entity = entity;
+      var val = fctx.getEntityValue();
+      if (fctx.spec.renderer ===
+          pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, col.displayPath, entity) || '').toString() :
-            '';
-      } else if (col.renderer) {
-        val = col.renderer(entity, this.cache_, val, col);
-      }
-      if (goog.isDefAndNotNull(val)) { val = val.toString().toLowerCase(); }
-      if (!this.search_.matches(val, filterVal)) { return false; }
+            this.cache_, fctx.spec.displayPath, fctx.entity) || '').
+                toString() : '';
+      } else if (fctx.spec.renderer) { val = fctx.spec.renderer(fctx); }
+      var strval = '';
+      if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
+      if (!this.search_.matches(strval, filterVal)) { return false; }
     }
   }
   return true;
@@ -83,12 +83,12 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
 /** Initialises the quick filters and attaches the filters row to the grid */
 pn.ui.grid.QuickFind.prototype.init = function() {
 
-  for (var i = 0; i < this.cols_.length; i++) {
-    var col = this.cols_[i];
-    var header = this.slick_.getHeaderRowColumn(col.id);
-    var val = this.filters_[col.id];
+  for (var i = 0; i < this.fctxs_.length; i++) {
+    var fctx = this.fctxs_[i];
+    var header = this.slick_.getHeaderRowColumn(fctx.id);
+    var val = this.filters_[fctx.id];
     var tt = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
-    var input = this.createFilterInput_(col, 100, val, col.id, tt);
+    var input = this.createFilterInput_(fctx, 100, val, tt);
 
     goog.dom.removeChildren(header);
     goog.dom.appendChild(header, input);
@@ -114,9 +114,9 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
       (this.slick_.getHeaderRow().parentNode.parentNode);
   var headerTemplates =
       goog.dom.getElementsByClass('slick-header-column', grid);
-  for (var i = 0; i < this.cols_.length; i++) {
-    var col = this.cols_[i];
-    var header = this.slick_.getHeaderRowColumn(col.id);
+  for (var i = 0; i < this.fctxs_.length; i++) {
+    var fctx = this.fctxs_[i];
+    var header = this.slick_.getHeaderRowColumn(fctx.id);
     var input = goog.dom.getChildren(header)[0];
     var width = $(headerTemplates[i]).width();
     goog.style.setWidth(header, Math.max(0, width - 1));
@@ -127,20 +127,19 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
 
 /**
  * @private
- * @param {pn.ui.grid.Column} col The column to apply the filter to.
+ * @param {!pn.ui.FieldCtx} fctx The column to apply the filter to.
  * @param {number} width The width of the control to create.
  * @param {string} value The value to display in the filter.
- * @param {string} id The control id.
  * @param {string} tooltip The control tooltip.
  * @return {!Element} The quick filter input control.
  */
 pn.ui.grid.QuickFind.prototype.createFilterInput_ =
-    function(col, width, value, id, tooltip) {
+    function(fctx, width, value, tooltip) {
   var input = goog.dom.createDom('input', {
     'type': 'text',
     'title': tooltip
   });
-  input['data-id'] = id;
+  input['data-id'] = fctx.id;
   goog.style.setWidth(input, width - 3);
   if (value) { input.value = value; }
   return input;
@@ -154,7 +153,7 @@ pn.ui.grid.QuickFind.prototype.disposeInternal = function() {
   goog.object.forEach(this.filters_, goog.dispose);
   goog.dispose(this.search_);
 
-  delete this.cols_;
+  delete this.fctxs_;
   delete this.slick_;
   delete this.filters_;
   delete this.search_;

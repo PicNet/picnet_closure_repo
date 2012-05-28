@@ -1,13 +1,10 @@
 ﻿;
-goog.require('goog.date.Date');
-goog.require('goog.ui.InputDatePicker');
-goog.require('goog.ui.LabelInput');
-goog.require('pn.ui.BaseField');
+goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.ValidateInfo');
 
-goog.provide('pn.ui.edit.Field');
-goog.provide('pn.ui.edit.Field.Renderer');
+goog.provide('pn.ui.edit.FieldSpec');
+goog.provide('pn.ui.edit.FieldSpec.Renderer');
 
 
 
@@ -19,17 +16,17 @@ goog.provide('pn.ui.edit.Field.Renderer');
  *    convenience methods in UiSpec (UiSpec.prototype.createField).
  *
  * @constructor
- * @extends {pn.ui.BaseField}
+ * @extends {pn.ui.BaseFieldSpec}
  * @param {string} id The id of this column.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
  * @param {string=} opt_name The optional name/caption of this column.
  */
-pn.ui.edit.Field = function(id, entitySpec, opt_name) {
+pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
   goog.asserts.assert(id);
   goog.asserts.assert(entitySpec);
 
-  pn.ui.BaseField.call(this, id, entitySpec, opt_name);
+  pn.ui.BaseFieldSpec.call(this, id, entitySpec, opt_name);
 
   /**
    * The renderer to use to render this field value.  This can either be of
@@ -38,7 +35,7 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    *    The 3 parameters are the the value to display, the entity being
    *    displayed and the parent Dom Element.
    *
-   * @type {pn.ui.edit.Field.Renderer}
+   * @type {pn.ui.edit.FieldSpec.Renderer}
    */
   this.renderer = null;
 
@@ -49,8 +46,7 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    *    returns a string which represents the validation error (falsy
    *    represents no error).
    *
-   * @type {null|pn.ui.edit.ValidateInfo|
-   *       function(pn.ui.edit.Field,*,Object=,!Object.<!Array>):string}
+   * @type {pn.ui.edit.FieldSpec.Validator}
    */
   this.validator = null;
 
@@ -69,6 +65,13 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    * @type {boolean}
    */
   this.readonly = false;
+
+  /**
+   * Wether this field is displayed when readonly. This fieldSpec is readonly.
+   *
+   * @type {boolean}
+   */
+  this.showOnReadOnly = true;
 
   /**
    * The default value to apply to the specified field.  This is only used
@@ -125,12 +128,12 @@ pn.ui.edit.Field = function(id, entitySpec, opt_name) {
    */
   this.additionalProperties = {};
 };
-goog.inherits(pn.ui.edit.Field, pn.ui.BaseField);
+goog.inherits(pn.ui.edit.FieldSpec, pn.ui.BaseFieldSpec);
 
 
 /** @inheritDoc */
-pn.ui.edit.Field.prototype.extend = function(props) {
-  pn.ui.edit.Field.superClass_.extend.call(this, props);
+pn.ui.edit.FieldSpec.prototype.extend = function(props) {
+  pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {
     if (!this.tableType && !this.renderer) {
@@ -152,6 +155,22 @@ pn.ui.edit.Field.prototype.extend = function(props) {
 };
 
 
-/** @typedef {pn.ui.edit.ComplexRenderer|function(*, Object, !Element,
-    !Object.<!Array>):!(Element|goog.ui.Component|Text)} */
-pn.ui.edit.Field.Renderer;
+/** @inheritDoc */
+pn.ui.edit.FieldSpec.prototype.disposeInternal = function() {
+  pn.ui.edit.FieldSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.renderer);
+  goog.dispose(this.validator);
+
+  delete this.renderer;
+  delete this.validator;
+};
+
+
+/** @typedef {pn.ui.edit.ComplexRenderer|function(!pn.ui.FieldCtx):
+    !(Element|goog.ui.Component|Text)} */
+pn.ui.edit.FieldSpec.Renderer;
+
+
+/** @typedef {null|pn.ui.edit.ValidateInfo|function(pn.ui.FieldCtx):string} */
+pn.ui.edit.FieldSpec.Validator;

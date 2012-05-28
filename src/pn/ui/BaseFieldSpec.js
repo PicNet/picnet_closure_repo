@@ -1,24 +1,27 @@
 ﻿;
-goog.provide('pn.ui.BaseField');
+goog.provide('pn.ui.BaseFieldSpec');
 
 
 
 /**
- * The BaseField is inherited by pn.ui.edit.Field and pn.ui.grid.Column and
- *    provides the base functionality required for defining fields and
+ * The BaseField is inherited by pn.ui.edit.FieldSpec and pn.ui.grid.ColumnSpec
+ *    and provides the base functionality required for defining fields and
  *    columns.
  *
  * BaseField types (Field / Column) should be constructed using the
  *    convenience methods in UiSpec.
  *
  * @constructor
+ * @extends {goog.Disposable}
  * @param {string} id The id of this column.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
  * @param {string=} opt_name The optional name/caption of this column. If the
  *    name is omitted the the field id will be used (parsing cammel casing).
  */
-pn.ui.BaseField = function(id, entitySpec, opt_name) {
+pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
+  goog.Disposable.call(this);
+
   goog.asserts.assert(id);
   goog.asserts.assert(entitySpec);
 
@@ -90,6 +93,7 @@ pn.ui.BaseField = function(id, entitySpec, opt_name) {
    */
   this.additionalCacheTypes = [];
 };
+goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
 
 
 /**
@@ -97,7 +101,7 @@ pn.ui.BaseField = function(id, entitySpec, opt_name) {
  *    we will also apply default values to any field that was not
  *    explicitally set.
  */
-pn.ui.BaseField.prototype.extend = function(props) {
+pn.ui.BaseFieldSpec.prototype.extend = function(props) {
   goog.asserts.assert(goog.isObject(props));
 
   goog.object.extend(this, props);
@@ -125,4 +129,15 @@ pn.ui.BaseField.prototype.extend = function(props) {
       this.displayPath = steps.join('.');
     }
   }
+};
+
+
+/** @inheritDoc */
+pn.ui.BaseFieldSpec.prototype.disposeInternal = function() {
+  pn.ui.BaseFieldSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.entitySpec);
+
+  delete this.entitySpec;
+  delete this.additionalCacheTypes;
 };

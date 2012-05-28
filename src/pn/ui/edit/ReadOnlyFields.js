@@ -1,7 +1,4 @@
 ﻿;
-goog.require('goog.date.Date');
-goog.require('goog.ui.InputDatePicker');
-goog.require('goog.ui.LabelInput');
 goog.require('pn.convert');
 goog.require('pn.date');
 
@@ -9,11 +6,12 @@ goog.provide('pn.ui.edit.ReadOnlyFields');
 
 
 /**
- * @param {!pn.ui.edit.Field} field The field wholse display value we want.
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field wholse display value we
+ *    want.
  * @param {!*} value The value on the non-readonly field.
  * @return {string} The text of the display value.
  */
-pn.ui.edit.ReadOnlyFields.getText = function(field, value) {
+pn.ui.edit.ReadOnlyFields.getText = function(fieldSpec, value) {
   if (!goog.isDefAndNotNull(value)) return '';
 
   if (goog.isString(value)) return value;
@@ -21,7 +19,7 @@ pn.ui.edit.ReadOnlyFields.getText = function(field, value) {
     return goog.array.filter(value, function(v) { return !!v; }).join(',');
   }
 
-  var type = pn.ui.edit.ReadOnlyFields.getFieldType_(field);
+  var type = pn.ui.edit.ReadOnlyFields.getFieldType_(fieldSpec);
   return pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
 };
 
@@ -29,20 +27,23 @@ pn.ui.edit.ReadOnlyFields.getText = function(field, value) {
 /** @param {!pn.ui.UiSpec} spec This specs that will be made readonly. */
 pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
   if (!spec.editConfig) return;
-  goog.array.forEach(spec.editConfig.fields,
+  goog.array.forEach(spec.editConfig.fieldSpecs,
       pn.ui.edit.ReadOnlyFields.toReadOnlyField);
 };
 
 
-/** @param {!pn.ui.edit.Field} field The field to change into readonly. */
-pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
-  if (field.renderer && field.renderer.readonly) {
-    return; // Field is already readonly.
-  }
+/**
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
+ */
+pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
+  fieldSpec.readonly = true;
+
+  // Complex renderers should know how to handle their own readonlyness
+  if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer) { return; }
 
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
-  var curr = field.renderer;
+  var curr = fieldSpec.renderer;
   var rendermap = [
     [fr.timeRenderer, rr.timeField],
     [fr.dateRenderer, rr.dateField],
@@ -50,38 +51,39 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(field) {
     [fr.yesNoRenderer, rr.boolField],
     [fr.centsRenderer, rr.centsField]
   ];
-  field.readonly = true;
-  if (goog.string.endsWith(field.dataProperty, 'Entities')) {
-    if (field.renderer === null) return; // Leave grids alone
-    field.renderer = rr.itemList;
-  } else if (!curr) { field.renderer = rr.textField; }
-  else if (curr.setReadOnly) curr.setReadOnly(true);
+  if (goog.string.endsWith(fieldSpec.dataProperty, 'Entities')) {
+    if (fieldSpec.renderer === null) return; // Leave grids alone
+    fieldSpec.renderer = rr.itemList;
+  } else if (!curr) { fieldSpec.renderer = rr.textField; }
   else {
     if (goog.array.findIndex(rendermap, function(trans) {
       if (curr === trans[0] || curr === trans[1]) {
-        field.renderer = trans[1];
+        fieldSpec.renderer = trans[1];
         return true;
       }
     }) < 0) {
-      field.renderer = rr.textField;
+      fieldSpec.renderer = rr.textField;
     }
   }
 };
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.textField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.textField = function(fctx) {
+  var val = fctx.spec.displayPath ?
+      fctx.getDisplayValue() :
+      fctx.getEntityValue();
   if (!val) val = '';
   if (goog.isString(val)) {
     val = pn.ui.edit.ReadOnlyFields.toHtmlText(val);
   }
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DEFAULT;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  var div = pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  div.innerHTML = val;
+  return div;
 };
 
 
@@ -99,84 +101,76 @@ pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.itemList = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.itemList = function(fctx) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.ITEM_LIST;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
 };
 
 
 /**
- * @param {*} val The time number represented by hhmm format.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The time field.
  */
-pn.ui.edit.ReadOnlyFields.timeField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.timeField = function(fctx) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.TIME;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
 };
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The readonly cents field.
  */
-pn.ui.edit.ReadOnlyFields.centsField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.centsField = function(fctx) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.CENTS;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
 };
 
 
 /**
- * @param {*} val The boolean to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.ReadOnlyFields.boolField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.boolField = function(fctx) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.BOOLEAN;
-  var field = pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
-  field.checked = field.value;
-  return field;
+  var ctl = pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  ctl.checked = fctx.value;
+  return ctl;
 };
 
 
 /**
- * @param {*} val The text to display.
- * @param {Object} entity The Entity being displayed.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The readonly
  *    text field control.
  */
-pn.ui.edit.ReadOnlyFields.dateField = function(val, entity, parent) {
+pn.ui.edit.ReadOnlyFields.dateField = function(fctx) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DATE;
-  return pn.ui.edit.ReadOnlyFields.field_(val, parent, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
 };
 
 
 /**
  * @private
- * @param {*} value The field value.
- * @param {!Element} parent The parent to attach this input control to.
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @param {!pn.ui.edit.ReadOnlyFields.FieldType_} type The type of this field.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.field_ = function(value, parent, type) {
-  goog.asserts.assert(parent);
+pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type) {
   goog.asserts.assert(type);
+  var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
+  var val = type === ft.ITEM_LIST ?
+      fctx.getDisplayValue() :
+      fctx.getEntityValue();
 
-  var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
+  var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
   var readonly = goog.dom.createDom('div', 'field');
   readonly.innerHTML = text;
-  readonly.value = value;
-  goog.dom.appendChild(parent, readonly);
+  readonly.value = val;
+  goog.dom.appendChild(fctx.parentComponent, readonly);
   return readonly;
 };
 
@@ -203,7 +197,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       var minutes = Math.floor(value % 60);
       var displayHr = goog.string.padNumber((hours % 12) + 1, 2);
       var displayMin = goog.string.padNumber(minutes, 2);
-      return displayHr + ':' + displayMin + ' ' + (hours < 12 ? ' AM' : ' PM');
+      return displayHr + ':' + displayMin + ' ' + (hours < 11 ? ' AM' : ' PM');
     case ft.DATE:
       var date = !value ? null : new Date(value);
       return !date ? '' : pn.date.dateFormat.format(date);
@@ -218,25 +212,24 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
 
 /**
  * @private
- * @param {!pn.ui.edit.Field} field The field specifications whose type we
- *    need.
+ * @param {!pn.ui.edit.FieldSpec} fieldSpec The field specifications whose type
+ *    we need.
  * @return {!pn.ui.edit.ReadOnlyFields.FieldType_} The field type for the given
  *    specifications.
  */
-pn.ui.edit.ReadOnlyFields.getFieldType_ = function(field) {
+pn.ui.edit.ReadOnlyFields.getFieldType_ = function(fieldSpec) {
   var fr = pn.ui.edit.FieldRenderers;
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   var ro = pn.ui.edit.ReadOnlyFields;
-  var curr = field.renderer;
-  var dataProp = field.dataProperty;
+  var curr = fieldSpec.renderer;
+  var dataProp = fieldSpec.dataProperty;
   var isList = goog.string.endsWith(dataProp, 'Entities');
 
-  if (pn.data.EntityUtils.isParentProperty(field.dataProperty) &&
-      !field.tableType) throw new Error('Not Supported');
+  if (pn.data.EntityUtils.isParentProperty(fieldSpec.dataProperty) &&
+      !fieldSpec.tableType) throw new Error('Not Supported');
 
   if (isList) return ft.ITEM_LIST;
   else if (!curr) return ft.DEFAULT;
-  else if (curr.setReadOnly) throw new Error('Not Supported');
   else if (curr === fr.timeRenderer || curr === ro.timeField) return ft.TIME;
   else if (curr === fr.dateRenderer || curr === ro.dateField) return ft.DATE;
   else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer ||

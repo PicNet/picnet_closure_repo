@@ -3,8 +3,8 @@ goog.provide('pn.app.AppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.app.schema.EntityDef');
-goog.require('pn.app.schema.FieldDef');
+goog.require('pn.app.schema.EntitySchema');
+goog.require('pn.app.schema.FieldSchema');
 
 
 
@@ -23,13 +23,13 @@ pn.app.AppConfig = function() {
   /** @type {Object} */
   this.defaultRenderers = {
 
-    /** @type {pn.ui.edit.Field.Renderer} */
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     bool: fr.boolRenderer,
 
-    /** @type {pn.ui.edit.Field.Renderer} */
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     date: fr.dateRenderer,
 
-    /** @type {pn.ui.edit.Field.Renderer} */
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     decimal: fr.centsRenderer,
 
     /** @type {number} */

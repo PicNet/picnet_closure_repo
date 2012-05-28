@@ -31,13 +31,12 @@ pn.ui.edit.Interceptor = function() {
   this.cache = {};
 
   /**
-   * @type {!Object.<!(Element|goog.ui.Component)>} The fields map in the UI.
+   * @type {!Object.<!(Element|goog.ui.Component)>} The components map for
+   *    this UI.
    */
-  this.fields = {};
+  this.components = {};
 
-  /**
-   * @type {!Object.<!goog.ui.Button>} The commands map in the UI.
-   */
+  /** @type {!Object.<!goog.ui.Button>} The commands map in the UI. */
   this.commands = {};
 
   /**
@@ -61,16 +60,27 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
  *    currently being shown.
  * @param {!Object} entity The entity that was just decorated.
- * @param {!Object.<Array>} cache The cache with all related entities.
- * @param {!Object.<Element|goog.ui.Component>} fields The fields map in the UI.
+ * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
+ * @param {!Object.<Element|goog.ui.Component>} components The components map
+ *    for this UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
-    function(component, entity, cache, fields, commands) {
+    function(component, entity, cache, components, commands) {
+
+  /** @type {!pn.ui.edit.CommandsComponent} */
   this.component = component;
+
+  /** @type {!Object} */
   this.entity = entity;
+
+  /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
-  this.fields = fields;
+
+  /** @type {!Object.<Element|goog.ui.Component>} */
+  this.components = components;
+
+  /** @type {!Object.<goog.ui.Button>} */
   this.commands = commands;
 
   if (pn.data.EntityUtils.isNew(this.entity)) {
@@ -83,7 +93,7 @@ pn.ui.edit.Interceptor.prototype.init =
 /**
  * Override this method to add events to any fields or do any custom UI
  * processing.  At this stage you will have access to this.entity, this.cache
- * and this.fields.
+ * and this.components.
  */
 pn.ui.edit.Interceptor.prototype.postInit = function() {};
 
@@ -107,7 +117,7 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function() {
  *    visible.
  */
 pn.ui.edit.Interceptor.prototype.isShown = function(id) {
-  var el = this.getFieldContainer_(this.fields[id], id);
+  var el = this.getFieldContainer_(this.components[id], id);
   return goog.style.isElementShown(el);
 };
 
@@ -118,7 +128,10 @@ pn.ui.edit.Interceptor.prototype.isShown = function(id) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
-  var el = this.getFieldContainer_(this.fields[id], id);
+  goog.asserts.assert(this.components[id],
+      'Could not find a component for field: ' + id);
+
+  var el = this.getFieldContainer_(this.components[id], id);
   goog.style.showElement(el, visible);
 };
 
@@ -147,7 +160,7 @@ pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
  * @return {!Element} The parent container of the speicified field id.
  */
 pn.ui.edit.Interceptor.prototype.getFieldContainer_ = function(el, id) {
-  goog.asserts.assert(el);
+  goog.asserts.assert(el, 'el is null - id: ' + id);
 
   var element = el.getElement ? el.getElement() : el;
   while (element.id !== id) { element = element.parentNode; }
@@ -165,5 +178,6 @@ pn.ui.edit.Interceptor.prototype.disposeInternal = function() {
   delete this.eh;
   delete this.entity;
   delete this.cache;
-  delete this.fields;
+  delete this.component;
+  delete this.components;
 };

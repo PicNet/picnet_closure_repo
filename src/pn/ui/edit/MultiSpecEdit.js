@@ -14,9 +14,9 @@ goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.Edit');
-goog.require('pn.ui.edit.Field');
+goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.ReadOnlyFields');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 goog.require('pn.ui.grid.Grid.EventType');
@@ -39,11 +39,6 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   goog.asserts.assert(specs);
   goog.asserts.assert(mainSpecId);
 
-  /**
-   * @protected
-   * @type {!Object}
-   */
-  this.entity = entity;
 
   /**
    * @protected
@@ -63,7 +58,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
    */
   this.edits = [];
 
-  pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId]);
+  pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId], entity);
 };
 goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 
@@ -76,6 +71,7 @@ goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
  */
 pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
   var ui = new pn.ui.edit.Edit(this.specs[specid], this.entity, this.cache);
+  ui.fireInterceptorEvents = false;
   this.edits.push({div: parent, edit: ui});
   ui.decorate(parent);
 };
@@ -160,8 +156,11 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   var commands = this.getCommandButtons();
 
   goog.array.forEach(this.edits, function(edit) {
-    if (edit.edit.getInputs) {
-      pn.object.uniqueExtend(fields, edit.edit.getInputs());
+    if (edit.edit.getFields) {
+      goog.array.forEach(edit.edit.getFields(), function(f) {
+        if (f.id in fields) return;
+        fields[f.id] = f.component;
+      });
     }
     if (edit.edit.getCommandButtons) {
       pn.object.uniqueExtend(commands, edit.edit.getCommandButtons());

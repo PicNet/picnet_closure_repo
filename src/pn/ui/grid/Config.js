@@ -8,7 +8,7 @@ goog.require('pn.ui.BaseConfig');
 /**
  * @constructor
  * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.grid.Column>} columns The specification of all the
+ * @param {!Array.<pn.ui.grid.ColumnSpec>} columns The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
@@ -19,7 +19,7 @@ pn.ui.grid.Config = function(columns, commands) {
 
   pn.ui.BaseConfig.call(this, columns);
 
-  /** @type {!Array.<pn.ui.grid.Column>} */
+  /** @type {!Array.<pn.ui.grid.ColumnSpec>} */
   this.columns = columns;
 
   /** @type {!Array.<pn.ui.grid.Command>} */
@@ -67,8 +67,8 @@ goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
  *    in COMPILE mode.
  */
 pn.ui.grid.Config.prototype.toSlick = function() {
-  var cfg = /** @type {pn.ui.grid.Config} */ (goog.object.clone(this));
-  goog.object.extend(cfg, {
+  // Need to copy twice as we need this to also work in compiled mode.
+  var cfg = /** @type {pn.ui.grid.Config} */ ({
     'enableColumnReorder': this.enableColumnReorder,
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
@@ -76,5 +76,22 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'showHeaderRow': this.enableQuickFilters,
     'syncColumnCellResize': this.syncColumnCellResize
   });
+  cfg.enableColumnReorder = this.enableColumnReorder;
+  cfg.forceFitColumns = this.forceFitColumns;
+  cfg.multiSelect = this.multiSelect;
+  cfg.editable = this.editable;
+  cfg.showHeaderRow = this.enableQuickFilters;
+  cfg.syncColumnCellResize = this.syncColumnCellResize;
   return cfg;
+};
+
+
+/** @inheritDoc */
+pn.ui.grid.Config.prototype.disposeInternal = function() {
+  pn.ui.grid.Config.superClass_.disposeInternal.call(this);
+
+  goog.array.forEach(this.commands, goog.dispose);
+
+  delete this.columns;
+  delete this.commands;
 };

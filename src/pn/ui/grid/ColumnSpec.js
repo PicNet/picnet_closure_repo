@@ -1,7 +1,7 @@
 ﻿;
-goog.provide('pn.ui.grid.Column');
+goog.provide('pn.ui.grid.ColumnSpec');
 
-goog.require('pn.ui.BaseField');
+goog.require('pn.ui.BaseFieldSpec');
 
 
 
@@ -15,18 +15,18 @@ goog.require('pn.ui.BaseField');
  *    convenience methods in UiSpec (UiSpec.prototype.createColumn).
  *
  * @constructor
- * @extends {pn.ui.BaseField}
+ * @extends {pn.ui.BaseFieldSpec}
  *
  * @param {string} id The id of this column.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
  * @param {string=} opt_name The optional name/caption of this column.
  */
-pn.ui.grid.Column = function(id, entitySpec, opt_name) {
+pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
   goog.asserts.assert(id);
   goog.asserts.assert(entitySpec);
 
-  pn.ui.BaseField.call(this, id, entitySpec, opt_name);
+  pn.ui.BaseFieldSpec.call(this, id, entitySpec, opt_name);
 
   /** @type {boolean} */
   this.resizable = true;
@@ -61,8 +61,7 @@ pn.ui.grid.Column = function(id, entitySpec, opt_name) {
    *    to this Column specifications.  The renderer then returns a html string
    *    of the value to display.
    *
-   * @type {null|function(
-   *   !Object,!Object.<!Array>,*,!pn.ui.grid.Column):string}
+   * @type {null|function(!pn.ui.FieldCtx):string}
    */
   this.renderer = null;
 
@@ -74,12 +73,12 @@ pn.ui.grid.Column = function(id, entitySpec, opt_name) {
    */
   this.total = false;
 };
-goog.inherits(pn.ui.grid.Column, pn.ui.BaseField);
+goog.inherits(pn.ui.grid.ColumnSpec, pn.ui.BaseFieldSpec);
 
 
 /** @inheritDoc */
-pn.ui.grid.Column.prototype.extend = function(props) {
-  pn.ui.grid.Column.superClass_.extend.call(this, props);
+pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
+  pn.ui.grid.ColumnSpec.superClass_.extend.call(this, props);
 
   if (!this.renderer && this.displayPath) {
     this.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
@@ -90,12 +89,12 @@ pn.ui.grid.Column.prototype.extend = function(props) {
 /**
  * @param {function(number,number,Object,Object,Object):string}
  *    formatter The formatter to use for this column.
- * @return {pn.ui.grid.Column} A SlickGrid compative object even when in
+ * @return {pn.ui.grid.ColumnSpec} A SlickGrid compative object even when in
  *    COMPILE mode.
  */
-pn.ui.grid.Column.prototype.toSlick = function(formatter) {
-  var col = /** @type {pn.ui.grid.Column} */ (goog.object.clone(this));
-  goog.object.extend(col, {
+pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
+  // Need to copy twice as we need this to also work in compiled mode.
+  var col = /** @type {pn.ui.grid.ColumnSpec} */ ({
     'id': this.id,
     'dataColumn': this.dataProperty,
     'field': this.id,
@@ -110,5 +109,28 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     'formatter': formatter,
     'source': this.displayPath
   });
+  col.id = this.id;
+  col.dataColumn = this.dataProperty;
+  col.field = this.id;
+  col.name = this.name;
+  col.resizable = this.resizable;
+  col.sortable = this.sortable;
+  col.minWidth = this.minWidth;
+  col.width = this.width;
+  col.rerenderOnResize = this.rerenderOnResize;
+  col.headerCssClass = this.headerCssClass;
+  col.behavior = this.behavior;
+  col.formatter = formatter;
+  col.source = this.displayPath;
   return col;
+};
+
+
+/** @inheritDoc */
+pn.ui.grid.ColumnSpec.prototype.disposeInternal = function() {
+  pn.ui.grid.ColumnSpec.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.renderer);
+
+  delete this.renderer;
 };

@@ -3,8 +3,8 @@ goog.provide('pn.app.schema.Schema');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.app.schema.EntityDef');
-goog.require('pn.app.schema.FieldDef');
+goog.require('pn.app.schema.EntitySchema');
+goog.require('pn.app.schema.FieldSchema');
 
 
 
@@ -21,7 +21,7 @@ pn.app.schema.Schema = function(description) {
 
   /**
    * @private
-   * @type {!Object.<!pn.app.schema.EntityDef>}
+   * @type {!Object.<!pn.app.schema.EntitySchema>}
    */
   this.entities_ = {};
 
@@ -31,51 +31,49 @@ goog.inherits(pn.app.schema.Schema, goog.Disposable);
 
 
 /**
- * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
+ * @param {!pn.ui.BaseFieldSpec} fieldSpec The field spec for the field being
  *     queried.
- * @return {pn.app.schema.FieldDef} The field schema for the specified field.
+ * @return {pn.app.schema.FieldSchema} The field schema for the specified field.
  */
 pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
   var type = fieldSpec.entitySpec.type;
   var prop = fieldSpec.dataProperty;
-  return this.entities_[type].fields[prop];
+  return this.entities_[type].fieldSchemas[prop];
 };
 
 
 /**
- * @param {!pn.ui.edit.Field} fieldSpec The field spec for the field being
- *     validated.
- * @param {*} value The value of the field in the current form.
+ * @param {!pn.ui.FieldCtx} fctx The field context for the field being
+ *    validated.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.app.schema.Schema.prototype.getValidationErrors =
-    function(fieldSpec, value) {
-  var field = this.getFieldSchema(fieldSpec);
-  if (!field) {
-    var desc = fieldSpec.entitySpec.type + '.' + fieldSpec.id;
+pn.app.schema.Schema.prototype.getValidationErrors = function(fctx) {
+  var schema = this.getFieldSchema(fctx.spec);
+  if (!schema) {
+    var desc = fctx.spec.entitySpec.type + '.' + fctx.id;
     throw new Error('Could not find the schema of ' + desc);
   }
   var validator = new pn.ui.edit.ValidateInfo();
-  validator.required = !field.allowNull;
-  if (field.length) {
-    validator.maxLength = field.length;
+  validator.required = !schema.allowNull;
+  if (fctx.length) {
+    validator.maxLength = schema.length;
   }
-  if (this.isNumericalTypeField_(field)) {
+  if (this.isNumericalTypeField_(schema)) {
     validator.isNumber = true;
   }
-  var error = validator.validateField(fieldSpec, value);
+  var error = validator.validateField(fctx);
   return error ? [error] : [];
 };
 
 
 /**
  * @private
- * @param {!pn.app.schema.FieldDef} field The field to determine wether its a
- *    number type.
+ * @param {!pn.app.schema.FieldSchema} fieldSchema The field to determine
+ *    wether its a number type.
  * @return {boolean} Wether the specified field is a number.
  */
-pn.app.schema.Schema.prototype.isNumericalTypeField_ = function(field) {
-  var t = field.type;
+pn.app.schema.Schema.prototype.isNumericalTypeField_ = function(fieldSchema) {
+  var t = fieldSchema.type;
   return t === 'Byte ' ||
       t === 'Int16' ||
       t === 'Int32' ||
@@ -97,10 +95,10 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
   var name = entity['name'];
   var fields = {};
   goog.array.forEach(entity['fields'], function(f) {
-    var field = this.parseField_(f);
-    fields[field.name] = field;
+    var fieldSchema = this.parseFieldSchema_(f);
+    fields[fieldSchema.name] = fieldSchema;
   }, this);
-  var e = new pn.app.schema.EntityDef(name, fields);
+  var e = new pn.app.schema.EntitySchema(name, fields);
   this.entities_[name] = e;
 };
 
@@ -109,12 +107,12 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
  * @private
  * @param {!Object} f The description of the field from the server (
  *   i.e. Use object property string identifiers.).
- * @return {!pn.app.schema.FieldDef} The parsed field.
+ * @return {!pn.app.schema.FieldSchema} The parsed field.
  */
-pn.app.schema.Schema.prototype.parseField_ = function(f) {
+pn.app.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
-  return new pn.app.schema.FieldDef(
+  return new pn.app.schema.FieldSchema(
       f['name'], f['type'], f['allowNull'], f['length']);
 
 };

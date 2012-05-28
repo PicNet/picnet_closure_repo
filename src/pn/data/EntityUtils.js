@@ -3,7 +3,7 @@ goog.provide('pn.data.EntityUtils');
 
 
 /**
- * @param {!Object} entity The entity to check for newness.
+ * @param {Object} entity The entity to check for newness.
  * @return {boolean} Wether the specified entity is new.
  */
 pn.data.EntityUtils.isNew = function(entity) {
@@ -159,6 +159,17 @@ pn.data.EntityUtils.isRelationshipProperty = function(property) {
 pn.data.EntityUtils.isParentProperty = function(property) {
   goog.asserts.assert(property);
   return property !== 'ID' && goog.string.endsWith(property, 'ID');
+};
+
+
+/**
+ * @param {string} property The entity property to check if it points to a
+ *    children relationship field.
+ * @return {boolean} Wether the specified property is a children property.
+ */
+pn.data.EntityUtils.isChildrenProperty = function(property) {
+  goog.asserts.assert(property);
+  return goog.string.endsWith(property, 'Entities');
 };
 
 

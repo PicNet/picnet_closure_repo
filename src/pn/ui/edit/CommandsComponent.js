@@ -10,10 +10,10 @@ goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
-goog.require('pn.ui.edit.Field');
 goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.FieldValidator');
-goog.require('pn.ui.grid.Column');
+goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
 
@@ -23,9 +23,11 @@ goog.require('pn.ui.grid.Grid');
  * @constructor
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
+ * @param {!Object} entity The entity being edited.
  */
-pn.ui.edit.CommandsComponent = function(spec) {
+pn.ui.edit.CommandsComponent = function(spec, entity) {
   goog.asserts.assert(spec);
+  goog.asserts.assert(entity);
 
   goog.ui.Component.call(this);
 
@@ -42,10 +44,18 @@ pn.ui.edit.CommandsComponent = function(spec) {
   this.spec = spec;
 
   /**
+   * @protected
+   * @type {!Object}
+   */
+  this.entity = entity;
+
+  /**
    * @private
    * @type {!Array.<pn.ui.edit.Command>}
    */
-  this.commands_ = spec.editConfig.commands;
+  this.commands_ = goog.array.filter(spec.editConfig.commands, function(c) {
+    return !pn.data.EntityUtils.isNew(entity) || c.showOnNew;
+  });
 
   /**
    * @private
