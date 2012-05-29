@@ -10,6 +10,7 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');

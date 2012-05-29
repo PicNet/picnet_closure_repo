@@ -14,7 +14,7 @@ goog.require('goog.object');
  *    application.
  */
 pn.ui.UiSpecsRegister = function(specs) {
-  goog.asserts.assert(specs.length);
+  goog.asserts.assert(specs);
 
   goog.Disposable.call(this);
 

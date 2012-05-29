@@ -1,6 +1,7 @@
 ﻿;
 goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
+goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.edit.ValidateInfo');
 
 goog.provide('pn.ui.edit.FieldSpec');
