@@ -4,8 +4,8 @@ goog.provide('pn.ui.edit.FieldBuilder');
 goog.require('goog.date.Date');
 goog.require('goog.events.EventHandler');
 goog.require('goog.string');
-goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
+goog.require('pn.ui.ComboBox');
 goog.require('pn.ui.UiSpecsRegister');
 
 
@@ -172,16 +172,17 @@ pn.ui.edit.FieldBuilder.createDropDownList =
  *    list.
  * @param {!Array.<Object>} list The list of entities.
  * @param {string} txtf The text field property name.
- * @return {goog.ui.ComboBox} The select box.
+ * @return {pn.ui.ComboBox} The select box.
  */
 pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
-  goog.array.sortObjectsByKey(list, txtf,
-      goog.string.caseInsensitiveCompare);
-  var cb = new goog.ui.ComboBox();
+  goog.array.sortObjectsByKey(list, txtf, goog.string.caseInsensitiveCompare);
+
+  var cb = new pn.ui.ComboBox();
   cb.setUseDropdownArrow(true);
   if (selectTxt) { cb.setDefaultText(selectTxt); }
   goog.array.forEach(list, function(e) {
-    cb.addItem(new goog.ui.ComboBoxItem(e[txtf]));
+    var item = new goog.ui.ComboBoxItem(e[txtf], e);
+    cb.addItem(item);
   });
   return cb;
 };
