@@ -29,8 +29,8 @@ pn.ui.ComboBox.prototype.getSelectedModel = function() {
 
 /** @param {*} value The model value to select. */
 pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
-  if (value === null) {
-    this.selectedModel_ = value;
+  if (!goog.isDefAndNotNull(value)) {
+    this.selectedModel_ = null;
     this.setValue('');
     return;
   }
@@ -40,7 +40,7 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
     var item = this.getItemAt(i);
     if (item.getModel() === value) {
       this.selectedModel_ = value;
-      this.setValue(/** @type {string} */ (item.getContent()));
+      this.setValue(/** @type {string} */ (item.getCaption()));
       return;
     }
   }
@@ -52,24 +52,18 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
 pn.ui.ComboBox.prototype.enterDocument = function() {
   var handler = this.getHandler();
   handler.listen(this, goog.events.EventType.CHANGE, this.onChanged_);
-
   pn.ui.ComboBox.superClass_.enterDocument.call(this);
 };
 
 
-/**
- * @private
- * @param {goog.events.Event} e The event.
- */
-pn.ui.ComboBox.prototype.onChanged_ = function(e) {
+/** @private */
+pn.ui.ComboBox.prototype.onChanged_ = function() {
   var idx = this.getMenu().getHighlightedIndex();
-  if (idx < 0) {
-    this.selectedModel_ = null;
-  } else {
+  if (idx < 0) { this.selectedModel_ = null; }
+  else {
     var cbi = this.getMenu().getChildAt(idx);
     this.selectedModel_ = cbi.getModel();
   }
-  e.model = this.selectedModel_;
 };
 
 
