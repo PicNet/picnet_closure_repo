@@ -124,6 +124,8 @@ pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
    * Any additional properties required by the validator or renderer.  This
    *    can be an object with any property values and is intended to be used
    *    with custom renderers/validators to enhance existing funcitonality.
+   *    NOTE: It is better to set and access these properties using
+   *    doctionary['access'] so this can work with server generated properties.
    *
    * @type {!Object}
    */

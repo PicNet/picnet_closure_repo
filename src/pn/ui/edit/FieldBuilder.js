@@ -105,7 +105,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
       'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
     };
   });
-  var sort = fctx.spec.additionalProperties.sortedValues;
+  var sort = fctx.spec.additionalProperties['sortedValues'];
   if (!goog.isDef(sort)) sort = true;
   return pn.ui.edit.FieldBuilder.createDropDownList_(
       selTxt, list, fctx.getEntityValue(), sort);
