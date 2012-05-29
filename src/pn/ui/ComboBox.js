@@ -40,7 +40,7 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
     var item = this.getItemAt(i);
     if (item.getModel() === value) {
       this.selectedModel_ = value;
-      this.setValue(/** @type {string} */ (item.getContent()));
+      this.setValue(/** @type {string} */ (item.getCaption()));
       return;
     }
   }
@@ -69,7 +69,6 @@ pn.ui.ComboBox.prototype.onChanged_ = function(e) {
     var cbi = this.getMenu().getChildAt(idx);
     this.selectedModel_ = cbi.getModel();
   }
-  e.model = this.selectedModel_;
 };
 
 
