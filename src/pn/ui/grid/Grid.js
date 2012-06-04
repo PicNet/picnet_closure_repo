@@ -216,16 +216,11 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(element, parent);
 
   this.dataView_ = new Slick.Data.DataView();
+  var columns = goog.array.map(this.fctxs_,
+      goog.bind(this.getColumnSlickConfig_, this));
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
-      goog.array.map(this.fctxs_,
-          /** @param {!pn.ui.FieldCtx} fctx The field context. */
-          function(fctx) {
-        return fctx.spec.toSlick(!fctx.spec.renderer ? null :
-            goog.bind(function(row, cell, value, col, item) {
-              fctx.entity = item;
-              return fctx.spec.renderer(fctx);
-            }, this));
-      }, this), this.cfg_.toSlick());
+      columns, this.cfg_.toSlick());
+
   if (this.totalColumns_.length) {
     this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
     goog.dom.appendChild(element, this.totalsLegend_);
@@ -233,6 +228,40 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   goog.style.showElement(this.gridContainer_, true);
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.FieldCtx} fctx The field context to convert to a slick
+ *    grid column config.
+ * @return {!Object} A config object for a slick grid column.
+ */
+pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
+  var cfg = fctx.spec.toSlick();
+  var renderer = this.getColumnRenderer_(fctx);
+  if (renderer) {
+    cfg['formatter'] = goog.bind(function(row, cell, value, col, item) {
+      fctx.entity = item;
+      return renderer(fctx);
+    }, this);
+  }
+  return cfg;
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.FieldCtx} fctx The field context to get the specified
+ *    renderer from.  If no renderer is specified then we try to use the
+ *    schema for the field and infer the renderer.
+ * @return {null|function(!pn.ui.FieldCtx):string} The specified
+ *    column renderer or an implied renderer from the given column schema type.
+ */
+pn.ui.grid.Grid.prototype.getColumnRenderer_ = function(fctx) {
+  if (fctx.spec.renderer) return fctx.spec.renderer;
+  if (!fctx.schema) return null;
+  return pn.app.ctx.cfg.defaultColumnRenderers[fctx.schema.type] || null;
 };
 
 
@@ -280,9 +309,10 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
 
     for (var cidx = 0; cidx < lencol; cidx++) {
       var fctx = this.fctxs_[cidx];
-      fctx.entity = rowData;
       var val = rowData[fctx.spec.dataProperty];
-      var txt = fctx.spec.renderer ? fctx.spec.renderer(fctx) : val;
+      var renderer = this.getColumnRenderer_(fctx);
+      fctx.entity = rowData;
+      var txt = renderer ? renderer(fctx) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -416,7 +446,11 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
     var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
-    if (fctx.spec.renderer) { val = fctx.spec.renderer(mockEntity); }
+    var renderer = this.getColumnRenderer_(fctx);
+    if (renderer) {
+      fctx.entity = mockEntity;
+      val = renderer(fctx);
+    }
     else { val = parseInt(total[field], 10); }
     html.push('Total ' + fctx.spec.name + ': ' + val || '0');
   }

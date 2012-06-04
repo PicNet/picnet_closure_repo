@@ -15,25 +15,36 @@ goog.require('pn.app.schema.FieldSchema');
 pn.app.AppConfig = function() {
   goog.Disposable.call(this);
 
-  var fr = pn.ui.edit.FieldRenderers;
+  var fr = pn.ui.edit.FieldRenderers,
+      cr = pn.ui.grid.ColumnRenderers;
 
   /** @type {boolean} */
   this.useAsyncEventBus = false;
 
   /** @type {Object} */
-  this.defaultRenderers = {
+  this.defaultFieldRenderers = {
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    bool: fr.boolRenderer,
+    'YesNo': fr.boolRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    date: fr.dateRenderer,
-
-    /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    decimal: fr.centsRenderer,
+    'DateTime': fr.dateRenderer,
 
     /** @type {number} */
     textAreaLengthThreshold: 250
+  };
+
+  /** @type {Object} */
+  this.defaultColumnRenderers = {
+
+    /** @type {function(!pn.ui.FieldCtx):string} */
+    'YesNo': cr.yesNoBoolRenderer,
+
+    /** @type {function(!pn.ui.FieldCtx):string} */
+    'DateTime': cr.dateRenderer,
+
+    /** @type {function(!pn.ui.FieldCtx):string} */
+    'Int64': cr.parentColumnRenderer
   };
 };
 goog.inherits(pn.app.AppConfig, goog.Disposable);
@@ -43,5 +54,6 @@ goog.inherits(pn.app.AppConfig, goog.Disposable);
 pn.app.AppConfig.prototype.disposeInternal = function() {
   pn.app.AppConfig.superClass_.disposeInternal.call(this);
 
-  delete this.defaultRenderers;
+  delete this.defaultFieldRenderers;
+  delete this.defaultColumnRenderers;
 };

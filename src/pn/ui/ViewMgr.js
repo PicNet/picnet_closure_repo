@@ -35,8 +35,8 @@ pn.ui.ViewMgr = function(parent) {
 goog.inherits(pn.ui.ViewMgr, goog.events.EventHandler);
 
 
-/** 
- * @param {goog.ui.Component|Node} component The component to display. 
+/**
+ * @param {goog.ui.Component|Node} component The component to display.
  */
 pn.ui.ViewMgr.prototype.showComponent = function(component) {
   goog.asserts.assert(component);
@@ -44,7 +44,7 @@ pn.ui.ViewMgr.prototype.showComponent = function(component) {
 
   this.clearExistingState_();
   this.currentView_ = component;
-  if (this.currentView_.canDecorate && 
+  if (this.currentView_.canDecorate &&
       this.currentView_.canDecorate(this.parent_)) {
     this.currentView_.decorate(this.parent_);
   } else if (this.currentView_.render) {

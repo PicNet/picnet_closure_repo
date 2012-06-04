@@ -55,11 +55,9 @@ pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
 
   /**
    * The renderer which will be turned into a slick grid formatter in Grid.js.
-   *    This renderer is a function that takes 4 parameters, the entity
-   *    displayed in the current row, The cache of entities in the current
-   *    context, the value of this column in the current entity and a reference
-   *    to this Column specifications.  The renderer then returns a html string
-   *    of the value to display.
+   *    This renderer is a function that takes 1 parameter and that is the
+   *    field context for the current column and the current row details.
+   *    The renderer then returns a html string of the value to display.
    *
    * @type {null|function(!pn.ui.FieldCtx):string}
    */
@@ -87,12 +85,10 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
 
 
 /**
- * @param {function(number,number,Object,Object,Object):string}
- *    formatter The formatter to use for this column.
  * @return {pn.ui.grid.ColumnSpec} A SlickGrid compative object even when in
  *    COMPILE mode.
  */
-pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
+pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   // Need to copy twice as we need this to also work in compiled mode.
   var col = /** @type {pn.ui.grid.ColumnSpec} */ ({
     'id': this.id,
@@ -106,7 +102,6 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
     'rerenderOnResize': this.rerenderOnResize,
     'headerCssClass': this.headerCssClass,
     'behavior': this.behavior,
-    'formatter': formatter,
     'source': this.displayPath
   });
   col.id = this.id;
@@ -120,7 +115,6 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function(formatter) {
   col.rerenderOnResize = this.rerenderOnResize;
   col.headerCssClass = this.headerCssClass;
   col.behavior = this.behavior;
-  col.formatter = formatter;
   col.source = this.displayPath;
   return col;
 };

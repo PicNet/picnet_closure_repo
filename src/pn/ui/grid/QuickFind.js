@@ -63,14 +63,19 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       var filterVal = this.filters_[columnId];
       var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
           function(fctx1) { return fctx1.id === columnId; }));
-      fctx.entity = entity;
       var val = fctx.getEntityValue();
       if (fctx.spec.renderer ===
           pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
             this.cache_, fctx.spec.displayPath, fctx.entity) || '').
                 toString() : '';
-      } else if (fctx.spec.renderer) { val = fctx.spec.renderer(fctx); }
+      } else if (fctx.spec.renderer) {
+        // TODO: This should probably use the same renderer logic as Grid.
+        // Meaning that we should imply the renderer type from the schema field
+        // type.
+        fctx.entity = entity;
+        val = fctx.spec.renderer(fctx);
+      }
       var strval = '';
       if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
       if (!this.search_.matches(strval, filterVal)) { return false; }
