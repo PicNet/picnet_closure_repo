@@ -239,7 +239,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
  */
 pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
   var cfg = fctx.spec.toSlick();
-  var renderer = this.getColumnRenderer_(fctx);
+  var renderer = fctx.getColumnRenderer();
   if (renderer) {
     cfg['formatter'] = goog.bind(function(row, cell, value, col, item) {
       fctx.entity = item;
@@ -247,21 +247,6 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
     }, this);
   }
   return cfg;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.FieldCtx} fctx The field context to get the specified
- *    renderer from.  If no renderer is specified then we try to use the
- *    schema for the field and infer the renderer.
- * @return {null|function(!pn.ui.FieldCtx):string} The specified
- *    column renderer or an implied renderer from the given column schema type.
- */
-pn.ui.grid.Grid.prototype.getColumnRenderer_ = function(fctx) {
-  if (fctx.spec.renderer) return fctx.spec.renderer;
-  if (!fctx.schema) return null;
-  return pn.app.ctx.cfg.defaultColumnRenderers[fctx.schema.type] || null;
 };
 
 
@@ -310,7 +295,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     for (var cidx = 0; cidx < lencol; cidx++) {
       var fctx = this.fctxs_[cidx];
       var val = rowData[fctx.spec.dataProperty];
-      var renderer = this.getColumnRenderer_(fctx);
+      var renderer = fctx.getColumnRenderer();
       fctx.entity = rowData;
       var txt = renderer ? renderer(fctx) : val;
       rowTxt.push(txt);
@@ -446,7 +431,7 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
     var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
-    var renderer = this.getColumnRenderer_(fctx);
+    var renderer = fctx.getColumnRenderer();
     if (renderer) {
       fctx.entity = mockEntity;
       val = renderer(fctx);

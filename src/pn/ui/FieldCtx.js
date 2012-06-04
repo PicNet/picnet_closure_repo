@@ -184,6 +184,17 @@ pn.ui.FieldCtx.prototype.validate = function() {
 
 
 /**
+ * @return {null|function(!pn.ui.FieldCtx):string} The specified
+ *    column renderer or an implied renderer from the given column schema type.
+ */
+pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
+  if (this.spec.renderer) return this.spec.renderer;
+  if (!this.schema) return null;
+  return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] || null;
+};
+
+
+/**
  * @private
  * @return {*} The default value of  this field.
  */
