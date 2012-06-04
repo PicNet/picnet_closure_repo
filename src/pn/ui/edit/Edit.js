@@ -152,8 +152,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
           return;
         }
         var renderer = fctx.getFieldRenderer();
-        if (!useTemplate && 
-            (!(renderer instanceof pn.ui.edit.ComplexRenderer) || 
+        if (!useTemplate &&
+            (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {
           fctx.parentComponent = fb.getFieldLabel(fctx);
           goog.dom.appendChild(fieldset, fctx.parentComponent);

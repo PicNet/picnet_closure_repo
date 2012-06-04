@@ -53,7 +53,7 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
   this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
 
   // TODO: This is not nice here.
-  if (this.spec instanceof pn.ui.edit.FieldSpec && 
+  if (this.spec instanceof pn.ui.edit.FieldSpec &&
       this.getFieldRenderer() === pn.ui.edit.FieldRenderers.dateRenderer) {
     this.normaliseDateField_();
   }
