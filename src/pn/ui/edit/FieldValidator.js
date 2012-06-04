@@ -12,9 +12,9 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx) {
         !goog.string.endsWith(fctx.spec.dataProperty, 'Entities');
   };
   var arraytise = pn.ui.edit.FieldValidator.arraytise_;
-
-  if (fctx.spec.renderer instanceof pn.ui.edit.ComplexRenderer) {
-    return arraytise(fctx.spec.renderer.validate(), []);
+  var renderer = fctx.getFieldRenderer();
+  if (renderer instanceof pn.ui.edit.ComplexRenderer) {
+    return arraytise(renderer.validate(), []);
   }
   var errors = isDBField() ? pn.app.ctx.schema.getValidationErrors(fctx) : [];
   // Always return schema issues before checking other errors as other

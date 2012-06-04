@@ -370,11 +370,12 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
  */
 pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
     function(fctx) {
-  if (!fctx.spec.renderer) return fctx;
+  var renderer = fctx.getFieldRenderer();
+  if (!renderer) return fctx;
   var sf = /** @type {!pn.ui.FieldCtx} */ (goog.object.clone(fctx));
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
-  var curr = fctx.spec.renderer;
+  var curr = renderer;
   if (curr === fr.centsRenderer ||
       curr === rr.centsField ||
       curr === fr.timeRenderer ||

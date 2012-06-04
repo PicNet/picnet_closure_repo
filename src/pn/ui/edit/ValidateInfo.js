@@ -74,35 +74,36 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 
 
 /**
- * @param {pn.ui.FieldCtx} field The field ctx to validate.
+ * @param {pn.ui.FieldCtx} fctx The field ctx to validate.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = function(field) {
-  var val = field.getControlValue();
-  var isParent = pn.data.EntityUtils.isParentProperty(field.spec.dataProperty);
-  var isYesNoRenderer = field.spec.renderer ===
-      pn.ui.edit.FieldRenderers.yesNoRenderer;
+pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx) {
+  var fr = pn.ui.edit.FieldRenderers;
+
+  var val = fctx.getControlValue();
+  var isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty);
+  var renderer = fctx.getFieldRenderer();
+  var isYesNoRenderer = renderer === fr.yesNoRenderer;
   var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
-  var isNullDate = field.spec.renderer ===
-      pn.ui.edit.FieldRenderers.dateRenderer && val === 0;
+  var isNullDate = renderer === fr.dateRenderer && val === 0;
   if (!goog.isDefAndNotNull(val) || val === '' ||
       isEmptyParentOrYesNo || isNullDate) {
-    return this.required ? field.spec.name + ' is required.' : '';
+    return this.required ? fctx.spec.name + ' is required.' : '';
   }
 
   if (this.minLength && val.length < this.minLength)
-    return field.spec.name + ' must be at least ' + this.minLength + ' chars.';
+    return fctx.spec.name + ' must be at least ' + this.minLength + ' chars.';
   if (this.maxLength && val.length > this.maxLength)
-    return field.spec.name + ' must be at most ' + this.maxLength + ' chars.';
+    return fctx.spec.name + ' must be at most ' + this.maxLength + ' chars.';
   if (this.validateRegex && !val.match(this.validateRegex))
-    return field.spec.name + ' appears to be invalid.';
+    return fctx.spec.name + ' appears to be invalid.';
   if (this.isNumber && isNaN(val))
-    return field.spec.name + ' must be a number.';
+    return fctx.spec.name + ' must be a number.';
   if (!isNaN(this.minNumber) || !isNaN(this.maxNumber)) {
     var valueNumber = parseFloat(val.toString());
     if ((!isNaN(this.minNumber) && valueNumber < this.minNumber) ||
         (!isNaN(this.maxNumber) && valueNumber > this.maxNumber)) {
-      return field.spec.name + ' must be between ' + this.minNumber + ' - ' +
+      return fctx.spec.name + ' must be between ' + this.minNumber + ' - ' +
           this.maxNumber + '.';
     }
   }

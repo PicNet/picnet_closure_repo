@@ -9,6 +9,10 @@ goog.require('pn.app.schema.FieldSchema');
 
 
 /**
+ * Note: The defaultFieldRenderers and the defaultColumnRenderers map a field
+ *    schema type property to a renderer.  Since the schema type comes from the
+ *    server we need to specify them using strings.
+ *
  * @constructor
  * @extends {goog.Disposable}
  */

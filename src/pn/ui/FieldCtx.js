@@ -52,7 +52,9 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
    */
   this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
 
-  if (spec.renderer === pn.ui.edit.FieldRenderers.dateRenderer) {
+  // TODO: This is not nice here.
+  if (this.spec instanceof pn.ui.edit.FieldSpec && 
+      this.getFieldRenderer() === pn.ui.edit.FieldRenderers.dateRenderer) {
     this.normaliseDateField_();
   }
 };
@@ -131,15 +133,18 @@ pn.ui.FieldCtx.prototype.getDisplayValue = function() {
 
 
 /**
- * @return {*} The compareable value of this field, suitable for sorting, etc.
+ * @return {*} The compareable value of this column, suitable for sorting, etc.
  */
 pn.ui.FieldCtx.prototype.getCompareableValue = function() {
+  goog.asserts.assert(this.spec instanceof pn.ui.grid.ColumnSpec);
+
+  var renderer = this.getColumnRenderer();
   var useRealValue =
-      !this.spec.renderer ||
-      this.spec.renderer === pn.ui.grid.ColumnRenderers.dateRenderer ||
-      this.spec.renderer === pn.ui.grid.ColumnRenderers.dateTimeRenderer ||
-      this.spec.renderer === pn.ui.grid.ColumnRenderers.centsRenderer;
-  return useRealValue ? this.getEntityValue() : this.spec.renderer(this);
+      !renderer ||
+      renderer === pn.ui.grid.ColumnRenderers.dateRenderer ||
+      renderer === pn.ui.grid.ColumnRenderers.dateTimeRenderer ||
+      renderer === pn.ui.grid.ColumnRenderers.centsRenderer;
+  return useRealValue ? this.getEntityValue() : renderer(this);
 };
 
 
@@ -188,9 +193,25 @@ pn.ui.FieldCtx.prototype.validate = function() {
  *    column renderer or an implied renderer from the given column schema type.
  */
 pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
+  goog.asserts.assert(this.spec instanceof pn.ui.grid.ColumnSpec);
+
   if (this.spec.renderer) return this.spec.renderer;
   if (!this.schema) return null;
   return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] || null;
+};
+
+
+/**
+ * @return {null|function(!pn.ui.FieldCtx):!(goog.ui.Component|Element)} The
+ *    specified field renderer or an implied renderer from the given column
+ *    schema type.
+ */
+pn.ui.FieldCtx.prototype.getFieldRenderer = function() {
+  goog.asserts.assert(this.spec instanceof pn.ui.edit.FieldSpec);
+
+  if (this.spec.renderer) return this.spec.renderer;
+  if (!this.schema) return null;
+  return pn.app.ctx.cfg.defaultFieldRenderers[this.schema.type] || null;
 };
 
 

@@ -56,13 +56,14 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
 pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
   var fb = pn.ui.edit.FieldBuilder;
   var elem;
-  if (fctx.spec.renderer) {
-    if (typeof (fctx.spec.renderer) === 'object') { // Complex Renderer
-      elem = fctx.spec.renderer;
-      fctx.spec.renderer.initialise(fctx);
+  var renderer = fctx.getFieldRenderer();
+  if (renderer) {
+    if (renderer instanceof pn.ui.edit.ComplexRenderer) {
+      elem = renderer;
+      renderer.initialise(fctx);
       elem.decorate(fctx.parentComponent);
     } else {
-      elem = fctx.spec.renderer(fctx);
+      elem = renderer(fctx);
     }
   } else if (pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty) &&
       !fctx.spec.tableType) {
