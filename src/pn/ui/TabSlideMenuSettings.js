@@ -23,11 +23,11 @@ pn.ui.TabSlideMenuSettings = function() {
   this.fixedPosition;
   /** @type {string} */
   this.positioning;
-  /** @type {string?} */
+  /** @type {string} */
   this.pathToTabImage;
-  /** @type {number?} */
+  /** @type {number} */
   this.imageHeight;
-  /** @type {number?} */
+  /** @type {number} */
   this.imageWidth;
   /** @type {boolean} */
   this.onLoadSlideOut;

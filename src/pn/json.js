@@ -5,7 +5,7 @@ goog.provide('pn.json');
 
 
 /**
- * @param {string?} json The json string to parse.
+ * @param {string} json The json string to parse.
  * @return {Object|string} The parsed object.
  */
 pn.json.parseJson = function(json) {

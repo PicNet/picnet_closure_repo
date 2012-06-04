@@ -50,7 +50,7 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
 
   /**
    * Instance of goog.ui.Popup used to manage the behavior of the date picker.
-   * @type {goog.ui.Popup?}
+   * @type {goog.ui.Popup}
    * @private
    */
   this.popup_ = null;

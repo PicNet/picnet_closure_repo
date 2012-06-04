@@ -28,20 +28,30 @@ pn.ui.ViewMgr = function(parent) {
 
   /**
    * @private
-   * @type {goog.ui.Component}
+   * @type {goog.ui.Component|Node}
    */
   this.currentView_ = null;
 };
 goog.inherits(pn.ui.ViewMgr, goog.events.EventHandler);
 
 
-/** @param {goog.ui.Component} component The component to display. */
+/** 
+ * @param {goog.ui.Component|Node} component The component to display. 
+ */
 pn.ui.ViewMgr.prototype.showComponent = function(component) {
   goog.asserts.assert(component);
+  goog.asserts.assert(this.parent_);
 
   this.clearExistingState_();
   this.currentView_ = component;
-  this.currentView_.decorate(this.parent_);
+  if (this.currentView_.canDecorate && 
+      this.currentView_.canDecorate(this.parent_)) {
+    this.currentView_.decorate(this.parent_);
+  } else if (this.currentView_.render) {
+    this.currentView_.render(this.parent_);
+  } else {
+    goog.dom.appendChild(this.parent_, /** @type {Node} */ (component));
+  }
 };
 
 
