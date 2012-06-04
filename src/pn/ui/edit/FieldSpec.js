@@ -36,9 +36,9 @@ pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
    *    The 3 parameters are the the value to display, the entity being
    *    displayed and the parent Dom Element.
    *
-   * @type {pn.ui.edit.FieldSpec.Renderer}
+   * @type {undefined|pn.ui.edit.FieldSpec.Renderer}
    */
-  this.renderer = null;
+  this.renderer = undefined;
 
   /**
    * The custom validator for this field.  The validator can either be an

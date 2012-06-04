@@ -59,9 +59,9 @@ pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
    *    field context for the current column and the current row details.
    *    The renderer then returns a html string of the value to display.
    *
-   * @type {null|function(!pn.ui.FieldCtx):string}
+   * @type {undefined|function(!pn.ui.FieldCtx):string}
    */
-  this.renderer = null;
+  this.renderer = undefined;
 
   /**
    * Wether this column should show in the totals legend at the bottom of the

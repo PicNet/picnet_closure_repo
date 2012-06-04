@@ -195,7 +195,7 @@ pn.ui.FieldCtx.prototype.validate = function() {
 pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
   goog.asserts.assert(this.spec instanceof pn.ui.grid.ColumnSpec);
 
-  if (this.spec.renderer) return this.spec.renderer;
+  if (goog.isDef(this.spec.renderer)) return this.spec.renderer;
   if (!this.schema) return null;
   return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] || null;
 };
