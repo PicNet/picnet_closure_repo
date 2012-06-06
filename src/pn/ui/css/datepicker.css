@@ -24,56 +24,56 @@ button {
 .goog-date-picker table, 
 .picnet-daterangepicker, 
 .picnet-daterangepicker-label {
-	display:inline;
-	float:left;
-	position:relative;
-	}
+  display:inline;
+  float:left;
+  position:relative;
+  }
 
 #date_list_container {
-	margin-bottom:20px;
-	}
+  margin-bottom:20px;
+  }
 
 .picnet-daterangepicker-label {
-	font-size:0.75em;
-	}
+  font-size:0.75em;
+  }
 
 .goog-date-picker {
-	-moz-user-focus: normal;
-	-moz-user-select: none;
-	float: left;
-	padding: 2px;
-	color: #333;
-	cursor: default;
-	top:0px;
-	margin-top:5px;
-	}
+  -moz-user-focus: normal;
+  -moz-user-select: none;
+  float: left;
+  padding: 2px;
+  color: #333;
+  cursor: default;
+  top:0px;
+  margin-top:5px;
+  }
 
 .goog-date-picker table {
-	margin-right:10px;
-	background: #f1f1f1;
-	border: 1px solid #fff;
-	-moz-box-shadow:#999 0px 1px 5px;
-	-webkit-box-shadow:#999 0px 1px 5px;
-	}
+  margin-right:10px;
+  background: #f1f1f1;
+  border: 1px solid #fff;
+  -moz-box-shadow:#999 0px 1px 5px;
+  -webkit-box-shadow:#999 0px 1px 5px;
+  }
 
 .goog-date-picker th {
-	text-align: center;
-	}
+  text-align: center;
+  }
 
 .goog-date-picker td {
-	text-align: center;
-	vertical-align: middle;
-	padding: 1px 3px;
-	}
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px 3px;
+  }
 
 .goog-date-picker-menu {
-	position: absolute;
-	background: threedface;
-	border: 1px solid gray;
-	-moz-user-focus: normal;
-	z-index: 1;
-	outline: none;
-	}
+  position: absolute;
+  background: threedface;
+  border: 1px solid gray;
+  -moz-user-focus: normal;
+  z-index: 1;
+  outline: none;
+  }
 
 .goog-date-picker-menu ul {
   list-style: none;
@@ -182,53 +182,53 @@ td.goog-date-picker-invalid-in-range {
 
 .picnet-daterangepicker-button, 
 .picnet-daterangepicker-clearbutton {
-	display:inline-block;
-	position:relative;
-	float:left;
-	width:13px;
-	height:13px;
-	margin-left:5px;
-	background-image:url('images/rangepicker_sprite.png');
-	text-indent:-9999px;
-	}
+  display:inline-block;
+  position:relative;
+  float:left;
+  width:13px;
+  height:13px;
+  margin-left:5px;
+  background-image:url('images/rangepicker_sprite.png');
+  text-indent:-9999px;
+  }
 
 .picnet-daterangepicker-button {
-	background-position:0px 0px;
-	}
+  background-position:0px 0px;
+  }
 
 .picnet-daterangepicker-clearbutton {
-	background-position:13px 0px;
-	}
+  background-position:13px 0px;
+  }
 
 .picnet-daterangepicker-button:hover {
-	cursor:pointer;
-	background-position:0px -13px;
-	} 
+  cursor:pointer;
+  background-position:0px -13px;
+  } 
 
 .picnet-daterangepicker-clearbutton:hover {
-	cursor:pointer;
-	background-position:13px -13px;
-	}
-	
+  cursor:pointer;
+  background-position:13px -13px;
+  }
+  
 .picnet-daterangepicker-button:active {
-	background-position:0px -26px;
-	} 
+  background-position:0px -26px;
+  } 
 
 .picnet-daterangepicker-clearbutton:active {
-	background-position:13px -26px;
-	}
+  background-position:13px -26px;
+  }
 
 #date_list_panel {
-	clear:both;
-	width:100%;
-	}
-	
+  clear:both;
+  width:100%;
+  }
+  
 button {
-	color:#00334e;	
-	}
+  color:#00334e;  
+  }
 
 button:hover {
-	cursor:pointer;
-	text-decoration:underline;
-	color:#0079c1
-	}
+  cursor:pointer;
+  text-decoration:underline;
+  color:#0079c1
+  }

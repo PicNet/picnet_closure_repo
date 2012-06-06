@@ -10,13 +10,13 @@ goog.require('pn.seq.Seq');
 
 var setUp = function() {};
 
-var testSimpleSelect = function () {		
+var testSimpleSelect = function () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.select(function(x) { return x + 1; }); 
   assertArrayEquals([2, 4, 5, 3, 9, 2], result); 
 };
 
-var testMultipleSelects = function () {		
+var testMultipleSelects = function () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]);   
   var seq = source.select(function(x) { return x + 1; });  
   assertEquals('First Count', 6, seq.count()); 
@@ -26,7 +26,7 @@ var testMultipleSelects = function () {
   assertEquals('Second Count', 6, seq.count()); 
 };
 
-var testIndexBasedSelect = function () {		
+var testIndexBasedSelect = function () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.select(function(x, i) { return x + i; }); 
   assertArrayEquals([1, 4, 6, 5, 12, 6], result); 

@@ -14,14 +14,14 @@ goog.require('pn.data.LocalDataProvider');
 
 
 var ldp;
-var type = 'LocalDataProviderTestType';	
+var type = 'LocalDataProviderTestType';  
 var types = [type];    
 
 var setUpPage = function() {  
   ldp = new pn.data.LocalDataProvider(new pn.data.LocalStorageRepository('testdb'));    
 };
 
-var testGetEntities_InMemory = function() {		
+var testGetEntities_InMemory = function() {    
   asyncTestCase.waitForAsync();
   ldp.clearEntireDatabase(function() {      
     ldp.updateLocalData(type, [{ID:1,Name:'Data 1'}, {ID:2,Name:'Data 2'}], function() {      

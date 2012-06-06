@@ -11,21 +11,21 @@ goog.require('pn.json');
 
 var setUp = function() {};
 
-var testSimpleJSONSerialise = function () {		
+var testSimpleJSONSerialise = function () {    
   if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
   var simpleObject = {'stringval':'stringvalue','numberval':10.1,'boolval':true,'objval':{'str':'string'}};
 
   var jsonstr1 = JSON.stringify(simpleObject);
-  var jsonstr2 = pn.Utils.serialiseJson(simpleObject);	
+  var jsonstr2 = pn.Utils.serialiseJson(simpleObject);  
   assertEquals(jsonstr1, jsonstr2);
 };
 
-var testComplexJSONSerialise = function () {			
+var testComplexJSONSerialise = function () {      
   if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
   var complexObject = { 'stringval':'stringvalue','dateval': new Date() };
 
   var jsonstr1 = JSON.stringify(complexObject);
-  var jsonstr2 = pn.json.serialiseJson(complexObject);	
+  var jsonstr2 = pn.json.serialiseJson(complexObject);  
   assertEquals(jsonstr1, jsonstr2);
 };
     </script>    

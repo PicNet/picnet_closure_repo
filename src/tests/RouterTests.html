@@ -30,7 +30,7 @@ var tearDown = function() {
   goog.dispose(router);
 };
 
-var testDefaultRouteIsSetOnCreation = function () {		  
+var testDefaultRouteIsSetOnCreation = function () {      
   router = new pn.Router({'default': getAction('default')}, 'default', true);
   assertRoute('default');  
 };

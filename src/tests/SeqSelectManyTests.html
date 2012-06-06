@@ -10,7 +10,7 @@ goog.require('pn.seq.Seq');
 
 var setUp = function() {};
 
-var testSimpleSelectMany = function () {		
+var testSimpleSelectMany = function () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
@@ -18,7 +18,7 @@ var testSimpleSelectMany = function () {
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
 };
 
-var testMultipleSelectMany = function () {		
+var testMultipleSelectMany = function () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {   
     return pn.seq.Seq.repeat(x, i);
@@ -30,7 +30,7 @@ var testMultipleSelectMany = function () {
   assertArrayEquals([3, 4, 4, 2, 2, 2, 8, 8, 8, 8, 1, 1, 1, 1, 1], result); 
 };
 
-var testWithSelector = function  () {		
+var testWithSelector = function  () {    
   var source = pn.seq.Seq.create([ 1, 3, 4, 2, 8, 1 ]); 
   var result = source.selectMany(function(x, i) {     
     return pn.seq.Seq.repeat(x, i);
