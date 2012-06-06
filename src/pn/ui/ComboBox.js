@@ -17,6 +17,12 @@ pn.ui.ComboBox = function() {
    * @type {*}
    */
   this.selectedModel_ = null;
+
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.ignoreChange_ = false;
 };
 goog.inherits(pn.ui.ComboBox, goog.ui.ComboBox);
 
@@ -40,7 +46,9 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
     var item = this.getItemAt(i);
     if (item.getModel() === value) {
       this.selectedModel_ = value;
+      this.ignoreChange_ = true;
       this.setValue(/** @type {string} */ (item.getCaption()));
+      this.ignoreChange_ = false;
       return;
     }
   }
@@ -58,6 +66,8 @@ pn.ui.ComboBox.prototype.enterDocument = function() {
 
 /** @private */
 pn.ui.ComboBox.prototype.onChanged_ = function() {
+  if (this.ignoreChange_) return;
+
   var idx = this.getMenu().getHighlightedIndex();
   if (idx < 0) { this.selectedModel_ = null; }
   else {
