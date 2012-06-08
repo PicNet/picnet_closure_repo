@@ -2,6 +2,7 @@
 goog.provide('pn.ui.grid.Grid');
 goog.provide('pn.ui.grid.Grid.EventType');
 
+goog.require('goog.i18n.NumberFormat');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
@@ -76,6 +77,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    */
   this.totalColumns_ =
       goog.array.filter(this.cols_, function(c) { return c.total; });
+
+  /**
+   * @private
+   * @type {goog.i18n.NumberFormat}
+   */
+  this.totalsFormatter_ = new goog.i18n.NumberFormat('#,##0.0#;');
 
   /**
    * @private
@@ -456,13 +463,17 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
 /** @private */
 pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   if (!this.totalColumns_.length) return;
+  // This multiplier is used to remove floating point problems.
+  var mult = 1000000;
   var items = this.dataView_.getItems();
   var total = goog.array.reduce(items,
       function(acc, item) {
         goog.array.forEach(this.totalColumns_, function(c) {
           if (acc[c.id] === undefined) acc[c.id] = 0;
           var itemVal = item[c.id];
-          if (itemVal) acc[c.id] += itemVal;
+          if (goog.isNumber(itemVal)) {
+            acc[c.id] += Math.floor(itemVal * mult);
+          }
         }, this);
         return acc;
       }, {}, this);
@@ -471,10 +482,10 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
     var spec = goog.array.find(this.totalColumns_, function(c) {
       return c.id === field;
     });
-    var val = total[field];
-    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }
-    else { val = parseInt(val, 10); }
-    html.push('Total ' + spec.name + ': ' + val || '0');
+    var val = total[field] / mult;
+    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }    
+    else { val = this.totalsFormatter_.format(val); }
+    html.push('Total ' + spec.name + ': ' + val);
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
       html.join('</li><li>') + '</li>';
@@ -610,7 +621,8 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
   goog.dispose(this.tooltip_);
-  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
+  goog.dispose(this.totalsFormatter_);
+  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);  
   delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;
@@ -631,6 +643,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.currentFilter_;
   delete this.sort_;
   delete this.tooltip_;
+  delete this.totalsFormatter_;
 };
 
 
