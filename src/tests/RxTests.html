@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="http://localhost/projects/picnet_closure_repo/rx.min.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventTarget');
+goog.require('goog.testing.net.XhrIo');
+goog.require('goog.net.HttpStatus');
+
+goog.require('pn.rx');
+
+var testXhr;
+
+var setUp = function() {
+  testXhr = new goog.testing.net.XhrIo();
+};
+
+var testFromArray = function() {
+  var obs = pn.rx.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);  
+  var res = [];
+  var arr = obs.
+    where(function(n) { return n > 3; }).
+    select(function(n, idx) { return n * idx; }).
+    subscribe(function(i) { res.push(i); });      
+  assertArrayEquals([0,5,12,21,32,45,60], res);
+};
+
+var testListen = function() {
+  var et = new goog.events.EventTarget();
+  var count = 0;
+  var fire = function(num) { 
+    var event = new goog.events.Event('type');
+    event.data = num;
+    et.dispatchEvent(event); 
+  };
+  var obs = pn.rx.listen(et, 'type').
+    where(function(e) { return e.data > 1; }).
+    subscribe(function(e) { count++; });
+
+  fire(1);
+  assertEquals(0, count);
+  fire(2);
+  assertEquals(1, count);
+  fire(3);
+  assertEquals(2, count);
+};
+
+var testAjaxSuccess = function() {
+  assertTrue(mockAjax(goog.net.HttpStatus.OK));
+};
+
+var testAjaxFailure = function() {  
+  assertFalse(mockAjax(goog.net.HttpStatus.NOT_FOUND));
+};
+
+var testAjaxDisposesTheXhrOnSuccess = function() {  
+  mockAjax(goog.net.HttpStatus.OK);
+  assertTrue(testXhr.isDisposed());
+  assertEquals(0, pn.rx.eh_.getListenerCount());
+};
+
+var testAjaxDisposesTheXhrOnError = function() {
+  mockAjax(goog.net.HttpStatus.NOT_FOUND);
+  assertTrue(testXhr.isDisposed());
+  assertEquals(0, pn.rx.eh_.getListenerCount());
+};
+
+var testEventListenerRemovesAllListenersOnDispose = function() {
+  var et = new goog.events.EventTarget();
+  var obs = pn.rx.listen(et, 'type').
+    where(function(e) { return e.data > 1; }).
+    subscribe(function(e) { count++; });
+
+  assertEquals(1, pn.rx.eh_.getListenerCount());
+  obs.dispose();  
+  assertEquals(0, pn.rx.eh_.getListenerCount());
+};
+
+function mockAjax(statusCode) {  
+  var gotSuccess = false;
+  var gotError = false;
+  pn.rx.ajax('uri', testXhr).subscribe(
+    function(xhr) { assertTrue(xhr.isSuccess()); gotSuccess = true; }, 
+    function(xhr) { assertFalse(xhr.isSuccess()); gotError = true; }
+  );   
+  testXhr.simulateResponse(statusCode);
+
+  assertFalse(gotSuccess && gotError);
+  assertTrue(gotSuccess || gotError);
+
+  return gotSuccess;
+};
+    </script>    
+  </body>
+</html>

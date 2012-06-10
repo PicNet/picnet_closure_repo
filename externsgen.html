@@ -21,40 +21,13 @@ function init() {
   $('#object_to_extern').val(localStorage['object_to_extern'] ||'jQuery').click(go);
   
   $('#load').click(loadScript);
-  $('#go').click(go);
-  
-  // Slick Grid
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/jquery-ui-1.8.16.custom.min.js');
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/jquery.event.drag-2.0.min.js');
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/slick.core.js');
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/slick.grid.js');
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/slick.dataview.js');
-  loadScriptUri('http://localhost/rcdb/resources/scripts/lib/slick.rowselectionmodel.js');
-  
-  setTimeout(function() {
-    // var RowSelectionModel = new Slick.RowSelectionModel();
-    // var SlickDataView = new Slick.Data.DataView();
-    // externImpl(Slick.RowSelectionModel, RowSelectionModel, 'Slick.RowSelectionModel');
-    var cfg = {      
-      enableColumnReorder: false,  
-      forceFitColumns: true,  
-      multiSelect: false,  
-      editable: true,  
-      checkboxRowSelect: false  
-    }    
-    var div = $('<div>').appendTo(document.body);
-    var SlickGrid = new Slick.Grid(div, [], [], cfg);
-    externImpl(Slick.Grid, SlickGrid, 'Slick.Grid');
-        
+  $('#go').click(go);  
+
+  loadScript();
+  setTimeout(function() {    
+    go();
   }, 500);
 };
-
-/*
-loadScript();
-setTimeout(function() {
-  go();
-}, 200);
-*/
 
 function loadScript(e) { 
   var uri = $('#script_uri').val();  
@@ -69,10 +42,11 @@ function loadScript(e) {
 };
 
 function loadScriptUri(uri) {
+  localStorage['script_uri'] = uri;
   var script = document.createElement('script');
   script.type = 'text/javascript';
   script.src = uri;
-  document.body.appendChild(script);
+  document.body.appendChild(script);  
 };
 
 function go() {     

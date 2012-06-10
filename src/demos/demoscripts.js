@@ -6,3 +6,4 @@ goog.require('pn.demo.datamanagerdemo');
 goog.require('pn.demo.daterangepickerdemo');
 goog.require('pn.demo.tabslidemenudemo');
 goog.require('pn.demo.seqdemo');
+goog.require('pn.rx');
