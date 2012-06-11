@@ -1,10 +1,11 @@
 
 goog.provide('pn.rx');
 
-goog.require('goog.events')
-goog.require('goog.events.EventHandler')
-goog.require('goog.net.XhrIo');
+goog.require('goog.events');
+goog.require('goog.events.EventHandler');
 goog.require('goog.net.EventType');
+goog.require('goog.net.XhrIo');
+
 
 /**
  * @private
@@ -12,11 +13,12 @@ goog.require('goog.net.EventType');
  */
 pn.rx.eh_;
 
+
 /**
  * Adds a listener to the specified target
- * @param  {!goog.events.EventHandler} target The target to add the event 
+ * @param  {!goog.events.EventHandler} target The target to add the event
  *    listener to.
- * @param  {string} The event type to subscribe to.
+ * @param  {string} type The event type to subscribe to.
  * @return {!Rx.Observable} The RxJS Observable object.
  */
 pn.rx.listen = function(target, type) {
@@ -25,12 +27,13 @@ pn.rx.listen = function(target, type) {
     var handler = function(eventObject) {
       observer.onNext(eventObject);
     };
-    pn.rx.eh_.listen(target, type, handler);    
+    pn.rx.eh_.listen(target, type, handler);
     return function() {
-      pn.rx.eh_.unlisten(target, type, handler);      
+      pn.rx.eh_.unlisten(target, type, handler);
     };
   });
 };
+
 
 /**
  * Converts an array to an RxJS Observable.
@@ -40,6 +43,7 @@ pn.rx.listen = function(target, type) {
 pn.rx.array = function(arr) {
   return Rx.Observable.fromArray(arr);
 };
+
 
 /**
  * Creates an RxJS Observable from an ajax request.
@@ -56,16 +60,16 @@ pn.rx.ajax = function(url, opt_xhr) {
   var onComplete = function(e) {
     if (xhr.isSuccess()) {
       as.onNext(xhr);
-      as.onCompleted();      
+      as.onCompleted();
       pn.rx.eh_.unlisten(xhr, goog.net.EventType.COMPLETE, onComplete);
       goog.dispose(xhr);
     } else {
-      as.onError(xhr);      
+      as.onError(xhr);
       pn.rx.eh_.unlisten(xhr, goog.net.EventType.COMPLETE, onComplete);
       goog.dispose(xhr);
     }
   };
-  pn.rx.eh_.listen(xhr, goog.net.EventType.COMPLETE, onComplete);  
-  xhr.send(url);  
+  pn.rx.eh_.listen(xhr, goog.net.EventType.COMPLETE, onComplete);
+  xhr.send(url);
   return as;
 };
