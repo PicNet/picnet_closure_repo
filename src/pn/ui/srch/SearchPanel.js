@@ -270,8 +270,7 @@ pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
 pn.ui.srch.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
   goog.object.forEach(this.filtersControls_, function(arr) {
-    this.eh_.unlisten(arr[0], goog.events.EventType.CHANGE);
-    this.eh_.unlisten(arr[1], goog.events.EventType.CLICK);
+    this.eh_.unlisten(arr[0], goog.events.EventType.CHANGE, this.doSearch_);
     goog.array.forEach(arr, goog.dispose);
   }, this);
   this.filtersControls_ = {};
@@ -351,14 +350,13 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     goog.dom.removeNode(fieldParent);
     goog.style.showElement(option, true);
 
-    this.eh_.unlisten(input, goog.events.EventType.CHANGE);
-    this.eh_.unlisten(remove, goog.events.EventType.CLICK);
+    this.eh_.unlisten(input, goog.events.EventType.CHANGE, this.doSearch_);
 
     this.doSearch_();
   }, this);
 
   this.eh_.listen(input, goog.events.EventType.CHANGE, this.doSearch_);
-  this.eh_.listen(remove, goog.events.EventType.CLICK, removeFilter);
+  this.eh_.listenOnce(remove, goog.events.EventType.CLICK, removeFilter);
 };
 
 
@@ -406,7 +404,6 @@ pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
   goog.dispose(this.resizeHide_);
 
   goog.object.forEach(this.filtersControls_, function(arr) {
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
     goog.array.forEach(arr, goog.dispose);
   }, this);
 
