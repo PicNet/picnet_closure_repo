@@ -11,6 +11,8 @@ c:\Python27\python.exe ^
   --root=src\ ^
   --output_mode=compiled ^
   --compiler_jar=U:\shared\lib\picnetcompiler.jar ^
+  --compiler_flags="--externs=src\pn\rx.externs.js" ^
+  --compiler_flags="--externs=src\pn\slick.grid.externs.js" ^
   --compiler_flags="--debug=true" ^
   --compiler_flags="--process_closure_primitives=true" ^
   --compiler_flags="--warning_level=VERBOSE" ^

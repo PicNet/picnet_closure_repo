@@ -101,8 +101,17 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 
   var div = goog.dom.createDom('div', 'details-container ' + this.spec.type);
   goog.dom.appendChild(element, div);
-
-  pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
+  if (this.cfg_.titleStrategy) {
+    var headerDiv = goog.dom.createDom('div', 'edit-head');
+    var title = this.cfg_.titleStrategy(this.spec, this.entity, this.cache_);
+    var titleDiv = goog.dom.createDom('div', 'edit-title');
+    titleDiv.innerHTML = title;
+    goog.dom.appendChild(headerDiv, titleDiv);
+    goog.dom.appendChild(div, headerDiv);
+    pn.ui.edit.Edit.superClass_.decorateInternal.call(this, headerDiv);
+  } else {
+    pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
+  }
   if (this.cfg_.template) {
     var html = this.cfg_.template(this.entity);
     var templateDiv = goog.dom.htmlToDocumentFragment(html);

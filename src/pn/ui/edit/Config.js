@@ -42,6 +42,10 @@ pn.ui.edit.Config =
 
   /** @type {boolean} */
   this.autoFocus = true;
+
+  /** @type {null|
+      function(!pn.ui.UiSpec,!Object,!Object.<!Array.<!Object>>):string} */
+  this.titleStrategy = null;
 };
 goog.inherits(pn.ui.edit.Config, pn.ui.BaseConfig);
 

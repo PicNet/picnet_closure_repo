@@ -3,7 +3,7 @@
 // object and is hence lacking in any type information and documentation which 
 // is available in the rx-vsdoc.js file.
 
-Rx = function() {};
+var Rx = function() {};
 /** @constructor */
 Rx.CompositeDisposable = function() {};
 /** @type {Rx.CompositeDisposable} */
@@ -158,7 +158,7 @@ Rx.prototype.Observer;
  * @param {*} a
  * @param {*} b
  * @param {*} c
- * @return {*}
+ * @return {Rx.Observer}
  */
 Rx.Observer.prototype.create = function(a,b,c) {};
 /**
@@ -278,7 +278,10 @@ Rx.Observable.prototype.onErrorResumeNext = function() {};
 Rx.Observable.prototype.amb = function() {};
 /** @constructor */
 Rx.Subject = function() {};
-/** @type {Rx.Subject} */
+/** 
+ * @constructor 
+ * @extends {Rx.Observable}
+ */
 Rx.prototype.Subject;
 /**
  * @param {*} a
@@ -291,7 +294,10 @@ Rx.Subject.prototype.create = function(a,c) {};
  * @return {*}
  */
 Rx.Subject.prototype.fromNotifier = function(a) {};
-/** @constructor */
+/** 
+ * @constructor 
+ * @extends {Rx.Subject}
+ */
 Rx.AsyncSubject = function() {};
 /** @type {Rx.AsyncSubject} */
 Rx.prototype.AsyncSubject;
