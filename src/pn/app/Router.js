@@ -32,11 +32,8 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    */
   this.routes_ = null;
 
-  /**
-   * @private
-   * @type {!string}
-   */
-  this.defaultRoute_ = opt_defaultRoute || '';
+  /** @type {!string} */
+  this.defaultRoute = opt_defaultRoute || '';
 
   /**
    * @private
@@ -74,8 +71,8 @@ pn.app.Router.prototype.initialise = function(routes) {
   goog.asserts.assert(routes);
 
   this.routes_ = routes;
-  if (!this.defaultRoute_) {
-    this.defaultRoute_ = goog.object.getKeys(this.routes_)[0];
+  if (!this.defaultRoute) {
+    this.defaultRoute = goog.object.getKeys(this.routes_)[0];
   }
   this.history_.setEnabled(true);
 };
@@ -84,7 +81,7 @@ pn.app.Router.prototype.initialise = function(routes) {
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
   this.historyStack_.pop(); // Ignore current page
-  var to = this.historyStack_.pop() || this.defaultRoute_;
+  var to = this.historyStack_.pop() || this.defaultRoute;
   this.log_.fine('back: ' + to);
   // This will trigger a NAVIGATE event which will inturn call navigateImpl_
   this.history_.setToken(to);
@@ -122,11 +119,11 @@ pn.app.Router.prototype.navigate = function(path, opt_add) {
 pn.app.Router.prototype.navigateImpl_ = function(path, opt_add) {
   if (!path) {
     this.log_.fine('navigateImpl empty path going to defaultRoute');
-    this.history_.setToken(this.defaultRoute_);
+    this.history_.setToken(this.defaultRoute);
     return;
   }
   var tokens = path.split('/');
-  var to = tokens.splice(0, 1)[0] || this.defaultRoute_;
+  var to = tokens.splice(0, 1)[0] || this.defaultRoute;
   var add = opt_add !== false;
 
   var msg = 'navigateImpl path: ' + path + ' to: ' + to + ' add: ' + add;
