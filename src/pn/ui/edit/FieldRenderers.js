@@ -4,6 +4,7 @@ goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
 goog.require('pn.convert');
 goog.require('pn.date');
+goog.require('pn.ui.InputDatePicker');
 
 goog.provide('pn.ui.edit.FieldRenderers');
 
@@ -17,18 +18,14 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(field) {
   var dt = null;
   if (val) {
     dt = new goog.date.Date();
-    dt.setTime(/** @type {number} */ (val));
+    dt.setTime(/** @type {number} */(val));
     if (dt.getFullYear() <= 1970) dt = null;
   }
 
-  // fieldLabelInput not being disposed
-  var fieldLabelInput = new goog.ui.LabelInput('DD/MMM/YYYY');
-  fieldLabelInput.render(field.parentComponent);
-
-  var idp = new goog.ui.InputDatePicker(pn.date.dateFormat, pn.date.dateParser);
-  idp.getDatePicker().setShowWeekNum(false);
-  idp.decorate(fieldLabelInput.getElement());
-  if (dt) { idp.setDate(dt); }
+  var idp = new pn.ui.InputDatePicker(
+      pn.date.dateFormat, pn.date.dateParser, 'DD/MMM/YYYY');
+  idp.decorate(field.parentComponent);
+  idp.setDate(dt);
   return idp;
 };
 
@@ -109,20 +106,6 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(field) {
 
 /**
  * @param {!pn.ui.FieldCtx} field The field to render.
- * @return {!Element} The input control.
- */
-pn.ui.edit.FieldRenderers.textFieldRenderer = function(field) {
-  var inp = goog.dom.createDom('input', {
-    'type': 'text',
-    'value': field.getEntityValue() || ''
-  });
-  goog.dom.appendChild(field.parentComponent, inp);
-  return inp;
-};
-
-
-/**
- * @param {!pn.ui.FieldCtx} field The field to render.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(field) {
@@ -138,24 +121,10 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(field) {
 
 /**
  * @param {!pn.ui.FieldCtx} field The field to render.
- * @return {!Element} The password control.
- */
-pn.ui.edit.FieldRenderers.passwordRenderer = function(field) {
-  var inp = goog.dom.createDom('input', {
-    'type': 'password',
-    'value': field.getEntityValue() || ''
-  });
-  goog.style.showElement(field.parentComponent, false);
-  goog.dom.appendChild(field.parentComponent, inp);
-  return inp;
-};
-
-
-/**
- * @param {!pn.ui.FieldCtx} field The field to render.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.hiddenTextField = function(field) {
+
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
     'value': field.getEntityValue() || ''
