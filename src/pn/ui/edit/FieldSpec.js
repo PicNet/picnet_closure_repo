@@ -90,18 +90,18 @@ pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
    *    if the id is: ChildrenEntities then the tableType will become
    *    'Children'.
    *
-   * @type {string}
+   * @type {string|undefined}
    */
-  this.tableType = '';
+  this.tableType = undefined;
 
   /**
    * When displaying a table in this field this points to the UiSpec id that
    *    will be used when rendering this table. If this is not specified then
    *    it will be the same as the tableType.
    *
-   * @type {string}
+   * @type {string|undefined}
    */
-  this.tableSpec = '';
+  this.tableSpec = undefined;
 
   /**
    * When displaying a table we only display the children entities that are
@@ -139,10 +139,10 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {
-    if (!this.tableType && !this.renderer) {
+    if (!goog.isDef(this.tableType) && !this.renderer) {
       this.tableType = pn.data.EntityUtils.getTypeProperty(firstStep);
     }
-    if (!this.tableSpec && !this.renderer) {
+    if (!goog.isDef(this.tableSpec) && !this.renderer) {
       this.tableSpec = this.tableType;
     }
   }

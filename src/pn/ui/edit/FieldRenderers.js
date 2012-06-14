@@ -106,6 +106,20 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(field) {
 
 /**
  * @param {!pn.ui.FieldCtx} field The field to render.
+ * @return {!Element} The input control.
+ */
+pn.ui.edit.FieldRenderers.textFieldRenderer = function(field) {
+  var inp = goog.dom.createDom('input', {
+    'type': 'text',
+    'value': field.getEntityValue() || ''
+  });
+  goog.dom.appendChild(field.parentComponent, inp);
+  return inp;
+};
+
+
+/**
+ * @param {!pn.ui.FieldCtx} field The field to render.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(field) {
@@ -121,10 +135,24 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(field) {
 
 /**
  * @param {!pn.ui.FieldCtx} field The field to render.
+ * @return {!Element} The password control.
+ */
+pn.ui.edit.FieldRenderers.passwordRenderer = function(field) {
+  var inp = goog.dom.createDom('input', {
+    'type': 'password',
+    'value': field.getEntityValue() || ''
+  });
+  goog.style.showElement(field.parentComponent, false);
+  goog.dom.appendChild(field.parentComponent, inp);
+  return inp;
+};
+
+
+/**
+ * @param {!pn.ui.FieldCtx} field The field to render.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.hiddenTextField = function(field) {
-
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
     'value': field.getEntityValue() || ''
