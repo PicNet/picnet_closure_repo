@@ -64,6 +64,28 @@ pn.ui.InputDatePicker = function(opt_dtf, opt_dtp, opt_label) {
 goog.inherits(pn.ui.InputDatePicker, goog.ui.Component);
 
 
+/** @param {goog.date.Date?} date The date to set in the control. */
+pn.ui.InputDatePicker.prototype.setDate = function(date) {
+  this.idp_.setDate(date);
+};
+
+
+/**
+* Returns the selected date, if any.  Compares the dates from the date picker
+* and the input field, causing them to be synced if different.
+* @return {goog.date.Date?} The selected date, if any.
+*/
+pn.ui.InputDatePicker.prototype.getDate = function() {
+  return this.idp_.getDate();
+};
+
+
+/** @return {goog.ui.LabelInput} The label input control. */
+pn.ui.InputDatePicker.prototype.getInput = function() {
+  return this.fieldLabelInput_;
+};
+
+
 /** @inheritDoc */
 pn.ui.InputDatePicker.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
@@ -88,27 +110,10 @@ pn.ui.InputDatePicker.prototype.enterDocument = function() {
 
 
 /**
- * Called when the date is changed.
- *
  * @private
+ * Called when the date is changed.
  */
 pn.ui.InputDatePicker.prototype.onDateChanged_ = function() {
   var event = new goog.events.Event(goog.events.EventType.CHANGE, this);
   this.dispatchEvent(event);
-};
-
-
-/** @param {goog.date.Date?} date The date to set in the control. */
-pn.ui.InputDatePicker.prototype.setDate = function(date) {
-  this.idp_.setDate(date);
-};
-
-
-/**
-* Returns the selected date, if any.  Compares the dates from the date picker
-* and the input field, causing them to be synced if different.
-* @return {goog.date.Date?} The selected date, if any.
-*/
-pn.ui.InputDatePicker.prototype.getDate = function() {
-  return this.idp_.getDate();
 };

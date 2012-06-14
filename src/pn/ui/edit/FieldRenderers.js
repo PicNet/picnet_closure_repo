@@ -10,11 +10,11 @@ goog.provide('pn.ui.edit.FieldRenderers');
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!goog.ui.Component} The date control.
  */
-pn.ui.edit.FieldRenderers.dateRenderer = function(field) {
-  var val = field.getEntityValue();
+pn.ui.edit.FieldRenderers.dateRenderer = function(fctx) {
+  var val = fctx.getEntityValue();
   var dt = null;
   if (val) {
     dt = new goog.date.Date();
@@ -24,17 +24,17 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(field) {
 
   var idp = new pn.ui.InputDatePicker(
       pn.date.dateFormat, pn.date.dateParser, 'DD/MMM/YYYY');
-  idp.decorate(field.parentComponent);
+  idp.decorate(fctx.parentComponent);
   idp.setDate(dt);
   return idp;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The date control.
  */
-pn.ui.edit.FieldRenderers.timeRenderer = function(field) {
+pn.ui.edit.FieldRenderers.timeRenderer = function(fctx) {
   var picker = goog.dom.createDom('select', {
     'class': 'time-picker'
   });
@@ -52,21 +52,21 @@ pn.ui.edit.FieldRenderers.timeRenderer = function(field) {
       goog.dom.appendChild(picker, opt);
     }
   }
-  picker.value = field.getEntityValue();
-  goog.dom.appendChild(field.parentComponent, picker);
+  picker.value = fctx.getEntityValue();
+  goog.dom.appendChild(fctx.parentComponent, picker);
   return picker;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The cents input control.
  */
-pn.ui.edit.FieldRenderers.centsRenderer = function(field) {
-  var val = field.getEntityValue() || 0;
+pn.ui.edit.FieldRenderers.centsRenderer = function(fctx) {
+  var val = fctx.getEntityValue() || 0;
   var input = goog.dom.createDom('input', 'cents');
   input.value = pn.convert.centsToCurrency(/** @type {number} */ (val));
-  goog.dom.appendChild(field.parentComponent, input);
+  goog.dom.appendChild(fctx.parentComponent, input);
   input.getValue = function() {
     return pn.convert.currencyToCents(input.value);
   };
@@ -76,100 +76,100 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(field) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.FieldRenderers.boolRenderer = function(field) {
+pn.ui.edit.FieldRenderers.boolRenderer = function(fctx) {
   var inp = goog.dom.createDom('input', {'type': 'checkbox'});
-  inp.defaultChecked = inp.checked = (field.getEntityValue() === true);
-  goog.dom.appendChild(field.parentComponent, inp);
+  inp.defaultChecked = inp.checked = (fctx.getEntityValue() === true);
+  goog.dom.appendChild(fctx.parentComponent, inp);
   return inp;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.FieldRenderers.yesNoRenderer = function(field) {
+pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx) {
   var sel = goog.dom.createDom('select', 'yesno',
       goog.dom.createDom('option', {'value': '0'}, 'Select...'),
       goog.dom.createDom('option', {'value': 'true'}, 'Yes'),
       goog.dom.createDom('option', {'value': 'false'}, 'No')
       );
-  var val = field.getEntityValue();
+  var val = fctx.getEntityValue();
   sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
-  goog.dom.appendChild(field.parentComponent, sel);
+  goog.dom.appendChild(fctx.parentComponent, sel);
   return sel;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The input control.
  */
-pn.ui.edit.FieldRenderers.textFieldRenderer = function(field) {
+pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx) {
   var inp = goog.dom.createDom('input', {
     'type': 'text',
-    'value': field.getEntityValue() || ''
+    'value': fctx.getEntityValue() || ''
   });
-  goog.dom.appendChild(field.parentComponent, inp);
+  goog.dom.appendChild(fctx.parentComponent, inp);
   return inp;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The textarea control.
  */
-pn.ui.edit.FieldRenderers.textAreaRenderer = function(field) {
+pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx) {
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
-    'value': field.getEntityValue() || ''
+    'value': fctx.getEntityValue() || ''
   });
-  goog.dom.appendChild(field.parentComponent, textarea);
+  goog.dom.appendChild(fctx.parentComponent, textarea);
   return textarea;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The password control.
  */
-pn.ui.edit.FieldRenderers.passwordRenderer = function(field) {
+pn.ui.edit.FieldRenderers.passwordRenderer = function(fctx) {
   var inp = goog.dom.createDom('input', {
     'type': 'password',
-    'value': field.getEntityValue() || ''
+    'value': fctx.getEntityValue() || ''
   });
-  goog.style.showElement(field.parentComponent, false);
-  goog.dom.appendChild(field.parentComponent, inp);
+  goog.style.showElement(fctx.parentComponent, false);
+  goog.dom.appendChild(fctx.parentComponent, inp);
   return inp;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
  * @return {!Element} The textarea control.
  */
-pn.ui.edit.FieldRenderers.hiddenTextField = function(field) {
+pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx) {
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
-    'value': field.getEntityValue() || ''
+    'value': fctx.getEntityValue() || ''
   });
-  goog.style.showElement(field.parentComponent, false);
-  goog.dom.appendChild(field.parentComponent, inp);
+  goog.style.showElement(fctx.parentComponent, false);
+  goog.dom.appendChild(fctx.parentComponent, inp);
   return inp;
 };
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field to render.
- * @return {!Element} The text field control for search inputs.
+ * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @return {!Element} The text fctx control for search inputs.
  */
-pn.ui.edit.FieldRenderers.standardTextSearchField = function(field) {
+pn.ui.edit.FieldRenderers.standardTextSearchField = function(fctx) {
   var txt = goog.dom.createDom('input', {'type': 'text'});
-  goog.dom.appendChild(field.parentComponent, txt);
+  goog.dom.appendChild(fctx.parentComponent, txt);
   return txt;
 };
 
@@ -186,21 +186,21 @@ pn.ui.edit.FieldRenderers.standardTextSearchField = function(field) {
  */
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
-  var renderer = function(field) {
-    var manyToManys = goog.array.filter(field.cache[mappingEntity],
+  var renderer = function(fctx) {
+    var manyToManys = goog.array.filter(fctx.cache[mappingEntity],
         function(abrand) {
-          return abrand[parentIdField] === field.entity['ID'];
+          return abrand[parentIdField] === fctx.entity['ID'];
         });
     var adminIDs = goog.array.map(manyToManys, function(mm) {
       return mm[adminEntity + 'ID'];
     });
 
-    // Setting the value in the dataProperty of the field so that dirty
-    // checking handles fields with many to many lists.
-    field.entity[mappingEntity + 'Entities'] = adminIDs;
+    // Setting the value in the dataProperty of the fctx so that dirty
+    // checking handles fctxs with many to many lists.
+    fctx.entity[mappingEntity + 'Entities'] = adminIDs;
 
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
-    goog.array.forEach(field.cache[adminEntity], function(ae) {
+    goog.array.forEach(fctx.cache[adminEntity], function(ae) {
       var text = opt_displayStrategy ?
           opt_displayStrategy(ae) :
           ae[adminEntity + 'Name'];
@@ -213,7 +213,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
       });
       select.options.add(opt);
     });
-    goog.dom.appendChild(field.parentComponent, select);
+    goog.dom.appendChild(fctx.parentComponent, select);
     return select;
   };
   return renderer;
