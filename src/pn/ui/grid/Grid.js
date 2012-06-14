@@ -5,12 +5,12 @@ goog.provide('pn.ui.grid.Grid.EventType');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
-goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.app.AppEvents');
 goog.require('pn.data.EntityUtils');
+goog.require('pn.storage');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFind');
 
@@ -258,7 +258,7 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
  * @return {!Array.<!pn.ui.FieldCtx>} The sorted columns with saved widths.
  */
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
-  var state = goog.net.cookies.get(this.hash_);
+  var state = pn.storage.get(this.hash_);
   if (!state) return fctxs;
   var data = goog.json.unsafeParse(state);
   var ids = data['ids'];
@@ -372,6 +372,18 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.quickFind_ = new pn.ui.grid.QuickFind(
         this.cache_, this.fctxs_, this.slick_);
     this.quickFind_.init();
+    if (this.cfg_.persistFilters) {
+      var state = pn.storage.get(this.hash_);
+      if (state) {
+        var data = goog.json.unsafeParse(state);
+        this.quickFind_.setFilterStates(data['filters']);
+        var eventType = pn.ui.grid.QuickFind.EventType.FILTERED;
+        this.eh_.listen(
+            this.quickFind_, eventType, goog.bind(function() {
+              this.saveGridState_('saving');
+            }, this));
+      }
+    }
   }
 
   var rfr = goog.bind(function() {
@@ -387,7 +399,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
 /** @private */
 pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
-  var state = goog.net.cookies.get(this.hash_);
+  var state = pn.storage.get(this.hash_);
   if (!state) return;
   var data = goog.json.unsafeParse(state);
   var col = null,
@@ -461,7 +473,10 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c['width']; }),
     'sort': this.sort_
   };
-  goog.net.cookies.set(this.hash_, goog.json.serialize(data));
+  if (this.cfg_.persistFilters && this.quickFind_) {
+    data['filters'] = this.quickFind_.getFilterStates();
+  }
+  pn.storage.set(this.hash_, goog.json.serialize(data));
 };
 
 

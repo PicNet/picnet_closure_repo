@@ -1,7 +1,8 @@
 ﻿;
 goog.provide('pn.ui.grid.QuickFind');
 
-goog.require('goog.events.EventHandler');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventTarget');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
 goog.require('pn.ui.grid.ColumnSpec');
@@ -10,13 +11,13 @@ goog.require('pn.ui.grid.ColumnSpec');
 
 /**
  * @constructor
- * @extends {goog.events.EventHandler}
+ * @extends {goog.events.EventTarget}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @param {!Array.<!pn.ui.FieldCtx>} fctxs The column specs being displayed.
  * @param {!Slick.Grid} slick The instance of the slick grid.
  */
 pn.ui.grid.QuickFind = function(cache, fctxs, slick) {
-  goog.events.EventHandler.call(this, this);
+  goog.events.EventTarget.call(this);
 
   /**
    * @private
@@ -48,7 +49,7 @@ pn.ui.grid.QuickFind = function(cache, fctxs, slick) {
    */
   this.search_ = new pn.ui.filter.SearchEngine();
 };
-goog.inherits(pn.ui.grid.QuickFind, goog.events.EventHandler);
+goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
 
 
 /**
@@ -99,11 +100,17 @@ pn.ui.grid.QuickFind.prototype.init = function() {
   var dataView = this.slick_.getData();
   var qf = this.filters_;
 
+  var fire = goog.bind(function() {
+    var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
+    this.dispatchEvent(event);
+  }, this);
+
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
             /** @type {string} */ ($(this).val())).toLowerCase();
         dataView.refresh();
+        fire();
       });
 
   this.resize();
@@ -123,6 +130,43 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
     var width = $(headerTemplates[i]).width();
     goog.style.setWidth(header, Math.max(0, width - 1));
     goog.style.setWidth(input, Math.max(0, width - 3));
+  }
+};
+
+
+/**
+ * @return {!Object.<string>} The current states of the quick find filters.
+ */
+pn.ui.grid.QuickFind.prototype.getFilterStates = function() {
+  var states = {};
+  for (var i = 0; i < this.fctxs_.length; i++) {
+    var fctx = this.fctxs_[i];
+    var header = this.slick_.getHeaderRowColumn(fctx.id);
+    var input = goog.dom.getChildren(header)[0];
+    var value = input.value;
+    if (value) { states[fctx.id] = value; }
+  }
+  return states;
+};
+
+
+/**
+ * @param {!Object.<string>} states The states to set in the filters.
+ */
+pn.ui.grid.QuickFind.prototype.setFilterStates = function(states) {
+  if (!states) return;
+  var needsRefresh = false;
+  for (var i = 0; i < this.fctxs_.length; i++) {
+    var fctx = this.fctxs_[i];
+    if (!states[fctx.id]) continue;
+
+    var header = this.slick_.getHeaderRowColumn(fctx.id);
+    var input = goog.dom.getChildren(header)[0];
+    this.filters_[fctx.id] = input.value = states[fctx.id];
+    needsRefresh = true;
+  }
+  if (needsRefresh) {
+    this.slick_.getData().refresh();
   }
 };
 
@@ -159,4 +203,10 @@ pn.ui.grid.QuickFind.prototype.disposeInternal = function() {
   delete this.slick_;
   delete this.filters_;
   delete this.search_;
+};
+
+
+/** @enum {string} */
+pn.ui.grid.QuickFind.EventType = {
+  FILTERED: 'filtered'
 };

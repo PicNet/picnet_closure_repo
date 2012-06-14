@@ -43,6 +43,9 @@ pn.ui.grid.Config = function(columns, commands, opt_interceptor) {
   /** @type {boolean} */
   this.defaultSortAscending = true;
 
+  /** @type {boolean} */
+  this.persistFilters = true;
+
   /** @type {pn.ui.grid.Interceptor} */
   this.interceptor = opt_interceptor || new pn.ui.grid.Interceptor();
 
