@@ -2,6 +2,7 @@
 goog.provide('pn.ui.grid.Config');
 
 goog.require('pn.ui.BaseConfig');
+goog.require('pn.ui.grid.Interceptor');
 
 
 
@@ -12,8 +13,10 @@ goog.require('pn.ui.BaseConfig');
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
+ * @param {pn.ui.grid.Interceptor=} opt_interceptor An optional interceptor to
+ *    use to modify the internal workings of the grid.
  */
-pn.ui.grid.Config = function(columns, commands) {
+pn.ui.grid.Config = function(columns, commands, opt_interceptor) {
   goog.asserts.assert(columns.length > 0);
   goog.asserts.assert(commands);
 
@@ -39,6 +42,9 @@ pn.ui.grid.Config = function(columns, commands) {
 
   /** @type {boolean} */
   this.defaultSortAscending = true;
+
+  /** @type {pn.ui.grid.Interceptor} */
+  this.interceptor = opt_interceptor || new pn.ui.grid.Interceptor();
 
   //////////////////////////////////////////////////////////////////////////////
   // Slick Grid Properties

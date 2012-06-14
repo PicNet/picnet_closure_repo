@@ -35,6 +35,8 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   goog.ui.Component.call(this);
 
+  spec.gridConfig.interceptor.init(cache);
+
   /**
    * @private
    * @type {!pn.ui.UiSpec}
@@ -73,7 +75,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array}
    */
-  this.list_ = list;
+  this.list_ = this.spec_.gridConfig.interceptor.filterList(list);
 
 
   /**
