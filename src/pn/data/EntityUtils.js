@@ -30,9 +30,13 @@ pn.data.EntityUtils.getEntityDisplayValue =
   goog.asserts.assert(path);
   goog.asserts.assert(target);
 
-  target = pn.data.EntityUtils.
+  var cacheKey = path + '_cache';
+  if (goog.isDef(target[cacheKey])) return target[cacheKey];
+
+  var entities = pn.data.EntityUtils.
       getTargetEntity(cache, path, target, opt_parentField);
-  return target.length > 1 ? target.join(', ') : target[0];
+  var value = entities.length > 1 ? entities.join(', ') : entities[0];
+  return (target[cacheKey] = value);
 };
 
 
