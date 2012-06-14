@@ -211,7 +211,19 @@ pn.ui.FieldCtx.prototype.getFieldRenderer = function() {
 
   if (this.spec.renderer) return this.spec.renderer;
   if (!this.schema) return null;
-  return pn.app.ctx.cfg.defaultFieldRenderers[this.schema.type] || null;
+
+  if (this.spec.readonly) {
+    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[this.schema.type] ||
+        pn.ui.edit.ReadOnlyFields.textField;
+  } else {
+    var schemaType = this.schema.type;
+    if (schemaType === 'String' &&
+        this.schema.length >
+            pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
+      schemaType = 'LongString';
+    }
+    return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] || null;
+  }
 };
 
 

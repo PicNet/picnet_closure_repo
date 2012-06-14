@@ -150,7 +150,6 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   if (this.tableType && !this.tableParentField) {
     this.tableParentField = this.entitySpec.type + 'ID';
   }
-  if (this.readonly) { pn.ui.edit.ReadOnlyFields.toReadOnlyField(this); }
   if (this.renderer instanceof pn.ui.edit.ComplexRenderer && this.validator) {
     throw new Error('Complex renderers cannot have validators, ' +
         'please review field definition "' + this.id + '"');

@@ -20,6 +20,7 @@ pn.app.AppConfig = function() {
   goog.Disposable.call(this);
 
   var fr = pn.ui.edit.FieldRenderers,
+      rr = pn.ui.edit.ReadOnlyFields,
       cr = pn.ui.grid.ColumnRenderers;
 
   /** @type {boolean} */
@@ -34,8 +35,23 @@ pn.app.AppConfig = function() {
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'DateTime': fr.dateRenderer,
 
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'String': fr.textFieldRenderer,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'LongString': fr.textAreaRenderer,
+
     /** @type {number} */
-    textAreaLengthThreshold: 250
+    textAreaLengthThreshold: 500
+  };
+
+  /** @type {Object} */
+  this.defaultReadOnlyFieldRenderers = {
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'YesNo': rr.boolField,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'DateTime': rr.dateField
   };
 
   /** @type {Object} */
