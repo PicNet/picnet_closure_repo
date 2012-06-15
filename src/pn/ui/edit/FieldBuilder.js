@@ -31,11 +31,6 @@ pn.ui.edit.FieldBuilder.getFieldLabel = function(fctx) {
 pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
   goog.asserts.assert(inp);
 
-  if (inp.getDate) {
-    var d = inp.getDate();
-    if (d) d = new goog.date.Date(d.getYear(), d.getMonth(), d.getDate());
-    return d ? d.getTime() : 0;
-  }
   if (inp.getValue) { return inp.getValue(opt_target); }
   else if (inp.options) {
     var arr = [];
