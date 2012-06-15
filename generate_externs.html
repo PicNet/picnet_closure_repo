@@ -11,6 +11,7 @@ Object to extern: <input id='object_to_extern' type='text' value='jQuery' style=
 </body></html>
 <script>
 var externed = '';
+var debug = false;
 var ignored = [document, window, Date, Array, Number, Object, Function, JSON, Error];
 var done = {};
 
@@ -66,6 +67,8 @@ function go() {
 };
 
 function externImpl(ctor, o, name) {  
+  dbg('Start');
+
   done = {};
   externFunction(name, ctor, true);  
   externObject(o, name + '.prototype.');
@@ -73,6 +76,8 @@ function externImpl(ctor, o, name) {
 };
 
 function externObject(o, prefix) {    
+  dbg('externObject - prefix [' + prefix + ']');
+
   if (ignored.indexOf(o) >= 0) return;
   for (var i in o) {    
     if (!isValidPropName(i)) continue; // Invalid prop name  
@@ -113,16 +118,23 @@ function isValidPropName(propName) {
 };
 
 function externConstructor(name, prop) {  
-  try { var instance = new prop(); } catch (ex) { return; }  
+  dbg('externConstructor - name [' + name + ']');
+
+  try { 
+    var instance = new prop(); 
+    instance.typeName_ = name;
+  } catch (ex) { return; }  
   externInnerObject(name, prop, name.replace('.prototype', ''));  
 };
 
 function externFunction(name, prop, constructor) {    
+  dbg('externFunction - name [' + name + ']');
+
   var desc = prop.toString();
   var paramNames = getParamNames(desc);
   var ret = hasReturn(desc);
   if (ret || paramNames.length) {
-    externed += '\n/**';
+    externed += '\n\n/**';
     if (constructor === true) { externed += '\n * @constructor'; }
     for (var i = 0; i < paramNames.length; i++) {
       externed += '\n * @param {*} ' + paramNames[i];  
@@ -130,6 +142,7 @@ function externFunction(name, prop, constructor) {
     if (ret && !constructor) { externed += '\n * @return {*}'; }
     externed += '\n */';
   }
+  if (name.indexOf('.') < 0) name = 'var ' + name;
   externed += '\n' + name + 
     ' = function(' + paramNames.join(',') + ') {};';
 };
@@ -149,13 +162,18 @@ function externInnerObject(name, prop, fieldName) {
   if (done[key] === 1) { return; }
   done[key] = 1;
     
-  externed += '\n/** @constructor */\n';      
+  externed += '\n\n/** @constructor */\n';      
   if (fieldName.indexOf('.') > 0) {
     externed += fieldName + ' = function() {};'
   } else {
     externed += 'function ' + fieldName + '() {};'
   }
-  externed += '\n/** @type {' + fieldName +'} */\n' + name + ';';      
+  externed += '\n\n/** @type {' + fieldName +'} */\n' + name + ';';      
   externObject(prop, fieldName + '.prototype.');
+};
+
+function dbg(msg) {
+  if (!debug) return;
+  externed += '\nDEBUG: ' + msg + '\n';
 };
 </script>

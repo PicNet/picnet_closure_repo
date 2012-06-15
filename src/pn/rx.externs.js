@@ -3,173 +3,168 @@
 // object and is hence lacking in any type information and documentation which 
 // is available in the rx-vsdoc.js file.
 
+
 var Rx = function() {};
-/** @constructor */
+
+/** 
+ * @constructor 
+ * @extends {Rx.Disposable}
+ */
 Rx.CompositeDisposable = function() {};
+
 /** @type {Rx.CompositeDisposable} */
 Rx.prototype.CompositeDisposable;
-/** @constructor */
+
+/** 
+ * @constructor
+ * @implements {goog.disposable.IDisposable}
+ */
 Rx.Disposable = function() {};
+
+/** @inheritDoc */
+Rx.Disposable.prototype.dispose = function() {};
+
+/** @inheritDoc */
+Rx.Disposable.prototype.isDisposed = function() {};
+
 /** @type {Rx.Disposable} */
 Rx.prototype.Disposable;
+
 /**
  * @param {*} a
- * @return {*}
+ * @return {!Rx.Disposable}
  */
-Rx.Disposable.prototype.create = function(a) {};
+Rx.Disposable.create = function(a) {};
+
 /** @constructor */
 function empty() {};
+
 /** @type {empty} */
 Rx.Disposable.prototype.empty;
 empty.prototype.dispose = function() {};
-/** @constructor */
+
+/** 
+ * @constructor 
+ * @extends {Rx.Disposable}
+ */
 Rx.SingleAssignmentDisposable = function() {};
+
 /** @type {Rx.SingleAssignmentDisposable} */
 Rx.prototype.SingleAssignmentDisposable;
+
 /** @constructor */
 Rx.SerialDisposable = function() {};
+
 /** @type {Rx.SerialDisposable} */
 Rx.prototype.SerialDisposable;
+
 /** @constructor */
 Rx.RefCountDisposable = function() {};
+
 /** @type {Rx.RefCountDisposable} */
 Rx.prototype.RefCountDisposable;
+
 /** @constructor */
 Rx.Scheduler = function() {};
+
 /** @type {Rx.Scheduler} */
 Rx.prototype.Scheduler;
 Rx.Scheduler.prototype.now = function() {};
+
 /**
  * @param {*} a
  * @return {*}
  */
 Rx.Scheduler.prototype.normalize = function(a) {};
+
 /** @constructor */
 Rx.VirtualTimeScheduler = function() {};
+
 /** @type {Rx.VirtualTimeScheduler} */
 Rx.prototype.VirtualTimeScheduler;
 Rx.VirtualTimeScheduler.prototype.now = function() {};
+
 /**
  * @param {*} a
  * @return {*}
  */
 Rx.VirtualTimeScheduler.prototype.normalize = function(a) {};
-/** @constructor */
-function base() {};
-/** @type {base} */
-Rx.VirtualTimeScheduler.prototype.base;
-/**
- * @param {*} a
- * @return {*}
- */
-base.prototype.schedule = function(a) {};
-/**
- * @param {*} a
- * @param {*} b
- * @return {*}
- */
-base.prototype.scheduleWithState = function(a,b) {};
-/**
- * @param {*} a
- * @param {*} b
- * @return {*}
- */
-base.prototype.scheduleWithRelative = function(a,b) {};
-/**
- * @param {*} a
- * @param {*} b
- * @param {*} c
- * @return {*}
- */
-base.prototype.scheduleWithRelativeAndState = function(a,b,c) {};
-/**
- * @param {*} a
- * @param {*} b
- * @return {*}
- */
-base.prototype.scheduleWithAbsolute = function(a,b) {};
-/**
- * @param {*} a
- * @param {*} b
- * @param {*} c
- * @return {*}
- */
-base.prototype.scheduleWithAbsoluteAndState = function(a,b,c) {};
-/**
- * @param {*} a
- * @return {*}
- */
-base.prototype.scheduleRecursive = function(a) {};
-/**
- * @param {*} a
- * @param {*} c
- * @return {*}
- */
-base.prototype.scheduleRecursiveWithState = function(a,c) {};
-/**
- * @param {*} a
- * @param {*} b
- * @return {*}
- */
-base.prototype.scheduleRecursiveWithRelative = function(a,b) {};
-/**
- * @param {*} a
- * @param {*} b
- * @param {*} d
- * @return {*}
- */
-base.prototype.scheduleRecursiveWithRelativeAndState = function(a,b,d) {};
-/**
- * @param {*} a
- * @param {*} b
- * @return {*}
- */
-base.prototype.scheduleRecursiveWithAbsolute = function(a,b) {};
-/**
- * @param {*} a
- * @param {*} b
- * @param {*} c
- * @return {*}
- */
-base.prototype.scheduleRecursiveWithAbsoluteAndState = function(a,b,c) {};
+
 /** @constructor */
 Rx.Notification = function() {};
+
 /** @type {Rx.Notification} */
 Rx.prototype.Notification;
+
 /**
  * @param {*} a
  * @return {*}
  */
-Rx.Notification.prototype.createOnNext = function(a) {};
+Rx.Notification.createOnNext = function(a) {};
+
 /**
  * @param {*} a
  * @return {*}
  */
-Rx.Notification.prototype.createOnError = function(a) {};
+Rx.Notification.createOnError = function(a) {};
+
 /**
  * @return {*}
  */
-Rx.Notification.prototype.createOnCompleted = function() {};
-/** @constructor */
+Rx.Notification.createOnCompleted = function() {};
+
+/** 
+ * @constructor 
+ * @extends {Rx.Disposable}
+ */
 Rx.Observer = function() {};
+
 /** @type {Rx.Observer} */
 Rx.prototype.Observer;
+
 /**
  * @param {*} a
  * @param {*} b
  * @param {*} c
- * @return {Rx.Observer}
+ * @return {!Rx.Observer}
  */
-Rx.Observer.prototype.create = function(a,b,c) {};
+Rx.Observer.create = function(a,b,c) {};
+
 /**
  * @param {*} a
  * @return {*}
  */
-Rx.Observer.prototype.fromNotifier = function(a) {};
-/** @constructor */
+Rx.Observer.fromNotifier = function(a) {};
+
+/**
+ * @param {*} a
+ */
+Rx.Observer.prototype.onNext = function(a) {};
+
+/** 
+ * @constructor 
+ * @extends {Rx.Disposable}
+ */
 Rx.Observable = function() {};
+
 /** @type {Rx.Observable} */
 Rx.prototype.Observable;
+
+/**
+ * @param {*} a
+ */
+Rx.Observable.prototype.onNext = function(a) {};
+
+/**
+ * @param {*} a
+ */
+Rx.Observable.prototype.onCompleted = function(a) {};
+
+/**
+ * @param {*} a
+ */
+Rx.Observable.prototype.onError = function(a) {};
+
 /**
  * @param {*} a
  * @param {*} b
@@ -178,33 +173,33 @@ Rx.prototype.Observable;
  * @return {*}
  */
 Rx.Observable.prototype.start = function(a,b,c,d) {};
+
 /**
  * @param {*} a
  * @param {*} b
  * @return {*}
  */
 Rx.Observable.prototype.toAsync = function(a,b) {};
+
 /**
  * @return {*}
  */
 Rx.Observable.prototype.never = function() {};
-/**
- * @param {*} a
- * @return {*}
- */
-Rx.Observable.prototype.empty = function(a) {};
+
 /**
  * @param {*} a
  * @param {*} b
  * @return {*}
  */
 Rx.Observable.prototype.returnValue = function(a,b) {};
+
 /**
  * @param {*} a
  * @param {*} b
  * @return {*}
  */
 Rx.Observable.prototype.throwException = function(a,b) {};
+
 /**
  * @param {*} a
  * @param {*} b
@@ -214,33 +209,39 @@ Rx.Observable.prototype.throwException = function(a,b) {};
  * @return {*}
  */
 Rx.Observable.prototype.generate = function(a,b,c,d,e) {};
+
 /**
  * @param {*} a
  * @return {*}
  */
 Rx.Observable.prototype.defer = function(a) {};
+
 /**
  * @param {*} a
  * @param {*} b
  * @return {*}
  */
 Rx.Observable.prototype.using = function(a,b) {};
+
 /**
  * @param {*} a
- * @param {*} b
- * @return {*}
+ * @param {*=} opt_b
+ * @return {!Rx.Observable}
  */
-Rx.Observable.prototype.fromArray = function(a,b) {};
-/**
- * @param {*} a
- * @return {*}
- */
-Rx.Observable.prototype.createWithDisposable = function(a) {};
+Rx.Observable.fromArray = function(a,opt_b) {};
+
 /**
  * @param {*} a
  * @return {*}
  */
-Rx.Observable.prototype.create = function(a) {};
+Rx.Observable.createWithDisposable = function(a) {};
+
+/**
+ * @param {*} a
+ * @return {!Rx.Observable}
+ */
+Rx.Observable.create = function(a) {};
+
 /**
  * @param {*} a
  * @param {*} b
@@ -248,6 +249,7 @@ Rx.Observable.prototype.create = function(a) {};
  * @return {*}
  */
 Rx.Observable.prototype.range = function(a,b,c) {};
+
 /**
  * @param {*} a
  * @param {*} b
@@ -255,81 +257,100 @@ Rx.Observable.prototype.range = function(a,b,c) {};
  * @return {*}
  */
 Rx.Observable.prototype.repeat = function(a,b,c) {};
+
 /**
  * @param {*} a
  * @return {*}
  */
 Rx.Observable.prototype.merge = function(a) {};
+
 /**
  * @return {*}
  */
 Rx.Observable.prototype.concat = function() {};
+
 /**
  * @return {*}
  */
 Rx.Observable.prototype.catchException = function() {};
+
 /**
  * @return {*}
  */
 Rx.Observable.prototype.onErrorResumeNext = function() {};
+
 /**
  * @return {*}
  */
 Rx.Observable.prototype.amb = function() {};
-/** @constructor */
-Rx.Subject = function() {};
+
 /** 
  * @constructor 
  * @extends {Rx.Observable}
  */
+Rx.Subject = function() {};
+
+/** @type {Rx.Subject} */
 Rx.prototype.Subject;
+
 /**
  * @param {*} a
  * @param {*} c
- * @return {*}
+ * @return {!Rx.Subject}
  */
-Rx.Subject.prototype.create = function(a,c) {};
+Rx.Subject.create = function(a,c) {};
+
 /**
  * @param {*} a
- * @return {*}
+ * @return {!Rx.Subject}
  */
-Rx.Subject.prototype.fromNotifier = function(a) {};
+Rx.Subject.fromNotifier = function(a) {};
+
 /** 
  * @constructor 
  * @extends {Rx.Subject}
  */
 Rx.AsyncSubject = function() {};
+
 /** @type {Rx.AsyncSubject} */
 Rx.prototype.AsyncSubject;
+
 /**
  * @param {*} a
  * @param {*} b
  * @param {*} c
- * @return {*}
+ * @return {!Rx.AsyncSubject}
  */
-Rx.AsyncSubject.prototype.create = function(a,b,c) {};
+Rx.AsyncSubject.create = function(a,b,c) {};
+
 /**
  * @param {*} a
- * @return {*}
+ * @return {!Rx.AsyncSubject}
  */
-Rx.AsyncSubject.prototype.fromNotifier = function(a) {};
+Rx.AsyncSubject.fromNotifier = function(a) {};
+
 /** @constructor */
 Rx.BehaviorSubject = function() {};
+
 /** @type {Rx.BehaviorSubject} */
 Rx.prototype.BehaviorSubject;
+
 /**
  * @param {*} a
  * @param {*} b
  * @param {*} c
- * @return {*}
+ * @return {!Rx.BehaviorSubject}
  */
-Rx.BehaviorSubject.prototype.create = function(a,b,c) {};
+Rx.BehaviorSubject.create = function(a,b,c) {};
+
 /**
  * @param {*} a
- * @return {*}
+ * @return {!Rx.BehaviorSubject}
  */
-Rx.BehaviorSubject.prototype.fromNotifier = function(a) {};
+Rx.BehaviorSubject.fromNotifier = function(a) {};
+
 /** @constructor */
 Rx.ReplaySubject = function() {};
+
 /** @type {Rx.ReplaySubject} */
 Rx.prototype.ReplaySubject;

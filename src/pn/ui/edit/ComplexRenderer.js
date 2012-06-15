@@ -45,14 +45,17 @@ pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
  */
 pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 
+
 /**
  * Any additional entity types that need to be added to the context cache
- *    when showing this renderer. 
- * @return {!Array.<string>}
+ *    when showing this renderer.
+ * @return {!Array.<string>} Any additional types to cache to enable the
+ *    use of this renderer.
  */
-pn.ui.edit.ComplexRenderer.prototype.getAdditionalCacheTypes = function() { 
-  return []; 
+pn.ui.edit.ComplexRenderer.prototype.getAdditionalCacheTypes = function() {
+  return [];
 };
+
 
 /**
  * Optional

@@ -16,8 +16,8 @@ pn.rx.eh_;
 
 /**
  * Adds a listener to the specified target
- * @param  {!goog.events.EventHandler} target The target to add the event
- *    listener to.
+ * @param  {(EventTarget|goog.events.EventTarget)} target The target to add
+ *    the event listener to.
  * @param  {string} type The event type to subscribe to.
  * @return {!Rx.Observable} The RxJS Observable object.
  */

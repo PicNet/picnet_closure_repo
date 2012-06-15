@@ -1,0 +1,1 @@
+cleancode.bat && compile.bat
