@@ -142,7 +142,6 @@ pn.ui.edit.FieldRenderers.passwordRenderer = function(fctx) {
     'type': 'password',
     'value': fctx.getEntityValue() || ''
   });
-  goog.style.showElement(fctx.parentComponent, false);
   goog.dom.appendChild(fctx.parentComponent, inp);
   return inp;
 };
