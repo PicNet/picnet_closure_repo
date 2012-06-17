@@ -66,33 +66,24 @@ pn.ui.edit.CommandsComponent = function(spec, entity) {
 goog.inherits(pn.ui.edit.CommandsComponent, goog.ui.Component);
 
 
-/**
- * @protected
- * @return {boolean} If this form is valid.
- */
-pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
-
-
-/**
- * Adds or removes a 'required' class to all required fields.
- * @protected
- */
-pn.ui.edit.CommandsComponent.prototype.updateRequiredClasses =
-    goog.abstractMethod;
-
-
-/**
- * @protected
- * @return {!Array.<string>} Any errors in the form.
- */
+/** @return {!Array.<string>} Any errors in the form. */
 pn.ui.edit.CommandsComponent.prototype.getFormErrors = goog.abstractMethod;
 
 
+/** @return {boolean} If this form is valid. */
+pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
+
+
+/** @return {!Object} The current form data (Read from input controls). */
+pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
+
+
 /**
  * @protected
- * @return {!Object} The current form data (Read from input controls).
+ * Adds or removes a 'required' class to all required fields.
  */
-pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
+pn.ui.edit.CommandsComponent.prototype.updateRequiredClasses =
+    goog.abstractMethod;
 
 
 /**

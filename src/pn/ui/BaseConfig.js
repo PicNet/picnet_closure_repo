@@ -42,11 +42,6 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
     var additional = fSpec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
 
-    if (fSpec.renderer instanceof pn.ui.edit.ComplexRenderer) {
-      additional = fSpec.renderer.getAdditionalCacheTypes();
-      if (additional.length) { types = goog.array.concat(types, additional); }
-    }
-
     if (fSpec.displayPath) {
       goog.array.forEach(fSpec.displayPath.split('.'), addIfType);
     }
