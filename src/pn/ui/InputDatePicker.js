@@ -70,6 +70,14 @@ pn.ui.InputDatePicker.prototype.setDate = function(date) {
 };
 
 
+/** @return {goog.date.Date} The selected date. */
+pn.ui.InputDatePicker.prototype.getDate = function() {
+  var d = this.idp_.getDate();
+  if (d) d = new goog.date.Date(d.getYear(), d.getMonth(), d.getDate());
+  return d;
+};
+
+
 /**
 * Returns the selected date, if any.  Compares the dates from the date picker
 * and the input field, causing them to be synced if different.
