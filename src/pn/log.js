@@ -14,7 +14,7 @@ goog.provide('pn.log');
  * @const
  * @type {boolean}
  */
-pn.log.OFF_ = true;
+pn.log.OFF_ = false;
 
 
 /**

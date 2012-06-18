@@ -36,8 +36,8 @@ pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 pn.date.isWeekday = function(date) {
   goog.asserts.assert(date);
 
-  var day = date.getDay();
-  return day !== 6 && day !== 0;
+  var day = date.getIsoWeekday();
+  return day !== goog.date.weekDay.SAT && day !== goog.date.weekDay.SUN;
 };
 
 
