@@ -57,13 +57,13 @@ pn.app.AppConfig = function() {
   /** @type {Object} */
   this.defaultColumnRenderers = {
 
-    /** @type {function(!pn.ui.FieldCtx):string} */
+    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'YesNo': cr.yesNoBoolRenderer,
 
-    /** @type {function(!pn.ui.FieldCtx):string} */
+    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'DateTime': cr.dateRenderer,
 
-    /** @type {function(!pn.ui.FieldCtx):string} */
+    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'Int64': cr.parentColumnRenderer
   };
 };

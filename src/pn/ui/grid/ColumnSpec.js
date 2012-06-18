@@ -59,9 +59,17 @@ pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
    *    field context for the current column and the current row details.
    *    The renderer then returns a html string of the value to display.
    *
-   * @type {undefined|function(!pn.ui.FieldCtx):string}
+   * @type {pn.ui.grid.ColumnSpec.Renderer}
    */
   this.renderer = undefined;
+
+  /**
+   * An optional funciton that returns a string or a number (any compareable
+   *    value really).  This value is then used for sorting.
+   *
+   * @type {pn.ui.grid.ColumnSpec.SortValueRenderer}
+   */
+  this.sortValueRenderer = undefined;
 
   /**
    * Wether this column should show in the totals legend at the bottom of the
@@ -128,3 +136,11 @@ pn.ui.grid.ColumnSpec.prototype.disposeInternal = function() {
 
   delete this.renderer;
 };
+
+
+/** @typedef {(undefined|function(!pn.ui.FieldCtx):string)} */
+pn.ui.grid.ColumnSpec.Renderer;
+
+
+/** @typedef {(undefined|function(!pn.ui.FieldCtx):(string|number))} */
+pn.ui.grid.ColumnSpec.SortValueRenderer;

@@ -138,6 +138,8 @@ pn.ui.FieldCtx.prototype.getDisplayValue = function() {
 pn.ui.FieldCtx.prototype.getCompareableValue = function() {
   goog.asserts.assert(this.spec instanceof pn.ui.grid.ColumnSpec);
 
+  if (this.spec.sortValueRenderer) { return this.spec.sortValueRenderer(this); }
+
   var renderer = this.getColumnRenderer();
   var useRealValue =
       !renderer ||
@@ -189,7 +191,7 @@ pn.ui.FieldCtx.prototype.validate = function() {
 
 
 /**
- * @return {null|function(!pn.ui.FieldCtx):string} The specified
+ * @return {(pn.ui.grid.ColumnSpec.Renderer|null)} The specified
  *    column renderer or an implied renderer from the given column schema type.
  */
 pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
