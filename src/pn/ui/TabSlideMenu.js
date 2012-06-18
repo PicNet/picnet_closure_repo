@@ -83,8 +83,9 @@ pn.ui.TabSlideMenu = function(element, args) {
 pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
   this.settings_.tabHandle = args.tabHandle;
   this.settings_.toggleButton = args.toggleButton || '.open-close-tab';
-  this.settings_.toggleButton =
-      pn.dom.getElement(this.settings_.toggleButton);
+  this.settings_.toggleButton = goog.isString(this.settings_.toggleButton) ?
+      pn.dom.getElement(this.settings_.toggleButton) :
+      this.settings_.toggleButton;
 
   this.settings_.speed = args.speed || 300;
   this.settings_.action = args.action || 'click';
@@ -95,9 +96,9 @@ pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
   this.settings_.fixedPosition = args.fixedPosition || false;
   this.settings_.positioning = this.settings_.fixedPosition ?
       'fixed' : (args.positioning || 'absolute');
-  this.settings_.pathToTabImage = args.pathToTabImage || null;
-  this.settings_.imageHeight = args.imageHeight || null;
-  this.settings_.imageWidth = args.imageWidth || null;
+  this.settings_.pathToTabImage = args.pathToTabImage || '';
+  this.settings_.imageHeight = args.imageHeight || 0;
+  this.settings_.imageWidth = args.imageWidth || 0;
   this.settings_.onLoadSlideOut = args.onLoadSlideOut || false;
   this.settings_.handleOffset = args.handleOffset || 0;
   if (goog.isDefAndNotNull(this.settings_.pathToTabImage)) {

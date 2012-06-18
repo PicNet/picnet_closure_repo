@@ -99,7 +99,7 @@ pn.data.WebSQLRepository.prototype.saveList =
     callback.call(opt_handler || this, true);
   }, this), goog.bind(function(tx, err) {
     this.error('savelist', [], err);
-  }));
+  }, this));
 };
 
 
