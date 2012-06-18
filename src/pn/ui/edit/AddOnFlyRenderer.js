@@ -96,11 +96,13 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
 
   goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {
     if (e.key === 'cancel') {
+      goog.dispose(edit);
       dialog.dispose();
       return;
     }
     if (this.validate_(edit)) {
       dialog.dispose();
+      goog.dispose(edit);
       this.doAdd_(edit);
     }
   }, false, this);
