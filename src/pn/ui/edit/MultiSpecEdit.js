@@ -10,6 +10,7 @@ goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.TabBar');
 goog.require('pn.dom');
 goog.require('pn.object');
+goog.require('pn.ui.IDirtyAware');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
@@ -26,6 +27,8 @@ goog.require('pn.ui.grid.Grid.EventType');
 /**
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
+ * @implements {pn.ui.IDirtyAware}
+ *
  * @param {!Object} entity The entity to edit, null for new entity.
  * @param {!Object.<Array>} cache The entities cache to use for
  *    related entities.
@@ -124,9 +127,7 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
 };
 
 
-/**
- * @return {boolean} Wether the current edit screen is dirty.
- */
+/** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
   return goog.array.findIndex(this.edits, function(c) {
     return c.edit && c.edit.isDirty && c.edit.isDirty();
@@ -134,7 +135,7 @@ pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
 };
 
 
-/** Resets the dirty state of the current view */
+/** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
   goog.array.forEach(this.edits, function(c) {
     if (c.edit.resetDirty) c.edit.resetDirty();

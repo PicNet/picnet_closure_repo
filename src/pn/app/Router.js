@@ -3,6 +3,7 @@ goog.provide('pn.app.Router');
 
 goog.require('goog.History');
 goog.require('goog.asserts');
+goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.history.EventType');
 goog.require('pn.log');
@@ -11,14 +12,14 @@ goog.require('pn.log');
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventTarget}
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
  * @param {boolean=} opt_invisible True to use hidden history states instead
  *    of the user-visible location hash.
  */
 pn.app.Router = function(opt_defaultRoute, opt_invisible) {
-  goog.Disposable.call(this);
+  goog.events.EventTarget.call(this);
 
   /**
    * @private
@@ -48,7 +49,7 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    * @private
    * @type {!Array}
    */
-  this.historyStack_ = [];
+  this.stack_ = [];
 
   /**
    * @private
@@ -56,17 +57,12 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    */
   this.history_ = new goog.History(opt_invisible,
       opt_invisible ? 'blank.htm' : '');
-
-  var historyEvent = goog.history.EventType.NAVIGATE;
-  this.eh_.listen(this.history_, historyEvent, function(e) {
-    this.navigateImpl_(e.token);
-  });
 };
-goog.inherits(pn.app.Router, goog.Disposable);
+goog.inherits(pn.app.Router, goog.events.EventTarget);
 
 
 /**
- * Enable the router and parse the first history token
+ * Enable the router and parse the first history token.
  * @param {!Object.<function(?):undefined>} routes The routes to use in this
  *    application.
  */
@@ -77,68 +73,127 @@ pn.app.Router.prototype.initialise = function(routes) {
   if (!this.defaultRoute_) {
     this.defaultRoute_ = goog.object.getKeys(this.routes_)[0];
   }
+  this.setEnabled_(true);
   this.history_.setEnabled(true);
 };
 
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
-  this.historyStack_.pop(); // Ignore current page
-  var to = this.historyStack_.pop() || this.defaultRoute_;
-  this.log_.fine('back: ' + to);
-  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+  var to = this.stack_[this.stack_.length - 2] || this.defaultRoute_;
   this.history_.setToken(to);
 };
 
 
-/** @return {string} the top of the history stack (if any). */
-pn.app.Router.prototype.pop = function() {
-  return this.historyStack_.pop();
+/**
+ * Replacing a token means that the existing browser location will be removed
+ *    from the stack, both from the internal stack and the browser history
+ *    stack.
+ * @param {!string} path The token to replace the current token with.
+ */
+pn.app.Router.prototype.replaceToken = function(path) {
+  goog.asserts.assert(path);
+
+  this.stack_.pop();
+  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+  this.history_.replaceToken(path);
 };
 
 
 /**
+ * Navigating to a path will add that path to the history stack.  Meaning the
+ *    current page will be navigateable by calling router.back() or pressing
+ *    the browser back button.
  * @param {!string} path The full route path to navigate to.
- * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.app.Router.prototype.navigate = function(path, opt_add) {
+pn.app.Router.prototype.navigate = function(path) {
   goog.asserts.assert(path);
-  var add = opt_add !== false;
-  if (add) {
-    this.log_.fine('path: ' + path + ' added to history stack');
-    // This will trigger a NAVIGATE event which will inturn call navigateImpl_
-    this.history_.setToken(path);
-  } else {
-    this.navigateImpl_(path);
+  this.log_.fine('path: ' + path + ' added to history stack');
+  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+  this.history_.setToken(path);
+};
+
+
+/**
+ * @private
+ * @param {goog.history.Event} e The history event.
+ */
+pn.app.Router.prototype.onNavigate_ = function(e) {
+  this.log_.fine('onNavigate isNavigation: ' + e.isNavigation);
+  if (!this.fireNavigating_()) {
+    this.undoLastNavigation_();
+    return;
   }
+  this.navigateImpl_(e.token);
+};
+
+
+/**
+ * @private
+ * @return {boolean} False if this navigation event is cancelled.
+ */
+pn.app.Router.prototype.fireNavigating_ = function() {
+  var e = new goog.events.Event(pn.app.Router.EventType.NAVIGATING);
+  var continuing = this.dispatchEvent(e);
+  this.log_.fine('fireNavigating_ continuing: ' + continuing);
+  return continuing;
+};
+
+
+/** @private */
+pn.app.Router.prototype.undoLastNavigation_ = function() {
+  var last = this.stack_[this.stack_.length - 1] || this.defaultRoute_;
+  this.log_.fine('undoLastNavigation_ replacing: ' +
+      this.history_.getToken() + ' with: ' + last);
+
+  this.setEnabled_(false);
+  this.history_.setToken(last);
+  this.setEnabled_(true);
+};
+
+
+/**
+ * @private
+ * @param {boolean} enabled Wether the router is enabled. If not enabled no
+ *    navigate events will be fired.
+ */
+pn.app.Router.prototype.setEnabled_ = function(enabled) {
+  var historyEvent = goog.history.EventType.NAVIGATE;
+  this.eh_.unlisten(this.history_, historyEvent, this.onNavigate_);
+  if (!enabled) { return; }
+
+  this.eh_.listen(this.history_, historyEvent, this.onNavigate_);
 };
 
 
 /**
  * @private
  * @param {!string} path The full route path to navigate to.
- * @param {boolean=} opt_add Wether to add the path to the history stack.
  */
-pn.app.Router.prototype.navigateImpl_ = function(path, opt_add) {
+pn.app.Router.prototype.navigateImpl_ = function(path) {
+  this.log_.fine('navigateImpl_ path: ' + path);
   if (!path) {
     this.log_.fine('navigateImpl empty path going to defaultRoute');
     this.history_.setToken(this.defaultRoute_);
     return;
   }
+
   var tokens = path.split('/');
   var to = tokens.splice(0, 1)[0] || this.defaultRoute_;
-  var add = opt_add !== false;
-
-  var msg = 'navigateImpl path: ' + path + ' to: ' + to + ' add: ' + add;
-  this.log_.fine(msg);
+  this.log_.fine('navigateImpl path: ' + path + ' to: ' + to);
 
   var route = this.routes_[to];
-  if (!route) {
-    throw new Error('Navigation token [' + path + '] not supported');
+  if (!route) { throw new Error('Route [' + path + '] not supported'); }
+
+  var goingBack = path === this.stack_[this.stack_.length - 2];
+  if (goingBack) {
+    this.stack_.pop();
+    this.stack_.pop();
   }
 
-  if (add) { this.historyStack_.push(path); }
+  this.stack_.push(path);
   route.apply(this, tokens);
+  this.log_.fine('navigateImpl_ path: ' + path + ' stack: ' + this.stack_);
 };
 
 
@@ -156,4 +211,10 @@ pn.app.Router.prototype.disposeInternal = function() {
   delete this.routes_;
   delete this.history_;
   delete this.eh_;
+};
+
+
+/** @enum {string} */
+pn.app.Router.EventType = {
+  NAVIGATING: 'navigating'
 };

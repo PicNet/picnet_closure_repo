@@ -550,9 +550,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 };
 
 
-/**
- * @enum {string}
- */
+/** @enum {string} */
 pn.ui.grid.Grid.EventType = {
   ROW_SELECTED: 'row-selected',
   ADD: 'add',

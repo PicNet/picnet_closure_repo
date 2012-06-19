@@ -2,12 +2,15 @@
 goog.provide('pn.ui.TemplateWrapper');
 
 goog.require('goog.ui.Component');
+goog.require('pn.ui.IDirtyAware');
 
 
 
 /**
  * @constructor
  * @extends {goog.ui.Component}
+ * @implements {pn.ui.IDirtyAware}
+ *
  * @param {string} html The template html to display.
  * @param {string} idOfParent The id of the parent DOM element in the specified
  *    html to attach the component to.
@@ -49,6 +52,18 @@ goog.inherits(pn.ui.TemplateWrapper, goog.ui.Component);
 /** @inheritDoc */
 pn.ui.TemplateWrapper.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
+};
+
+
+/** @inheritDoc. */
+pn.ui.TemplateWrapper.prototype.isDirty = function() {
+  return this.component_.isDirty && this.component_.isDirty();
+};
+
+
+/** @inheritDoc. */
+pn.ui.TemplateWrapper.prototype.resetDirty = function() {
+  if (this.component_.resetDirty) this.component_.resetDirty();
 };
 
 
