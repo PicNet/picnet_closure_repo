@@ -49,7 +49,8 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
     [fr.dateRenderer, rr.dateField],
     [fr.boolRenderer, rr.boolField],
     [fr.yesNoRenderer, rr.boolField],
-    [fr.centsRenderer, rr.centsField]
+    [fr.centsRenderer, rr.centsField],
+    [fr.intRenderer, rr.intField]
   ];
   if (goog.string.endsWith(fieldSpec.dataProperty, 'Entities')) {
     if (fieldSpec.renderer === null) return; // Leave grids alone
@@ -132,6 +133,16 @@ pn.ui.edit.ReadOnlyFields.centsField = function(fctx) {
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @return {!Element} The readonly int field.
+ */
+pn.ui.edit.ReadOnlyFields.intField = function(fctx) {
+  var type = pn.ui.edit.ReadOnlyFields.FieldType_.INT;
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+};
+
+
+/**
+ * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.ReadOnlyFields.boolField = function(fctx) {
@@ -205,6 +216,8 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       return value === true ? 'yes' : 'no';
     case ft.CENTS:
       return pn.convert.centsToCurrency(/** @type {number} */ (value));
+    case ft.INT:
+      return (value || 0).toString();
   }
   throw new Error('Type: ' + type + ' Not Supported');
 };
@@ -235,6 +248,7 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(fieldSpec) {
   else if (curr === fr.yesNoRenderer || curr === fr.boolRenderer ||
       curr === ro.boolField) return ft.BOOLEAN;
   else if (curr === fr.centsRenderer || curr === ro.centsField) return ft.CENTS;
+  else if (curr === fr.intRenderer || curr === ro.intField) return ft.INT;
   else return ft.DEFAULT;
 };
 
@@ -248,6 +262,7 @@ pn.ui.edit.ReadOnlyFields.FieldType_ = {
   TIME: 'time',
   BOOLEAN: 'boolean',
   CENTS: 'cents',
+  INT: 'int',
   ITEM_LIST: 'itemlist',
   DEFAULT: 'default'
 };
