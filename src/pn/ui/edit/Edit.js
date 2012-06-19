@@ -11,6 +11,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.dom');
 goog.require('pn.ui.FieldCtx');
+goog.require('pn.ui.IDirtyAware');
 goog.require('pn.ui.edit.Command');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
@@ -26,6 +27,8 @@ goog.require('pn.ui.grid.Grid');
 /**
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
+ * @implements {pn.ui.IDirtyAware}
+ *
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} entity The entity object to edit, {} for new entity.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
@@ -69,19 +72,25 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
 
-/**
- * @return {boolean} Wether the current edit screen is dirty.
- */
+/** @inheritDoc. */
 pn.ui.edit.Edit.prototype.isDirty = function() {
-  return goog.array.findIndex(this.getEditableFields_(), function(fctx) {
+  this.log_.fine('isDirty: ' + this.spec.id);
+  var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
     return this.cfg_.interceptor.isShown(fctx.id) && fctx.isDirty();
   }, this) >= 0;
+  this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
+  return dirty;
 };
 
 
-/** Resets the dirty state of the current view */
+/** @inheritDoc. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
+  this.log_.fine('resetDirty: ' + this.spec.id);
+
   this.entity = this.getCurrentFormData();
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+    goog.object.extend(fctx.entity, this.entity);
+  }, this);
 };
 
 

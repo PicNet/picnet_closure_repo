@@ -64,7 +64,6 @@ var testDeleteEntity = function () {
   provider.saveEntities({'TestEntity': [{ID:1,Name:'Data 1'}]}, function () {
     provider.deleteEntity(type, 1, function() {
       provider.ajax_.getEntities(type, function(entities) {
-       console.dir(entities);
         assertEquals(0, entities.length);
         asyncTestCase.continueTesting();
       }, this);      
