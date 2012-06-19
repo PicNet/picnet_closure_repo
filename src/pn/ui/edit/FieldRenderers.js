@@ -74,7 +74,25 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(field) {
     return pn.convert.currencyToCents(input.value);
   };
   return input;
+};
 
+
+/**
+ * @param {!pn.ui.FieldCtx} field The field to render.
+ * @return {!Element} The int input control.
+ */
+pn.ui.edit.FieldRenderers.intRenderer = function(field) {
+  var val = field.getEntityValue() || 0;
+  var input = goog.dom.createDom('input', {
+    'class': 'int-field',
+    'type': 'number'
+  });
+  input.value = val.toString();
+  goog.dom.appendChild(field.parentComponent, input);
+  input.getValue = function() {
+    return parseInt(input.value, 10) || 0;
+  };
+  return input;
 };
 
 
