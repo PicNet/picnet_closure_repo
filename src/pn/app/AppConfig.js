@@ -39,6 +39,9 @@ pn.app.AppConfig = function() {
     'String': fr.textFieldRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'Int32': fr.intRenderer,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'LongString': fr.textAreaRenderer,
 
     /** @type {number} */
@@ -51,7 +54,10 @@ pn.app.AppConfig = function() {
     'YesNo': rr.boolField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'DateTime': rr.dateField
+    'DateTime': rr.dateField,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'Int32': rr.intField
   };
 
   /** @type {Object} */
@@ -61,10 +67,7 @@ pn.app.AppConfig = function() {
     'YesNo': cr.yesNoBoolRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'DateTime': cr.dateRenderer,
-
-    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'Int64': cr.parentColumnRenderer
+    'DateTime': cr.dateRenderer
   };
 };
 goog.inherits(pn.app.AppConfig, goog.Disposable);

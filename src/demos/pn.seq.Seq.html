@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
@@ -176,8 +176,7 @@ function init() {
 };
 
 function go() {   
-  var txt = $('#shell').val();    
-  console.log(txt);
+  var txt = $('#shell').val();      
   eval('var result = ' + txt);    
   showResults(result);
   return false;

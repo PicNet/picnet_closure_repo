@@ -67,7 +67,6 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(field) {
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field) {
-
   return (pn.data.EntityUtils.getEntityDisplayValue(
       field.cache, field.spec.displayPath, field.entity) || '').toString();
 };

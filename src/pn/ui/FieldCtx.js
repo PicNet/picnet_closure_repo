@@ -202,7 +202,9 @@ pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
 
   if (goog.isDef(this.spec.renderer)) return this.spec.renderer;
   if (!this.schema) return null;
-  return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] || null;
+  return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
+      (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty) ?
+          pn.ui.grid.ColumnRenderers.parentColumnRenderer : null);
 };
 
 
@@ -213,7 +215,6 @@ pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
  */
 pn.ui.FieldCtx.prototype.getFieldRenderer = function() {
   goog.asserts.assert(this.spec instanceof pn.ui.edit.FieldSpec);
-
   if (this.spec.renderer) return this.spec.renderer;
   if (!this.schema) return null;
 
