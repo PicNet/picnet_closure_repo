@@ -77,7 +77,7 @@ pn.app.Router.prototype.initialise = function(routes) {
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
-  var to = this.stack_[this.stack_.length - 2] || this.defaultRoute_;
+  var to = this.stack_[this.stack_.length - 2] || this.defaultRoute;
   this.history_.setToken(to);
 };
 
@@ -139,7 +139,7 @@ pn.app.Router.prototype.fireNavigating_ = function() {
 
 /** @private */
 pn.app.Router.prototype.undoLastNavigation_ = function() {
-  var last = this.stack_[this.stack_.length - 1] || this.defaultRoute_;
+  var last = this.stack_[this.stack_.length - 1] || this.defaultRoute;
   this.log_.fine('undoLastNavigation_ replacing: ' +
       this.history_.getToken() + ' with: ' + last);
 
@@ -176,7 +176,7 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   }
 
   var tokens = path.split('/');
-  var to = tokens.splice(0, 1)[0] || this.defaultRoute_;
+  var to = tokens.splice(0, 1)[0] || this.defaultRoute;
   this.log_.fine('navigateImpl path: ' + path + ' to: ' + to);
 
   var route = this.routes_[to];
