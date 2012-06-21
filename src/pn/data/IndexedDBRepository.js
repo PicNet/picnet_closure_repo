@@ -6,11 +6,9 @@ goog.require('pn.data.IEntity');
 
 goog.provide('pn.data.IndexedDBRepository');
 
-if ('webkitIndexedDB' in window) {
+if (!window['indexedDB'] && 'webkitIndexedDB' in window) {
   window['indexedDB'] = window.webkitIndexedDB;
-  window['IDBTransaction'] = window.webkitIDBTransaction;
-  window['IDBKeyRange'] = window.webkitIDBKeyRange;
-} else if ('mozIndexedDB' in window) {
+} else if (!window['indexedDB'] && 'mozIndexedDB' in window) {
   window['indexedDB'] = window.mozIndexedDB;
 }
 
@@ -92,8 +90,8 @@ pn.data.IndexedDBRepository.prototype.getDatabase_ =
     callback.call(opt_handler, this.db_);
     return;
   }
-  this.runRequest_(window.indexedDB.open(
-      this.databaseName, this.databaseName),
+  var name = this.databaseName;
+  this.runRequest_(window['indexedDB'].open(name, name),
       function(result) {
         this.db_ = result;
         if (this.db_.version === '1.1') {
@@ -114,27 +112,23 @@ pn.data.IndexedDBRepository.prototype.getDatabase_ =
 /**
  * @private
  * @param {string} table The name of the object store to open.
- * @param {boolean} readWrite Wether the transaction needs to be read-write.
+ * @param {boolean} rw Wether the transaction needs to be read-write.
  * @return {!IDBObjectStore} The object store for the specified type.
  */
-pn.data.IndexedDBRepository.prototype.getObjectStore_ =
-    function(table, readWrite) {
-  return this.getTransaction_([table], readWrite).objectStore(table);
+pn.data.IndexedDBRepository.prototype.getObjectStore_ = function(table, rw) {
+  return this.getTransaction_([table], rw).objectStore(table);
 };
 
 
 /**
  * @private
  * @param {Array.<string>} types The name of the object store types.
- * @param {boolean} readWrite Wether the transaction needs to be read-write.
+ * @param {boolean} rw Wether the transaction needs to be read-write.
  * @return {!IDBTransaction} The transaction that can access all the
  *    specified types.
  */
-pn.data.IndexedDBRepository.prototype.getTransaction_ =
-    function(types, readWrite) {
-  var trans = this.db_.transaction(types,
-      readWrite ? IDBTransaction.READ_WRITE :
-      IDBTransaction.READ_ONLY);
+pn.data.IndexedDBRepository.prototype.getTransaction_ = function(types, rw) {
+  var trans = this.db_.transaction(types, rw ? 'readwrite' : 'readonly');
   return trans;
 };
 
@@ -257,14 +251,14 @@ pn.data.IndexedDBRepository.prototype.deleteList =
  * @param {IDBObjectStore} os The object store to iterate.
  * @param {function(!IDBCursor):undefined} op The operation to perform in each
  *    iteration.
- * @param {!function()} callback The callback.
+ * @param {!function(boolean):undefined} callback The callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.IndexedDBRepository.prototype.doOnCursor_ =
     function(os, op, callback, opt_handler) {
   this.runRequest_(os.openCursor(), function(cursor) {
     if (!cursor) {
-      callback.call(opt_handler || this);
+      callback.call(opt_handler || this, true);
       return;
     }
     op.call(opt_handler || this, cursor);
@@ -474,8 +468,10 @@ pn.data.IndexedDBRepository.prototype.runRequest_ =
   }
 
   req.onsuccess = function(e) {
-    callback.call(opt_handler || this, e.result || req['result']);
-  }
+    goog.Timer.callOnce(function() {
+      callback.call(opt_handler || this, e.result || req['result']);
+    }, 1);
+  };
 };
 
 

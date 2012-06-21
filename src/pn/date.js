@@ -1,4 +1,5 @@
 
+goog.require('goog.date.Date');
 goog.require('goog.i18n.DateTimeFormat');
 goog.require('goog.i18n.DateTimeParse');
 
@@ -84,4 +85,26 @@ pn.date.isPast = function(date) {
   var now = new Date(goog.now());
   if (goog.date.isSameDay(date, now)) return false;
   return goog.date.Date.compare(date, now) < 0;
+};
+
+
+/**
+ * @param {number} millis The number of milliseconds from 1970.
+ * @return {!goog.date.Date} The goog.Date from the specified millis.
+ */
+pn.date.fromMillis = function(millis) {
+  var date = new goog.date.Date();
+  date.setTime(millis);
+  return date;
+};
+
+
+/**
+ * @param {Date} d The JS Date object.
+ * @return {!goog.date.Date} The goog.Date from the specified Date.
+ */
+pn.date.fromDate = function(d) {
+  var date = new goog.date.Date();
+  date.setTime(d.getTime());
+  return date;
 };

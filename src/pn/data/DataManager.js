@@ -209,7 +209,7 @@ pn.data.DataManager.prototype.removeAllLocalUsavedItems_ =
  * @private
  * @param {boolean} initialRequest Wether this is the intial request to the
  *    server.
- * @param {!function(Array.<string>)} callback The success callback.
+ * @param {!function():undefined} callback The success callback.
  * @param {Object=} opt_handler The context to use when calling the callback.
  */
 pn.data.DataManager.prototype.updateClientWithLatestServerChanges_ =

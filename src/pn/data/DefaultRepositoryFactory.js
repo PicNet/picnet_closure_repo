@@ -24,16 +24,13 @@ pn.data.DefaultRepositoryFactory.getRepository = function(databaseName) {
   }
   var repository;
   // Find the best possible database provider
-  if (pn.data.WebSQLRepository.isSupported()) {
-    repository = new pn.data.WebSQLRepository(databaseName);
-  } else if (pn.data.IndexedDBRepository.isSupported()) {
+  if (pn.data.IndexedDBRepository.isSupported()) {
     repository = new pn.data.IndexedDBRepository(databaseName);
+  } else if (pn.data.WebSQLRepository.isSupported()) {
+    repository = new pn.data.WebSQLRepository(databaseName);
   } else {
     pn.data.GearsRepository.installGears(
-        function() {
-          repository = new pn.data.GearsRepository(databaseName);
-        }
-    );
+        function() { repository = new pn.data.GearsRepository(databaseName); });
   }
   return /** @type {!pn.data.IRepository} */ (repository);
 };

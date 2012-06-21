@@ -4,7 +4,7 @@ goog.provide('pn.demo.datamanagerdemo');
 goog.require('pn.MockAjaxProvider');
 goog.require('pn.data.DataManager');
 goog.require('pn.data.LocalStorageRepository');
-
+goog.require('goog.dom');
 
 /**
  * @export
@@ -20,7 +20,8 @@ pn.demo.datamanagerdemo = function() {
   var data = new pn.data.DataManager(memrepo, types);
   data.databaseName = 'picnetdemo';
 
-  data.init(function() { data.clearEntireDatabase_(function() {
+  data.init(function() { 
+    data.clearEntireDatabase_(function() {
     document.getElementById('currentRepo').innerHTML =
         data.local_.repository.constructor === pn.data.WebSQLRepository.prototype.constructor ? 'Web SQL' :
         data.local_.repository.constructor === pn.data.GearsRepository.prototype.constructor ? 'Gears' :
@@ -71,12 +72,11 @@ pn.demo.datamanagerdemo = function() {
       goog.array.forEach(entities, function(e) {
         var del;
         goog.dom.appendChild(table, goog.dom.createDom('tr', {},
-            goog.dom.createDom('td', {},
-            del = goog.dom.createDom('a', {'href': '#'}, 'Delete')
-            ),
+            goog.dom.createDom('td', {}, 
+                del = goog.dom.createDom('a', {'href': '#'}, 'Delete')),
             goog.dom.createDom('td', {}, e.ID.toString()),
             goog.dom.createDom('td', {}, e.Name),
-            goog.dom.createDom('td', {}, e.Date.toDateString())
+            goog.dom.createDom('td', {}, pn.date.dateFormat.format(e.Date))
             ));
         goog.events.listen(del, 'click', function() {
           data.deleteEntity(type, e.ID, function() {
