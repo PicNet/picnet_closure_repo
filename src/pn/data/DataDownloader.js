@@ -32,5 +32,5 @@ pn.data.DataDownloader.send = function(url, data, opt_cb, opt_timeout) {
   goog.Timer.callOnce(function() {
     goog.dispose(io);
     cb(null);
-  }, opt_timeout || 2000);
+  }, opt_timeout || 10000);
 };
