@@ -81,12 +81,10 @@ pn.ui.InputDatePicker.prototype.getDate = function() {
 /**
 * Returns the selected date, if any.  Compares the dates from the date picker
 * and the input field, causing them to be synced if different.
-* @return {number} The selected date in millis.
+* @return {goog.date.Date} The selected date.
 */
 pn.ui.InputDatePicker.prototype.getValue = function() {
-  var d = this.idp_.getDate();
-  if (d) d = new goog.date.Date(d.getYear(), d.getMonth(), d.getDate());
-  return d ? d.getTime() : 0;
+  return this.getDate();
 };
 
 

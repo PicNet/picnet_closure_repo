@@ -475,7 +475,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   if (this.cfg_.persistFilters && this.quickFind_) {
     data['filters'] = this.quickFind_.getFilterStates();
   }
-  pn.storage.set(this.hash_, goog.json.serialize(data));
+  pn.storage.set(this.hash_, pn.json.serialiseJson(data));
 };
 
 

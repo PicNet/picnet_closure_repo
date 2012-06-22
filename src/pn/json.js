@@ -1,4 +1,5 @@
 
+goog.require('goog.date.Date');
 goog.require('goog.json');
 goog.require('pn.date');
 
@@ -23,14 +24,11 @@ pn.json.parseJson = function(json) {
  * @return {string} The string (json) representation of the specified object.
  */
 pn.json.serialiseJson = function(o) {
-  return goog.isDefAndNotNull(o) ? window['JSON']['stringify'](o) : '';
-};
-
-
-/**
- * @return {string} The date's json string.
- * @this {Date}
- */
-Date.prototype['toJSON'] = function() {
-  return '\\/Date(' + this.getTime() + ')\\/';
+  if (!goog.isDefAndNotNull(o)) return '';
+  return goog.json.serialize(o, function(id, val) {
+    if (val instanceof goog.date.Date || val instanceof Date) {
+      return val.getTime();
+    }
+    return val;
+  });
 };

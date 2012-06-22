@@ -1,9 +1,9 @@
 ﻿;
 goog.provide('pn.ui.edit.AddOnFlyRenderer');
 
-goog.require('goog.ui.Dialog');
+goog.require('pn.ui.edit.AddOnFlyDialog');
+goog.require('pn.ui.edit.AddOnFlyDialog.EventType');
 goog.require('pn.ui.edit.ComplexRenderer');
-goog.require('pn.ui.edit.Edit');
 
 
 
@@ -14,6 +14,8 @@ goog.require('pn.ui.edit.Edit');
  *    fly control.
  */
 pn.ui.edit.AddOnFlyRenderer = function(specId) {
+  goog.asserts.assert(specId);
+
   pn.ui.edit.ComplexRenderer.call(this);
 
   /**
@@ -27,6 +29,12 @@ pn.ui.edit.AddOnFlyRenderer = function(specId) {
    * @type {pn.ui.UiSpec}
    */
   this.spec_ = null;
+
+  /**
+   * @private
+   * @type {pn.ui.edit.AddOnFlyDialog}
+   */
+  this.dialog_ = null;
 
   /**
    * @private
@@ -44,17 +52,17 @@ goog.inherits(pn.ui.edit.AddOnFlyRenderer, pn.ui.edit.ComplexRenderer);
 
 
 /** @inheritDoc */
-pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
-  return null;
+pn.ui.edit.AddOnFlyRenderer.prototype.initialise = function(fctx) {
+  pn.ui.edit.AddOnFlyRenderer.superClass_.initialise.call(this, fctx);
+
+  this.spec_ = pn.app.ctx.specs.get(this.specId_);
+  this.registerDisposable(this.spec_);
 };
 
 
 /** @inheritDoc */
-pn.ui.edit.AddOnFlyRenderer.prototype.initialise = function(spec) {
-  pn.ui.edit.AddOnFlyRenderer.superClass_.initialise.call(this, spec);
-
-  this.spec_ = pn.app.ctx.specs.get(this.specId_);
-  this.registerDisposable(this.spec_);
+pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
+  return null;
 };
 
 
@@ -77,93 +85,50 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 
   this.eh.listen(this.add_, goog.events.EventType.CLICK, this.addOnFly_);
 
-  this.refreshList_();
+  this.refreshList_(/** @type {number} */ (this.fctx.getEntityValue()));
 };
 
 
 /** @private */
 pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
-  var dialog = new goog.ui.Dialog();
-  dialog.setTitle('Add ' + this.spec_.name);
-  dialog.setModal(true);
-  dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
+  this.dialog_ = new pn.ui.edit.AddOnFlyDialog(this.spec_.id, this.fctx.cache);
 
-  var el = dialog.getDialogElement();
-  var edit = new pn.ui.edit.Edit(this.spec_, { 'ID': 0 }, this.fctx.cache);
-  edit.render(el);
+  var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
+  this.eh.listen(this.dialog_, eventType, this.aofAdded_);
 
-  dialog.setVisible(true);
-
-  goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {
-    if (e.key === 'cancel') {
-      goog.dispose(edit);
-      dialog.dispose();
-      return;
-    }
-    if (this.validate_(edit)) {
-      dialog.dispose();
-      goog.dispose(edit);
-      this.doAdd_(edit);
-    }
-  }, false, this);
+  this.registerDisposable(this.dialog_);
+  this.dialog_.show();
 };
 
 
 /**
  * @private
- * @param {!pn.ui.edit.Edit} edit The Edit compoenent to validate.
- * @return {boolean} Wether the current form is valid.
+ * @param {goog.events.Event} e The AOF_ADDED event.
  */
-pn.ui.edit.AddOnFlyRenderer.prototype.validate_ = function(edit) {
-  var errors = edit.getFormErrors();
-  if (!errors.length) return true;
-  // TODO: Show errors in the dialog??  For now just use generic errors.
-  pn.app.ctx.pub(pn.app.AppEvents.ENTITY_VALIDATION_ERROR, errors);
-  return false;
+pn.ui.edit.AddOnFlyRenderer.prototype.aofAdded_ = function(e) {
+  goog.dispose(this.dialog_);
+  this.dialog_ = null;
+
+  this.refreshList_(e.entityId);
 };
 
 
 /**
  * @private
- * @param {!pn.ui.edit.Edit} edit The Edit compoenent that needs to be
- *    queried for entity to add.
+ * @param {number} selectedId The ID of the entity to select.
  */
-pn.ui.edit.AddOnFlyRenderer.prototype.doAdd_ = function(edit) {
-  var entity = edit.getCurrentFormData();
-  var cb = goog.bind(this.entityAdded_, this);
-  pn.app.ctx.pub(pn.oms.OmsEvents.ENTITY_SAVE, this.spec_.type, entity, cb);
-};
-
-
-/**
- * @private
- * @param {(string|Object)} saved The server error or the entity that was added.
- */
-pn.ui.edit.AddOnFlyRenderer.prototype.entityAdded_ = function(saved) {
-  if (goog.isString(saved)) { alert(saved); return; }
-  this.fctx.cache[this.spec_.type].splice(0, 0, saved);
-  this.refreshList_(saved['ID']);
-};
-
-
-/**
- * @private
- * @param {number=} opt_selected The optinal currently selected ID.
- */
-pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(opt_selected) {
-  var type = this.spec_.type;
-  var list = this.fctx.cache[type];
-  var nameProp = type + 'Name';
+pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
+  var list = this.fctx.cache[this.spec_.type];
+  var nameProp = this.spec_.type + 'Name';
   goog.array.sort(list, function(a, b) {
     return goog.string.caseInsensitiveCompare(a[nameProp], b[nameProp]);
   });
   goog.dom.removeChildren(this.select_);
-  var currentId = opt_selected || this.fctx.getEntityValue();
   goog.array.forEach(list, function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e['ID'],
       'text': e[nameProp],
-      'selected': e['ID'] === currentId
+      'selected': e['ID'] === selectedId
     }));
   }, this);
 };
@@ -176,7 +141,6 @@ pn.ui.edit.AddOnFlyRenderer.prototype.disposeInternal = function() {
   goog.dispose(this.select_);
   goog.dispose(this.add_);
 
-  delete this.spec_;
   delete this.select_;
   delete this.add_;
 };
