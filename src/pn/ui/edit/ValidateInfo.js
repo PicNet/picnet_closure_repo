@@ -75,12 +75,13 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 
 /**
  * @param {pn.ui.FieldCtx} fctx The field ctx to validate.
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {string} Any error that this field can have.
  */
-pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx) {
+pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx, control) {
   var fr = pn.ui.edit.FieldRenderers;
 
-  var val = fctx.getControlValue();
+  var val = fctx.getControlValue(control);
   var isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty);
   var renderer = fctx.getFieldRenderer();
   var isYesNoRenderer = renderer === fr.yesNoRenderer;

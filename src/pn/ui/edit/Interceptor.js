@@ -31,10 +31,11 @@ pn.ui.edit.Interceptor = function() {
   this.cache = {};
 
   /**
-   * @type {!Object.<!(Element|goog.ui.Component)>} The components map for
-   *    this UI.
+   * @type {!Object.<!Array.<!(Element|goog.ui.Component)>>} The controls map
+   *  for this UI.  The first item is the control for the field.  The second is
+   *  the parent.
    */
-  this.components = {};
+  this.controls = {};
 
   /** @type {!Object.<!goog.ui.Button>} The commands map in the UI. */
   this.commands = {};
@@ -61,26 +62,17 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  *    currently being shown.
  * @param {!Object} entity The entity that was just decorated.
  * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
- * @param {!Object.<Element|goog.ui.Component>} components The components map
+ * @param {!Object.<Element|goog.ui.Component>} controls The controls map
  *    for this UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
-    function(component, entity, cache, components, commands) {
+    function(component, entity, cache, controls, commands) {
 
-  /** @type {!pn.ui.edit.CommandsComponent} */
   this.component = component;
-
-  /** @type {!Object} */
   this.entity = entity;
-
-  /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
-
-  /** @type {!Object.<Element|goog.ui.Component>} */
-  this.components = components;
-
-  /** @type {!Object.<goog.ui.Button>} */
+  this.controls = controls;
   this.commands = commands;
 
   if (pn.data.EntityUtils.isNew(this.entity)) {
@@ -93,7 +85,7 @@ pn.ui.edit.Interceptor.prototype.init =
 /**
  * Override this method to add events to any fields or do any custom UI
  * processing.  At this stage you will have access to this.entity, this.cache
- * and this.components.
+ * and this.controls.
  */
 pn.ui.edit.Interceptor.prototype.postInit = function() {};
 
@@ -117,7 +109,7 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function() {
  *    visible.
  */
 pn.ui.edit.Interceptor.prototype.isShown = function(id) {
-  var el = this.getFieldContainer_(this.components[id], id);
+  var el = this.getFieldContainer_(this.controls[id][0], id);
   return goog.style.isElementShown(el);
 };
 
@@ -128,10 +120,10 @@ pn.ui.edit.Interceptor.prototype.isShown = function(id) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
-  goog.asserts.assert(this.components[id],
+  goog.asserts.assert(this.controls[id][0],
       'Could not find a component for field: ' + id);
 
-  var el = this.getFieldContainer_(this.components[id], id);
+  var el = this.getFieldContainer_(this.controls[id][0], id);
   goog.style.showElement(el, visible);
 };
 
@@ -179,5 +171,5 @@ pn.ui.edit.Interceptor.prototype.disposeInternal = function() {
   delete this.entity;
   delete this.cache;
   delete this.component;
-  delete this.components;
+  delete this.controls;
 };

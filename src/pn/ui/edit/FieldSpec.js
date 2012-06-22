@@ -169,8 +169,11 @@ pn.ui.edit.FieldSpec.prototype.disposeInternal = function() {
 };
 
 
-/** @typedef {pn.ui.edit.ComplexRenderer|function(!pn.ui.FieldCtx):
-    !(Element|goog.ui.Component|Text)} */
+/**
+ * @typedef {pn.ui.edit.ComplexRenderer|
+ *     function(!pn.ui.FieldCtx,!Element,!Object):
+ *       !(Element|goog.ui.Component|Text)}
+ */
 pn.ui.edit.FieldSpec.Renderer;
 
 

@@ -45,9 +45,10 @@ pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
 /**
  * @param {!pn.ui.FieldCtx} fctx The field context for the field being
  *    validated.
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.app.schema.Schema.prototype.getValidationErrors = function(fctx) {
+pn.app.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
   var schema = this.getFieldSchema(fctx.spec);
   if (!schema) {
     var desc = fctx.spec.entitySpec.type + '.' + fctx.id;
@@ -61,7 +62,7 @@ pn.app.schema.Schema.prototype.getValidationErrors = function(fctx) {
   if (this.isNumericalTypeField_(schema)) {
     validator.isNumber = true;
   }
-  var error = validator.validateField(fctx);
+  var error = validator.validateField(fctx, control);
   return error ? [error] : [];
 };
 

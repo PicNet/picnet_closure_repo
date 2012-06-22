@@ -243,8 +243,7 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
   var renderer = fctx.getColumnRenderer();
   if (renderer) {
     cfg['formatter'] = goog.bind(function(row, cell, value, col, item) {
-      fctx.entity = item;
-      return renderer(fctx);
+      return renderer(fctx, item);
     }, this);
   }
   return cfg;
@@ -297,8 +296,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
       var fctx = this.fctxs_[cidx];
       var val = rowData[fctx.spec.dataProperty];
       var renderer = fctx.getColumnRenderer();
-      fctx.entity = rowData;
-      var txt = renderer ? renderer(fctx) : val;
+      var txt = renderer ? renderer(fctx, rowData) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -337,10 +335,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       return fctx1.id === args['sortCol']['id'];
     });
     this.dataView_.sort(function(a, b) {
-      fctx.entity = a;
-      var x = fctx.getCompareableValue();
-      fctx.entity = b;
-      var y = fctx.getCompareableValue();
+      var x = fctx.getCompareableValue(a);
+      var y = fctx.getCompareableValue(b);
       return (x === y ? 0 : (x > y ? 1 : -1));
     }, args['sortAsc']);
     this.saveGridState_();
@@ -445,10 +441,7 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
     var mockEntity = {};
     mockEntity[field] = total[field];
     var renderer = fctx.getColumnRenderer();
-    if (renderer) {
-      fctx.entity = mockEntity;
-      val = renderer(fctx);
-    }
+    if (renderer) { val = renderer(fctx, mockEntity); }
     else { val = parseInt(total[field], 10); }
     html.push('Total ' + fctx.spec.name + ': ' + val || '0');
   }

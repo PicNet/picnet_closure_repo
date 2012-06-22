@@ -4,9 +4,10 @@ goog.provide('pn.ui.edit.FieldValidator');
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field context to validate.
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.ui.edit.FieldValidator.validateFieldValue = function(fctx) {
+pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
   var isDBField = function() {
     return !goog.string.startsWith(fctx.id, '_') &&
         !goog.string.endsWith(fctx.spec.dataProperty, 'Entities');
@@ -16,13 +17,14 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx) {
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
     return arraytise(renderer.validate(), []);
   }
-  var errors = isDBField() ? pn.app.ctx.schema.getValidationErrors(fctx) : [];
+  var errors = isDBField() ?
+      pn.app.ctx.schema.getValidationErrors(fctx, control) : [];
   // Always return schema issues before checking other errors as other
   // validations may conflic or duplicate these errors.
   if (errors.length || !fctx.spec.validator) { return errors; }
 
   if (fctx.spec.validator instanceof pn.ui.edit.ValidateInfo) {
-    return arraytise(fctx.spec.validator.validateField(fctx), errors);
+    return arraytise(fctx.spec.validator.validateField(fctx, control), errors);
   }
   var f = /** @type {function(pn.ui.FieldCtx):string} */ (fctx.spec.validator);
   return arraytise(f(fctx), errors);

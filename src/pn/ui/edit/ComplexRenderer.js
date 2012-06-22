@@ -19,6 +19,12 @@ pn.ui.edit.ComplexRenderer = function() {
    */
   this.fctx = null;
 
+  /**
+   * @protected
+   * @type {Object}
+   */
+  this.entity = null;
+
   /** @type {boolean} */
   this.showLabel = true;
 
@@ -31,10 +37,17 @@ pn.ui.edit.ComplexRenderer = function() {
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
 
-/** @param {!pn.ui.FieldCtx} fctx The field context object. */
-pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx) {
+/**
+ * @param {!pn.ui.FieldCtx} fctx The field context object.
+ * @param {!Object} entity The entity being edited.
+ */
+pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx, entity) {
+  goog.asserts.assert(fctx);
+  goog.asserts.assert(entity);
+
   this.eh = new goog.events.EventHandler(this);
   this.fctx = fctx;
+  this.entity = entity;
 };
 
 

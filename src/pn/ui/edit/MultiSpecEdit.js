@@ -157,14 +157,15 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   var commands = this.getCommandButtons();
 
   goog.array.forEach(this.edits, function(edit) {
-    if (edit.edit.getFields) {
-      goog.array.forEach(edit.edit.getFields(), function(f) {
-        if (f.id in fields) return;
-        fields[f.id] = f.component;
+    var ed = edit.edit;
+    if (ed.getFields) {
+      goog.array.forEach(ed.getFields(), function(fctx) {
+        if (fctx.id in fields) return;
+        fields[fctx.id] = [ed.getControl(), ed.getParentControl()];
       });
     }
-    if (edit.edit.getCommandButtons) {
-      pn.object.uniqueExtend(commands, edit.edit.getCommandButtons());
+    if (ed.getCommandButtons) {
+      pn.object.uniqueExtend(commands, ed.getCommandButtons());
     }
   }, this);
 

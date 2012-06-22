@@ -322,32 +322,31 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
   var name = fctx.spec.name;
   var lbl = goog.dom.createDom('label', { 'for': fctx.id }, name);
-  fctx.parentComponent = goog.dom.createDom('div', {
+  var parent = goog.dom.createDom('div', {
     'class': fctx.spec.className || 'field'
   }, lbl, remove);
-  goog.dom.appendChild(this.filtersPanel_, fctx.parentComponent);
+  goog.dom.appendChild(this.filtersPanel_, parent);
 
   var input;
   if (!fctx.spec.renderer &&
       pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty)) {
     input = FieldBuilder.createSearchParentFilter(fctx);
-    goog.dom.appendChild(fctx.parentComponent, input);
+    goog.dom.appendChild(parent, input);
   } else {
     var srchFctx = this.getSearchAppropriateFieldSpec_(fctx);
-    input = FieldBuilder.createAndAttach(srchFctx);
+    input = FieldBuilder.createAndAttach(srchFctx, parent, {});
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }
   }
-  this.filtersControls_[fctx.id] = [input, remove, lbl, fctx.parentComponent];
+  this.filtersControls_[fctx.id] = [input, remove, lbl, parent];
 
   // fctx will be disposed before here so lets grab references for the closure.
-  var fieldParent = fctx.parentComponent;
   var fieldId = fctx.id;
   var removeFilter = goog.bind(function() {
     delete this.filtersControls_[fieldId];
 
-    goog.dom.removeNode(fieldParent);
+    goog.dom.removeNode(parent);
     goog.style.showElement(option, true);
 
     this.eh_.unlisten(input, goog.events.EventType.CHANGE, this.doSearch_);

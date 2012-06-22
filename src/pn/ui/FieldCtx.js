@@ -22,11 +22,14 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
 
   goog.Disposable.call(this);
 
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
+
   /** @type {!pn.ui.BaseFieldSpec} */
   this.spec = spec;
-
-  /** @type {Object} */
-  this.entity = entity;
 
   /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
@@ -39,49 +42,21 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
 
   /** @type {pn.app.schema.FieldSchema} */
   this.schema = pn.app.ctx.schema.getFieldSchema(spec);
-
-  /** @type {(Element|goog.ui.Component)} */
-  this.component = null;
-
-  /** @type {Element} */
-  this.parentComponent = null;
-
-  /**
-   * @private
-   * @type {goog.debug.Logger}
-   */
-  this.log_ = pn.log.getLogger('pn.ui.FieldCtx');
-
-  // TODO: This is not nice here.
-  if (this.spec instanceof pn.ui.edit.FieldSpec &&
-      this.getFieldRenderer() === pn.ui.edit.FieldRenderers.dateRenderer) {
-    this.normaliseDateField_();
-  }
 };
 goog.inherits(pn.ui.FieldCtx, goog.Disposable);
 
 
 /**
- * This is required so that fields with date only (no time) renderers don't
- *    throw 'dirty' checks when nothing has changed (just time is lost)
- * @private
+ * @param {!Object} entity Then entity is required to check wether this is a
+ *    new entity or existing one as some fields are only editable if or if not
+ *    a new entity.
+ * @return {boolean} Wether this field is editable.
  */
-pn.ui.FieldCtx.prototype.normaliseDateField_ = function() {
-  var date = this.entity[this.id];
-  if (!goog.isNumber(date)) return;
-  var dt = new goog.date.Date();
-  dt.setTime(/** @type {number} */ (date));
-  var trimmed = new goog.date.Date(dt.getYear(), dt.getMonth(), dt.getDate());
-  this.entity[this.id] = trimmed.getTime();
-};
-
-
-/** @return {boolean} Wether this field is editable. */
-pn.ui.FieldCtx.prototype.isEditable = function() {
-  goog.asserts.assert(this.entity);
+pn.ui.FieldCtx.prototype.isEditable = function(entity) {
+  goog.asserts.assert(entity);
 
   return !this.spec.readonly && !this.spec.tableType &&
-      (this.spec.showOnAdd || !pn.data.EntityUtils.isNew(this.entity));
+      (this.spec.showOnAdd || !pn.data.EntityUtils.isNew(entity));
 };
 
 
@@ -94,22 +69,29 @@ pn.ui.FieldCtx.prototype.isRequired = function() {
 
 
 /**
+ * @param {!(Element|goog.ui.Component)} component The compoenent that this
+ *    field is rendererd on.
  * @param {Object=} opt_target The optional 'entity' target to inject values
  *    into if required.
  * @return {*} The current control value of this field.
  */
-pn.ui.FieldCtx.prototype.getControlValue = function(opt_target) {
-  return pn.ui.edit.FieldBuilder.getFieldValue(this.component, opt_target);
+pn.ui.FieldCtx.prototype.getControlValue = function(component, opt_target) {
+  return pn.ui.edit.FieldBuilder.getFieldValue(component, opt_target);
 };
 
 
-/** @return {*} The value of  this field. */
-pn.ui.FieldCtx.prototype.getEntityValue = function() {
+/**
+ * @param {Object} entity The entity's whose value we need.
+ * @return {*} The value of  this field.
+ */
+pn.ui.FieldCtx.prototype.getEntityValue = function(entity) {
+  goog.asserts.assert(entity);
+
   var prop = this.spec.dataProperty;
-  var v = this.entity[prop];
+  var v = entity[prop];
   if (goog.isDef(v)) return v;
 
-  if (pn.data.EntityUtils.isNew(this.entity)) {
+  if (pn.data.EntityUtils.isNew(entity)) {
     if (goog.isDefAndNotNull(this.spec.defaultValue)) {
       return this.getDefaultFieldValue_();
     }
@@ -125,23 +107,30 @@ pn.ui.FieldCtx.prototype.getEntityValue = function() {
 };
 
 
-/** @return {*} The display value of this field. */
-pn.ui.FieldCtx.prototype.getDisplayValue = function() {
+/**
+ * @param {!Object} entity The entity's whose display value we need.
+ * @return {*} The display value of this field.
+ */
+pn.ui.FieldCtx.prototype.getDisplayValue = function(entity) {
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
-      this.entity,
+      entity,
       this.spec.tableParentField);
 };
 
 
 /**
+ * @param {!Object} entity The entity being shown.
  * @return {*} The compareable value of this column, suitable for sorting, etc.
  */
-pn.ui.FieldCtx.prototype.getCompareableValue = function() {
+pn.ui.FieldCtx.prototype.getCompareableValue = function(entity) {
+  goog.asserts.assert(entity);
   goog.asserts.assert(this.spec instanceof pn.ui.grid.ColumnSpec);
 
-  if (this.spec.sortValueRenderer) { return this.spec.sortValueRenderer(this); }
+  if (this.spec.sortValueRenderer) {
+    return this.spec.sortValueRenderer(this, entity);
+  }
 
   var renderer = this.getColumnRenderer();
   var useRealValue =
@@ -149,17 +138,19 @@ pn.ui.FieldCtx.prototype.getCompareableValue = function() {
       renderer === pn.ui.grid.ColumnRenderers.dateRenderer ||
       renderer === pn.ui.grid.ColumnRenderers.dateTimeRenderer ||
       renderer === pn.ui.grid.ColumnRenderers.centsRenderer;
-  return useRealValue ? this.getEntityValue() : renderer(this);
+  return useRealValue ? this.getEntityValue(entity) : renderer(this, entity);
 };
 
 
 /**
+ * @param {!Object} entity The entity being checked for dirty.
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {boolean} Wether this field is currently dirty (i.e. The control is
  *    different than the entity value).
  */
-pn.ui.FieldCtx.prototype.isDirty = function() {
-  var orig = this.getEntityValue();
-  var curr = this.getControlValue();
+pn.ui.FieldCtx.prototype.isDirty = function(entity, control) {
+  var orig = this.getEntityValue(entity);
+  var curr = this.getControlValue(control);
 
   // Handle tricky falsies
   var isFalseEquivalent = function(val) {
@@ -180,13 +171,14 @@ pn.ui.FieldCtx.prototype.isDirty = function() {
 
 
 /**
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {!Array.<string>} An error list of all validation errors (empty if
  *    no errors found).
  */
-pn.ui.FieldCtx.prototype.validate = function() {
-  var errs = pn.ui.edit.FieldValidator.validateFieldValue(this);
+pn.ui.FieldCtx.prototype.validate = function(control) {
+  var errs = pn.ui.edit.FieldValidator.validateFieldValue(this, control);
   if (errs.length) {
-    var val = this.getControlValue();
+    var val = this.getControlValue(control);
     this.log_.info('Field: ' + this.id + ' val: ' + val + ' error: ' + errs);
   }
   return errs;
@@ -209,9 +201,8 @@ pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
 
 
 /**
- * @return {null|function(!pn.ui.FieldCtx):!(goog.ui.Component|Element)} The
- *    specified field renderer or an implied renderer from the given column
- *    schema type.
+ * @return {?pn.ui.edit.FieldSpec.Renderer} The specified field renderer or
+ *    an implied renderer from the given column schema type.
  */
 pn.ui.FieldCtx.prototype.getFieldRenderer = function() {
   goog.asserts.assert(this.spec instanceof pn.ui.edit.FieldSpec);
@@ -256,16 +247,11 @@ pn.ui.FieldCtx.prototype.disposeInternal = function() {
   pn.ui.FieldCtx.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
-  goog.dispose(this.component);
-  goog.dispose(this.parentComponent);
   goog.dispose(this.spec);
 
   delete this.log_;
   delete this.spec;
-  delete this.entity;
   delete this.cache;
   delete this.entitySpec;
   delete this.schema;
-  delete this.component;
-  delete this.parentComponent;
 };

@@ -64,15 +64,13 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       var filterVal = this.filters_[columnId];
       var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
           function(fctx1) { return fctx1.id === columnId; }));
-      fctx.entity = entity;
-      var val = fctx.getEntityValue();
+      var val = fctx.getEntityValue(entity);
       var renderer = fctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, fctx.spec.displayPath, fctx.entity) || '').
-                toString() : '';
+            this.cache_, fctx.spec.displayPath, entity) || '').toString() : '';
       } else if (renderer) {
-        val = renderer(fctx);
+        val = renderer(fctx, entity);
       }
       var strval = '';
       if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }

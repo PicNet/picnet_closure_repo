@@ -9,30 +9,33 @@ goog.require('pn.date');
 
 /**
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(field) {
-  return field.getEntityValue() === true ? 'Y' : 'N';
+pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(field, entity) {
+  return field.getEntityValue(entity) === true ? 'Y' : 'N';
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.dateRenderer = function(field) {
+pn.ui.grid.ColumnRenderers.dateRenderer = function(field, entity) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      field, pn.date.dateFormat);
+      field, pn.date.dateFormat, entity);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(field) {
+pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(field, entity) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
-      field, pn.date.dateTimeFormat);
+      field, pn.date.dateTimeFormat, entity);
 };
 
 
@@ -41,11 +44,12 @@ pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(field) {
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
  * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
  *    this time/date value;.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
-    function(field, formatter) {
-  var val = field.getEntityValue();
+    function(field, formatter, entity) {
+  var val = field.getEntityValue(entity);
   if (val && goog.isNumber(val)) val = new Date(val);
   if (val && val.getFullYear() <= 1970) { val = null; }
   return val ? formatter.format(/** @type {Date} */ (val)) : '';
@@ -54,21 +58,23 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
 
 /**
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.centsRenderer = function(field) {
-  var val = /** @type {number} */ (field.getEntityValue());
+pn.ui.grid.ColumnRenderers.centsRenderer = function(field, entity) {
+  var val = /** @type {number} */ (field.getEntityValue(entity));
   return pn.convert.centsToCurrency(val);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
-pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field) {
+pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field, entity) {
   return (pn.data.EntityUtils.getEntityDisplayValue(
-      field.cache, field.spec.displayPath, field.entity) || '').toString();
+      field.cache, field.spec.displayPath, entity) || '').toString();
 };
 
 
@@ -85,17 +91,18 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field) {
  *   })
  *  </code>
  *
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.FieldCtx} fctx The field context for the current column.
  * @param {!string} parentField The child field used to match this
  *    entities children.
+ * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
-    function(field, parentField) {
-  goog.asserts.assert(field.entity);
-  goog.asserts.assert(field.spec.id.indexOf('Entities') >= 0);
+    function(fctx, parentField, entity) {
+  goog.asserts.assert(entity);
+  goog.asserts.assert(fctx.spec.id.indexOf('Entities') >= 0);
 
   return (pn.data.EntityUtils.getEntityDisplayValue(
-      field.cache, field.spec.displayPath, field.entity, parentField) || '').
+      fctx.cache, fctx.spec.displayPath, entity, parentField) || '').
       toString();
 };

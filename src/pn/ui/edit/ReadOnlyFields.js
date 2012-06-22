@@ -71,18 +71,20 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.textField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.textField = function(fctx, parent, entity) {
   var val = fctx.spec.displayPath ?
-      fctx.getDisplayValue() :
-      fctx.getEntityValue();
+      fctx.getDisplayValue(entity) :
+      fctx.getEntityValue(entity);
   if (!val) val = '';
   if (goog.isString(val)) {
     val = pn.ui.edit.ReadOnlyFields.toHtmlText(val);
   }
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DEFAULT;
-  var div = pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  var div = pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
   div.innerHTML = val;
   return div;
 };
@@ -103,51 +105,61 @@ pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.itemList = function(fctx) {
+pn.ui.edit.ReadOnlyFields.itemList = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.ITEM_LIST;
-  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The time field.
  */
-pn.ui.edit.ReadOnlyFields.timeField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.timeField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.TIME;
-  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly cents field.
  */
-pn.ui.edit.ReadOnlyFields.centsField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.centsField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.CENTS;
-  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly int field.
  */
-pn.ui.edit.ReadOnlyFields.intField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.intField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.INT;
-  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
 };
 
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.ReadOnlyFields.boolField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.boolField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.BOOLEAN;
-  var ctl = pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  var ctl = pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
   ctl.checked = fctx.value;
   return ctl;
 };
@@ -155,12 +167,14 @@ pn.ui.edit.ReadOnlyFields.boolField = function(fctx) {
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly
  *    text field control.
  */
-pn.ui.edit.ReadOnlyFields.dateField = function(fctx) {
+pn.ui.edit.ReadOnlyFields.dateField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DATE;
-  return pn.ui.edit.ReadOnlyFields.field_(fctx, type);
+  return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
 };
 
 
@@ -168,20 +182,22 @@ pn.ui.edit.ReadOnlyFields.dateField = function(fctx) {
  * @private
  * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
  * @param {!pn.ui.edit.ReadOnlyFields.FieldType_} type The type of this field.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type) {
+pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
   goog.asserts.assert(type);
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   var val = type === ft.ITEM_LIST ?
-      fctx.getDisplayValue() :
-      fctx.getEntityValue();
+      fctx.getDisplayValue(entity) :
+      fctx.getEntityValue(entity);
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
   var readonly = goog.dom.createDom('div', 'field');
   readonly.innerHTML = text;
   readonly.value = val;
-  goog.dom.appendChild(fctx.parentComponent, readonly);
+  goog.dom.appendChild(parent, readonly);
   return readonly;
 };
 

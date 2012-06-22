@@ -52,8 +52,8 @@ goog.inherits(pn.ui.edit.AddOnFlyRenderer, pn.ui.edit.ComplexRenderer);
 
 
 /** @inheritDoc */
-pn.ui.edit.AddOnFlyRenderer.prototype.initialise = function(fctx) {
-  pn.ui.edit.AddOnFlyRenderer.superClass_.initialise.call(this, fctx);
+pn.ui.edit.AddOnFlyRenderer.prototype.initialise = function(fctx, entity) {
+  pn.ui.edit.AddOnFlyRenderer.superClass_.initialise.call(this, fctx, entity);
 
   this.spec_ = pn.app.ctx.specs.get(this.specId_);
   this.registerDisposable(this.spec_);
@@ -85,7 +85,8 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 
   this.eh.listen(this.add_, goog.events.EventType.CLICK, this.addOnFly_);
 
-  this.refreshList_(/** @type {number} */ (this.fctx.getEntityValue()));
+  this.refreshList_(
+      /** @type {number} */ (this.fctx.getEntityValue(this.entity)));
 };
 
 

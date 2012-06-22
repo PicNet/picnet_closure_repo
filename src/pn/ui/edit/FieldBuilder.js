@@ -46,32 +46,34 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
 
 /**
  * @param {!pn.ui.FieldCtx} fctx The field to create a dom tree for.
+ * @param {!Element} parent The parent control to attach this control to.
+ * @param {!Object} entity The entity being edited.
  * @return {Element|goog.ui.Component|Text} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
+pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
   var fb = pn.ui.edit.FieldBuilder;
   var elem;
   var renderer = fctx.getFieldRenderer();
   if (renderer) {
     if (renderer instanceof pn.ui.edit.ComplexRenderer) {
       elem = renderer;
-      renderer.initialise(fctx);
-      elem.decorate(fctx.parentComponent);
+      renderer.initialise(fctx, entity);
+      elem.decorate(parent);
     } else {
-      elem = renderer(fctx);
+      elem = renderer(fctx, parent, entity);
     }
   } else if (pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty) &&
       !fctx.spec.tableType) {
     elem = fctx.spec.readonly ?
-        fb.createReadOnlyParentEntitySelect_(fctx) :
-        fb.createParentEntitySelect_(fctx);
-    goog.dom.appendChild(fctx.parentComponent, /** @type {!Node} */ (elem));
+        fb.createReadOnlyParentEntitySelect_(fctx, entity) :
+        fb.createParentEntitySelect_(fctx, entity);
+    goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
   } else if (fctx.tableType) {
-    elem = fb.createChildEntitiesSelectTable_(fctx);
+    elem = fb.createChildEntitiesSelectTable_(fctx, parent, entity);
   } else {
-    var val = fctx.getEntityValue() || '';
+    var val = fctx.getEntityValue(entity) || '';
     elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
-    goog.dom.appendChild(fctx.parentComponent, elem);
+    goog.dom.appendChild(parent, elem);
   }
   return elem;
 };
@@ -80,9 +82,10 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
 /**
  * @private
  * @param {!pn.ui.FieldCtx} fctx The field/column context to create a dom tree.
+ * @param {!Object} entity The entity being edited.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
+pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx, entity) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
   var entityType = cascading ?
@@ -104,7 +107,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
   var sort = fctx.spec.additionalProperties['sortedValues'];
   if (!goog.isDef(sort)) sort = true;
   return pn.ui.edit.FieldBuilder.createDropDownList_(
-      selTxt, list, fctx.getEntityValue(), sort);
+      selTxt, list, fctx.getEntityValue(entity), sort);
 };
 
 
@@ -113,7 +116,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createSearchParentFilter = function(fctx) {
-  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect_(fctx);
+  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect_(fctx, {});
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
@@ -123,15 +126,17 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(fctx) {
 /**
  * @private
  * @param {!pn.ui.FieldCtx} fctx The field to create parent select.
+ * @param {!Object} entity The entity being edited.
  * @return {!Element} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ = function(fctx) {
+pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
+    function(fctx, entity) {
   var path = fctx.spec.displayPath;
   var val = pn.data.EntityUtils.
-      getEntityDisplayValue(fctx.cache, path, fctx.entity) || '';
+      getEntityDisplayValue(fctx.cache, path, entity) || '';
 
   var div = goog.dom.createDom('div', 'field', val.toString());
-  div.value = fctx.entity[path.split('.')[0]];
+  div.value = entity[path.split('.')[0]];
   return div;
 };
 
@@ -194,13 +199,16 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
 /**
  * @private
  * @param {!pn.ui.FieldCtx} fctx The field to create a dom tree for.
+ * @param {!Element} parent The parent to attach to.
+ * @param {!Object} entity The entity being edited.
  * @return {!Element|!goog.ui.Component} The created dom element.
  */
-pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ = function(fctx) {
+pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
+    function(fctx, parent, entity) {
   goog.asserts.assert(fctx.spec.tableType);
-  goog.asserts.assert(fctx.entity['ID'] != 0);
+  goog.asserts.assert(entity['ID'] != 0);
 
-  var parentId = fctx.entity['ID'];
+  var parentId = entity['ID'];
 
   var parentField = fctx.spec.tableParentField;
   var list = fctx.cache[fctx.spec.tableType];
@@ -211,6 +219,6 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ = function(fctx) {
       function(c) { return c[parentField] === parentId; });
   var spec = pn.app.ctx.specs.get(fctx.spec.tableSpec);
   var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
-  g.decorate(fctx.parentComponent);
+  g.decorate(parent);
   return g;
 };
