@@ -109,13 +109,13 @@ pn.app.BaseApp.prototype.initialise = function(schema) {
 
 /**
  * A template method used to get all required UiSpecs.  This method should
- *    return an array with types such as:
- *    [
- *      pn.application.specs.Spec1,
- *      pn.application.specs.Spec2
- *    ]
+ *    return an object map (id/ctor pair) with types such as:
+ *    {
+ *      'Type1': pn.application.specs.Spec1,
+ *      'Type1': pn.application.specs.Spec2
+ *    {
  *
- * @return {!Array.<!function(new:pn.ui.UiSpec)>} The routes for this
+ * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
  *    application. The first route is considered the default route.
  */
 pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;

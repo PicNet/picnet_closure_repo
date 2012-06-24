@@ -9,8 +9,8 @@ goog.require('goog.object');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Array.<!function(new:pn.ui.UiSpec)>} specs The UiSpecs array
- *    containing all the UI specifications that will be used in this
+ * @param {!Object.<!function(new:pn.ui.UiSpec)>} specs The UiSpecs object map
+ *    containing all the IDs and UI specifications that will be used in this
  *    application.
  */
 pn.ui.UiSpecsRegister = function(specs) {
@@ -22,12 +22,7 @@ pn.ui.UiSpecsRegister = function(specs) {
    * @private
    * @type {!Object.<!function(new:pn.ui.UiSpec)>}
    */
-  this.map_ = {};
-  goog.array.forEach(specs, function(spec) {
-    var instance = new spec();
-    this.map_[instance.id] = spec;
-    goog.dispose(instance);
-  }, this);
+  this.map_ = specs;
 };
 goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
 
@@ -39,7 +34,12 @@ goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
 pn.ui.UiSpecsRegister.prototype.get = function(id) {
   goog.asserts.assert(this.map_[id],
       'ID "' + id + ' was not found in the UiSpec register.');
-  return new this.map_[id]();
+
+  var instance = new this.map_[id]();
+
+  goog.asserts.assert(instance.id === id, 'Spec ID: ' + instance.id +
+      ' was registered with a different ID ' + id + ' this is not allowed.');
+  return instance;
 };
 
 
