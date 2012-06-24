@@ -8,37 +8,49 @@ goog.require('goog.events.EventHandler');
 /**
  * @constructor
  * @extends {goog.Disposable}
+ * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
+ *    currently being shown.
+ * @param {!Object} entity The entity that was just decorated.
+ * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
+ * @param {!Object.<Element|goog.ui.Component>} controls The controls map
+ *    for this UI.
+ * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
-pn.ui.edit.Interceptor = function() {
+pn.ui.edit.Interceptor =
+    function(component, entity, cache, controls, commands) {
   goog.Disposable.call(this);
 
   /**
    * @protected
    * @type {pn.ui.edit.CommandsComponent}
    */
-  this.component = null;
+  this.component = component;
 
   /**
    * @protected
    * @type {!Object} The entity being edited.
    */
-  this.entity = {};
+  this.entity = entity;
 
   /**
    * @protected
    * @type {!Object.<Array>} The cache with all related entities.
    */
-  this.cache = {};
+  this.cache = cache;
 
   /**
+   * @private
    * @type {!Object.<!Array.<!(Element|goog.ui.Component)>>} The controls map
    *  for this UI.  The first item is the control for the field.  The second is
    *  the parent.
    */
-  this.controls = {};
+  this.controls_ = controls;
 
-  /** @type {!Object.<!goog.ui.Button>} The commands map in the UI. */
-  this.commands = {};
+  /**
+   * @private
+   * @type {!Object.<!goog.ui.Button>} The commands map in the UI.
+   */
+  this.commands_ = commands;
 
   /**
    * @protected
@@ -50,113 +62,22 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
 
 
 /**
- * Called after an Edit.js is created.  This is only used to initialise
- * the values related to the entity being edited. To attach events, etc
- * override the init method.
- *
- * Note: This method is an internal method and should not be called or
- *    inherited. Currently only called by Edit.js to initialise the spec
- *    to allow documentEntered functionality.
- *
- * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
- *    currently being shown.
- * @param {!Object} entity The entity that was just decorated.
- * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
- * @param {!Object.<Element|goog.ui.Component>} controls The controls map
- *    for this UI.
- * @param {!Object.<goog.ui.Button>} commands The command elements.
- */
-pn.ui.edit.Interceptor.prototype.init =
-    function(component, entity, cache, controls, commands) {
-
-  this.component = component;
-  this.entity = entity;
-  this.cache = cache;
-  this.controls = controls;
-  this.commands = commands;
-
-  if (pn.data.EntityUtils.isNew(this.entity)) {
-    this.showCommand('Delete', false);
-    this.showCommand('Clone', false);
-  }
-};
-
-
-/**
- * Override this method to add events to any fields or do any custom UI
- * processing.  At this stage you will have access to this.entity, this.cache
- * and this.controls.
- */
-pn.ui.edit.Interceptor.prototype.postInit = function() {};
-
-
-/**
  * Override this method to do custom validation checking.  These errors are
  *    in addition to the standard field based error checking done by Edit.js.
  * @return {!Array} An array of any errors found in the form in addition to
  *    the standard error checks done by Edit.js.
  */
-pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function() {
-  return [];
-};
+pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
+    function() { return []; };
 
 
 /**
- * @protected
- * @param {string} id The id of the field (and its label) to check
- *    for visibility.
- * @return {boolean} visible Wether the specified field element is currently
- *    visible.
+ * @param {string} id The id of the control we need.
+ * @return {!(Element|goog.ui.Component)} The control for the specified id.
  */
-pn.ui.edit.Interceptor.prototype.isShown = function(id) {
-  var el = this.getFieldContainer_(this.controls[id][0], id);
-  return goog.style.isElementShown(el);
-};
-
-
-/**
- * @protected
- * @param {string} id The id of the field (and its label) to show/hide.
- * @param {boolean} visible Wether to show or hide the element.
- */
-pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
-  goog.asserts.assert(this.controls[id][0],
-      'Could not find a component for field: ' + id);
-
-  var el = this.getFieldContainer_(this.controls[id][0], id);
-  goog.style.showElement(el, visible);
-};
-
-
-/**
- * @protected
- * @param {string} id The id of the command to hide.
- * @param {boolean} visible Wether to show or hide the command.
- */
-pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
-  var cmd = this.commands[id];
-  // Command is not available, usually the case for commands that are only
-  // visible on edit (not add)
-  if (!cmd) return;
-
-  var el = this.getFieldContainer_(cmd, id);
-  goog.style.showElement(el, visible);
-};
-
-
-/**
- * @private
- * @param {!(Element|goog.ui.Component)} el The element to get the parent
- *    container element for.
- * @param {string} id The id of the element we are looking for.
- * @return {!Element} The parent container of the speicified field id.
- */
-pn.ui.edit.Interceptor.prototype.getFieldContainer_ = function(el, id) {
-  goog.asserts.assert(el, 'el is null - id: ' + id);
-
-  var element = el.getElement ? el.getElement() : el;
-  while (element.id !== id) { element = element.parentNode; }
-  return /** @type {!Element} */ (element);
+pn.ui.edit.Interceptor.prototype.getControl = function(id) {
+  goog.asserts.assert(this.controls_[id][0]);
+  return this.controls_[id][0];
 };
 
 
@@ -171,5 +92,5 @@ pn.ui.edit.Interceptor.prototype.disposeInternal = function() {
   delete this.entity;
   delete this.cache;
   delete this.component;
-  delete this.controls;
+  delete this.controls_;
 };

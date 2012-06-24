@@ -57,9 +57,15 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
 
   /**
    * @protected
-   * @type {!Array.<!{div:Element, edit:pn.ui.edit.CommandsComponent}>}
+   * @type {!Array.<!pn.ui.edit.CommandsComponent>}
    */
   this.edits = [];
+
+  /**
+   * @private
+   * @type {!Array.<pn.ui.edit.Interceptor>}
+   */
+  this.interceptors_ = [];
 
   pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId], entity);
 };
@@ -75,7 +81,7 @@ goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
   var ui = new pn.ui.edit.Edit(this.specs[specid], this.entity, this.cache);
   ui.fireInterceptorEvents = false;
-  this.edits.push({div: parent, edit: ui});
+  this.edits.push(ui);
   ui.decorate(parent);
 };
 
@@ -92,22 +98,20 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.edits, function(c) {
-    c.edit.updateRequiredClasses();
-  });
+  goog.array.forEach(this.edits, function(c) { c.updateRequiredClasses(); });
 };
 
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.edits, function(c) {
-    if (c.edit.getFormErrors) {
-      errors = goog.array.concat(errors, c.edit.getFormErrors());
+  goog.array.forEach(this.edits, function(edit) {
+    if (edit.getFormErrors) {
+      errors = goog.array.concat(errors, edit.getFormErrors());
     }
   });
-  goog.object.forEach(this.specs, function(spec) {
-    var customErrors = spec.editConfig.interceptor.getCustomValidationErrors();
+  goog.array.forEach(this.interceptors_, function(icptr) {
+    var customErrors = icptr.getCustomValidationErrors();
     errors = goog.array.concat(errors, customErrors);
   }, this);
   return errors;
@@ -118,10 +122,8 @@ pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
 pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.entity);
-  goog.array.forEach(this.edits, function(c) {
-    if (c.edit.getFormData) {
-      goog.object.extend(current, c.edit.getFormData());
-    }
+  goog.array.forEach(this.edits, function(edit) {
+    if (edit.getFormData) { goog.object.extend(current, edit.getFormData()); }
   }, this);
   return current;
 };
@@ -129,16 +131,16 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
-  return goog.array.findIndex(this.edits, function(c) {
-    return c.edit && c.edit.isDirty && c.edit.isDirty();
-  }, this) >= 0;
+  return goog.array.findIndex(this.edits, function(edit) {
+    return edit.isDirty && edit.isDirty();
+  }) >= 0;
 };
 
 
 /** @inheritDoc */
 pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
-  goog.array.forEach(this.edits, function(c) {
-    if (c.edit.resetDirty) c.edit.resetDirty();
+  goog.array.forEach(this.edits, function(edit) {
+    if (edit.resetDirty) edit.resetDirty();
   });
 };
 
@@ -153,15 +155,14 @@ pn.ui.edit.MultiSpecEdit.prototype.createDom = function() {
 pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   pn.ui.edit.MultiSpecEdit.superClass_.enterDocument.call(this);
 
-  var fields = {};
+  var controls = {};
   var commands = this.getCommandButtons();
 
-  goog.array.forEach(this.edits, function(edit) {
-    var ed = edit.edit;
+  goog.array.forEach(this.edits, function(ed) {
     if (ed.getFields) {
       goog.array.forEach(ed.getFields(), function(fctx) {
-        if (fctx.id in fields) return;
-        fields[fctx.id] = [ed.getControl(), ed.getParentControl()];
+        if (fctx.id in controls) return;
+        controls[fctx.id] = [ed.getControl(), ed.getParentControl()];
       });
     }
     if (ed.getCommandButtons) {
@@ -170,12 +171,8 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   }, this);
 
   goog.object.forEach(this.specs, function(spec) {
-    spec.editConfig.interceptor.init(
-        this, this.entity, this.cache, fields, commands);
-  }, this);
-
-  goog.object.forEach(this.specs, function(spec) {
-    spec.editConfig.interceptor.postInit();
+    this.interceptors_.push(new spec.editConfig.interceptor(
+        this, this.entity, this.cache, controls, commands));
   }, this);
 };
 
@@ -184,11 +181,9 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
 pn.ui.edit.MultiSpecEdit.prototype.disposeInternal = function() {
   pn.ui.edit.MultiSpecEdit.superClass_.disposeInternal.call(this);
 
-  goog.array.forEach(this.edits, function(c) {
-    goog.dispose(c.div);
-    goog.dispose(c.edit);
-  });
+  goog.array.forEach(this.edits, goog.dispose);
   goog.object.forEach(this.specs, goog.dispose);
+  goog.object.forEach(this.interceptors_, goog.dispose);
 
   delete this.specs;
   delete this.entity;

@@ -3,6 +3,7 @@ goog.provide('pn.ui.FieldCtx');
 
 goog.require('goog.date.Date');
 goog.require('pn.ui.BaseFieldSpec');
+goog.require('pn.ui.edit.EditUtils');
 goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.grid.ColumnRenderers');
 
@@ -77,6 +78,28 @@ pn.ui.FieldCtx.prototype.isRequired = function() {
  */
 pn.ui.FieldCtx.prototype.getControlValue = function(component, opt_target) {
   return pn.ui.edit.FieldBuilder.getFieldValue(component, opt_target);
+};
+
+
+/**
+ * @param {!(Element|goog.ui.Component)} control The control that this
+ *    field is rendererd on.
+ * @return {boolean} visible Wether the specified field element is currently
+ *    visible.
+ */
+pn.ui.FieldCtx.prototype.isShown = function(control) {
+  return pn.ui.edit.EditUtils.isShown(control, this.id);
+};
+
+
+/**
+ * @protected
+ * @param {!(Element|goog.ui.Component)} control The control that this
+ *    field is rendererd on.
+ * @param {boolean} visible Wether to show or hide the element.
+ */
+pn.ui.FieldCtx.prototype.showElement = function(control, visible) {
+  pn.ui.edit.EditUtils.showElement(control, this.id, visible);
 };
 
 

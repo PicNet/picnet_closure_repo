@@ -19,8 +19,10 @@ goog.require('pn.ui.edit.DeleteCommand');
  *    are used.
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
-  * @param {pn.ui.edit.Interceptor=} opt_interceptor The optional interceptor
-  *   used to receive and intercept lifecycle events.
+ * @param {function(new:pn.ui.edit.Interceptor,!pn.ui.edit.CommandsComponent,
+ *    !Object,!Object.<!Array.<!Object>>,!Object.<Element|goog.ui.Component>,
+ *    !Object.<goog.ui.Button>)=} opt_interceptor The optional interceptor
+ *    constructor pointer used to receive and intercept lifecycle events.
  */
 pn.ui.edit.Config =
     function(fieldSpecs, opt_commands, opt_template, opt_interceptor) {
@@ -37,8 +39,10 @@ pn.ui.edit.Config =
   /** @type {null|function(?):string} */
   this.template = opt_template || null;
 
-  /** @type {!pn.ui.edit.Interceptor} */
-  this.interceptor = opt_interceptor || new pn.ui.edit.Interceptor();
+  /** @type {null|function(new:pn.ui.edit.Interceptor,
+   *    !pn.ui.edit.CommandsComponent,!Object,!Object.<!Array.<!Object>>,
+   *    !Object.<Element|goog.ui.Component>,!Object.<goog.ui.Button>)} */
+  this.interceptor = opt_interceptor || null;
 
   /** @type {boolean} */
   this.autoFocus = true;
@@ -70,7 +74,6 @@ pn.ui.edit.Config.prototype.disposeInternal = function() {
   pn.ui.edit.Config.superClass_.disposeInternal.call(this);
 
   if (this.commands) goog.array.forEach(this.commands, goog.dispose);
-  goog.dispose(this.interceptor);
 
   delete this.fieldSpecs;
   delete this.commands;

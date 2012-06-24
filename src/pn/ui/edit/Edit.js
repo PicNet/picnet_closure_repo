@@ -63,6 +63,12 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 
   /**
    * @private
+   * @type {pn.ui.edit.Interceptor}
+   */
+  this.interceptor_ = null;
+
+  /**
+   * @private
    * @type {!Array.<pn.ui.FieldCtx>}
    */
   this.fctxs_ = goog.array.map(this.cfg_.fieldSpecs, function(fieldSpec) {
@@ -82,8 +88,9 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
-    return this.cfg_.interceptor.isShown(fctx.id) &&
-        fctx.isDirty(this.entity, this.controls_[fctx.id][0]);
+    var ctl = this.controls_[fctx.id][0];
+    return fctx.isShown(ctl) &&
+        fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
   this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
   return dirty;
@@ -154,11 +161,6 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   }
   this.decorateFields_(div);
   this.updateRequiredClasses();
-
-  if (!this.fireInterceptorEvents) return;
-  var cmds = this.getCommandButtons();
-  this.cfg_.interceptor.init(
-      this, this.entity, this.cache_, this.controls_, cmds);
 };
 
 
@@ -254,12 +256,12 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) {
-        if (!this.cfg_.interceptor.isShown(fctx.id)) return;
         var ctl = this.controls_[fctx.id][0];
+        if (!fctx.isShown(ctl)) return;
         errors = goog.array.concat(errors, fctx.validate(ctl));
       }, this);
-  if (this.fireInterceptorEvents) {
-    var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
+  if (this.fireInterceptorEvents && this.interceptor_) {
+    var errors2 = this.interceptor_.getCustomValidationErrors();
     errors = goog.array.concat(errors, errors2);
   }
   return errors;
@@ -317,8 +319,10 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
   goog.array.forEach(this.fctxs_, this.enterDocumentOnChildrenField_, this);
 
-  if (!this.fireInterceptorEvents) return;
-  this.cfg_.interceptor.postInit();
+  if (!this.fireInterceptorEvents || !this.cfg_.interceptor) return;
+
+  this.interceptor_ = new this.cfg_.interceptor(
+      this, this.entity, this.cache_, this.controls_, this.getCommandButtons());
 };
 
 
@@ -384,11 +388,13 @@ pn.ui.edit.Edit.prototype.disposeInternal = function() {
   pn.ui.edit.Edit.superClass_.disposeInternal.call(this);
 
   goog.dispose(this.log_);
+  goog.dispose(this.interceptor_);
   goog.array.forEach(this.fctxs_, goog.dispose);
   goog.object.forEach(this.controls_, function(arr) {
     goog.array.forEach(arr, goog.dispose);
   });
 
+  delete this.interceptor_;
   delete this.controls_;
   delete this.fctxs_;
   delete this.cfg_;
