@@ -335,14 +335,15 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
   var grid = this.controls_[fctx.id][0];
-  this.eh.listen(grid, pn.ui.grid.Grid.EventType.ADD, function() {
+  var gridet = pn.ui.grid.Grid.EventType;
+  this.getHandler().listen(grid, gridet.ADD, function() {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
     e.parentField = fieldSpec.tableParentField;
     this.publishEvent_(e);
   });
-  this.eh.listen(grid, pn.ui.grid.Grid.EventType.ROW_SELECTED, function(ev) {
+  this.getHandler().listen(grid, gridet.ROW_SELECTED, function(ev) {
     var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
     e.entityId = ev.selected['ID'];
     e.parent = this.entity;

@@ -4,7 +4,6 @@ goog.provide('pn.ui.grid.Grid.EventType');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
@@ -132,12 +131,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {Function}
    */
   this.selectionHandler_ = null;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
 
   /**
    * @private
@@ -319,7 +312,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     goog.array.forEach(this.commands_,
         /** @param {!pn.ui.grid.Command} c The command. */
         function(c) {
-          this.eh_.listen(c, c.eventType, function(e) {
+          this.getHandler().listen(c, c.eventType, function(e) {
             e.target = this;
             this.publishEvent_(e);
           });
@@ -373,7 +366,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
         var data = goog.json.unsafeParse(state);
         this.quickFind_.setFilterStates(data['filters']);
         var eventType = pn.ui.grid.QuickFind.EventType.FILTERED;
-        this.eh_.listen(
+        this.getHandler().listen(
             this.quickFind_, eventType, goog.bind(function() {
               this.saveGridState_('saving');
             }, this));
@@ -450,13 +443,6 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
 };
 
 
-/** @inheritDoc */
-pn.ui.grid.Grid.prototype.exitDocument = function() {
-  pn.ui.grid.Grid.superClass_.exitDocument.call(this);
-  this.eh_.removeAll();
-};
-
-
 /** @private */
 pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
@@ -527,8 +513,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.array.forEach(this.fctxs_, goog.dispose);
   goog.dispose(this.cfg_);
 
-  this.eh_.removeAll();
-  goog.dispose(this.eh_);
   goog.dispose(this.log_);
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
@@ -537,7 +521,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.quickFind_);
 
   delete this.spec_;
-  delete this.eh_;
   delete this.slick_;
   delete this.dataView_;
   delete this.cfg_;

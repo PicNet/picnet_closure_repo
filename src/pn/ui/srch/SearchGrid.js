@@ -3,7 +3,6 @@ goog.provide('pn.ui.srch.SearchGrid');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.data.EntityFilter');
@@ -56,12 +55,6 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
    * @type {pn.ui.srch.SearchPanel}
    */
   this.searchPanel_ = null;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
 
   /**
    * @private
@@ -133,7 +126,7 @@ pn.ui.srch.SearchGrid.prototype.enterDocument = function() {
   pn.ui.srch.SearchGrid.superClass_.enterDocument.call(this);
 
   var searchEvent = pn.ui.srch.SearchPanel.SEARCH;
-  this.eh_.listen(this.searchPanel_, searchEvent, function(e) {
+  this.getHandler().listen(this.searchPanel_, searchEvent, function(e) {
     this.filterList(e.filters);
   });
 };
@@ -143,14 +136,11 @@ pn.ui.srch.SearchGrid.prototype.enterDocument = function() {
 pn.ui.srch.SearchGrid.prototype.disposeInternal = function() {
   pn.ui.srch.SearchGrid.superClass_.disposeInternal.call(this);
 
-  this.eh_.removeAll();
-  goog.dispose(this.eh_);
   goog.dispose(this.grid_);
   goog.dispose(this.searchPanel_);
   goog.dispose(this.filter_);
   goog.dispose(this.spec_);
 
-  delete this.eh_;
   delete this.list_;
   delete this.cache_;
   delete this.grid_;

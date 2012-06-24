@@ -5,7 +5,6 @@ goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
-goog.require('pn.ui.grid.Grid.EventType');
 
 
 
@@ -45,12 +44,6 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
    * @type {goog.ui.Button}
    */
   this.commandElement_ = null;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
 };
 goog.inherits(pn.ui.grid.Command, goog.ui.Component);
 
@@ -74,25 +67,15 @@ pn.ui.grid.Command.prototype.decorateInternal = function(element) {
 
 /** @inheritDoc */
 pn.ui.grid.Command.prototype.enterDocument = function() {
-  this.eh_.listen(this.commandElement_, goog.ui.Component.EventType.ACTION,
-      function() {
-        this.dispatchEvent(new goog.events.Event(this.eventType, this));
-      });
-};
-
-
-/** @inheritDoc */
-pn.ui.grid.Command.prototype.exitDocument = function() {
-  this.eh_.removeAll();
+  var action = goog.ui.Component.EventType.ACTION;
+  this.getHandler().listen(this.commandElement_, action, function() {
+    this.dispatchEvent(new goog.events.Event(this.eventType, this));
+  });
 };
 
 
 /** @inheritDoc */
 pn.ui.grid.Command.prototype.disposeInternal = function() {
   goog.dispose(this.commandElement_);
-  this.eh_.removeAll();
-  goog.dispose(this.eh_);
-
   delete this.commandElement_;
-  delete this.eh_;
 };

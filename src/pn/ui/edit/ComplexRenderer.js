@@ -1,7 +1,6 @@
 ﻿;
 goog.provide('pn.ui.edit.ComplexRenderer');
 
-goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Component');
 
 
@@ -27,12 +26,6 @@ pn.ui.edit.ComplexRenderer = function() {
 
   /** @type {boolean} */
   this.showLabel = true;
-
-  /**
-   * @protected
-   * @type {goog.events.EventHandler}
-   */
-  this.eh = null;
 };
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
 
@@ -45,7 +38,6 @@ pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx, entity) {
   goog.asserts.assert(fctx);
   goog.asserts.assert(entity);
 
-  this.eh = new goog.events.EventHandler(this);
   this.fctx = fctx;
   this.entity = entity;
 };
@@ -76,11 +68,5 @@ pn.ui.edit.ComplexRenderer.prototype.createDom = function() {
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
 
-  if (this.eh) {
-    this.eh.removeAll();
-    goog.dispose(this.eh);
-  }
-
-  delete this.eh;
   delete this.fctx;
 };

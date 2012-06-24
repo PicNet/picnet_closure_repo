@@ -83,7 +83,8 @@ pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
 pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
   pn.ui.edit.AddOnFlyRenderer.superClass_.enterDocument.call(this);
 
-  this.eh.listen(this.add_, goog.events.EventType.CLICK, this.addOnFly_);
+  var click = goog.events.EventType.CLICK;
+  this.getHandler().listen(this.add_, click, this.addOnFly_);
 
   this.refreshList_(
       /** @type {number} */ (this.fctx.getEntityValue(this.entity)));
@@ -95,7 +96,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(this.spec_.id, this.fctx.cache);
 
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
-  this.eh.listen(this.dialog_, eventType, this.aofAdded_);
+  this.getHandler().listen(this.dialog_, eventType, this.aofAdded_);
 
   this.registerDisposable(this.dialog_);
   this.dialog_.show();

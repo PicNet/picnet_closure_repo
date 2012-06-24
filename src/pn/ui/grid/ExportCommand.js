@@ -1,7 +1,6 @@
 ﻿;
 goog.require('goog.events');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.json');
 goog.require('goog.net.IframeIo');
 goog.require('goog.ui.Component');
@@ -30,12 +29,6 @@ pn.ui.grid.ExportCommand = function() {
    * @type {Element}
    */
   this.select_ = null;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
 };
 goog.inherits(pn.ui.grid.ExportCommand, goog.ui.Component);
 
@@ -62,7 +55,8 @@ pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
 
 /** @inheritDoc */
 pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
-  this.eh_.listen(this.select_, goog.events.EventType.CHANGE, function() {
+  var change = goog.events.EventType.CHANGE;
+  this.getHandler().listen(this.select_, change, function() {
     var exportFormat = this.select_.value;
     if (!exportFormat) return;
     this.select_.selectedIndex = 0;
@@ -74,16 +68,8 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
 
 
 /** @inheritDoc */
-pn.ui.grid.ExportCommand.prototype.exitDocument = function() {
-  this.eh_.removeAll();
-};
-
-
-/** @inheritDoc */
 pn.ui.grid.ExportCommand.prototype.disposeInternal = function() {
   goog.dispose(this.select_);
-  goog.dispose(this.eh_);
 
   delete this.select_;
-  delete this.eh_;
 };

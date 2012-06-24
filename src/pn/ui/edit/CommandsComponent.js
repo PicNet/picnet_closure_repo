@@ -3,7 +3,6 @@ goog.provide('pn.ui.edit.CommandsComponent');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
@@ -30,12 +29,6 @@ pn.ui.edit.CommandsComponent = function(spec, entity) {
   goog.asserts.assert(entity);
 
   goog.ui.Component.call(this);
-
-  /**
-   * @protected
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh = new goog.events.EventHandler(this);
 
   /**
    * @protected
@@ -162,7 +155,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
  */
 pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(command) {
   var button = this.commandButtons_[command.name];
-  this.eh.listen(button, goog.events.EventType.CLICK, function() {
+  this.getHandler().listen(button, goog.events.EventType.CLICK, function() {
     if (!this.shouldFireCommandEvent(command)) { return; }
     this.fireCommandEvent(command, this.getCurrentFormData());
   });
@@ -185,24 +178,13 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 
 
 /** @inheritDoc */
-pn.ui.edit.CommandsComponent.prototype.exitDocument = function() {
-  pn.ui.edit.CommandsComponent.superClass_.exitDocument.call(this);
-
-  this.eh.removeAll();
-};
-
-
-/** @inheritDoc */
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 
-  this.eh.removeAll();
-  goog.dispose(this.eh);
   goog.object.forEach(this.commandButtons_, goog.dispose);
   goog.array.forEach(this.commands_, goog.dispose);
   goog.dispose(this.spec);
 
-  delete this.eh;
   delete this.commandButtons_;
   delete this.commands_;
   delete this.spec;

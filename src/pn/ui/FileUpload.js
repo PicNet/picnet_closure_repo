@@ -6,7 +6,6 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.net.EventType');
 goog.require('goog.net.IframeIo');
@@ -79,12 +78,6 @@ pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
    * @type {function(string):boolean|undefined}
    */
   this.validateData_ = opt_validateData;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
 };
 goog.inherits(pn.ui.FileUpload, goog.ui.Component);
 
@@ -120,16 +113,8 @@ pn.ui.FileUpload.prototype.decorateInternal = function(element) {
 /** @inheritDoc */
 pn.ui.FileUpload.prototype.enterDocument = function() {
   pn.ui.FileUpload.superClass_.enterDocument.call(this);
-  this.eh_.listen(this.fileInput_, goog.events.EventType.CHANGE,
+  this.getHandler().listen(this.fileInput_, goog.events.EventType.CHANGE,
       this.doUpload_);
-};
-
-
-/** @inheritDoc */
-pn.ui.FileUpload.prototype.exitDocument = function() {
-  pn.ui.FileUpload.superClass_.exitDocument.call(this);
-
-  this.eh_.removeAll();
 };
 
 
@@ -144,7 +129,8 @@ pn.ui.FileUpload.prototype.doUpload_ = function() {
   this.dispatchEvent(e);
 
   this.io_ = new goog.net.IframeIo();
-  this.eh_.listen(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
+  var complete = goog.net.EventType.COMPLETE;
+  this.getHandler().listen(this.io_, complete, this.onComplete_);
 
   if (this.getData_) {
     var data = typeof (this.getData_) === 'object' ?
@@ -181,7 +167,8 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
  */
 pn.ui.FileUpload.prototype.onComplete_ = function() {
   this.fileInput_.disabled = false;
-  this.eh_.unlisten(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
+  var complete = goog.net.EventType.COMPLETE;
+  this.getHandler().unlisten(this.io_, complete, this.onComplete_);
 
   var et = this.io_.isSuccess() ?
       pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :
@@ -206,12 +193,10 @@ pn.ui.FileUpload.prototype.disposeInternal = function() {
   pn.ui.FileUpload.superClass_.disposeInternal.call(this);
 
   goog.array.forEach(this.formFields_, goog.dispose);
-  goog.dispose(this.eh_);
   goog.dispose(this.fileInput_);
   goog.dispose(this.uploadform_);
 
   delete this.formFields_;
-  delete this.eh_;
   delete this.fileInput_;
   delete this.uploadform_;
   delete this.getData_;

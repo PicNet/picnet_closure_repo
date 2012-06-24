@@ -3,7 +3,6 @@ goog.provide('pn.ui.srch.SearchPanel');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.fx.dom.ResizeHeight');
 goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
@@ -114,12 +113,6 @@ pn.ui.srch.SearchPanel = function(filters, cache) {
 
   /**
    * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-
-  /**
-   * @private
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.ui.srch.SearchPanel');
@@ -208,10 +201,10 @@ pn.ui.srch.SearchPanel.prototype.enterDocument = function() {
   pn.ui.srch.SearchPanel.superClass_.enterDocument.call(this);
 
   var et = goog.events.EventType;
-  this.eh_.listen(this.toggle_, et.CLICK, this.toggleFiltersPanel_);
-  this.eh_.listen(this.go_, et.CLICK, this.doSearch_);
-  this.eh_.listen(this.clear_, et.CLICK, this.doClear_);
-  this.eh_.listen(this.select_, et.CHANGE, this.filterSelected_);
+  this.getHandler().listen(this.toggle_, et.CLICK, this.toggleFiltersPanel_);
+  this.getHandler().listen(this.go_, et.CLICK, this.doSearch_);
+  this.getHandler().listen(this.clear_, et.CLICK, this.doClear_);
+  this.getHandler().listen(this.select_, et.CHANGE, this.filterSelected_);
 };
 
 
@@ -228,9 +221,10 @@ pn.ui.srch.SearchPanel.prototype.toggleFiltersPanel_ = function() {
     this.resizeShow_ = new rh(this.searchPanel_, 0, this.panelHeight_, dur);
     this.resizeHide_ = new rh(this.searchPanel_, this.panelHeight_, 0, dur);
     var endEventType = goog.fx.Transition.EventType.END;
-    this.eh_.listen(this.resizeShow_, endEventType, goog.bind(function() {
-      goog.style.setHeight(this.searchPanel_, 'auto');
-    }, this));
+    this.getHandler().listen(this.resizeShow_, endEventType,
+        goog.bind(function() {
+          goog.style.setHeight(this.searchPanel_, 'auto');
+        }, this));
   } else {
     this.resizeHide_.start = this.panelHeight_;
     this.resizeShow_.end = this.panelHeight_;
@@ -270,7 +264,8 @@ pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
 pn.ui.srch.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
   goog.object.forEach(this.filtersControls_, function(arr) {
-    this.eh_.unlisten(arr[0], goog.events.EventType.CHANGE, this.doSearch_);
+    var change = goog.events.EventType.CHANGE;
+    this.getHandler().unlisten(arr[0], change, this.doSearch_);
     goog.array.forEach(arr, goog.dispose);
   }, this);
   this.filtersControls_ = {};
@@ -343,19 +338,21 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
   // fctx will be disposed before here so lets grab references for the closure.
   var fieldId = fctx.id;
+  var change = goog.events.EventType.CHANGE;
+  var click = goog.events.EventType.CLICK;
   var removeFilter = goog.bind(function() {
     delete this.filtersControls_[fieldId];
 
     goog.dom.removeNode(parent);
     goog.style.showElement(option, true);
 
-    this.eh_.unlisten(input, goog.events.EventType.CHANGE, this.doSearch_);
+    this.getHandler().unlisten(input, change, this.doSearch_);
 
     this.doSearch_();
   }, this);
 
-  this.eh_.listen(input, goog.events.EventType.CHANGE, this.doSearch_);
-  this.eh_.listenOnce(remove, goog.events.EventType.CLICK, removeFilter);
+  this.getHandler().listen(input, change, this.doSearch_);
+  this.getHandler().listenOnce(remove, click, removeFilter);
 };
 
 
@@ -389,8 +386,6 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
 pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
   pn.ui.srch.SearchPanel.superClass_.disposeInternal.call(this);
 
-  this.eh_.removeAll();
-  goog.dispose(this.eh_);
   goog.dispose(this.log_);
   goog.dispose(this.select_);
   goog.dispose(this.clear_);
@@ -409,7 +404,6 @@ pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
   delete this.filters_;
   delete this.cache_;
   delete this.filtersControls_;
-  delete this.eh_;
   delete this.log_;
   delete this.select_;
   delete this.clear_;
