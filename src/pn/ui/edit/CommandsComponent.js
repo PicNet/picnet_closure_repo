@@ -23,10 +23,13 @@ goog.require('pn.ui.grid.Grid');
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} entity The entity being edited.
+ * @param {!Object.<!Array.<!Object>>} cache The entities cache to use for
+ *    related entities.
  */
-pn.ui.edit.CommandsComponent = function(spec, entity) {
+pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
   goog.asserts.assert(spec);
   goog.asserts.assert(entity);
+  goog.asserts.assert(cache);
 
   goog.ui.Component.call(this);
 
@@ -43,10 +46,22 @@ pn.ui.edit.CommandsComponent = function(spec, entity) {
   this.entity = entity;
 
   /**
+   * @protected
+   * @type {!Object.<!Array.<!Object>>}
+   */
+  this.cache = cache;
+
+  /**
+   * @protected
+   * @type {!pn.ui.edit.Config}
+   */
+  this.cfg = spec.getEditConfig(entity, cache);
+
+  /**
    * @private
    * @type {!Array.<pn.ui.edit.Command>}
    */
-  this.commands_ = goog.array.filter(spec.editConfig.commands, function(c) {
+  this.commands_ = goog.array.filter(this.cfg.commands, function(c) {
     return !pn.data.EntityUtils.isNew(entity) || c.showOnNew;
   });
 
@@ -183,9 +198,12 @@ pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
 
   goog.object.forEach(this.commandButtons_, goog.dispose);
   goog.array.forEach(this.commands_, goog.dispose);
+  goog.array.forEach(this.cfg.fCtxs, goog.dispose);
+  goog.dispose(this.cfg);
   goog.dispose(this.spec);
 
   delete this.commandButtons_;
   delete this.commands_;
+  delete this.cfg;
   delete this.spec;
 };

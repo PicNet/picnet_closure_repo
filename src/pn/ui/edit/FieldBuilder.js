@@ -57,7 +57,6 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
   if (renderer) {
     if (renderer instanceof pn.ui.edit.ComplexRenderer) {
       elem = renderer;
-      renderer.initialise(fctx, entity);
       elem.decorate(parent);
     } else {
       elem = renderer(fctx, parent, entity);

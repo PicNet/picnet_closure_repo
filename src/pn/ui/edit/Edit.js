@@ -38,7 +38,7 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(entity);
   goog.asserts.assert(cache);
 
-  pn.ui.edit.CommandsComponent.call(this, spec, entity);
+  pn.ui.edit.CommandsComponent.call(this, spec, entity, cache);
 
   /**
    * @private
@@ -51,29 +51,9 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!Object.<!Array>}
-   */
-  this.cache_ = cache;
-
-  /**
-   * @private
-   * @type {pn.ui.edit.Config}
-   */
-  this.cfg_ = this.spec.editConfig;
-
-  /**
-   * @private
    * @type {pn.ui.edit.Interceptor}
    */
   this.interceptor_ = null;
-
-  /**
-   * @private
-   * @type {!Array.<pn.ui.FieldCtx>}
-   */
-  this.fctxs_ = goog.array.map(this.cfg_.fieldSpecs, function(fieldSpec) {
-    return new pn.ui.FieldCtx(fieldSpec, entity, cache);
-  }, this);
 
   /**
    * @private
@@ -105,7 +85,7 @@ pn.ui.edit.Edit.prototype.resetDirty = function() {
 
 
 /** @return {!Array.<!pn.ui.FieldCtx>} All fields. */
-pn.ui.edit.Edit.prototype.getFields = function() { return this.fctxs_; };
+pn.ui.edit.Edit.prototype.getFields = function() { return this.cfg.fCtxs; };
 
 
 /**
@@ -143,9 +123,9 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 
   var div = goog.dom.createDom('div', 'details-container ' + this.spec.type);
   goog.dom.appendChild(element, div);
-  if (this.cfg_.titleStrategy) {
+  if (this.cfg.titleStrategy) {
     var headerDiv = goog.dom.createDom('div', 'edit-head');
-    var title = this.cfg_.titleStrategy(this.spec, this.entity, this.cache_);
+    var title = this.cfg.titleStrategy(this.spec, this.entity, this.cache);
     var titleDiv = goog.dom.createDom('div', 'edit-title');
     titleDiv.innerHTML = title;
     goog.dom.appendChild(headerDiv, titleDiv);
@@ -154,8 +134,8 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   } else {
     pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
   }
-  if (this.cfg_.template) {
-    var html = this.cfg_.template(this.entity);
+  if (this.cfg.template) {
+    var html = this.cfg.template(this.entity);
     var templateDiv = goog.dom.htmlToDocumentFragment(html);
     goog.dom.appendChild(div, templateDiv);
   }
@@ -171,14 +151,14 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
 
-  var useTemplate = !!this.cfg_.template,
-      focusSet = !this.cfg_.autoFocus,
+  var useTemplate = !!this.cfg.template,
+      focusSet = !this.cfg.autoFocus,
       fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
       newEntity = pn.data.EntityUtils.isNew(this.entity);
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.fctxs_,
+  goog.array.forEach(this.cfg.fCtxs,
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) {
         // Do not do child tables on new entities
@@ -221,7 +201,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.fctxs_,
+  goog.array.forEach(this.cfg.fCtxs,
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) {
         var parent = this.controls_[fctx.id][1];
@@ -300,7 +280,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<!pn.ui.FieldCtx>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  return goog.array.filter(this.fctxs_,
+  return goog.array.filter(this.cfg.fCtxs,
       /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) { return fctx.isEditable(this.entity); }, this);
 };
@@ -317,12 +297,12 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
-  goog.array.forEach(this.fctxs_, this.enterDocumentOnChildrenField_, this);
+  goog.array.forEach(this.cfg.fCtxs, this.enterDocumentOnChildrenField_, this);
 
-  if (!this.fireInterceptorEvents || !this.cfg_.interceptor) return;
+  if (!this.fireInterceptorEvents || !this.cfg.interceptor) return;
 
-  this.interceptor_ = new this.cfg_.interceptor(
-      this, this.entity, this.cache_, this.controls_, this.getCommandButtons());
+  this.interceptor_ = new this.cfg.interceptor(
+      this, this.entity, this.cache, this.controls_, this.getCommandButtons());
 };
 
 
@@ -360,7 +340,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
  *    mechanism.
  */
 pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
-  if (!this.cfg_.publishEventBusEvents) {
+  if (!this.cfg.publishEventBusEvents) {
     this.dispatchEvent(e);
     return;
   }
@@ -390,15 +370,12 @@ pn.ui.edit.Edit.prototype.disposeInternal = function() {
 
   goog.dispose(this.log_);
   goog.dispose(this.interceptor_);
-  goog.array.forEach(this.fctxs_, goog.dispose);
   goog.object.forEach(this.controls_, function(arr) {
     goog.array.forEach(arr, goog.dispose);
   });
 
   delete this.interceptor_;
   delete this.controls_;
-  delete this.fctxs_;
-  delete this.cfg_;
   delete this.log_;
 };
 

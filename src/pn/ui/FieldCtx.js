@@ -13,12 +13,10 @@ goog.require('pn.ui.grid.ColumnRenderers');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.BaseFieldSpec} spec The field specifications.
- * @param {!Object} entity The current entity being rendererd.
  * @param {!Object.<!Array.<!Object>>} cache The current cache.
  */
-pn.ui.FieldCtx = function(spec, entity, cache) {
+pn.ui.FieldCtx = function(spec, cache) {
   goog.asserts.assert(spec);
-  goog.asserts.assert(entity);
   goog.asserts.assert(cache);
 
   goog.Disposable.call(this);

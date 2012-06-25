@@ -42,12 +42,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   goog.asserts.assert(specs);
   goog.asserts.assert(mainSpecId);
 
-
-  /**
-   * @protected
-   * @type {!Object.<Array>}
-   */
-  this.cache = cache;
+  pn.ui.edit.CommandsComponent.call(this, specs[mainSpecId], entity, cache);
 
   /**
    * @protected
@@ -66,8 +61,6 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
    * @type {!Array.<pn.ui.edit.Interceptor>}
    */
   this.interceptors_ = [];
-
-  pn.ui.edit.CommandsComponent.call(this, this.specs[mainSpecId], entity);
 };
 goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 
@@ -170,8 +163,8 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
     }
   }, this);
 
-  goog.object.forEach(this.specs, function(spec) {
-    this.interceptors_.push(new spec.editConfig.interceptor(
+  goog.object.forEach(this.edits, function(edit) {
+    this.interceptors_.push(new edit.cfg.interceptor(
         this, this.entity, this.cache, controls, commands));
   }, this);
 };
@@ -187,6 +180,5 @@ pn.ui.edit.MultiSpecEdit.prototype.disposeInternal = function() {
 
   delete this.specs;
   delete this.entity;
-  delete this.cache;
   delete this.edits;
 };

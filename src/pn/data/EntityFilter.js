@@ -32,10 +32,9 @@ pn.data.EntityFilter = function(cache, spec) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.FieldCtx>}
+   * @type {!pn.ui.srch.Config}
    */
-  this.fctxs_ = goog.array.map(this.spec_.searchConfig.fieldSpecs,
-      function(fs) { return new pn.ui.FieldCtx(fs, {}, cache); }, this);
+  this.cfg_ = this.spec_.getSearchConfig(cache);
 
   /**
    * @private
@@ -125,7 +124,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev['ID']) return ev['ID'].toString() === fv;
-    var fctx = goog.array.find(this.fctxs_,
+    var fctx = goog.array.find(this.cfg_.fCtxs,
         function(fctx1) { return fctx1.id === fieldId; });
     var renderer = fctx.getFieldRenderer();
     if (renderer === FieldRenderers.dateRenderer) {
@@ -223,9 +222,11 @@ pn.data.EntityFilter.prototype.disposeInternal = function() {
 
   goog.dispose(this.log_);
   goog.dispose(this.search_);
+  goog.dispose(this.cfg_);
 
   delete this.cache_;
   delete this.spec_;
+  delete this.cfg_;
   delete this.search_;
   delete this.log_;
 };

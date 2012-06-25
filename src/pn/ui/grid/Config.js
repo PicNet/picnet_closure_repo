@@ -9,21 +9,18 @@ goog.require('pn.ui.grid.Interceptor');
 /**
  * @constructor
  * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.grid.ColumnSpec>} columns The specification of all the
+ * @param {!Array.<pn.ui.FieldCtx>} fCtxs The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
  * @param {pn.ui.grid.Interceptor=} opt_interceptor An optional interceptor to
  *    use to modify the internal workings of the grid.
  */
-pn.ui.grid.Config = function(columns, commands, opt_interceptor) {
-  goog.asserts.assert(columns.length > 0);
+pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
+  goog.asserts.assert(fCtxs.length > 0);
   goog.asserts.assert(commands);
 
-  pn.ui.BaseConfig.call(this, columns);
-
-  /** @type {!Array.<pn.ui.grid.ColumnSpec>} */
-  this.columns = columns;
+  pn.ui.BaseConfig.call(this, fCtxs);
 
   /** @type {!Array.<pn.ui.grid.Command>} */
   this.commands = commands;
@@ -101,6 +98,5 @@ pn.ui.grid.Config.prototype.disposeInternal = function() {
 
   goog.array.forEach(this.commands, goog.dispose);
 
-  delete this.columns;
   delete this.commands;
 };

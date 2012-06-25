@@ -16,10 +16,9 @@ goog.provide('pn.ui.BaseFieldSpec');
  * @param {string} id The id of this column.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
- * @param {string=} opt_name The optional name/caption of this column. If the
  *    name is omitted the the field id will be used (parsing cammel casing).
  */
-pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
+pn.ui.BaseFieldSpec = function(id, entitySpec) {
   goog.Disposable.call(this);
 
   goog.asserts.assert(id);
@@ -47,7 +46,7 @@ pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
    *
    * @type {string}
    */
-  this.name = opt_name || '';
+  this.name = '';
 
   /**
    * This field should represent the value in the currently displayed entity
@@ -97,6 +96,7 @@ goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
 
 
 /**
+ * @protected
  * @param {!Object} props The properties to add this / Column.  After adding
  *    we will also apply default values to any field that was not
  *    explicitally set.

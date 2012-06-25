@@ -11,7 +11,7 @@ goog.require('pn.ui.edit.DeleteCommand');
 /**
  * @constructor
  * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.edit.FieldSpec>} fieldSpecs An array of field meta
+ * @param {!Array.<pn.ui.FieldCtx>} fCtxs An array of field meta
  *    specifications that describe how each of the display fields should be
  *    displayed, captioned and validated.
  * @param {Array.<pn.ui.edit.Command>=} opt_commands An optional commands array
@@ -25,13 +25,10 @@ goog.require('pn.ui.edit.DeleteCommand');
  *    constructor pointer used to receive and intercept lifecycle events.
  */
 pn.ui.edit.Config =
-    function(fieldSpecs, opt_commands, opt_template, opt_interceptor) {
-  goog.asserts.assert(fieldSpecs);
+    function(fCtxs, opt_commands, opt_template, opt_interceptor) {
+  goog.asserts.assert(fCtxs);
 
-  pn.ui.BaseConfig.call(this, fieldSpecs);
-
-  /** @type {!Array.<pn.ui.edit.FieldSpec>} */
-  this.fieldSpecs = fieldSpecs;
+  pn.ui.BaseConfig.call(this, fCtxs);
 
   /** @type {!Array.<pn.ui.edit.Command>} */
   this.commands = opt_commands || this.getDefaultCommands_();
@@ -75,7 +72,6 @@ pn.ui.edit.Config.prototype.disposeInternal = function() {
 
   if (this.commands) goog.array.forEach(this.commands, goog.dispose);
 
-  delete this.fieldSpecs;
   delete this.commands;
   delete this.template;
   delete this.interceptor;

@@ -18,15 +18,18 @@ goog.require('pn.ui.BaseFieldSpec');
  * @extends {pn.ui.BaseFieldSpec}
  *
  * @param {string} id The id of this column.
+ * @param {!Object} props The properties to add this column.  After adding
+ *    we will also apply default values to any attribute that was not
+ *    explicitally set.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
- * @param {string=} opt_name The optional name/caption of this column.
  */
-pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
+pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   goog.asserts.assert(id);
+  goog.asserts.assert(props);
   goog.asserts.assert(entitySpec);
 
-  pn.ui.BaseFieldSpec.call(this, id, entitySpec, opt_name);
+  pn.ui.BaseFieldSpec.call(this, id, entitySpec);
 
   /** @type {boolean} */
   this.resizable = true;
@@ -78,6 +81,8 @@ pn.ui.grid.ColumnSpec = function(id, entitySpec, opt_name) {
    * @type {boolean}
    */
   this.total = false;
+
+  this.extend(props);
 };
 goog.inherits(pn.ui.grid.ColumnSpec, pn.ui.BaseFieldSpec);
 

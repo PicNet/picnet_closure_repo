@@ -6,19 +6,16 @@ goog.provide('pn.ui.BaseConfig');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Array.<pn.ui.BaseFieldSpec>} fieldSpecs The fields being
- *    displayed by this config.
+ * @param {!Array.<pn.ui.FieldCtx>} fCtxs The fields being displayed by this
+ *    config.
  */
-pn.ui.BaseConfig = function(fieldSpecs) {
-  goog.asserts.assert(fieldSpecs);
+pn.ui.BaseConfig = function(fCtxs) {
+  goog.asserts.assert(fCtxs);
 
   goog.Disposable.call(this);
 
-  /**
-   * @private
-   * @type {!Array.<pn.ui.BaseFieldSpec>}
-   */
-  this.fieldSpecs_ = fieldSpecs;
+  /** @type {!Array.<pn.ui.FieldCtx>} */
+  this.fCtxs = fCtxs;
 
   /**
    * The Grid and Edit controls will use pn.app.ctx.pub to publish events if
@@ -38,30 +35,23 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
     var type = pn.data.EntityUtils.getTypeProperty(f);
     if (type !== f) types.push(type);
   };
-  goog.array.forEach(this.fieldSpecs_, function(fSpec) {
-    var additional = fSpec.additionalCacheTypes;
+  goog.array.forEach(this.fCtxs, function(fctx) {
+    var additional = fctx.spec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
 
-    if (fSpec.displayPath) {
-      goog.array.forEach(fSpec.displayPath.split('.'), addIfType);
+    if (fctx.spec.displayPath) {
+      goog.array.forEach(fctx.spec.displayPath.split('.'), addIfType);
     }
-    addIfType(fSpec.dataProperty);
-    if (fSpec.tableSpec) {
-      var spec = pn.app.ctx.specs.get(fSpec.tableSpec);
-      var related = spec.gridConfig.getRelatedTypes();
+    addIfType(fctx.spec.dataProperty);
+    if (fctx.spec.tableSpec) {
+      var spec = pn.app.ctx.specs.get(fctx.spec.tableSpec);
+      var cfg = spec.getGridConfig(fctx.cache);
+      var related = cfg.getRelatedTypes();
       types = goog.array.concat(types, related);
+      goog.dispose(cfg);
       goog.dispose(spec);
     }
   });
   goog.array.removeDuplicates(types);
   return types;
-};
-
-
-/** @inheritDoc */
-pn.ui.BaseConfig.prototype.disposeInternal = function() {
-  pn.ui.BaseConfig.superClass_.disposeInternal.call(this);
-
-  goog.array.forEach(this.fieldSpecs_, goog.dispose);
-  delete this.fieldSpecs_;
 };

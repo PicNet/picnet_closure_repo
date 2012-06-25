@@ -33,8 +33,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   goog.ui.Component.call(this);
 
-  spec.gridConfig.interceptor.init(cache);
-
   /**
    * @private
    * @type {!pn.ui.UiSpec}
@@ -46,21 +44,16 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {pn.ui.grid.Config}
    */
-  this.cfg_ = this.spec_.gridConfig;
-
-  /** @type {!Array.<!pn.ui.FieldCtx>} */
-  var fctxs = goog.array.map(this.cfg_.columns,
-      /** @param {!pn.ui.grid.ColumnSpec} c The column. */
-      function(c) {
-        return new pn.ui.FieldCtx(c, {}, cache);
-      });
+  this.cfg_ = this.spec_.getGridConfig(cache);
+  // TODO: Remove this init, make same as edit.Interceptor
+  this.cfg_.interceptor.init(cache);
 
   /**
    * @private
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(fctxs,
+  this.hash_ = /** @type {string} */ (goog.array.reduce(this.cfg_.fCtxs,
       function(acc, f) { return acc + f.id; }, ''));
 
   /**
@@ -73,14 +66,14 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array}
    */
-  this.list_ = this.spec_.gridConfig.interceptor.filterList(list);
+  this.list_ = this.cfg_.interceptor.filterList(list);
 
 
   /**
    * @private
    * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.fctxs_ = this.getColumnsWithInitialState_(fctxs);
+  this.fctxs_ = this.getColumnsWithInitialState_(this.cfg_.fCtxs);
 
   /**
    * @private
@@ -251,6 +244,7 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
 pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
   var state = pn.storage.get(this.hash_);
   if (!state) return fctxs;
+
   var data = goog.json.unsafeParse(state);
   var ids = data['ids'];
   var widths = data['widths'];
@@ -510,7 +504,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
     this.slick_.destroy();
   }
   goog.array.forEach(this.commands_, goog.dispose);
-  goog.array.forEach(this.fctxs_, goog.dispose);
   goog.dispose(this.cfg_);
 
   goog.dispose(this.log_);

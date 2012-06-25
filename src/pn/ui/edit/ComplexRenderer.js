@@ -8,39 +8,31 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
+ * @param {!pn.ui.FieldCtx} fctx The field context object.
+ * @param {!Object} entity The entity being edited.
  */
-pn.ui.edit.ComplexRenderer = function() {
+pn.ui.edit.ComplexRenderer = function(fctx, entity) {
+  goog.asserts.assert(fctx);
+  goog.asserts.assert(entity);
+
   goog.ui.Component.call(this);
 
   /**
    * @protected
-   * @type {pn.ui.FieldCtx}
+   * @type {!pn.ui.FieldCtx}
    */
-  this.fctx = null;
+  this.fctx = fctx;
 
   /**
    * @protected
-   * @type {Object}
+   * @type {!Object}
    */
-  this.entity = null;
+  this.entity = entity;
 
   /** @type {boolean} */
   this.showLabel = true;
 };
 goog.inherits(pn.ui.edit.ComplexRenderer, goog.ui.Component);
-
-
-/**
- * @param {!pn.ui.FieldCtx} fctx The field context object.
- * @param {!Object} entity The entity being edited.
- */
-pn.ui.edit.ComplexRenderer.prototype.initialise = function(fctx, entity) {
-  goog.asserts.assert(fctx);
-  goog.asserts.assert(entity);
-
-  this.fctx = fctx;
-  this.entity = entity;
-};
 
 
 /**

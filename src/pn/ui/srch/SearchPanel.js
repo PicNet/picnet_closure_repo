@@ -24,12 +24,10 @@ goog.require('pn.ui.grid.Grid.EventType');
  * @extends {goog.ui.Component}
  * @param {!Object.<string>} filters The id/caption map to show in the filter
  *    list.
- * @param {!Object.<Array>} cache The entities cache used for showin parental
- *    properties in the filters.
+ * @param {!Array.<!pn.ui.FieldCtx>} fctxs The array of fields to search on.
  */
-pn.ui.srch.SearchPanel = function(filters, cache) {
+pn.ui.srch.SearchPanel = function(filters, fctxs) {
   goog.asserts.assert(filters);
-  goog.asserts.assert(cache);
 
   goog.ui.Component.call(this);
 
@@ -41,9 +39,9 @@ pn.ui.srch.SearchPanel = function(filters, cache) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!Array.<!pn.ui.FieldCtx>}
    */
-  this.cache_ = cache;
+  this.fctxs_ = fctxs;
 
   /**
    * @private
@@ -280,19 +278,10 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   var val = option.value;
   if (!val) return;
 
-  var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var spec = pn.app.ctx.specs.get(specid);
-  var fctx;
-  var fieldSpec = /** @type {pn.ui.edit.FieldSpec} */ (goog.array.find(
-      spec.searchConfig.fieldSpecs, function(fieldSpec1) {
-        return fieldSpec1.id === fieldId;
-      }));
-  if (!fieldSpec) {
-    throw new Error('Could not find the specified field: ' + fieldId +
-        ' in the searcheable fields of the ' + spec.id + ' spec');
-  }
-  fctx = new pn.ui.FieldCtx(fieldSpec, {}, this.cache_);
+  var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
+      function(fctx1) { return fctx1.id === fieldId; }));
+
   this.select_.selectedIndex = 0;
   this.addFieldToTheFiltersSearch_(fctx, option);
   goog.dispose(fctx);
@@ -401,8 +390,8 @@ pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
     goog.array.forEach(arr, goog.dispose);
   }, this);
 
+  delete this.fctxs_;
   delete this.filters_;
-  delete this.cache_;
   delete this.filtersControls_;
   delete this.log_;
   delete this.select_;

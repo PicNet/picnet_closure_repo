@@ -10,13 +10,15 @@ goog.require('pn.ui.edit.ComplexRenderer');
 /**
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
+ * @param {!pn.ui.FieldCtx} fctx The field context object.
+ * @param {!Object} entity The entity being edited.
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.
  */
-pn.ui.edit.AddOnFlyRenderer = function(specId) {
+pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId) {
   goog.asserts.assert(specId);
 
-  pn.ui.edit.ComplexRenderer.call(this);
+  pn.ui.edit.ComplexRenderer.call(this, fctx, entity);
 
   /**
    * @private
@@ -28,7 +30,8 @@ pn.ui.edit.AddOnFlyRenderer = function(specId) {
    * @private
    * @type {pn.ui.UiSpec}
    */
-  this.spec_ = null;
+  this.spec_ = pn.app.ctx.specs.get(this.specId_);
+  this.registerDisposable(this.spec_);
 
   /**
    * @private
@@ -49,15 +52,6 @@ pn.ui.edit.AddOnFlyRenderer = function(specId) {
   this.select_ = goog.dom.createDom('select', 'add-on-fly-select');
 };
 goog.inherits(pn.ui.edit.AddOnFlyRenderer, pn.ui.edit.ComplexRenderer);
-
-
-/** @inheritDoc */
-pn.ui.edit.AddOnFlyRenderer.prototype.initialise = function(fctx, entity) {
-  pn.ui.edit.AddOnFlyRenderer.superClass_.initialise.call(this, fctx, entity);
-
-  this.spec_ = pn.app.ctx.specs.get(this.specId_);
-  this.registerDisposable(this.spec_);
-};
 
 
 /** @inheritDoc */

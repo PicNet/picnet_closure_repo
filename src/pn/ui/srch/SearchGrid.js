@@ -34,6 +34,12 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
 
   /**
    * @private
+   * @type {!pn.ui.srch.Config}
+   */
+  this.cfg_ = spec.getSearchConfig(cache);
+
+  /**
+   * @private
    * @type {!Array}
    */
   this.list_ = list;
@@ -106,17 +112,17 @@ pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
  */
 pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
   var filters = {};
-  var showPrefix = this.spec_.searchConfig.showTypePrefixes;
-  goog.array.forEach(this.spec_.searchConfig.fieldSpecs, function(fieldSpec) {
-    if (pn.data.EntityUtils.isChildrenProperty(fieldSpec.dataProperty)) {
+  var showPrefix = this.cfg_.showTypePrefixes;
+  goog.array.forEach(this.cfg_.fCtxs, function(fctx) {
+    if (pn.data.EntityUtils.isChildrenProperty(fctx.spec.dataProperty)) {
       return;
     }
-    var filterid = this.spec_.id + '.' + fieldSpec.id;
-    var txt = (showPrefix ? this.spec_.name + ' - ' : '') + fieldSpec.name;
+    var filterid = this.spec_.id + '.' + fctx.id;
+    var txt = (showPrefix ? this.spec_.name + ' - ' : '') + fctx.spec.name;
     filters[filterid] = txt;
   }, this);
 
-  this.searchPanel_ = new pn.ui.srch.SearchPanel(filters, this.cache_);
+  this.searchPanel_ = new pn.ui.srch.SearchPanel(filters, this.cfg_.fCtxs);
   this.searchPanel_.decorate(parent);
 };
 
@@ -140,6 +146,7 @@ pn.ui.srch.SearchGrid.prototype.disposeInternal = function() {
   goog.dispose(this.searchPanel_);
   goog.dispose(this.filter_);
   goog.dispose(this.spec_);
+  goog.dispose(this.cfg_);
 
   delete this.list_;
   delete this.cache_;
@@ -147,4 +154,5 @@ pn.ui.srch.SearchGrid.prototype.disposeInternal = function() {
   delete this.searchPanel_;
   delete this.filter_;
   delete this.spec_;
+  delete this.cfg_;
 };
