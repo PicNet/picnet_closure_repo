@@ -99,10 +99,8 @@ pn.ui.grid.QuickFind.prototype.init = function() {
   var dataView = this.slick_.getData();
   var qf = this.filters_;
 
-  var fire = goog.bind(function() {
-    var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
-    this.dispatchEvent(event);
-  }, this);
+  var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
+  var fire = goog.bind(this.dispatchEvent, this, event);
 
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {

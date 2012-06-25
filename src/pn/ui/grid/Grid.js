@@ -336,7 +336,6 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.saveGridState_();
   }, this));
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
-
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
   }, this));
@@ -367,10 +366,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
         var data = goog.json.unsafeParse(state);
         this.quickFind_.setFilterStates(data['filters']);
         var eventType = pn.ui.grid.QuickFind.EventType.FILTERED;
-        this.getHandler().listen(
-            this.quickFind_, eventType, goog.bind(function() {
-              this.saveGridState_('saving');
-            }, this));
+        this.getHandler().listen(this.quickFind_, eventType,
+            goog.bind(this.saveGridState_, this, 'saving'));
       }
     }
   }
