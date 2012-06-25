@@ -71,7 +71,7 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(field) {
   input.value = pn.convert.centsToCurrency(/** @type {number} */ (val));
   goog.dom.appendChild(field.parentComponent, input);
   input.getValue = function() {
-    return pn.convert.currencyToCents(input.value);
+    return pn.convert.currencyToCents(input.value) || 0;
   };
   return input;
 };
