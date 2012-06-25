@@ -204,7 +204,10 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.cfg.fCtxs,
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var parent = this.controls_[fctx.id][1];
+        var ctls = this.controls_[fctx.id];
+        if (!ctls) return;
+
+        var parent = ctls[1];
         if (!parent) return; // Not shown, such as fields not shown on add
 
         if (fctx.isRequired()) {

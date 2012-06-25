@@ -56,7 +56,7 @@ goog.inherits(pn.ui.edit.AddOnFlyRenderer, pn.ui.edit.ComplexRenderer);
 
 /** @inheritDoc */
 pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
-  return null;
+  return parseInt(this.select_.value, 10);
 };
 
 
@@ -120,6 +120,10 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
     return goog.string.caseInsensitiveCompare(a[nameProp], b[nameProp]);
   });
   goog.dom.removeChildren(this.select_);
+  goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
+    'value': '0',
+    'text': 'Select ' + this.spec_.name + '...'
+  }));
   goog.array.forEach(list, function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e['ID'],
