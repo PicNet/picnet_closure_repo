@@ -45,8 +45,13 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {pn.ui.grid.Config}
    */
   this.cfg_ = this.spec_.getGridConfig(cache);
-  // TODO: Remove this init, make same as edit.Interceptor
-  this.cfg_.interceptor.init(cache);
+
+  /**
+   * @private
+   * @type {pn.ui.grid.Interceptor}
+   */
+  this.interceptor_ = this.cfg_.interceptor ?
+      new this.cfg_.interceptor(cache) : null;
 
   /**
    * @private
@@ -66,7 +71,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array}
    */
-  this.list_ = this.cfg_.interceptor.filterList(list);
+  this.list_ = this.interceptor_ ? this.interceptor_.filterList(list) : list;
 
 
   /**
@@ -510,6 +515,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.noData_);
   goog.dispose(this.gridContainer_);
   if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
+  if (this.interceptor_) goog.dispose(this.interceptor_);
   goog.dispose(this.spec_);
   goog.dispose(this.quickFind_);
 
@@ -532,6 +538,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.currentFilter_;
   delete this.sort_;
   delete this.quickFind_;
+  delete this.interceptor_;
 };
 
 

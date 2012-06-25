@@ -8,28 +8,19 @@ goog.require('goog.events.EventHandler');
 /**
  * @constructor
  * @extends {goog.Disposable}
+ * @param {!Object.<!Array.<!Object>>} cache The cache with all
+ *    related entities.
  */
-pn.ui.grid.Interceptor = function() {
+pn.ui.grid.Interceptor = function(cache) {
   goog.Disposable.call(this);
 
   /**
    * @protected
    * @type {!Object.<!Array.<!Object>>} The cache with all related entities.
    */
-  this.cache = {};
-};
-goog.inherits(pn.ui.grid.Interceptor, goog.Disposable);
-
-
-/**
- * Called by Grid when initising the interceptor.
- *
- * @param {!Object.<!Array.<!Object>>} cache The cache with all related
- *    entities.
- */
-pn.ui.grid.Interceptor.prototype.init = function(cache) {
   this.cache = cache;
 };
+goog.inherits(pn.ui.grid.Interceptor, goog.Disposable);
 
 
 /**

@@ -13,8 +13,9 @@ goog.require('pn.ui.grid.Interceptor');
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
- * @param {pn.ui.grid.Interceptor=} opt_interceptor An optional interceptor to
- *    use to modify the internal workings of the grid.
+ * @param {function(new:pn.ui.grid.Interceptor, !Object.<!Array.<!Object>>)=}
+ *    opt_interceptor An optional interceptor ctor to use to modify the
+ *    internal workings of the grid.
  */
 pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
   goog.asserts.assert(fCtxs.length > 0);
@@ -43,8 +44,11 @@ pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
   /** @type {boolean} */
   this.persistFilters = true;
 
-  /** @type {pn.ui.grid.Interceptor} */
-  this.interceptor = opt_interceptor || new pn.ui.grid.Interceptor();
+  /**
+   * @type {null|
+   *    function(new:pn.ui.grid.Interceptor, !Object.<!Array.<!Object>>)}
+   */
+  this.interceptor = opt_interceptor || null;
 
   //////////////////////////////////////////////////////////////////////////////
   // Slick Grid Properties
