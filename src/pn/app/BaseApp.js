@@ -113,13 +113,31 @@ pn.app.BaseApp.prototype.initialise = function(schema) {
 
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
 
-  var eventBusEvents = this.getAppEventHandlers();
+  var eventBusEvents = this.getDefaultAppEventHandlers_();
+  goog.object.extend(eventBusEvents, this.getAppEventHandlers());
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
   this.router.initialise(this.getRoutes());
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
+};
+
+
+/**
+ * @private
+ * @return {!Object} The default/generic event handlers.
+ */
+pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
+  var evs = {},
+      ae = pn.app.AppEvents;
+  evs[ae.CLEAR_MESSAGE] = goog.bind(this.msg.clearMessage, this.msg);
+  evs[ae.SHOW_MESSAGE] = goog.bind(this.msg.showMessage, this.msg);
+  evs[ae.SHOW_MESSAGES] = goog.bind(this.msg.showMessages, this.msg);
+  evs[ae.SHOW_ERROR] = goog.bind(this.msg.showError, this.msg);
+  evs[ae.SHOW_ERRORS] = goog.bind(this.msg.showErrors, this.msg);
+  evs[ae.ENTITY_VALIDATION_ERROR] = goog.bind(this.msg.showErrors, this.msg);
+  return evs;
 };
 
 
