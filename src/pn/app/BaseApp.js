@@ -7,7 +7,9 @@ goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.app.schema.Schema');
 goog.require('pn.log');
+goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
+goog.require('pn.ui.ViewMgr');
 
 goog.provide('pn.app.BaseApp');
 
@@ -66,6 +68,18 @@ pn.app.BaseApp = function(opt_cfg) {
   this.schema = null;
 
   /**
+   * @protected
+   * @type {!pn.ui.ViewMgr}
+   */
+  this.view = new pn.ui.ViewMgr(pn.dom.getElement(this.cfg.viewContainerId));
+
+  /**
+   * @protected
+   * @type {!pn.ui.MessagePanel}
+   */
+  this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
+
+  /**
    * @private
    * @type {!pn.app.EventBus}
    */
@@ -104,6 +118,8 @@ pn.app.BaseApp.prototype.initialise = function(schema) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
   this.router.initialise(this.getRoutes());
+  var navevent = pn.app.Router.EventType.NAVIGATING;
+  goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
 };
 
 
@@ -155,11 +171,24 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
 pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 
 
+/**
+ * @private
+ * @return {boolean} Wether happy to loose unsaved data (or not dirty).
+ */
+pn.app.BaseApp.prototype.acceptDirty_ = function() {
+  if (!this.view.isDirty()) return true;
+  return window.confirm('Any unsaved changes will be lost, continue?');
+};
+
+
 /** @inheritDoc */
 pn.app.BaseApp.prototype.disposeInternal = function() {
   pn.app.BaseApp.superClass_.disposeInternal.call(this);
 
   this.log.info('Disposing Application');
+
+  var navevent = pn.app.Router.EventType.NAVIGATING;
+  goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
 
   goog.dispose(this.log);
   goog.dispose(this.router);
@@ -167,6 +196,8 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   goog.dispose(this.bus_);
   goog.dispose(this.cfg);
   goog.dispose(this.schema);
+  goog.dispose(this.view);
+  goog.dispose(this.msg);
 
   delete pn.app.ctx;
   delete this.log;
@@ -175,4 +206,6 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   delete this.bus_;
   delete this.cfg;
   delete this.schema;
+  delete this.view;
+  delete this.msg;
 };

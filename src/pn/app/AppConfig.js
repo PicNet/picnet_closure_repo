@@ -26,6 +26,12 @@ pn.app.AppConfig = function() {
   /** @type {boolean} */
   this.useAsyncEventBus = false;
 
+  /** @type {string} */
+  this.viewContainerId = 'view-container';
+
+  /** @type {string} */
+  this.messagePanelId = 'message';
+
   /** @type {Object} */
   this.defaultFieldRenderers = {
 
