@@ -11,7 +11,7 @@ goog.require('pn.ui.grid.Grid');
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a label for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a label for.
  * @return {!Element} The label element wrapped in a div.
  */
 pn.ui.edit.FieldBuilder.getFieldLabel = function(fctx) {
@@ -45,7 +45,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a dom tree for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent control to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {Element|goog.ui.Component|Text} The created dom element.
@@ -80,7 +80,8 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field/column context to create a dom tree.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field/column context to create a
+ *    dom tree.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The created dom element.
  */
@@ -111,7 +112,7 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field/column to create a dom tree for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field/column to create a dom tree for.
  * @return {!Element} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createSearchParentFilter = function(fctx) {
@@ -124,7 +125,7 @@ pn.ui.edit.FieldBuilder.createSearchParentFilter = function(fctx) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field to create parent select.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create parent select.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The created dom element.
  */
@@ -197,7 +198,7 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field to create a dom tree for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent to attach to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element|!goog.ui.Component} The created dom element.
@@ -216,7 +217,7 @@ pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : goog.array.filter(list,
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.app.ctx.specs.get(fctx.spec.tableSpec);
+  var spec = pn.app.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
   var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
   g.decorate(parent);
   return g;

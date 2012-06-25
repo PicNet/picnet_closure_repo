@@ -10,7 +10,7 @@ goog.provide('pn.ui.edit.FieldRenderers');
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!goog.ui.Component} The date control.
@@ -33,7 +33,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The date control.
@@ -63,7 +63,7 @@ pn.ui.edit.FieldRenderers.timeRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The cents input control.
@@ -81,7 +81,7 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The int input control.
@@ -102,7 +102,7 @@ pn.ui.edit.FieldRenderers.intRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The checkbox control.
@@ -116,7 +116,7 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The checkbox control.
@@ -135,7 +135,7 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The input control.
@@ -151,7 +151,7 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The textarea control.
@@ -168,7 +168,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The password control.
@@ -184,7 +184,7 @@ pn.ui.edit.FieldRenderers.passwordRenderer = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
  * @return {!Element} The textarea control.
@@ -201,7 +201,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to render.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @return {!Element} The text control for search inputs.
  */

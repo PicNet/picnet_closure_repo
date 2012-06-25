@@ -85,11 +85,11 @@ pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
  * @param {string} id The id representing this column.
  * @param {!Object.<!Array.<!Object>>} cache The current context cache.
  * @param {Object=} opt_props Any additional properties for this column.
- * @return {!pn.ui.FieldCtx} The created column.
+ * @return {!pn.ui.grid.ColumnCtx} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
   var spec = new pn.ui.grid.ColumnSpec(id, opt_props || {}, this);
-  var fctx = new pn.ui.FieldCtx(spec, cache);
+  var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
   this.registerDisposable(fctx);
 
   return fctx;
@@ -100,11 +100,11 @@ pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
  * @param {string} id The id representing this field.
  * @param {!Object.<!Array.<!Object>>} cache The current context cache.
  * @param {Object=} opt_props Any additional properties for this field.
- * @return {!pn.ui.FieldCtx} The field created.
+ * @return {!pn.ui.edit.FieldCtx} The field created.
  */
 pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
   var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, this);
-  var fctx = new pn.ui.FieldCtx(spec, cache);
+  var fctx = new pn.ui.edit.FieldCtx(spec, cache);
   this.registerDisposable(fctx);
 
   return fctx;

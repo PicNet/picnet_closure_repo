@@ -176,11 +176,14 @@ pn.ui.edit.FieldSpec.prototype.disposeInternal = function() {
 
 /**
  * @typedef {pn.ui.edit.ComplexRenderer|
- *     function(!pn.ui.FieldCtx,!Element,!Object):
+ *     function(!pn.ui.edit.FieldCtx,!Element,!Object):
  *       !(Element|goog.ui.Component|Text)}
  */
 pn.ui.edit.FieldSpec.Renderer;
 
 
-/** @typedef {null|pn.ui.edit.ValidateInfo|function(pn.ui.FieldCtx):string} */
+/**
+ * @typedef
+ *    {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.FieldCtx):string}
+ */
 pn.ui.edit.FieldSpec.Validator;

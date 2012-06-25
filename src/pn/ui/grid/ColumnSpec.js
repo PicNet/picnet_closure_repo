@@ -143,9 +143,12 @@ pn.ui.grid.ColumnSpec.prototype.disposeInternal = function() {
 };
 
 
-/** @typedef {(undefined|function(!pn.ui.FieldCtx,!Object):string)} */
+/** @typedef {(undefined|function(!pn.ui.grid.ColumnCtx,!Object):string)} */
 pn.ui.grid.ColumnSpec.Renderer;
 
 
-/** @typedef {(undefined|function(!pn.ui.FieldCtx,!Object):(string|number))} */
+/**
+ * @typedef
+ *    {(undefined|function(!pn.ui.grid.ColumnCtx,!Object):(string|number))}
+ */
 pn.ui.grid.ColumnSpec.SortValueRenderer;

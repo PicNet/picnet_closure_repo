@@ -8,7 +8,7 @@ goog.require('pn.date');
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
@@ -18,7 +18,7 @@ pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(field, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
@@ -29,7 +29,7 @@ pn.ui.grid.ColumnRenderers.dateRenderer = function(field, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
@@ -41,7 +41,7 @@ pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(field, entity) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
  *    this time/date value;.
  * @param {!Object} entity The entity being displayed.
@@ -57,7 +57,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
@@ -68,7 +68,7 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(field, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} field The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} field The context for the current column.
  * @param {!Object} entity The entity being displayed.
  * @return {string} The html value to display in this cell;.
  */
@@ -91,7 +91,7 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(field, entity) {
  *   })
  *  </code>
  *
- * @param {!pn.ui.FieldCtx} fctx The field context for the current column.
+ * @param {!pn.ui.grid.ColumnCtx} fctx The context for the current column.
  * @param {!string} parentField The child field used to match this
  *    entities children.
  * @param {!Object} entity The entity being displayed.

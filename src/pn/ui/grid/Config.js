@@ -1,15 +1,15 @@
 ﻿;
 goog.provide('pn.ui.grid.Config');
 
-goog.require('pn.ui.BaseConfig');
+goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Interceptor');
 
 
 
 /**
  * @constructor
- * @extends {pn.ui.BaseConfig}
- * @param {!Array.<pn.ui.FieldCtx>} fCtxs The specification of all the
+ * @extends {goog.Disposable}
+ * @param {!Array.<pn.ui.grid.ColumnCtx>} cCtxs The specification of all the
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
@@ -17,11 +17,14 @@ goog.require('pn.ui.grid.Interceptor');
  *    opt_interceptor An optional interceptor ctor to use to modify the
  *    internal workings of the grid.
  */
-pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
-  goog.asserts.assert(fCtxs.length > 0);
+pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
+  goog.asserts.assert(cCtxs.length > 0);
   goog.asserts.assert(commands);
 
-  pn.ui.BaseConfig.call(this, fCtxs);
+  goog.Disposable.call(this);
+
+  /** @type {!Array.<pn.ui.grid.ColumnCtx>} */
+  this.cCtxs = cCtxs;
 
   /** @type {!Array.<pn.ui.grid.Command>} */
   this.commands = commands;
@@ -50,6 +53,13 @@ pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
    */
   this.interceptor = opt_interceptor || null;
 
+  /**
+   * The Grid control will use pn.app.ctx.pub to publish events if this is true.
+   *    Otherwise traditional goog.events.Event will be used.
+   * @type {boolean}
+   */
+  this.publishEventBusEvents = true;
+
   //////////////////////////////////////////////////////////////////////////////
   // Slick Grid Properties
   //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +79,7 @@ pn.ui.grid.Config = function(fCtxs, commands, opt_interceptor) {
   /** @type {boolean} */
   this.syncColumnCellResize = true;
 };
-goog.inherits(pn.ui.grid.Config, pn.ui.BaseConfig);
+goog.inherits(pn.ui.grid.Config, goog.Disposable);
 
 
 /**
@@ -93,6 +103,28 @@ pn.ui.grid.Config.prototype.toSlick = function() {
   cfg.showHeaderRow = this.enableQuickFilters;
   cfg.syncColumnCellResize = this.syncColumnCellResize;
   return cfg;
+};
+
+
+/** @return {!Array.<string>} The list of types related to this entity. */
+pn.ui.grid.Config.prototype.getRelatedTypes = function() {
+  var types = [];
+  var addIfType = function(f) {
+    if (!f) return;
+    var type = pn.data.EntityUtils.getTypeProperty(f);
+    if (type !== f) types.push(type);
+  };
+  goog.array.forEach(this.cCtxs, function(cctx) {
+    var additional = cctx.spec.additionalCacheTypes;
+    if (additional.length) { types = goog.array.concat(types, additional); }
+
+    if (cctx.spec.displayPath) {
+      goog.array.forEach(cctx.spec.displayPath.split('.'), addIfType);
+    }
+    addIfType(cctx.spec.dataProperty);
+  });
+  goog.array.removeDuplicates(types);
+  return types;
 };
 
 

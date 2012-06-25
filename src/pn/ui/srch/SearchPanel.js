@@ -24,7 +24,8 @@ goog.require('pn.ui.grid.Grid.EventType');
  * @extends {goog.ui.Component}
  * @param {!Object.<string>} filters The id/caption map to show in the filter
  *    list.
- * @param {!Array.<!pn.ui.FieldCtx>} fctxs The array of fields to search on.
+ * @param {!Array.<!pn.ui.edit.FieldCtx>} fctxs The array of fields to
+ *    search on.
  */
 pn.ui.srch.SearchPanel = function(filters, fctxs) {
   goog.asserts.assert(filters);
@@ -39,7 +40,7 @@ pn.ui.srch.SearchPanel = function(filters, fctxs) {
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.FieldCtx>}
+   * @type {!Array.<!pn.ui.edit.FieldCtx>}
    */
   this.fctxs_ = fctxs;
 
@@ -279,7 +280,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   if (!val) return;
 
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
+  var fctx = /** @type {!pn.ui.edit.FieldCtx} */ (goog.array.find(this.fctxs_,
       function(fctx1) { return fctx1.id === fieldId; }));
 
   this.select_.selectedIndex = 0;
@@ -293,7 +294,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field context.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field context.
  * @param {!Element} option The select option element representing this option.
  */
 pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
@@ -347,15 +348,15 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field context to make appropriate for
+ * @param {!pn.ui.edit.FieldCtx} fctx The field context to make appropriate for
  *    searching.
- * @return {!pn.ui.FieldCtx} The search appropriate field.
+ * @return {!pn.ui.edit.FieldCtx} The search appropriate field.
  */
 pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
     function(fctx) {
   var renderer = fctx.getFieldRenderer();
   if (!renderer) return fctx;
-  var sf = /** @type {!pn.ui.FieldCtx} */ (goog.object.clone(fctx));
+  var sf = /** @type {!pn.ui.edit.FieldCtx} */ (goog.object.clone(fctx));
   var fr = pn.ui.edit.FieldRenderers;
   var rr = pn.ui.edit.ReadOnlyFields;
   var curr = renderer;

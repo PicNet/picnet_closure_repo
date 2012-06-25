@@ -13,10 +13,11 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Array.<!pn.ui.FieldCtx>} fctxs The column specs being displayed.
+ * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
+ *    displayed.
  * @param {!Slick.Grid} slick The instance of the slick grid.
  */
-pn.ui.grid.QuickFind = function(cache, fctxs, slick) {
+pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
   goog.events.EventTarget.call(this);
 
   /**
@@ -27,9 +28,9 @@ pn.ui.grid.QuickFind = function(cache, fctxs, slick) {
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.FieldCtx>}
+   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
    */
-  this.fctxs_ = fctxs;
+  this.cctxs_ = cctxs;
 
   /**
    * @private
@@ -62,8 +63,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {
       var filterVal = this.filters_[columnId];
-      var fctx = /** @type {!pn.ui.FieldCtx} */ (goog.array.find(this.fctxs_,
-          function(fctx1) { return fctx1.id === columnId; }));
+      var fctx = /** @type {!pn.ui.grid.ColumnCtx} */ (goog.array.find(
+          this.cctxs_, function(fctx1) { return fctx1.id === columnId; }));
       var val = fctx.getEntityValue(entity);
       var renderer = fctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
@@ -84,8 +85,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
 /** Initialises the quick filters and attaches the filters row to the grid */
 pn.ui.grid.QuickFind.prototype.init = function() {
 
-  for (var i = 0; i < this.fctxs_.length; i++) {
-    var fctx = this.fctxs_[i];
+  for (var i = 0; i < this.cctxs_.length; i++) {
+    var fctx = this.cctxs_[i];
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var val = this.filters_[fctx.id];
     var tt = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
@@ -121,8 +122,8 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
       (this.slick_.getHeaderRow().parentNode.parentNode);
   var headerTemplates =
       goog.dom.getElementsByClass('slick-header-column', grid);
-  for (var i = 0; i < this.fctxs_.length; i++) {
-    var fctx = this.fctxs_[i];
+  for (var i = 0; i < this.cctxs_.length; i++) {
+    var fctx = this.cctxs_[i];
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var input = goog.dom.getChildren(header)[0];
     var width = $(headerTemplates[i]).width();
@@ -137,8 +138,8 @@ pn.ui.grid.QuickFind.prototype.resize = function() {
  */
 pn.ui.grid.QuickFind.prototype.getFilterStates = function() {
   var states = {};
-  for (var i = 0; i < this.fctxs_.length; i++) {
-    var fctx = this.fctxs_[i];
+  for (var i = 0; i < this.cctxs_.length; i++) {
+    var fctx = this.cctxs_[i];
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var input = goog.dom.getChildren(header)[0];
     var value = input.value;
@@ -154,8 +155,8 @@ pn.ui.grid.QuickFind.prototype.getFilterStates = function() {
 pn.ui.grid.QuickFind.prototype.setFilterStates = function(states) {
   if (!states) return;
   var needsRefresh = false;
-  for (var i = 0; i < this.fctxs_.length; i++) {
-    var fctx = this.fctxs_[i];
+  for (var i = 0; i < this.cctxs_.length; i++) {
+    var fctx = this.cctxs_[i];
     if (!states[fctx.id]) continue;
 
     var header = this.slick_.getHeaderRowColumn(fctx.id);
@@ -171,7 +172,7 @@ pn.ui.grid.QuickFind.prototype.setFilterStates = function(states) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The column to apply the filter to.
+ * @param {!pn.ui.grid.ColumnCtx} fctx The column to apply the filter to.
  * @param {number} width The width of the control to create.
  * @param {string} value The value to display in the filter.
  * @param {string} tooltip The control tooltip.
@@ -197,7 +198,7 @@ pn.ui.grid.QuickFind.prototype.disposeInternal = function() {
   goog.object.forEach(this.filters_, goog.dispose);
   goog.dispose(this.search_);
 
-  delete this.fctxs_;
+  delete this.cctxs_;
   delete this.slick_;
   delete this.filters_;
   delete this.search_;

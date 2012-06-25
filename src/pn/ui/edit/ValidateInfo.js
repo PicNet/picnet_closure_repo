@@ -74,7 +74,7 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
 
 
 /**
- * @param {pn.ui.FieldCtx} fctx The field ctx to validate.
+ * @param {pn.ui.edit.FieldCtx} fctx The field ctx to validate.
  * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {string} Any error that this field can have.
  */

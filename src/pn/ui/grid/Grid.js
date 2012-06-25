@@ -9,6 +9,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.app.AppEvents');
 goog.require('pn.storage');
+goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFind');
 
@@ -58,7 +59,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(this.cfg_.fCtxs,
+  this.hash_ = /** @type {string} */ (goog.array.reduce(this.cfg_.cCtxs,
       function(acc, f) { return acc + f.id; }, ''));
 
   /**
@@ -76,16 +77,16 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.FieldCtx>}
+   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
    */
-  this.fctxs_ = this.getColumnsWithInitialState_(this.cfg_.fCtxs);
+  this.cctxs_ = this.getColumnsWithInitialState_(this.cfg_.cCtxs);
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.FieldCtx>}
+   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
+  this.totalColumns_ = goog.array.filter(this.cctxs_,
+      /** @param {!pn.ui.grid.ColumnCtx} fctx The field context. */
       function(fctx) { return !!fctx.spec.total; });
 
   /**
@@ -208,7 +209,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(element, parent);
 
   this.dataView_ = new Slick.Data.DataView();
-  var columns = goog.array.map(this.fctxs_,
+  var columns = goog.array.map(this.cctxs_,
       goog.bind(this.getColumnSlickConfig_, this));
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       columns, this.cfg_.toSlick());
@@ -225,9 +226,9 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field context to convert to a slick
+ * @param {!pn.ui.grid.ColumnCtx} fctx The field context to convert to a slick
  *    grid column config.
- * @return {!Object} A config object for a slick grid column.
+ * @return {pn.ui.grid.ColumnSpec} A config object for a slick grid column.
  */
 pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
   var cfg = fctx.spec.toSlick();
@@ -243,29 +244,30 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
 
 /**
  * @private
- * @param {!Array.<!pn.ui.FieldCtx>} fctxs The unsorted columns.
- * @return {!Array.<!pn.ui.FieldCtx>} The sorted columns with saved widths.
+ * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The unsorted columns.
+ * @return {!Array.<!pn.ui.grid.ColumnCtx>} The sorted columns with saved
+ *    widths.
  */
-pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
+pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
   var state = pn.storage.get(this.hash_);
-  if (!state) return fctxs;
+  if (!state) return cctxs;
 
   var data = goog.json.unsafeParse(state);
   var ids = data['ids'];
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(fctxs,
-        /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+    var cidx = goog.array.findIndex(cctxs,
+        /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
         function(fctx1) { return fctx1.id === id; });
-    var fctx = fctxs[cidx];
-    delete fctxs[cidx];
+    var fctx = cctxs[cidx];
+    delete cctxs[cidx];
     fctx.spec.width = widths[idx];
     ordered.push(fctx);
   });
 
   // Add remaining columns (if any)
-  goog.array.forEach(fctxs, ordered.push);
+  goog.array.forEach(cctxs, ordered.push);
   return ordered;
 };
 
@@ -275,17 +277,17 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(fctxs) {
  *    exporting the grid contents.
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
-  var headers = goog.array.map(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+  var headers = goog.array.map(this.cctxs_,
+      /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
       function(fctx1) { return fctx1.spec.name; });
   var gridData = [headers];
-  var lencol = this.fctxs_.length;
+  var lencol = this.cctxs_.length;
   for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
     var rowData = this.dataView_.getItem(row);
     var rowTxt = [];
 
     for (var cidx = 0; cidx < lencol; cidx++) {
-      var fctx = this.fctxs_[cidx];
+      var fctx = this.cctxs_[cidx];
       var val = rowData[fctx.spec.dataProperty];
       var renderer = fctx.getColumnRenderer();
       var txt = renderer ? renderer(fctx, rowData) : val;
@@ -323,7 +325,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       'colid': args['sortCol']['id'],
       'asc': args['sortAsc']
     };
-    var fctx = goog.array.find(this.fctxs_, function(fctx1) {
+    var fctx = goog.array.find(this.cctxs_, function(fctx1) {
       return fctx1.id === args['sortCol']['id'];
     });
     this.dataView_.sort(function(a, b) {
@@ -357,7 +359,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Quick Filters
   if (this.cfg_.enableQuickFilters) {
     this.quickFind_ = new pn.ui.grid.QuickFind(
-        this.cache_, this.fctxs_, this.slick_);
+        this.cache_, this.cctxs_, this.slick_);
     this.quickFind_.init();
     if (this.cfg_.persistFilters) {
       var state = pn.storage.get(this.hash_);
@@ -413,7 +415,7 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   var total = goog.array.reduce(items,
       function(acc, item) {
         goog.array.forEach(this.totalColumns_,
-            /** @param {!pn.ui.FieldCtx} fctx The field context. */
+            /** @param {!pn.ui.grid.ColumnCtx} fctx The field context. */
             function(fctx) {
               if (acc[fctx.id] === undefined) acc[fctx.id] = 0;
               var itemVal = item[fctx.id];
@@ -423,9 +425,9 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       }, {}, this);
   var html = [];
   for (var field in total) {
-    var fctx = /** @type {!pn.ui.FieldCtx} */ (
+    var fctx = /** @type {!pn.ui.grid.ColumnCtx} */ (
         goog.array.find(this.totalColumns_,
-            /** @param {!pn.ui.FieldCtx} fctx1 The field context. */
+            /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
             function(fctx1) {
           return fctx1.id === field;
         }));
@@ -526,7 +528,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   delete this.log_;
   delete this.totalsLegend_;
   delete this.list_;
-  delete this.fctxs_;
+  delete this.cctxs_;
   delete this.totalColumns_;
   delete this.cfg_;
   delete this.cache_;

@@ -43,7 +43,7 @@ pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field context for the field being
+ * @param {!pn.ui.edit.FieldCtx} fctx The field context for the field being
  *    validated.
  * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.

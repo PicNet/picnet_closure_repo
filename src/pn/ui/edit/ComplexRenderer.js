@@ -8,7 +8,7 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!pn.ui.FieldCtx} fctx The field context object.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field context object.
  * @param {!Object} entity The entity being edited.
  */
 pn.ui.edit.ComplexRenderer = function(fctx, entity) {
@@ -19,7 +19,7 @@ pn.ui.edit.ComplexRenderer = function(fctx, entity) {
 
   /**
    * @protected
-   * @type {!pn.ui.FieldCtx}
+   * @type {!pn.ui.edit.FieldCtx}
    */
   this.fctx = fctx;
 

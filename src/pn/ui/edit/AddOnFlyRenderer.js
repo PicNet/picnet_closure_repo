@@ -10,7 +10,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
 /**
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
- * @param {!pn.ui.FieldCtx} fctx The field context object.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field context object.
  * @param {!Object} entity The entity being edited.
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.

@@ -62,7 +62,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly text field control.
@@ -96,7 +96,7 @@ pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly text field control.
@@ -108,7 +108,7 @@ pn.ui.edit.ReadOnlyFields.itemList = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The time field.
@@ -120,7 +120,7 @@ pn.ui.edit.ReadOnlyFields.timeField = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly cents field.
@@ -132,7 +132,7 @@ pn.ui.edit.ReadOnlyFields.centsField = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly int field.
@@ -144,7 +144,7 @@ pn.ui.edit.ReadOnlyFields.intField = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The checkbox control.
@@ -158,7 +158,7 @@ pn.ui.edit.ReadOnlyFields.boolField = function(fctx, parent, entity) {
 
 
 /**
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly
@@ -172,7 +172,7 @@ pn.ui.edit.ReadOnlyFields.dateField = function(fctx, parent, entity) {
 
 /**
  * @private
- * @param {!pn.ui.FieldCtx} fctx The field to create a control for.
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!pn.ui.edit.ReadOnlyFields.FieldType_} type The type of this field.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
