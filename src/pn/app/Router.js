@@ -88,12 +88,22 @@ pn.app.Router.prototype.back = function() {
  *    stack.
  * @param {!string} path The token to replace the current token with.
  */
-pn.app.Router.prototype.replaceToken = function(path) {
+pn.app.Router.prototype.replaceLocation = function(path) {
   goog.asserts.assert(path);
 
   this.stack_.pop();
-  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
-  this.history_.replaceToken(path);
+  if (path !== this.history_.getToken()) {
+    // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+    this.history_.replaceToken(path);
+  } else {
+    // replaceLocation can also be used to reload the current page.  However,
+    // in that case the above "this.history_.replaceToken" will not fire
+    // the NAVIGATE event so we manually call navigateImpl_.  NOTE: This
+    // manual navigateImpl_ will not fire the NAVIGATING event and can hence
+    // not be cancelled.  This is a bug but allowing cancelling of a replace
+    // location call can lead to its own complications.
+    this.navigateImpl_(path);
+  }
 };
 
 

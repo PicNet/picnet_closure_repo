@@ -35,9 +35,7 @@ pn.ui.ViewMgr = function(parent) {
 goog.inherits(pn.ui.ViewMgr, goog.events.EventHandler);
 
 
-/**
- * @param {goog.ui.Component|Node} component The component to display.
- */
+/** @param {goog.ui.Component|Node} component The component to display. */
 pn.ui.ViewMgr.prototype.showComponent = function(component) {
   goog.asserts.assert(component);
   goog.asserts.assert(this.parent_);
@@ -71,18 +69,14 @@ pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
 };
 
 
-/**
- * @return {boolean} Whether the screen is dirty.
- */
+/** @return {boolean} Whether the screen is dirty. */
 pn.ui.ViewMgr.prototype.isDirty = function() {
   return this.currentView_ && this.currentView_.isDirty &&
       this.currentView_.isDirty();
 };
 
 
-/**
- * Resets the dirty state of the current view
- */
+/** Resets the dirty state of the current view */
 pn.ui.ViewMgr.prototype.resetDirty = function() {
   if (this.currentView_ && this.currentView_.resetDirty) {
     this.currentView_.resetDirty();
