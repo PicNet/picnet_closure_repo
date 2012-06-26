@@ -73,33 +73,3 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
     new pn.ui.edit.Command('Cancel', pn.ui.edit.Edit.EventType.CANCEL)
   ];
 };
-
-
-/** @return {!Array.<string>} The list of types related to this entity. */
-pn.ui.edit.Config.prototype.getRelatedTypes = function() {
-  var types = [];
-  var addIfType = function(f) {
-    if (!f) return;
-    var type = pn.data.EntityUtils.getTypeProperty(f);
-    if (type !== f) types.push(type);
-  };
-  goog.array.forEach(this.fCtxs, function(fctx) {
-    var additional = fctx.spec.additionalCacheTypes;
-    if (additional.length) { types = goog.array.concat(types, additional); }
-
-    if (fctx.spec.displayPath) {
-      goog.array.forEach(fctx.spec.displayPath.split('.'), addIfType);
-    }
-    addIfType(fctx.spec.dataProperty);
-    if (fctx.spec.tableSpec) {
-      var spec = pn.app.ctx.specs.get(fctx.spec.tableSpec);
-      var cfg = spec.getGridConfig(fctx.cache);
-      var related = cfg.getRelatedTypes();
-      types = goog.array.concat(types, related);
-      goog.dispose(cfg);
-      goog.dispose(spec);
-    }
-  });
-  goog.array.removeDuplicates(types);
-  return types;
-};

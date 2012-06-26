@@ -29,11 +29,3 @@ pn.ui.srch.Config = function(type, fCtxs) {
   this.showTypePrefixes = false;
 };
 goog.inherits(pn.ui.srch.Config, pn.ui.edit.Config);
-
-
-/** @inheritDoc */
-pn.ui.srch.Config.prototype.getRelatedTypes = function() {
-  var types = pn.ui.srch.Config.superClass_.getRelatedTypes.call(this);
-  types.push(this.type_);
-  return types;
-};

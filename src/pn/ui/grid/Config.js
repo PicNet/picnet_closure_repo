@@ -106,28 +106,6 @@ pn.ui.grid.Config.prototype.toSlick = function() {
 };
 
 
-/** @return {!Array.<string>} The list of types related to this entity. */
-pn.ui.grid.Config.prototype.getRelatedTypes = function() {
-  var types = [];
-  var addIfType = function(f) {
-    if (!f) return;
-    var type = pn.data.EntityUtils.getTypeProperty(f);
-    if (type !== f) types.push(type);
-  };
-  goog.array.forEach(this.cCtxs, function(cctx) {
-    var additional = cctx.spec.additionalCacheTypes;
-    if (additional.length) { types = goog.array.concat(types, additional); }
-
-    if (cctx.spec.displayPath) {
-      goog.array.forEach(cctx.spec.displayPath.split('.'), addIfType);
-    }
-    addIfType(cctx.spec.dataProperty);
-  });
-  goog.array.removeDuplicates(types);
-  return types;
-};
-
-
 /** @inheritDoc */
 pn.ui.grid.Config.prototype.disposeInternal = function() {
   pn.ui.grid.Config.superClass_.disposeInternal.call(this);
