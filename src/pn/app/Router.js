@@ -93,10 +93,16 @@ pn.app.Router.prototype.back = function() {
  */
 pn.app.Router.prototype.replaceToken = function(path) {
   goog.asserts.assert(path);
-
+  var current = this.stack_[this.stack_.length - 1];
+  this.log_.fine('replaceToken: ' + path + ' current: ' + current);
   this.stack_.pop();
-  // This will trigger a NAVIGATE event which will inturn call navigateImpl_
-  this.history_.replaceToken(path);
+
+  if (current !== path) {
+    // This will trigger a NAVIGATE event which will inturn call navigateImpl_
+    this.history_.replaceToken(path);
+  } else {
+    this.navigateImpl_(path);
+  }
 };
 
 
