@@ -41,6 +41,7 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    * @type {!goog.events.EventHandler}
    */
   this.eh_ = new goog.events.EventHandler(this);
+  this.registerDisposable(this.eh_);
 
   /**
    * @private
@@ -54,6 +55,7 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    */
   this.history_ = new goog.History(opt_invisible,
       opt_invisible ? 'blank.htm' : '');
+  this.registerDisposable(this.history_);
 };
 goog.inherits(pn.app.Router, goog.events.EventTarget);
 
@@ -201,23 +203,6 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   this.stack_.push(path);
   route.apply(this, tokens);
   this.log_.fine('navigateImpl_ path: ' + path + ' stack: ' + this.stack_);
-};
-
-
-/** @inheritDoc */
-pn.app.Router.prototype.disposeInternal = function() {
-  pn.app.Router.superClass_.disposeInternal.call(this);
-  this.log_.fine('disposing');
-
-  goog.dispose(this.log_);
-  goog.dispose(this.history_);
-  this.eh_.removeAll();
-  goog.dispose(this.eh_);
-
-  delete this.log_;
-  delete this.routes_;
-  delete this.history_;
-  delete this.eh_;
 };
 
 

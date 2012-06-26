@@ -188,6 +188,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
           this.entity[fctx.id] = input.getValue();
         }
+        this.registerDisposable(input);
+        this.registerDisposable(parentComp);
         this.controls_[fctx.id] = [input, parentComp];
 
         if (!focusSet && input.focus && !fctx.spec.readonly) {
@@ -306,6 +308,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 
   this.interceptor_ = new this.cfg.interceptor(
       this, this.entity, this.cache, this.controls_, this.getCommandButtons());
+  this.registerDisposable(this.interceptor_);
 };
 
 
@@ -364,22 +367,6 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
       args = ['entity-' + e.type, this.spec.type, e.data];
   }
   pn.app.ctx.pub.apply(null, args);
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.Edit.prototype.disposeInternal = function() {
-  pn.ui.edit.Edit.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log_);
-  goog.dispose(this.interceptor_);
-  goog.object.forEach(this.controls_, function(arr) {
-    goog.array.forEach(arr, goog.dispose);
-  });
-
-  delete this.interceptor_;
-  delete this.controls_;
-  delete this.log_;
 };
 
 

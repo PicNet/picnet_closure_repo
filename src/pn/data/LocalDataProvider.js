@@ -21,10 +21,9 @@ goog.provide('pn.data.LocalDataProvider');
 pn.data.LocalDataProvider = function(repository) {
   goog.Disposable.call(this);
 
-  /**
-   * @type {!pn.data.IRepository}
-   */
+  /** @type {!pn.data.IRepository} */
   this.repository = repository;
+  this.registerDisposable(this.repository);
 };
 goog.inherits(pn.data.LocalDataProvider, goog.Disposable);
 
@@ -306,12 +305,4 @@ pn.data.LocalDataProvider.prototype.clearEntireDatabase =
 pn.data.LocalDataProvider.prototype.reset_ =
     function(types, callback, opt_handler) {
   this.repository.init(types, callback, opt_handler);
-};
-
-
-/** @inheritDoc */
-pn.data.LocalDataProvider.prototype.disposeInternal = function() {
-  pn.data.LocalDataProvider.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.repository);
 };

@@ -92,6 +92,7 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
    */
   this.datePickerFrom_ = opt_datePickerFrom || new goog.ui.DatePicker();
   this.datePickerFrom_.setDate(null);
+  this.registerDisposable(this.datePickerFrom_);
 
   /**
    * Instance of a date picker control.
@@ -100,6 +101,7 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
    */
   this.datePickerTo_ = opt_datePickerTo || new goog.ui.DatePicker();
   this.datePickerTo_.setDate(null);
+  this.registerDisposable(this.datePickerTo_);
 
   /**
    * The date format to use on the range label
@@ -154,6 +156,7 @@ pn.ui.DateRangePicker.prototype.enterDocument = function() {
 
   this.popup_ = new goog.ui.Popup(this.popupConent_);
   goog.style.showElement(this.popupConent_, false);
+  this.registerDisposable(this.popup_);
 
   var fromContainer = goog.dom.createDom('div',
       goog.getCssName('picnet-daterangepicker-fromto-cont'));
@@ -214,21 +217,6 @@ pn.ui.DateRangePicker.prototype.showHideFromToLabels_ = function() {
       goog.getCssName('picnet-daterangepicker-fromto-label')), function(d) {
         goog.style.showElement(d, visible);
       });
-};
-
-
-/** @inheritDoc */
-pn.ui.DateRangePicker.prototype.disposeInternal = function() {
-  pn.ui.DateRangePicker.superClass_.disposeInternal.call(this);
-  if (this.popup_) {
-    this.popup_.dispose();
-    this.popup_ = null;
-  }
-  this.datePickerFrom_.dispose();
-  this.datePickerFrom_ = null;
-  this.datePickerTo_.dispose();
-  this.datePickerTo_ = null;
-  this.lastTarget_ = null;
 };
 
 

@@ -49,6 +49,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
    * @type {!Object.<!pn.ui.UiSpec>}
    */
   this.specs = specs;
+  goog.array.forEach(this.specs, this.registerDisposable, this);
 
   /**
    * @protected
@@ -74,6 +75,7 @@ goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
   var ui = new pn.ui.edit.Edit(this.specs[specid], this.entity, this.cache);
   ui.fireInterceptorEvents = false;
+  this.registerDisposable(ui);
   this.edits.push(ui);
   ui.decorate(parent);
 };
@@ -164,21 +166,9 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   }, this);
 
   goog.object.forEach(this.edits, function(edit) {
-    this.interceptors_.push(new edit.cfg.interceptor(
-        this, this.entity, this.cache, controls, commands));
+    var interceptor = new edit.cfg.interceptor(
+        this, this.entity, this.cache, controls, commands);
+    this.interceptors_.push(interceptor);
+    this.registerDisposable(interceptor);
   }, this);
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.MultiSpecEdit.prototype.disposeInternal = function() {
-  pn.ui.edit.MultiSpecEdit.superClass_.disposeInternal.call(this);
-
-  goog.array.forEach(this.edits, goog.dispose);
-  goog.object.forEach(this.specs, goog.dispose);
-  goog.object.forEach(this.interceptors_, goog.dispose);
-
-  delete this.specs;
-  delete this.entity;
-  delete this.edits;
 };

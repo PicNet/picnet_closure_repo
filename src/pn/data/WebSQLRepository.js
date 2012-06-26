@@ -21,16 +21,15 @@ pn.data.WebSQLRepository = function(databaseName) {
    */
   this.transaction_;
 
+  /**
+   * @private
+   * @type {Database}
+   */
+  this.db_;
+
   this.log.fine('using the pn.data.WebSQLRepository');
 };
 goog.inherits(pn.data.WebSQLRepository, pn.data.AbstractSQLRepository);
-
-
-/**
- * @private
- * @type {Database}
- */
-pn.data.WebSQLRepository.prototype.db_;
 
 
 /**
@@ -48,8 +47,11 @@ pn.data.WebSQLRepository.prototype.isSupported =
 
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.db = function() {
-  return this.db_ || (this.db_ =
-      window.openDatabase(this.databaseName, '1', this.databaseName, 10485760));
+  if (this.db_) return this.db_;
+  var name = this.databaseName;
+  this.db_ = window.openDatabase(name, '1', name, 10485760);
+  this.registerDisposable(this.db_);
+  return this.db_;
 };
 
 
@@ -161,12 +163,4 @@ pn.data.WebSQLRepository.prototype.executeImpl_ =
 
     if (opt_kill) this.transaction_ = null;
   }, this));
-};
-
-
-/** @inheritDoc */
-pn.data.WebSQLRepository.prototype.disposeInternal = function() {
-  pn.data.WebSQLRepository.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.db_);
 };

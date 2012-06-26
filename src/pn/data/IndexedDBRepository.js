@@ -21,23 +21,26 @@ if (!window['indexedDB'] && 'webkitIndexedDB' in window) {
  */
 pn.data.IndexedDBRepository = function(databaseName) {
   pn.data.AbstractRepository.call(this, databaseName);
+
   this.log.finest('using the pn.data.IndexedDBRepository');
+
+
+
+  /**
+   * @private
+   * @type {!IDBDatabase}
+   */
+  this.db_;
+
+
+  /**
+   * @private
+   * @type {!Array.<string>}
+   */
+  this.osNames_;
+
 };
 goog.inherits(pn.data.IndexedDBRepository, pn.data.AbstractRepository);
-
-
-/**
- * @private
- * @type {!IDBDatabase}
- */
-pn.data.IndexedDBRepository.prototype.db_;
-
-
-/**
- * @private
- * @type {!Array.<string>}
- */
-pn.data.IndexedDBRepository.prototype.osNames_;
 
 
 /** @inheritDoc */
@@ -94,6 +97,8 @@ pn.data.IndexedDBRepository.prototype.getDatabase_ =
   this.runRequest_(window['indexedDB'].open(name, name),
       function(result) {
         this.db_ = result;
+        this.registerDisposable(this.db_);
+
         if (this.db_.version === '1.1') {
           callback.call(opt_handler, this.db_);
           return;
@@ -472,15 +477,4 @@ pn.data.IndexedDBRepository.prototype.runRequest_ =
       callback.call(opt_handler || this, e.result || req['result']);
     }, 1);
   };
-};
-
-
-/** @inheritDoc */
-pn.data.IndexedDBRepository.prototype.disposeInternal = function() {
-  pn.data.IndexedDBRepository.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.db_);
-  goog.dispose(this.log);
-
-  delete this.db_;
 };

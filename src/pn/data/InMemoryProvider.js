@@ -21,6 +21,7 @@ pn.data.InMemoryProvider = function() {
    * @type {!pn.data.InMemoryRepository}
    */
   this.repository = new pn.data.InMemoryRepository();
+  this.registerDisposable(this.repository);
 };
 goog.inherits(pn.data.InMemoryProvider, goog.Disposable);
 
@@ -75,12 +76,4 @@ pn.data.InMemoryProvider.prototype.deleteEntities =
     function(type, ids, callback, opt_handler) {
   this.repository.deleteItems(type, ids);
   if (callback) callback.call(opt_handler || this, null);
-};
-
-
-/** @inheritDoc */
-pn.data.InMemoryProvider.prototype.disposeInternal = function() {
-  pn.data.InMemoryProvider.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.repository);
 };

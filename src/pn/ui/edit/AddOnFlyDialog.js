@@ -48,7 +48,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
 
   var el = dialog.getDialogElement();
   var edit = new pn.ui.edit.Edit(spec, { 'ID': 0 }, this.cache_);
-  this.registerDisposable(dialog);
+  this.registerDisposable(edit);
   edit.render(el);
 
   dialog.setVisible(true);

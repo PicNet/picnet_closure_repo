@@ -32,6 +32,7 @@ pn.app.EventBus = function(async) {
    * @type {goog.pubsub.PubSub}
    */
   this.pubsub_ = new goog.pubsub.PubSub();
+  this.registerDisposable(this.pubsub_);
 };
 goog.inherits(pn.app.EventBus, goog.Disposable);
 
@@ -69,16 +70,4 @@ pn.app.EventBus.prototype.sub = function(topic, callback, opt_handler) {
   } else {
     this.pubsub_.subscribe(topic, cb);
   }
-};
-
-
-/** @inheritDoc */
-pn.app.EventBus.prototype.disposeInternal = function() {
-  pn.app.EventBus.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log_);
-  goog.dispose(this.pubsub_);
-
-  delete this.log_;
-  delete this.pubsub_;
 };

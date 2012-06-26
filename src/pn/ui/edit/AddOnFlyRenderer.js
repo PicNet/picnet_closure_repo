@@ -90,9 +90,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(this.spec_.id, this.fctx.cache);
 
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
-  this.getHandler().listen(this.dialog_, eventType, this.aofAdded_);
-
-  this.registerDisposable(this.dialog_);
+  this.getHandler().listenOnce(this.dialog_, eventType, this.aofAdded_);
   this.dialog_.show();
 };
 
@@ -131,16 +129,4 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
       'selected': e['ID'] === selectedId
     }));
   }, this);
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.AddOnFlyRenderer.prototype.disposeInternal = function() {
-  pn.ui.edit.AddOnFlyRenderer.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.select_);
-  goog.dispose(this.add_);
-
-  delete this.select_;
-  delete this.add_;
 };

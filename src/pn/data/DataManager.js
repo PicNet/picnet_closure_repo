@@ -37,18 +37,21 @@ pn.data.DataManager = function(ajax, types) {
    * @type {!pn.data.RemoteDataProvider}
    */
   this.remote_ = new pn.data.RemoteDataProvider(ajax);
+  this.registerDisposable(this.remote_);
 
   /**
     * @private
     * @type {!pn.data.InMemoryProvider}
     */
   this.memory_ = new pn.data.InMemoryProvider();
+  this.registerDisposable(this.memory_);
 
   /**
     * @private
     * @type {!pn.data.LocalDataProvider}
     */
   this.local_;
+  this.registerDisposable(this.local_);
 
   /**
     * @type {string}
@@ -611,14 +614,4 @@ pn.data.DataManager.prototype.postSave_ =
     });
   }
   return true;
-};
-
-
-/** @inheritDoc */
-pn.data.DataManager.prototype.disposeInternal = function() {
-  pn.data.DataManager.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.remote_);
-  goog.dispose(this.memory_);
-  goog.dispose(this.local_);
 };

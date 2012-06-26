@@ -142,6 +142,11 @@ goog.inherits(pn.ui.edit.FieldSpec, pn.ui.BaseFieldSpec);
 /** @inheritDoc */
 pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
+  if (this.renderer instanceof pn.ui.edit.ComplexRenderer) {
+    this.registerDisposable(
+        /** @type {pn.ui.edit.ComplexRenderer} */ (this.renderer));
+  }
+
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {
     if (!goog.isDef(this.tableType) && !this.renderer) {
@@ -159,18 +164,6 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
     throw new Error('Complex renderers cannot have validators, ' +
         'please review field definition "' + this.id + '"');
   }
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.FieldSpec.prototype.disposeInternal = function() {
-  pn.ui.edit.FieldSpec.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.renderer);
-  goog.dispose(this.validator);
-
-  delete this.renderer;
-  delete this.validator;
 };
 
 

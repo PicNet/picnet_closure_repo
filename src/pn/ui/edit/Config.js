@@ -33,6 +33,7 @@ pn.ui.edit.Config =
 
   /** @type {!Array.<pn.ui.edit.Command>} */
   this.commands = opt_commands || this.getDefaultCommands_();
+  goog.array.forEach(this.commands, this.registerDisposable, this);
 
   /** @type {null|function(?):string} */
   this.template = opt_template || null;
@@ -71,18 +72,6 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
     new pn.ui.edit.DeleteCommand(),
     new pn.ui.edit.Command('Cancel', pn.ui.edit.Edit.EventType.CANCEL)
   ];
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.Config.prototype.disposeInternal = function() {
-  pn.ui.edit.Config.superClass_.disposeInternal.call(this);
-
-  if (this.commands) goog.array.forEach(this.commands, goog.dispose);
-
-  delete this.commands;
-  delete this.template;
-  delete this.interceptor;
 };
 
 

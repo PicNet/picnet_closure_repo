@@ -23,6 +23,7 @@ pn.ui.UiSpecsRegister = function(specs) {
    * @type {!Object.<!function(new:pn.ui.UiSpec)>}
    */
   this.map_ = specs;
+  goog.object.forEach(this.map_, this.registerDisposable, this);
 };
 goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
 
@@ -48,13 +49,4 @@ pn.ui.UiSpecsRegister.prototype.get = function(id) {
  */
 pn.ui.UiSpecsRegister.prototype.all = function() {
   return this.map_;
-};
-
-
-/** @inheritDoc */
-pn.ui.UiSpecsRegister.prototype.disposeInternal = function() {
-  pn.ui.UiSpecsRegister.superClass_.disposeInternal.call(this);
-
-  goog.object.forEach(this.map_, goog.dispose);
-  delete this.map_;
 };

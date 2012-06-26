@@ -133,16 +133,6 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
 };
 
 
-/** @inheritDoc */
-pn.ui.grid.ColumnSpec.prototype.disposeInternal = function() {
-  pn.ui.grid.ColumnSpec.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.renderer);
-
-  delete this.renderer;
-};
-
-
 /** @typedef {(undefined|function(!pn.ui.grid.ColumnCtx,!Object):string)} */
 pn.ui.grid.ColumnSpec.Renderer;
 

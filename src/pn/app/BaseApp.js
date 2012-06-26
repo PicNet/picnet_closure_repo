@@ -60,9 +60,11 @@ pn.app.BaseApp = function(opt_cfg) {
 
   /** @type {!pn.app.Router} */
   this.router = new pn.app.Router();
+  this.registerDisposable(this.router);
 
   /** @type {!pn.app.AppConfig} */
   this.cfg = opt_cfg || new pn.app.AppConfig();
+  this.registerDisposable(this.cfg);
 
   /** @type {pn.app.schema.Schema} */
   this.schema = null;
@@ -72,18 +74,21 @@ pn.app.BaseApp = function(opt_cfg) {
    * @type {!pn.ui.ViewMgr}
    */
   this.view = new pn.ui.ViewMgr(pn.dom.getElement(this.cfg.viewContainerId));
+  this.registerDisposable(this.view);
 
   /**
    * @protected
    * @type {!pn.ui.MessagePanel}
    */
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
+  this.registerDisposable(this.msg);
 
   /**
    * @private
    * @type {!pn.app.EventBus}
    */
   this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
+  this.registerDisposable(this.bus_);
 
   // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
   this.pub = goog.bind(this.bus_.pub, this.bus_);
@@ -110,8 +115,10 @@ pn.app.BaseApp.prototype.initialise = function(schema) {
   goog.asserts.assert(schema);
 
   this.schema = new pn.app.schema.Schema(schema);
+  this.registerDisposable(this.schema);
 
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.registerDisposable(this.specs);
 
   var eventBusEvents = this.getDefaultAppEventHandlers_();
   goog.object.extend(eventBusEvents, this.getAppEventHandlers());
@@ -207,23 +214,4 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
 
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
-
-  goog.dispose(this.log);
-  goog.dispose(this.router);
-  goog.dispose(this.specs);
-  goog.dispose(this.bus_);
-  goog.dispose(this.cfg);
-  goog.dispose(this.schema);
-  goog.dispose(this.view);
-  goog.dispose(this.msg);
-
-  delete pn.app.ctx;
-  delete this.log;
-  delete this.router;
-  delete this.specs;
-  delete this.bus_;
-  delete this.cfg;
-  delete this.schema;
-  delete this.view;
-  delete this.msg;
 };

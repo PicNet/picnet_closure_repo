@@ -44,13 +44,6 @@ pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
 
   /**
    * @private
-   * @type {Element}
-   */
-  this.fileInput_ = null;
-
-
-  /**
-   * @private
    * @type {HTMLFormElement}
    */
   this.uploadform_ = null;
@@ -106,6 +99,8 @@ pn.ui.FileUpload.prototype.decorateInternal = function(element) {
         'enctype': 'multipart/form-data', 'method': 'POST', 'action' :
             this.serverAction_}, this.fileInput_));
   this.uploadform_.encoding = 'multipart/form-data'; // For IE
+  this.registerDisposable(this.uploadform_);
+
   goog.dom.appendChild(element, this.uploadform_);
 };
 
@@ -181,25 +176,9 @@ pn.ui.FileUpload.prototype.onComplete_ = function() {
       this.io_.getLastError();
 
   goog.dispose(this.io_);
-  goog.array.forEach(this.formFields_, goog.dispose);
   this.formFields_ = [];
 
   this.dispatchEvent(event);
-};
-
-
-/** @inheritDoc */
-pn.ui.FileUpload.prototype.disposeInternal = function() {
-  pn.ui.FileUpload.superClass_.disposeInternal.call(this);
-
-  goog.array.forEach(this.formFields_, goog.dispose);
-  goog.dispose(this.fileInput_);
-  goog.dispose(this.uploadform_);
-
-  delete this.formFields_;
-  delete this.fileInput_;
-  delete this.uploadform_;
-  delete this.getData_;
 };
 
 

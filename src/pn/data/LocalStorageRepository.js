@@ -176,11 +176,3 @@ pn.data.LocalStorageRepository.prototype.clearEntireDatabase =
   window['localStorage']['clear']();
   callback.call(opt_handler);
 };
-
-
-/** @inheritDoc */
-pn.data.LocalStorageRepository.prototype.disposeInternal = function() {
-  pn.data.LocalStorageRepository.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log);
-};

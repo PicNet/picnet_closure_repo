@@ -34,6 +34,7 @@ pn.data.AbstractRepository = function(databaseName) {
    * @type {string}
    */
   this.databaseName = databaseName;
+
   /**
    * @protected
    * @type {Array.<string>}
@@ -136,12 +137,4 @@ pn.data.AbstractRepository.prototype.updateListWithItem =
   });
   if (idx >= 0) { list[idx] = item; }
   else { list.push(item); }
-};
-
-
-/** @inheritDoc */
-pn.data.AbstractRepository.prototype.disposeInternal = function() {
-  pn.data.AbstractRepository.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log);
 };

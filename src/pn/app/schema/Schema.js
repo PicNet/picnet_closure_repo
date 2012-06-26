@@ -117,11 +117,3 @@ pn.app.schema.Schema.prototype.parseFieldSchema_ = function(f) {
       f['name'], f['type'], f['allowNull'], f['length']);
 
 };
-
-
-/** @inheritDoc */
-pn.app.schema.Schema.prototype.disposeInternal = function() {
-  pn.app.schema.Schema.superClass_.disposeInternal.call(this);
-
-  delete this.entities_;
-};

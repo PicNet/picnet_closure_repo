@@ -14,7 +14,15 @@ goog.provide('pn.data.GearsRepository');
  */
 pn.data.GearsRepository = function(databaseName) {
   pn.data.AbstractSQLRepository.call(this, databaseName);
+
   this.log.fine('using the pn.data.GearsRepository');
+
+
+  /**
+   * @private
+   * @type {Object}
+   */
+  this.db_;
 };
 goog.inherits(pn.data.GearsRepository, pn.data.AbstractSQLRepository);
 
@@ -28,13 +36,6 @@ pn.data.GearsRepository.GOOGLE_GEARS_SUPPORT_URL =
     ' install Google Gears to use this application.';
 
 
-/**
- * @private
- * @type {Object}
- */
-pn.data.GearsRepository.prototype.db_;
-
-
 /** @inheritDoc */
 pn.data.GearsRepository.prototype.isSupported = function() {
   return typeof (google) !== 'undefined' &&
@@ -46,6 +47,8 @@ pn.data.GearsRepository.prototype.isSupported = function() {
 pn.data.GearsRepository.prototype.db = function() {
   if (this.db_) { return this.db_; }
   this.db_ = google.gears.factory.create('beta.database');
+  this.registerDisposable(this.db_);
+
   this.db_.open(this.databaseName);
   return this.db_;
 };
@@ -202,12 +205,4 @@ pn.data.GearsRepository.setUpGreasFactory = function() {
   if (!google.gears) {
     google.gears = {factory: factory};
   }
-};
-
-
-/** @inheritDoc */
-pn.data.GearsRepository.prototype.disposeInternal = function() {
-  pn.data.GearsRepository.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.db_);
 };

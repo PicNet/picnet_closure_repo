@@ -29,6 +29,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
 
   /** @type {!pn.ui.edit.FieldSpec} */
   this.spec = spec;
+  this.registerDisposable(this.spec);
 
   /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
@@ -224,19 +225,4 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     }, this)['ID'];
   }
   return val;
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.FieldCtx.prototype.disposeInternal = function() {
-  pn.ui.edit.FieldCtx.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log_);
-  goog.dispose(this.spec);
-
-  delete this.log_;
-  delete this.spec;
-  delete this.cache;
-  delete this.entitySpec;
-  delete this.schema;
 };

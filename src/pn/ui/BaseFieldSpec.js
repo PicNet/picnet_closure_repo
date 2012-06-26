@@ -130,14 +130,3 @@ pn.ui.BaseFieldSpec.prototype.extend = function(props) {
     }
   }
 };
-
-
-/** @inheritDoc */
-pn.ui.BaseFieldSpec.prototype.disposeInternal = function() {
-  pn.ui.BaseFieldSpec.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.entitySpec);
-
-  delete this.entitySpec;
-  delete this.additionalCacheTypes;
-};

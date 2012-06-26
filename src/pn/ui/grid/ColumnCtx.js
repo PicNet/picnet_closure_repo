@@ -23,6 +23,7 @@ pn.ui.grid.ColumnCtx = function(spec, cache) {
 
   /** @type {!pn.ui.grid.ColumnSpec} */
   this.spec = spec;
+  this.registerDisposable(this.spec);
 
   /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
@@ -81,16 +82,4 @@ pn.ui.grid.ColumnCtx.prototype.getColumnRenderer = function() {
   return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
       (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty) ?
           pn.ui.grid.ColumnRenderers.parentColumnRenderer : null);
-};
-
-
-/** @inheritDoc */
-pn.ui.grid.ColumnCtx.prototype.disposeInternal = function() {
-  pn.ui.grid.ColumnCtx.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.spec);
-
-  delete this.spec;
-  delete this.cache;
-  delete this.entitySpec;
 };

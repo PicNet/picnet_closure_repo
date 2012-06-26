@@ -38,6 +38,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec = spec;
+  this.registerDisposable(this.spec);
 
   /**
    * @protected
@@ -56,6 +57,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    * @type {!pn.ui.edit.Config}
    */
   this.cfg = spec.getEditConfig(entity, cache);
+  this.registerDisposable(this.cfg);
 
   /**
    * @private
@@ -151,6 +153,8 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
     var button = goog.dom.createDom('button',
         {'class': 'goog-button ' + className, 'id': c.name, 'title': c.name});
     goog.dom.appendChild(parent, button);
+
+    this.registerDisposable(button);
     this.commandButtons_[c.name] = button;
   }, this);
 };
@@ -189,21 +193,4 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     return false;
   } if (command.validate && !this.isValidForm()) { return false; }
   return true;
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
-  pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
-
-  goog.object.forEach(this.commandButtons_, goog.dispose);
-  goog.array.forEach(this.commands_, goog.dispose);
-  goog.array.forEach(this.cfg.fCtxs, goog.dispose);
-  goog.dispose(this.cfg);
-  goog.dispose(this.spec);
-
-  delete this.commandButtons_;
-  delete this.commands_;
-  delete this.cfg;
-  delete this.spec;
 };

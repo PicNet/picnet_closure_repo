@@ -109,15 +109,3 @@ pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
     }, 3000, this);
   }
 };
-
-
-/** @inheritDoc */
-pn.ui.MessagePanel.prototype.disposeInternal = function() {
-  pn.ui.MessagePanel.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.panel_);
-  goog.dispose(this.log_);
-
-  delete this.panel_;
-  delete this.log_;
-};

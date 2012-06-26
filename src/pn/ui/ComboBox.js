@@ -65,11 +65,3 @@ pn.ui.ComboBox.prototype.onChanged_ = function() {
     this.selectedModel_ = cbi.getModel();
   }
 };
-
-
-/** @inheritDoc */
-pn.ui.ComboBox.prototype.disposeInternal = function() {
-  pn.ui.ComboBox.superClass_.disposeInternal.call(this);
-
-  delete this.selectedModel_;
-};

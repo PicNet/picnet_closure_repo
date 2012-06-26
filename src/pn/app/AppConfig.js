@@ -77,12 +77,3 @@ pn.app.AppConfig = function() {
   };
 };
 goog.inherits(pn.app.AppConfig, goog.Disposable);
-
-
-/** @inheritDoc */
-pn.app.AppConfig.prototype.disposeInternal = function() {
-  pn.app.AppConfig.superClass_.disposeInternal.call(this);
-
-  delete this.defaultFieldRenderers;
-  delete this.defaultColumnRenderers;
-};

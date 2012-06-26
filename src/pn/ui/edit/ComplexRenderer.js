@@ -54,11 +54,3 @@ pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
 pn.ui.edit.ComplexRenderer.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
-
-
-/** @inheritDoc */
-pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
-  pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
-
-  delete this.fctx;
-};

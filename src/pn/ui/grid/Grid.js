@@ -39,13 +39,14 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec_ = spec;
-
+  this.registerDisposable(this.spec_);
 
   /**
    * @private
    * @type {pn.ui.grid.Config}
    */
   this.cfg_ = this.spec_.getGridConfig(cache);
+  this.registerDisposable(this.cfg_);
 
   /**
    * @private
@@ -53,6 +54,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    */
   this.interceptor_ = this.cfg_.interceptor ?
       new this.cfg_.interceptor(cache) : null;
+  this.registerDisposable(this.interceptor_);
 
   /**
    * @private
@@ -234,9 +236,9 @@ pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
   var cfg = fctx.spec.toSlick();
   var renderer = fctx.getColumnRenderer();
   if (renderer) {
-    cfg['formatter'] = goog.bind(function(row, cell, value, col, item) {
+    cfg['formatter'] = function(row, cell, value, col, item) {
       return renderer(fctx, item);
-    }, this);
+    };
   }
   return cfg;
 };
@@ -359,6 +361,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   if (this.cfg_.enableQuickFilters) {
     this.quickFind_ = new pn.ui.grid.QuickFind(
         this.cache_, this.cctxs_, this.slick_);
+    this.registerDisposable(this.quickFind_);
     this.quickFind_.init();
     if (this.cfg_.persistFilters) {
       var state = pn.storage.get(this.hash_);
@@ -503,41 +506,21 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
-  if (this.slick_) {
-    // this.slick_.invalidate();
-    this.slick_.destroy();
-  }
-  goog.array.forEach(this.commands_, goog.dispose);
-  goog.dispose(this.cfg_);
-
-  goog.dispose(this.log_);
-  goog.dispose(this.noData_);
-  goog.dispose(this.gridContainer_);
-  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
-  if (this.interceptor_) goog.dispose(this.interceptor_);
-  goog.dispose(this.spec_);
-  goog.dispose(this.quickFind_);
-
-  delete this.spec_;
-  delete this.slick_;
-  delete this.dataView_;
-  delete this.cfg_;
-  delete this.log_;
-  delete this.totalsLegend_;
-  delete this.list_;
-  delete this.cctxs_;
-  delete this.totalColumns_;
-  delete this.cfg_;
-  delete this.cache_;
-  delete this.commands_;
-  delete this.slick_;
-  delete this.noData_;
-  delete this.gridContainer_;
   delete this.selectionHandler_;
-  delete this.currentFilter_;
-  delete this.sort_;
   delete this.quickFind_;
-  delete this.interceptor_;
+
+  if (this.slick_) {
+    var columns = this.slick_.getColumns();
+    for (var c in columns) {
+      for (var prop in c) { delete c[prop]; }
+    }
+    this.slick_.destroy();
+    delete this.slick_;
+  }
+  if (this.dataView_) {
+    this.dataView_.setFilter(null);
+    delete this.dataView_;
+  }
 };
 
 

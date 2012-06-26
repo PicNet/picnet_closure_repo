@@ -89,7 +89,7 @@ pn.ui.ViewMgr.prototype.clearExistingState_ = function() {
   this.parent_.innerHTML = '';
   if (!this.currentView_) { return; }
   goog.dispose(this.currentView_);
-  delete this.currentView_;
+  this.currentView_ = null;
 
   this.removeAll(); // Remove all view listeners
   goog.dom.removeChildren(this.parent_);
@@ -100,9 +100,5 @@ pn.ui.ViewMgr.prototype.clearExistingState_ = function() {
 pn.ui.ViewMgr.prototype.disposeInternal = function() {
   pn.ui.ViewMgr.superClass_.disposeInternal.call(this);
 
-  goog.dispose(this.parent_);
   goog.dispose(this.currentView_);
-
-  delete this.parent_;
-  delete this.currentView_;
 };

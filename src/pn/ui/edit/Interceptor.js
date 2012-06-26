@@ -57,6 +57,7 @@ pn.ui.edit.Interceptor =
    * @type {!goog.events.EventHandler}
    */
   this.eh = new goog.events.EventHandler(this);
+  this.registerDisposable(this.eh);
 };
 goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
 
@@ -78,19 +79,4 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
 pn.ui.edit.Interceptor.prototype.getControl = function(id) {
   goog.asserts.assert(this.controls_[id][0]);
   return this.controls_[id][0];
-};
-
-
-/** @inheritDoc */
-pn.ui.edit.Interceptor.prototype.disposeInternal = function() {
-  pn.ui.edit.Interceptor.superClass_.disposeInternal.call(this);
-
-  this.eh.removeAll();
-  goog.dispose(this.eh);
-
-  delete this.eh;
-  delete this.entity;
-  delete this.cache;
-  delete this.component;
-  delete this.controls_;
 };

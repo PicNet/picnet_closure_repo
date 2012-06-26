@@ -58,6 +58,8 @@ pn.ui.grid.Command.prototype.createDom = function() {
 pn.ui.grid.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.commandElement_ = new goog.ui.Button(this.name_);
+  this.registerDisposable(this.commandElement_);
+
   this.commandElement_.setTooltip(this.tooltip_);
   this.commandElement_.enableClassName(
       goog.string.removeAll(this.name_.toLowerCase(), ''), true);
@@ -71,11 +73,4 @@ pn.ui.grid.Command.prototype.enterDocument = function() {
   this.getHandler().listen(this.commandElement_, action, function() {
     this.dispatchEvent(new goog.events.Event(this.eventType, this));
   });
-};
-
-
-/** @inheritDoc */
-pn.ui.grid.Command.prototype.disposeInternal = function() {
-  goog.dispose(this.commandElement_);
-  delete this.commandElement_;
 };

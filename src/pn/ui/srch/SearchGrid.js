@@ -31,12 +31,14 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec_ = spec;
+  this.registerDisposable(this.spec_);
 
   /**
    * @private
    * @type {!pn.ui.srch.Config}
    */
   this.cfg_ = spec.getSearchConfig(cache);
+  this.registerDisposable(this.cfg_);
 
   /**
    * @private
@@ -67,6 +69,7 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
    * @type {!pn.data.EntityFilter}
    */
   this.filter_ = new pn.data.EntityFilter(this.cache_, spec);
+  this.registerDisposable(this.filter_);
 };
 goog.inherits(pn.ui.srch.SearchGrid, goog.ui.Component);
 
@@ -102,6 +105,7 @@ pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
   this.decorateSeachPanel_(leftDiv);
 
   this.grid_ = new pn.ui.grid.Grid(this.spec_, this.list_, this.cache_);
+  this.registerDisposable(this.grid_);
   this.grid_.decorate(rightDiv);
 };
 
@@ -123,6 +127,7 @@ pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
   }, this);
 
   this.searchPanel_ = new pn.ui.srch.SearchPanel(filters, this.cfg_.fCtxs);
+  this.registerDisposable(this.searchPanel_);
   this.searchPanel_.decorate(parent);
 };
 
@@ -135,24 +140,4 @@ pn.ui.srch.SearchGrid.prototype.enterDocument = function() {
   this.getHandler().listen(this.searchPanel_, searchEvent, function(e) {
     this.filterList(e.filters);
   });
-};
-
-
-/** @inheritDoc */
-pn.ui.srch.SearchGrid.prototype.disposeInternal = function() {
-  pn.ui.srch.SearchGrid.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.grid_);
-  goog.dispose(this.searchPanel_);
-  goog.dispose(this.filter_);
-  goog.dispose(this.spec_);
-  goog.dispose(this.cfg_);
-
-  delete this.list_;
-  delete this.cache_;
-  delete this.grid_;
-  delete this.searchPanel_;
-  delete this.filter_;
-  delete this.spec_;
-  delete this.cfg_;
 };

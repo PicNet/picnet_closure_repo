@@ -44,13 +44,3 @@ pn.ui.edit.DecimalRenderer.prototype.decorateInternal =
       goog.dom.createDom('input', {'type': 'number', 'value': this.val || 0});
   goog.dom.appendChild(element, this.input_);
 };
-
-
-/** @inheritDoc */
-pn.ui.edit.DecimalRenderer.prototype.disposeInternal =
-    function() {
-  pn.ui.edit.DecimalRenderer.superClass_.disposeInternal.call(this);
-  goog.dispose(this.input_);
-
-  delete this.input_;
-};

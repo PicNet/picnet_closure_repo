@@ -63,15 +63,15 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {
       var filterVal = this.filters_[columnId];
-      var fctx = /** @type {!pn.ui.grid.ColumnCtx} */ (goog.array.find(
+      var cctx = /** @type {!pn.ui.grid.ColumnCtx} */ (goog.array.find(
           this.cctxs_, function(fctx1) { return fctx1.id === columnId; }));
-      var val = fctx.getEntityValue(entity);
-      var renderer = fctx.getColumnRenderer();
+      var val = cctx.getEntityValue(entity);
+      var renderer = cctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, fctx.spec.displayPath, entity) || '').toString() : '';
+            this.cache_, cctx.spec.displayPath, entity) || '').toString() : '';
       } else if (renderer) {
-        val = renderer(fctx, entity);
+        val = renderer(cctx, entity);
       }
       var strval = '';
       if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
@@ -193,13 +193,7 @@ pn.ui.grid.QuickFind.prototype.createFilterInput_ =
 pn.ui.grid.QuickFind.prototype.disposeInternal = function() {
   pn.ui.grid.QuickFind.superClass_.disposeInternal.call(this);
 
-  goog.object.forEach(this.filters_, goog.dispose);
-  goog.dispose(this.search_);
-
-  delete this.cctxs_;
   delete this.slick_;
-  delete this.filters_;
-  delete this.search_;
 };
 
 

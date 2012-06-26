@@ -48,6 +48,7 @@ pn.data.RemoteDataProvider = function(ajax) {
    * @type {!pn.data.IDataAjaxRequest}
    */
   this.ajax_ = ajax;
+  this.registerDisposable(this.ajax_);
 
   /**
    * @type {function(string,pn.data.IEntity):boolean}
@@ -193,12 +194,4 @@ pn.data.RemoteDataProvider.prototype.stringifyValues_ = function(o) {
   for (var i in o) {
     o[i] = pn.json.serialiseJson(o[i]);
   }
-};
-
-
-/** @inheritDoc */
-pn.data.RemoteDataProvider.prototype.disposeInternal = function() {
-  pn.data.RemoteDataProvider.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.ajax_);
 };

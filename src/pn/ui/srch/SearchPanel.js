@@ -219,6 +219,9 @@ pn.ui.srch.SearchPanel.prototype.toggleFiltersPanel_ = function() {
     var rh = goog.fx.dom.ResizeHeight;
     this.resizeShow_ = new rh(this.searchPanel_, 0, this.panelHeight_, dur);
     this.resizeHide_ = new rh(this.searchPanel_, this.panelHeight_, 0, dur);
+    this.registerDisposable(this.resizeShow_);
+    this.registerDisposable(this.resizeHide_);
+
     var endEventType = goog.fx.Transition.EventType.END;
     this.getHandler().listen(this.resizeShow_, endEventType,
         goog.bind(function() {

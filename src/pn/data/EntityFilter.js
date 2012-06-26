@@ -35,6 +35,7 @@ pn.data.EntityFilter = function(cache, spec) {
    * @type {!pn.ui.srch.Config}
    */
   this.cfg_ = this.spec_.getSearchConfig(cache);
+  this.registerDisposable(this.cfg_);
 
   /**
    * @private
@@ -213,20 +214,4 @@ pn.data.EntityFilter.prototype.dbg_ = function(args) {
 
   var strings = goog.array.map(arguments, format);
   this.log_.finest(strings.join(''));
-};
-
-
-/** @inheritDoc */
-pn.data.EntityFilter.prototype.disposeInternal = function() {
-  pn.data.EntityFilter.superClass_.disposeInternal.call(this);
-
-  goog.dispose(this.log_);
-  goog.dispose(this.search_);
-  goog.dispose(this.cfg_);
-
-  delete this.cache_;
-  delete this.spec_;
-  delete this.cfg_;
-  delete this.search_;
-  delete this.log_;
 };

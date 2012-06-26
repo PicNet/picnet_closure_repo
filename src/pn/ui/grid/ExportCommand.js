@@ -65,11 +65,3 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
     this.dispatchEvent(e);
   }, false, this);
 };
-
-
-/** @inheritDoc */
-pn.ui.grid.ExportCommand.prototype.disposeInternal = function() {
-  goog.dispose(this.select_);
-
-  delete this.select_;
-};
