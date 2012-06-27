@@ -97,6 +97,20 @@ pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
 
 
 /**
+ * @param {string} id The id representing this ordering column.
+ * @param {!Object.<!Array.<!Object>>} cache The current context cache.
+ * @return {!pn.ui.grid.ColumnCtx} The created column.
+ */
+pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
+  var spec = new pn.ui.grid.OrderingColumnSpec(id, this);
+  var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
+  this.registerDisposable(fctx);
+
+  return fctx;
+};
+
+
+/**
  * @param {string} id The id representing this field.
  * @param {!Object.<!Array.<!Object>>} cache The current context cache.
  * @param {Object=} opt_props Any additional properties for this field.

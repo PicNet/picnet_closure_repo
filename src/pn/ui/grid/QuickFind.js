@@ -15,7 +15,7 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
  *    displayed.
- * @param {!Slick.Grid} slick The instance of the slick grid.
+ * @param {Slick.Grid} slick The instance of the slick grid.
  */
 pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
   goog.events.EventTarget.call(this);

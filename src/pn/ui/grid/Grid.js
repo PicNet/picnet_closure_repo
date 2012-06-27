@@ -11,7 +11,9 @@ goog.require('pn.app.AppEvents');
 goog.require('pn.storage');
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Config');
+goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
+goog.require('pn.ui.grid.RowOrdering');
 
 
 
@@ -145,6 +147,11 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    */
   this.quickFind_ = null;
 
+  /**
+   * @private
+   * @type {pn.ui.grid.RowOrdering}
+   */
+  this.rowOrdering_ = null;
 
   /**
    * @private
@@ -305,10 +312,15 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
+  var hasOrderColumn = !this.cfg_.readonly && goog.array.findIndex(this.cctxs_,
+      function(cctx) {
+        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
+      }) >= 0;
+  var rowSelectionModel = new Slick.RowSelectionModel();
   // Selecting
   if (!this.cfg_.readonly) {
     if (this.cfg_.allowEdit) {
-      this.slick_.setSelectionModel(new Slick.RowSelectionModel());
+      this.slick_.setSelectionModel(rowSelectionModel);
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
@@ -321,22 +333,24 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
           });
         }, this);
   }
-  // Sorting
-  this.slick_.onSort.subscribe(goog.bind(function(e, args) {
-    this.sort_ = {
-      'colid': args['sortCol']['id'],
-      'asc': args['sortAsc']
-    };
-    var fctx = goog.array.find(this.cctxs_, function(fctx1) {
-      return fctx1.id === args['sortCol']['id'];
-    });
-    this.dataView_.sort(function(a, b) {
-      var x = fctx.getCompareableValue(a);
-      var y = fctx.getCompareableValue(b);
-      return (x === y ? 0 : (x > y ? 1 : -1));
-    }, args['sortAsc']);
-    this.saveGridState_();
-  }, this));
+  if (!hasOrderColumn) {
+    // Sorting
+    this.slick_.onSort.subscribe(goog.bind(function(e, args) {
+      this.sort_ = {
+        'colid': args['sortCol']['id'],
+        'asc': args['sortAsc']
+      };
+      var fctx = goog.array.find(this.cctxs_, function(fctx1) {
+        return fctx1.id === args['sortCol']['id'];
+      });
+      this.dataView_.sort(function(a, b) {
+        var x = fctx.getCompareableValue(a);
+        var y = fctx.getCompareableValue(b);
+        return (x === y ? 0 : (x > y ? 1 : -1));
+      }, args['sortAsc']);
+      this.saveGridState_();
+    }, this));
+  }
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
@@ -368,11 +382,20 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       if (state) {
         var data = goog.json.unsafeParse(state);
         this.quickFind_.setFilterStates(data['filters']);
-        var eventType = pn.ui.grid.QuickFind.EventType.FILTERED;
-        this.getHandler().listen(this.quickFind_, eventType,
-            goog.bind(this.saveGridState_, this, 'saving'));
+        var filtered = pn.ui.grid.QuickFind.EventType.FILTERED;
+        this.getHandler().listen(this.quickFind_, filtered,
+            goog.bind(this.saveGridState_, this));
       }
     }
+  }
+
+  if (hasOrderColumn) {
+    this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick_);
+    this.registerDisposable(this.rowOrdering_);
+    this.rowOrdering_.init();
+    var ordered = pn.ui.grid.RowOrdering.EventType.ORDERED;
+    this.getHandler().listen(this.rowOrdering_, ordered,
+        goog.bind(this.publishEvent_, this));
   }
 
   var rfr = goog.bind(function() {
@@ -388,9 +411,17 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
 /** @private */
 pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
+  var orderColumn = goog.array.find(this.cctxs_, function(cctx) {
+    return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
+  });
   var state = pn.storage.get(this.hash_);
-  if (!state) return;
-  var data = goog.json.unsafeParse(state);
+  if (!orderColumn && !state) return;
+  var data = orderColumn ? {
+    'sort': {
+      'colid': orderColumn.spec.dataProperty,
+      'asc': true
+    }
+  } : goog.json.unsafeParse(state);
   var col = null,
       asc = true;
   if (data['sort']) {
@@ -465,6 +496,10 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
  * @param {Object} evData The data for the selection event.
  */
 pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
+  // Ignore if triggered by cell re-ordering.
+  if (window.event.target.className.indexOf('cell-reorder') >= 0 ||
+      (this.rowOrdering_ && this.rowOrdering_.isOrdering())) return;
+
   var idx = evData['rows'][0];
   var selected = this.dataView_.getItem(idx);
   var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
@@ -497,6 +532,9 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
       var format = e.exportFormat;
       pn.app.ctx.pub(ae.LIST_EXPORT, this.spec_.type, format, data);
       break;
+    case pn.ui.grid.RowOrdering.EventType.ORDERED:
+      pn.app.ctx.pub(ae.LIST_ORDERED, this.spec_.type, e.ids);
+      break;
     default: throw new Error('Event: ' + e.type + ' is not supported');
   }
 };
@@ -508,6 +546,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 
   delete this.selectionHandler_;
   delete this.quickFind_;
+  delete this.rowOrdering_;
 
   if (this.slick_) {
     var columns = this.slick_.getColumns();

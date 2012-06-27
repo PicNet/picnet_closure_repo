@@ -1392,9 +1392,8 @@ onPagingInfoChanged.prototype.unsubscribe = function(fn) {};
 onPagingInfoChanged.prototype.notify = function(args, e, scope) {};
 
 ////////////////////////////////////////////////////////////////////////////////
-// Slick.Data.DataView
+// Slick.RowSelectionModel
 ////////////////////////////////////////////////////////////////////////////////
-
 
 
 /** @constructor */
@@ -1460,3 +1459,69 @@ onSelectedRangesChanged.prototype.unsubscribe = function(fn) {};
  * @return {*}
  */
 onSelectedRangesChanged.prototype.notify = function(args, e, scope) {};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Slick.RowMoveManager
+////////////////////////////////////////////////////////////////////////////////
+
+
+/** @constructor */
+Slick.RowMoveManager = function() {};
+
+
+/** @constructor */
+function onBeforeMoveRows() {}
+
+
+/** @type {onBeforeMoveRows} */
+Slick.RowMoveManager.prototype.onBeforeMoveRows;
+
+
+/**
+ * @param {*} fn
+ */
+onBeforeMoveRows.prototype.subscribe = function(fn) {};
+
+
+/**
+ * @param {*} fn
+ */
+onBeforeMoveRows.prototype.unsubscribe = function(fn) {};
+
+
+/**
+ * @param {*} args
+ * @param {*}  e
+ * @param {*}  scope
+ * @return {*}
+ */
+onBeforeMoveRows.prototype.notify = function(args, e, scope) {};
+
+/** @constructor */
+function onMoveRows() {}
+
+
+/** @type {onBeforeMoveRows} */
+Slick.RowMoveManager.prototype.onMoveRows;
+
+
+/**
+ * @param {*} fn
+ */
+onMoveRows.prototype.subscribe = function(fn) {};
+
+
+/**
+ * @param {*} fn
+ */
+onMoveRows.prototype.unsubscribe = function(fn) {};
+
+
+/**
+ * @param {*} args
+ * @param {*}  e
+ * @param {*}  scope
+ * @return {*}
+ */
+onMoveRows.prototype.notify = function(args, e, scope) {};

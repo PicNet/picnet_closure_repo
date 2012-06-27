@@ -50,6 +50,9 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   this.headerCssClass = '';
 
   /** @type {string} */
+  this.cssClass = '';
+
+  /** @type {string} */
   this.behavior = '';
 
   //////////////////////////////////////////////////////////////////////////////
@@ -114,6 +117,7 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
     'width': this.width,
     'rerenderOnResize': this.rerenderOnResize,
     'headerCssClass': this.headerCssClass,
+    'cssClass': this.cssClass,
     'behavior': this.behavior,
     'source': this.displayPath
   });
@@ -127,6 +131,7 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   col.width = this.width;
   col.rerenderOnResize = this.rerenderOnResize;
   col.headerCssClass = this.headerCssClass;
+  col.cssClass = this.cssClass;
   col.behavior = this.behavior;
   col.source = this.displayPath;
   return col;

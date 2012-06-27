@@ -19,7 +19,7 @@ pn.ui.InputColourPicker = function() {
 
   /**
    * @private
-   * @type {Element}   
+   * @type {Element}
    */
   this.input_ = goog.dom.createDom('input', {
     'type': 'text',
@@ -35,7 +35,7 @@ pn.ui.InputColourPicker = function() {
 
   /**
    * @private
-   * @type {goog.ui.PopupColorPicker}   
+   * @type {goog.ui.PopupColorPicker}
    */
   this.pcp_ = new goog.ui.PopupColorPicker();
   this.registerDisposable(this.pcp_);
