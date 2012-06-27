@@ -18,8 +18,8 @@ pn.ui.InputColourPicker = function() {
   goog.ui.Component.call(this);
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.input_ = goog.dom.createDom('input', {
     'type': 'text',
@@ -28,8 +28,14 @@ pn.ui.InputColourPicker = function() {
   this.input_.setAttribute('readonly', 'readonly');
 
   /**
-   * @type {goog.ui.PopupColorPicker}
    * @private
+   * @type {string}
+   */
+  this.col_ = '';
+
+  /**
+   * @private
+   * @type {goog.ui.PopupColorPicker}   
    */
   this.pcp_ = new goog.ui.PopupColorPicker();
   this.registerDisposable(this.pcp_);
@@ -39,7 +45,7 @@ goog.inherits(pn.ui.InputColourPicker, goog.ui.Component);
 
 /** @param {string} colour The colour to set on the control. */
 pn.ui.InputColourPicker.prototype.setColour = function(colour) {
-  goog.style.setStyle(this.input_, 'background-color', colour);
+  goog.style.setStyle(this.input_, 'background-color', this.col_ = colour);
 };
 
 
@@ -49,7 +55,7 @@ pn.ui.InputColourPicker.prototype.setColour = function(colour) {
 * @return {?string} The selected colour.
 */
 pn.ui.InputColourPicker.prototype.getValue = function() {
-  return this.pcp_.getSelectedColor();
+  return this.col_;
 };
 
 
@@ -76,7 +82,7 @@ pn.ui.InputColourPicker.prototype.enterDocument = function() {
   pn.ui.InputColourPicker.superClass_.enterDocument.call(this);
   var changeEvent = goog.events.EventType.CHANGE;
   this.getHandler().listen(this.pcp_, changeEvent, function(e) {
-    this.setColour(this.getValue());
+    this.setColour(this.pcp_.getSelectedColor());
     this.dispatchEvent(e);
   });
 };

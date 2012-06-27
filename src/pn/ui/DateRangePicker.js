@@ -36,59 +36,59 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
 
   /**
    * The text to display on the label when no dates are selected.
-   * @type {string}
    * @private
+   * @type {string}   
    */
   this.emptyText_ = 'Select Date Range';
 
   /**
    * Wether to display the from and to labels on top of the date pickers.
-   * @type {boolean}
    * @private
+   * @type {boolean}   
    */
   this.showFromAndToLabels_ = false;
 
   /**
    * Instance of goog.ui.Popup used to manage the behavior of the date picker.
-   * @type {goog.ui.Popup}
    * @private
+   * @type {goog.ui.Popup}   
    */
   this.popup_ = null;
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.lastTarget_ = null;
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.label_;
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.popupButton_;
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.clearRangeButton_;
 
   /**
-   * @type {Element}
    * @private
+   * @type {Element}   
    */
   this.popupConent_;
 
   /**
    * Instance of a date picker control.
-   * @type {goog.ui.DatePicker}
    * @private
+   * @type {goog.ui.DatePicker}   
    */
   this.datePickerFrom_ = opt_datePickerFrom || new goog.ui.DatePicker();
   this.datePickerFrom_.setDate(null);
@@ -96,8 +96,8 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
 
   /**
    * Instance of a date picker control.
-   * @type {goog.ui.DatePicker}
    * @private
+   * @type {goog.ui.DatePicker}   
    */
   this.datePickerTo_ = opt_datePickerTo || new goog.ui.DatePicker();
   this.datePickerTo_.setDate(null);
@@ -105,8 +105,8 @@ pn.ui.DateRangePicker = function(opt_datePickerFrom, opt_datePickerTo,
 
   /**
    * The date format to use on the range label
-   * @type {goog.i18n.DateTimeFormat|undefined}
    * @private
+   * @type {goog.i18n.DateTimeFormat|undefined}   
    */
   this.dateFormat_ = opt_dateFormat;
 };
@@ -344,8 +344,8 @@ pn.ui.DateRangePicker.prototype.showPopup = function(element) {
 
 /**
  * Handles click events on the targets and shows the date picker.
- * @param {goog.events.Event} event The click event.
  * @private
+ * @param {goog.events.Event} event The click event. 
  */
 pn.ui.DateRangePicker.prototype.showPopup_ = function(event) {
   this.showPopup(/** @type {Element} */ (event.currentTarget));
@@ -364,9 +364,7 @@ pn.ui.DateRangePicker.prototype.hidePopup = function() {
 };
 
 
-/**
- * @private
- */
+/** @private */
 pn.ui.DateRangePicker.prototype.clearRange_ = function() {
   this.listenToPickers(false);   // Ignore the individual change events
   this.datePickerFrom_.setDate(null);
@@ -381,8 +379,8 @@ pn.ui.DateRangePicker.prototype.clearRange_ = function() {
 /**
  * Called when the date is changed.
  *
- * @param {goog.events.Event} event The date change event.
  * @private
+ * @param {goog.events.Event} event The date change event. 
  */
 pn.ui.DateRangePicker.prototype.onDateChanged_ = function(event) {
   var from = this.datePickerFrom_.getDate();
@@ -403,9 +401,9 @@ pn.ui.DateRangePicker.prototype.onDateChanged_ = function(event) {
 
 
 /**
- * @param {goog.date.Date} from The from date (start of the range). Can be null.
- * @param {goog.date.Date} to The to date (end of the range). Can be null.
  * @private
+ * @param {goog.date.Date} from The from date (start of the range). Can be null.
+ * @param {goog.date.Date} to The to date (end of the range). Can be null. 
  */
 pn.ui.DateRangePicker.prototype.setLabelText_ = function(from, to) {
   var tos, froms;
@@ -425,9 +423,9 @@ pn.ui.DateRangePicker.prototype.setLabelText_ = function(from, to) {
 
 
 /**
- * @param {goog.date.Date} from The from date (start of the range). Can be null.
- * @param {goog.date.Date} to The to date (end of the range). Can be null.
  * @private
+ * @param {goog.date.Date} from The from date (start of the range). Can be null.
+ * @param {goog.date.Date} to The to date (end of the range). Can be null. 
  */
 pn.ui.DateRangePicker.prototype.highlightDateRange_ = function(from, to) {
   this.highlightDateRangeImpl_(from, to, this.datePickerFrom_);
@@ -436,10 +434,10 @@ pn.ui.DateRangePicker.prototype.highlightDateRange_ = function(from, to) {
 
 
 /**
+ * @private
  * @param {goog.date.Date} from The from date (start of the range). Can be null.
  * @param {goog.date.Date} to The to date (end of the range). Can be null.
- * @param {goog.ui.DatePicker} picker the DatePicker to highlight dates in.
- * @private
+ * @param {goog.ui.DatePicker} picker the DatePicker to highlight dates in. 
  */
 pn.ui.DateRangePicker.prototype.highlightDateRangeImpl_ = function(from, to,
     picker) {
