@@ -15,8 +15,11 @@ goog.require('pn.app.schema.FieldSchema');
  *
  * @constructor
  * @extends {goog.Disposable}
+ * @param {Object=} opt_opts The configuration options for the
+ *    application. These options will be extended on top of the default
+ *    pn.app.AppConfig options.
  */
-pn.app.AppConfig = function() {
+pn.app.AppConfig = function(opt_opts) {
   goog.Disposable.call(this);
 
   var fr = pn.ui.edit.FieldRenderers,
@@ -75,5 +78,7 @@ pn.app.AppConfig = function() {
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'DateTime': cr.dateRenderer
   };
+
+  if (opt_opts) goog.object.extend(this, opt_opts);
 };
 goog.inherits(pn.app.AppConfig, goog.Disposable);

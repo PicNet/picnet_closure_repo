@@ -38,8 +38,9 @@ goog.provide('pn.app.BaseApp');
  *   setting in pn.app.ctx.cfg.
  *
  * @constructor
- * @param {pn.app.AppConfig=} opt_cfg The configuration options for the
- *    application. If this is not specified then the default AppConfig is used.
+ * @param {Object=} opt_cfg The configuration options for the
+ *    application. These options will be extended on top of the default
+ *    pn.app.AppConfig options.
  * @extends {goog.Disposable}
  */
 pn.app.BaseApp = function(opt_cfg) {
@@ -63,7 +64,7 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.router);
 
   /** @type {!pn.app.AppConfig} */
-  this.cfg = opt_cfg || new pn.app.AppConfig();
+  this.cfg = new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
   /** @type {pn.app.schema.Schema} */
