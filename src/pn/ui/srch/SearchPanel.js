@@ -318,8 +318,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   var input;
   if (!fctx.spec.renderer &&
       pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty)) {
-    input = FieldBuilder.createSearchParentFilter(fctx);
-    goog.dom.appendChild(parent, input);
+    input = this.entityParentListSearchField(fctx, parent);
   } else {
     var srchFctx = this.getSearchAppropriateFieldSpec_(fctx);
     input = FieldBuilder.createAndAttach(srchFctx, parent, {});
@@ -350,6 +349,20 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 
 
 /**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field/column to create a dom tree for.
+ * @param {!Element} parent The parent element to attach to.
+ * @return {!Element} The created dom element.
+ */
+pn.ui.srch.SearchPanel.prototype.entityParentListSearchField =
+    function(fctx, parent) {
+  var sel = pn.ui.edit.FieldRenderers.entityParentListField(fctx, parent, {});
+  sel.setAttribute('multiple', 'multiple');
+  sel.setAttribute('rows', 2);
+  return sel;
+};
+
+
+/**
  * @private
  * @param {!pn.ui.edit.FieldCtx} fctx The field context to make appropriate for
  *    searching.
@@ -369,9 +382,22 @@ pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
       curr === rr.timeField ||
       curr === fr.textAreaRenderer ||
       curr === fr.hiddenTextField) {
-    sf.spec.renderer = fr.standardTextSearchField;
+    sf.spec.renderer = this.standardTextSearchField;
   }
   return sf;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
+ * @return {!Element} The text control for search inputs.
+ */
+pn.ui.srch.SearchPanel.prototype.standardTextSearchField =
+    function(fctx, parent) {
+  var txt = goog.dom.createDom('input', {'type': 'text'});
+  goog.dom.appendChild(parent, txt);
+  return txt;
 };
 
 

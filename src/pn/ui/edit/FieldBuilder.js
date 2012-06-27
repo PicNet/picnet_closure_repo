@@ -51,123 +51,12 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
  * @return {Element|goog.ui.Component|Text} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
-  var fb = pn.ui.edit.FieldBuilder;
-  var elem;
   var renderer = fctx.getFieldRenderer();
-  if (renderer) {
-    if (renderer instanceof pn.ui.edit.ComplexRenderer) {
-      elem = renderer;
-      elem.decorate(parent);
-    } else {
-      elem = renderer(fctx, parent, entity);
-    }
-  } else if (pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty) &&
-      !fctx.spec.tableType) {
-    elem = fctx.spec.readonly ?
-        fb.createReadOnlyParentEntitySelect_(fctx, entity) :
-        fb.createParentEntitySelect_(fctx, entity);
-    goog.dom.appendChild(parent, /** @type {!Node} */ (elem));
-  } else if (fctx.tableType) {
-    elem = fb.createChildEntitiesSelectTable_(fctx, parent, entity);
-  } else {
-    var val = fctx.getEntityValue(entity) || '';
-    elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
-    goog.dom.appendChild(parent, elem);
+  if (renderer instanceof pn.ui.edit.ComplexRenderer) {
+    renderer.decorate(parent);
+    return renderer;
   }
-  return elem;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.edit.FieldCtx} fctx The field/column context to create a
- *    dom tree.
- * @param {!Object} entity The entity being edited.
- * @return {!Element} The created dom element.
- */
-pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx, entity) {
-  var steps = fctx.spec.displayPath.split('.');
-  var cascading = !!fctx.spec.tableType;
-  var entityType = /** @type {string} */ (cascading ?
-      fctx.spec.tableType :
-      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty));
-
-  var list = fctx.cache[entityType];
-  if (!list) throw new Error('Expected access to "' + entityType +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  pn.app.ctx.schema.orderEntities(entityType, list);
-
-  var selTxt = 'Select ' + fctx.spec.name + ' ...';
-  steps.shift();
-  var namePath = cascading ? entityType + 'Name' : steps.join('.');
-  list = goog.array.map(list, function(e) {
-    return {
-      'ID': e['ID'],
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
-    };
-  });
-  return pn.ui.edit.FieldBuilder.createDropDownList_(
-      selTxt, list, fctx.getEntityValue(entity));
-};
-
-
-/**
- * @param {!pn.ui.edit.FieldCtx} fctx The field/column to create a dom tree for.
- * @return {!Element} The created dom element.
- */
-pn.ui.edit.FieldBuilder.createSearchParentFilter = function(fctx) {
-  var sel = pn.ui.edit.FieldBuilder.createParentEntitySelect_(fctx, {});
-  sel.setAttribute('multiple', 'multiple');
-  sel.setAttribute('rows', 2);
-  return sel;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.edit.FieldCtx} fctx The field to create parent select.
- * @param {!Object} entity The entity being edited.
- * @return {!Element} The created dom element.
- */
-pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
-    function(fctx, entity) {
-  var path = fctx.spec.displayPath;
-  var val = pn.data.EntityUtils.
-      getEntityDisplayValue(fctx.cache, path, entity) || '';
-
-  var div = goog.dom.createDom('div', 'field', val.toString());
-  div.value = entity[path.split('.')[0]];
-  return div;
-};
-
-
-/**
- * @private
- * @param {string} selectTxt The message to display in the first element of the
- *    list.
- * @param {!Array.<Object>} list The list of entities.
- * @param {*} selValue The selected value in the 'ID' field.
- * @return {!Element} The select box.
- */
-pn.ui.edit.FieldBuilder.createDropDownList_ =
-    function(selectTxt, list, selValue) {
-  var select = goog.dom.createDom('select');
-  if (selectTxt) {
-    goog.dom.appendChild(select, goog.dom.createDom('option',
-        {'value': '0' }, selectTxt));
-  }
-  goog.array.forEach(list, function(e) {
-    var opts = {'value': e['ID']};
-    if (selValue && e['ID'] === selValue) { opts['selected'] = 'selected'; }
-    var txt = e['Name'] ? e['Name'].toString() : '';
-    goog.asserts.assert(txt !== undefined);
-
-    if (txt) {
-      var option = goog.dom.createDom('option', opts, txt);
-      goog.dom.appendChild(select, option);
-    }
-  });
-  return select;
+  return renderer(fctx, parent, entity);
 };
 
 
@@ -187,32 +76,4 @@ pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
     cb.addItem(new goog.ui.ComboBoxItem(e[txtf]));
   });
   return cb;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
- * @param {!Element} parent The parent to attach to.
- * @param {!Object} entity The entity being edited.
- * @return {!Element|!goog.ui.Component} The created dom element.
- */
-pn.ui.edit.FieldBuilder.createChildEntitiesSelectTable_ =
-    function(fctx, parent, entity) {
-  goog.asserts.assert(fctx.spec.tableType);
-  goog.asserts.assert(entity['ID'] != 0);
-
-  var parentId = entity['ID'];
-
-  var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache[fctx.spec.tableType];
-  if (!list) list = fctx.cache[goog.string.remove(fctx['id'], 'Entities')];
-  if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
-      '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  var data = !parentId ? [] : goog.array.filter(list,
-      function(c) { return c[parentField] === parentId; });
-  var spec = pn.app.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
-  var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
-  g.decorate(parent);
-  return g;
 };

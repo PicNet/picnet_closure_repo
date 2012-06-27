@@ -6,62 +6,6 @@ goog.provide('pn.ui.edit.ReadOnlyFields');
 
 
 /**
- * @param {!pn.ui.edit.FieldSpec} fieldSpec The field wholse display value we
- *    want.
- * @param {!*} value The value on the non-readonly field.
- * @return {string} The text of the display value.
- */
-pn.ui.edit.ReadOnlyFields.getText = function(fieldSpec, value) {
-  if (!goog.isDefAndNotNull(value)) return '';
-
-  if (goog.isString(value)) return value;
-  else if (goog.isArray(value)) {
-    return goog.array.filter(value, function(v) { return !!v; }).join(',');
-  }
-
-  var type = pn.ui.edit.ReadOnlyFields.getFieldType_(fieldSpec);
-  return pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, value);
-};
-
-
-/**
- * @param {!pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
- */
-pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
-  fieldSpec.readonly = true;
-
-  // Complex renderers should know how to handle their own readonlyness
-  if (fieldSpec.renderer instanceof pn.ui.edit.ComplexRenderer) { return; }
-
-  var fr = pn.ui.edit.FieldRenderers;
-  var rr = pn.ui.edit.ReadOnlyFields;
-  var curr = fieldSpec.renderer;
-  var rendermap = [
-    [fr.timeRenderer, rr.timeField],
-    [fr.dateRenderer, rr.dateField],
-    [fr.boolRenderer, rr.boolField],
-    [fr.yesNoRenderer, rr.boolField],
-    [fr.centsRenderer, rr.centsField],
-    [fr.intRenderer, rr.intField]
-  ];
-  if (goog.string.endsWith(fieldSpec.dataProperty, 'Entities')) {
-    if (fieldSpec.renderer === null) return; // Leave grids alone
-    fieldSpec.renderer = rr.itemList;
-  } else if (!curr) { fieldSpec.renderer = rr.textField; }
-  else {
-    if (goog.array.findIndex(rendermap, function(trans) {
-      if (curr === trans[0] || curr === trans[1]) {
-        fieldSpec.renderer = trans[1];
-        return true;
-      }
-    }) < 0) {
-      fieldSpec.renderer = rr.textField;
-    }
-  }
-};
-
-
-/**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
@@ -167,6 +111,25 @@ pn.ui.edit.ReadOnlyFields.boolField = function(fctx, parent, entity) {
 pn.ui.edit.ReadOnlyFields.dateField = function(fctx, parent, entity) {
   var type = pn.ui.edit.ReadOnlyFields.FieldType_.DATE;
   return pn.ui.edit.ReadOnlyFields.field_(fctx, type, parent, entity);
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
+ * @return {!Element} The readonly text field control.
+ */
+pn.ui.edit.ReadOnlyFields.entityParentListField =
+    function(fctx, parent, entity) {
+  var path = fctx.spec.displayPath;
+  var val = pn.data.EntityUtils.
+      getEntityDisplayValue(fctx.cache, path, entity) || '';
+
+  var div = goog.dom.createDom('div', 'field', val.toString());
+  div.value = entity[path.split('.')[0]];
+  goog.dom.appendChild(parent, div);
+  return div;
 };
 
 
