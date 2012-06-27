@@ -14,8 +14,11 @@ goog.require('pn.ui.edit.ComplexRenderer');
  * @param {!Object} entity The entity being edited.
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.
+ * @param {boolean} showAof Wether to allow the current user to add on the fly.
+ *    This functionality is sometimes only reserved for administrators so this
+ *    should represent this.
  */
-pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId) {
+pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId, showAof) {
   goog.asserts.assert(specId);
 
   pn.ui.edit.ComplexRenderer.call(this, fctx, entity);
@@ -25,6 +28,12 @@ pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId) {
    * @type {string}
    */
   this.specId_ = specId;
+
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.showAof_ = showAof;
 
   /**
    * @private
@@ -67,7 +76,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
 
   var dom = goog.dom.createDom('div', 'add-on-fly',
       this.select_,
-      this.add_);
+      this.showAof_ ? this.add_ : undefined);
 
   goog.dom.appendChild(element, dom);
 };
