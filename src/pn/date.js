@@ -90,12 +90,12 @@ pn.date.isPast = function(date) {
 
 /**
  * @param {number} millis The number of milliseconds from 1970.
- * @return {!goog.date.Date} The goog.Date from the specified millis.
+ * @return {goog.date.Date} The goog.Date from the specified millis.
  */
 pn.date.fromMillis = function(millis) {
   var date = new goog.date.Date();
   date.setTime(millis);
-  return date;
+  return date.getYear() <= 1753 ? null : date;
 };
 
 
