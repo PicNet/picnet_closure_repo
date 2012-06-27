@@ -203,6 +203,26 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being edited.
+ * @return {!Element} The textarea control.
+ */
+pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
+  var order = pn.data.EntityUtils.isNew(entity) ?
+      fctx.cache[fctx.entitySpec.type].length :
+      fctx.getEntityValue(entity);
+  var inp = goog.dom.createDom('input', {
+    'type': 'hidden',
+    'value': order.toString()
+  });
+  goog.style.showElement(parent, false);
+  goog.dom.appendChild(parent, inp);
+  return inp;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
  * @return {!Element} The text control for search inputs.
  */
 pn.ui.edit.FieldRenderers.standardTextSearchField = function(fctx, parent) {

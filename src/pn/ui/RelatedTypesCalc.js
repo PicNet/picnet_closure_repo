@@ -62,6 +62,9 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes = function(spec, opt_additionals) {
     if (fctx.spec.displayPath) {
       goog.array.forEach(fctx.spec.displayPath.split('.'), addIfType);
     }
+    if (fctx.spec.renderer === pn.ui.edit.FieldRenderers.orderFieldRenderer) {
+      types.push(spec.type);
+    }
     addIfType(fctx.spec.dataProperty);
     if (fctx.spec.tableSpec) {
       types = goog.array.concat(types,
