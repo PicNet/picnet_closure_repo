@@ -224,10 +224,15 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
+ * @param {function(!Object,!Array.<!Object>):!Array.<!Object>=} opt_filter The
+ *    filter to apply to the list entity.  This function takes the current
+ *    entity and the list of unfiltered entities, this function needs to then
+ *    return the filtered (and optionally resorted) entity list to display
+ *    in the default select control.
  * @return {!Element} The parent select list.
  */
 pn.ui.edit.FieldRenderers.entityParentListField =
-    function(fctx, parent, entity) {
+    function(fctx, parent, entity, opt_filter) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
   var entityType = /** @type {string} */ (cascading ?
@@ -238,6 +243,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   pn.app.ctx.schema.orderEntities(entityType, list);
+  if (opt_filter) list = opt_filter(entity, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
@@ -357,3 +363,20 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
   return renderer;
 };
 
+
+/**
+ * @param {function(!Object,!Array.<!Object>):!Array.<!Object>} filter The
+ *    filter to apply to the list entity.  This function takes the current
+ *    entity and the list of unfiltered entities, this function needs to then
+ *    return the filtered (and optionally resorted) entity list to display
+ *    in the default select control.
+ * @return {!pn.ui.edit.FieldSpec.Renderer} The many to many list box renderer.
+ */
+pn.ui.edit.FieldRenderers.createFilteredEntityParentList =
+    function(filter) {
+  var renderer = function(fctx, parent, entity) {
+    var defaultImpl = pn.ui.edit.FieldRenderers.entityParentListField;
+    return defaultImpl(fctx, parent, entity, filter);
+  };
+  return renderer;
+};
