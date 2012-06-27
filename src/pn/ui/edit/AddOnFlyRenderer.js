@@ -113,10 +113,8 @@ pn.ui.edit.AddOnFlyRenderer.prototype.aofAdded_ = function(e) {
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
   var list = this.fctx.cache[this.spec_.type];
-  var nameProp = this.spec_.type + 'Name';
-  goog.array.sort(list, function(a, b) {
-    return goog.string.caseInsensitiveCompare(a[nameProp], b[nameProp]);
-  });
+  pn.app.ctx.schema.orderEntities(this.spec_.type, list);
+
   goog.dom.removeChildren(this.select_);
   goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
     'value': '0',
@@ -125,7 +123,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
   goog.array.forEach(list, function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e['ID'],
-      'text': e[nameProp],
+      'text': e[this.spec_.type + 'Name'],
       'selected': e['ID'] === selectedId
     }));
   }, this);

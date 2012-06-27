@@ -31,6 +31,27 @@ goog.inherits(pn.app.schema.Schema, goog.Disposable);
 
 
 /**
+ * @param {string} type The type of entities we are ordering.
+ * @param {!Array.<!Object>} list The entities to order.
+ */
+pn.app.schema.Schema.prototype.orderEntities = function(type, list) {
+  var entitySchema = this.entities_[type];
+  var orderp = type + 'Order';
+  var namep = type + 'Name';
+  var order = entitySchema.fieldSchemas[orderp];
+  var name = entitySchema.fieldSchemas[namep];
+
+  if (order && order.type === 'Int32') {
+    goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });
+  } else if (name && name.type === 'String') {
+    goog.array.sort(list, function(a, b) {
+      return goog.string.caseInsensitiveCompare(a[namep], b[namep]);
+    });
+  }
+};
+
+
+/**
  * @param {!pn.ui.BaseFieldSpec} fieldSpec The field spec for the field being
  *     queried.
  * @return {pn.app.schema.FieldSchema} The field schema for the specified field.

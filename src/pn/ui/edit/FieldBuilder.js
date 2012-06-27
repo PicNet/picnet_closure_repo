@@ -88,13 +88,15 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
 pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx, entity) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
-  var entityType = cascading ?
+  var entityType = /** @type {string} */ (cascading ?
       fctx.spec.tableType :
-      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
+      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty));
 
   var list = fctx.cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
+  pn.app.ctx.schema.orderEntities(entityType, list);
+
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
   var namePath = cascading ? entityType + 'Name' : steps.join('.');
@@ -104,10 +106,8 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx, entity) {
       'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
     };
   });
-  var sort = fctx.spec.additionalProperties['sortedValues'];
-  if (!goog.isDef(sort)) sort = true;
   return pn.ui.edit.FieldBuilder.createDropDownList_(
-      selTxt, list, fctx.getEntityValue(entity), sort);
+      selTxt, list, fctx.getEntityValue(entity));
 };
 
 
@@ -147,30 +147,25 @@ pn.ui.edit.FieldBuilder.createReadOnlyParentEntitySelect_ =
  *    list.
  * @param {!Array.<Object>} list The list of entities.
  * @param {*} selValue The selected value in the 'ID' field.
- * @param {boolean} sort Wether the list should display sorted.
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldBuilder.createDropDownList_ =
-    function(selectTxt, list, selValue, sort) {
+    function(selectTxt, list, selValue) {
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
         {'value': '0' }, selectTxt));
   }
-  var options = [];
   goog.array.forEach(list, function(e) {
     var opts = {'value': e['ID']};
     if (selValue && e['ID'] === selValue) { opts['selected'] = 'selected'; }
     var txt = e['Name'] ? e['Name'].toString() : '';
     goog.asserts.assert(txt !== undefined);
-    if (txt) options.push(goog.dom.createDom('option', opts, txt));
-  });
-  if (sort) {
-    goog.array.sortObjectsByKey(options, 'innerHTML',
-        goog.string.caseInsensitiveCompare);
-  }
-  goog.array.forEach(options, function(o) {
-    goog.dom.appendChild(select, o);
+
+    if (txt) {
+      var option = goog.dom.createDom('option', opts, txt);
+      goog.dom.appendChild(select, option);
+    }
   });
   return select;
 };
@@ -184,8 +179,7 @@ pn.ui.edit.FieldBuilder.createDropDownList_ =
  * @return {goog.ui.ComboBox} The select box.
  */
 pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
-  goog.array.sortObjectsByKey(list, txtf,
-      goog.string.caseInsensitiveCompare);
+  goog.array.sortObjectsByKey(list, txtf, goog.string.caseInsensitiveCompare);
   var cb = new goog.ui.ComboBox();
   cb.setUseDropdownArrow(true);
   if (selectTxt) { cb.setDefaultText(selectTxt); }
