@@ -194,6 +194,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
         pn.ui.edit.ReadOnlyFields.textField;
   } else {
     var schema = pn.app.ctx.schema.getFieldSchema(this);
+    if (!schema) throw Error('could not find schema for field: ' + this.id);
     var schemaType = schema.type;
     if (schemaType === 'String' && schema.length >
             pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {

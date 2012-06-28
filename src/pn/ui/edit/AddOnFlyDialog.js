@@ -46,7 +46,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
   dialog.setModal(true);
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
 
-  var el = dialog.getDialogElement();
+  var el = dialog.getContentElement();
   var edit = new pn.ui.edit.Edit(spec, { 'ID': 0 }, this.cache_);
   this.registerDisposable(edit);
   edit.render(el);
