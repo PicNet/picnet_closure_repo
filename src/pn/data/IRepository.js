@@ -6,6 +6,7 @@ goog.provide('pn.data.IRepository');
 
 /**
  * @interface
+ * @extends {goog.disposable.IDisposable}
  */
 pn.data.IRepository = function() {};
 

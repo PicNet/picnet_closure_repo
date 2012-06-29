@@ -50,7 +50,6 @@ pn.data.WebSQLRepository.prototype.db = function() {
   if (this.db_) return this.db_;
   var name = this.databaseName;
   this.db_ = window.openDatabase(name, '1', name, 10485760);
-  this.registerDisposable(this.db_);
   return this.db_;
 };
 
@@ -163,4 +162,12 @@ pn.data.WebSQLRepository.prototype.executeImpl_ =
 
     if (opt_kill) this.transaction_ = null;
   }, this));
+};
+
+/** @inheritDoc */
+pn.data.WebSQLRepository.prototype.disposeInternal = function() {
+  pn.data.WebSQLRepository.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.db_);
+  delete this.db_;
 };

@@ -47,7 +47,6 @@ pn.data.GearsRepository.prototype.isSupported = function() {
 pn.data.GearsRepository.prototype.db = function() {
   if (this.db_) { return this.db_; }
   this.db_ = google.gears.factory.create('beta.database');
-  this.registerDisposable(this.db_);
 
   this.db_.open(this.databaseName);
   return this.db_;
@@ -205,4 +204,13 @@ pn.data.GearsRepository.setUpGreasFactory = function() {
   if (!google.gears) {
     google.gears = {factory: factory};
   }
+};
+
+
+/** @inheritDoc */
+pn.data.GearsRepository.prototype.disposeInternal = function() {
+  pn.data.GearsRepository.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.db_);
+  delete this.db_;
 };

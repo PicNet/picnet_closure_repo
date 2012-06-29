@@ -144,3 +144,12 @@ pn.data.InMemoryRepository.prototype.updateListWithItem_ =
   if (idx >= 0) { list[idx] = item; }
   else { list.push(item); }
 };
+
+
+/** @inheritDoc */
+pn.data.InMemoryRepository.prototype.disposeInternal = function() {
+  pn.data.InMemoryRepository.superClass_.disposeInternal.call(this);
+
+  goog.dispose(this.db_);
+  delete this.db_;
+};

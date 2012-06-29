@@ -14,6 +14,7 @@ goog.provide('pn.data.RemoteDataProvider');
 
 /**
  * @interface
+ * @extends {goog.disposable.IDisposable}
  */
 pn.data.IDataAjaxRequest = function() {};
 
