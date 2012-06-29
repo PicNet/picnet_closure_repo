@@ -164,6 +164,7 @@ pn.data.WebSQLRepository.prototype.executeImpl_ =
   }, this));
 };
 
+
 /** @inheritDoc */
 pn.data.WebSQLRepository.prototype.disposeInternal = function() {
   pn.data.WebSQLRepository.superClass_.disposeInternal.call(this);

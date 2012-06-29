@@ -2,6 +2,7 @@
 goog.require('goog.Uri.QueryData');
 goog.require('goog.net.XhrIo');
 
+goog.require('goog.Disposable');
 goog.require('pn.json');
 goog.require('pn.data.IDataAjaxRequest');
 
@@ -11,16 +12,19 @@ goog.provide('pn.MockAjaxProvider.RealServerAjax');
 
 /**
  * @constructor
+ * @extends {goog.Disposable}
  * @implements {pn.data.IDataAjaxRequest}
  * @param {!Array.<string>} types
  */
 pn.MockAjaxProvider = function(types) {
+  goog.Disposable.call(this);
+
   this.log = goog.debug.Logger.getLogger('pn.data.MockAjaxProvider');
   this.log.setLevel(goog.debug.Logger.Level.FINEST);
 
   this.memory = new pn.data.InMemoryRepository();
 };
-
+goog.inherits(pn.MockAjaxProvider, goog.Disposable);
 
 /** @inheritDoc */
 pn.MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
