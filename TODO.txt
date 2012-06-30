@@ -1,9 +1,13 @@
 
 HI
 ==
-- Use Schema to build default controls.
-- Refactor Edit.js and the whole FieldBuilders / FieldRenderers mess
-- Creater a wrapper for the {value, field, entity, cache} params which are seen
-  throughout the application.
+- Make the clean_and_compile.bat also run on bash
 - Edit.js and Grid.js need to use a better MVC style design. Same goes for all
   controls.  May need to integrate soy into the picnet closure repo project.  
+- When a list is empty the quick find filters are still showing.
+
+MED
+===
+- Creating a UiSpec requires registration in the getUiSpecs method with an
+    id but UiSpec constructor also takes an ID, making each UiSpec 
+    implementation have to declare the ID twice.

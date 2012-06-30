@@ -47,6 +47,9 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
 };
 goog.inherits(pn.ui.UiSpec, goog.Disposable);
 
+////////////////////////////////////////////////////////////////////////////////
+// OPTIONAL TEMPLATE METHODS - IMPLEMENT AS REQUIRED
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Gets the specifications for the pn.ui.edit.Edit component including all
@@ -80,6 +83,9 @@ pn.ui.UiSpec.prototype.getSearchConfig = goog.abstractMethod;
  */
 pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
 
+////////////////////////////////////////////////////////////////////////////////
+// PUBLIC HELPERS
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @param {string} id The id representing this column.

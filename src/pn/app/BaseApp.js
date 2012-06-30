@@ -14,6 +14,12 @@ goog.require('pn.ui.ViewMgr');
 goog.provide('pn.app.BaseApp');
 
 
+/**
+ * A globally accisble handle to the application context.
+ * @type {pn.app.BaseApp}
+ */
+pn.app.ctx = null;
+
 
 /**
  * This is the main starting point to any pn.app application. Extend this class
@@ -94,60 +100,37 @@ pn.app.BaseApp = function(opt_cfg) {
   // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
   this.pub = goog.bind(this.bus_.pub, this.bus_);
 
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
+  this.init_();  
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
+////////////////////////////////////////////////////////////////////////////////
+// REQUIRED TEMPLATE METHODS
+////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A globally accisble handle to the application context.
- * @type {pn.app.BaseApp}
+ * A template method used to load the schema for the entities being handled by 
+ *    this application. This schema is usually loaded from the server and is
+ *    expected in the following format:
+ *    [
+ *      {
+ *        'name': 'EntityName',
+ *        'fields': [
+ *          { 'name': 'ID', 'type': 'Int64' },
+ *          { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
+ *          { 'name': 'IntFieldName', 'type': 'Int32' },
+ *          { 'name': 'BoolFieldName', 'type': 'YesNo' },
+ *          { 'name': 'DateFieldName', 'type': 'DateTime' }
+ *        ]
+ *      }
+ *    ]
+ *
+ * @see pn.app.schema
+ * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to 
+ *    call with the loaded schema which representing the entities for this 
+ *    application.
  */
-pn.app.ctx = null;
-
-
-/**
- * Start the application by calling the first route.  Also sets the system
- * schema to add default validation.
- * @param {!Array} schema The schema describing the system database.
- *  This is used to provide default validation.
- */
-pn.app.BaseApp.prototype.initialise = function(schema) {
-  goog.asserts.assert(schema);
-
-  this.schema = new pn.app.schema.Schema(schema);
-  this.registerDisposable(this.schema);
-
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
-  this.registerDisposable(this.specs);
-
-  var eventBusEvents = this.getDefaultAppEventHandlers_();
-  goog.object.extend(eventBusEvents, this.getAppEventHandlers());
-  for (var event in eventBusEvents) {
-    this.bus_.sub(event, eventBusEvents[event]);
-  }
-  this.router.initialise(this.getRoutes());
-  var navevent = pn.app.Router.EventType.NAVIGATING;
-  goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
-};
-
-
-/**
- * @private
- * @return {!Object} The default/generic event handlers.
- */
-pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
-  var evs = {},
-      ae = pn.app.AppEvents;
-  evs[ae.CLEAR_MESSAGE] = goog.bind(this.msg.clearMessage, this.msg);
-  evs[ae.SHOW_MESSAGE] = goog.bind(this.msg.showMessage, this.msg);
-  evs[ae.SHOW_MESSAGES] = goog.bind(this.msg.showMessages, this.msg);
-  evs[ae.SHOW_ERROR] = goog.bind(this.msg.showError, this.msg);
-  evs[ae.SHOW_ERRORS] = goog.bind(this.msg.showErrors, this.msg);
-  evs[ae.ENTITY_VALIDATION_ERROR] = goog.bind(this.msg.showErrors, this.msg);
-  return evs;
-};
-
+pn.app.BaseApp.prototype.loadSchema = goog.abstractMethod;
 
 /**
  * A template method used to get all required UiSpecs.  This method should
@@ -196,6 +179,58 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  */
 pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 
+////////////////////////////////////////////////////////////////////////////////
+// PRIVATE IMPLEMENTATION DETAILS
+////////////////////////////////////////////////////////////////////////////////
+
+/** @private */
+pn.app.BaseApp.prototype.init_ = function() {
+  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
+
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.registerDisposable(this.specs);
+
+  var eventBusEvents = this.getDefaultAppEventHandlers_();
+  goog.object.extend(eventBusEvents, this.getAppEventHandlers());
+  for (var event in eventBusEvents) {
+    this.bus_.sub(event, eventBusEvents[event]);
+  }
+
+  var navevent = pn.app.Router.EventType.NAVIGATING;
+  goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
+
+  this.loadSchema(goog.bind(this.schemaLoaded_, this));
+}
+
+/**
+ * @private 
+ * @param {!Array.<!Object>} schema The loaded schema object.
+ */
+pn.app.BaseApp.prototype.schemaLoaded_ = function(schema) {
+  goog.asserts.assert(schema);
+
+  this.schema = new pn.app.schema.Schema(schema);
+  this.registerDisposable(this.schema);
+
+  this.router.initialise(this.getRoutes());
+};
+
+
+/**
+ * @private
+ * @return {!Object} The default/generic event handlers.
+ */
+pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
+  var evs = {},
+      ae = pn.app.AppEvents;
+  evs[ae.CLEAR_MESSAGE] = goog.bind(this.msg.clearMessage, this.msg);
+  evs[ae.SHOW_MESSAGE] = goog.bind(this.msg.showMessage, this.msg);
+  evs[ae.SHOW_MESSAGES] = goog.bind(this.msg.showMessages, this.msg);
+  evs[ae.SHOW_ERROR] = goog.bind(this.msg.showError, this.msg);
+  evs[ae.SHOW_ERRORS] = goog.bind(this.msg.showErrors, this.msg);
+  evs[ae.ENTITY_VALIDATION_ERROR] = goog.bind(this.msg.showErrors, this.msg);
+  return evs;
+};
 
 /**
  * @private

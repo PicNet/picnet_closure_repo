@@ -1,7 +1,7 @@
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\depswriter.py ^
-  --root_with_prefix="src\ ../../../../projects/oms2/picnet.oms.mvc/resources/scripts/lib/picnet_closure_repo/src/" ^
-  --root_with_prefix="..\tablefilter\src\ ../../../../projects/oms2/picnet.oms.mvc/resources/scripts/lib/tablefilter/src/" ^
+  --root_with_prefix="src\ ../../../../projects/picnet_closure_repo/src/" ^
+  --root_with_prefix="..\tablefilter\src\ ../../../../projects/tablefilter/src/" ^
   --output_file=src\deps.js && ^
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\closurebuilder.py ^
