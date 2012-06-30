@@ -1,13 +1,16 @@
 
 HI
 ==
-- Make the clean_and_compile.bat also run on bash
 - Edit.js and Grid.js need to use a better MVC style design. Same goes for all
   controls.  May need to integrate soy into the picnet closure repo project.  
-- When a list is empty the quick find filters are still showing.
+- Model binding - see Model / View examples Backbone.JS
+- Model binding in Edit.js
+- Update models from the server
+- Make the server run on conventions like Backbone.JS
 
 MED
 ===
+- Make the clean_and_compile.bat also run on bash
 - Creating a UiSpec requires registration in the getUiSpecs method with an
     id but UiSpec constructor also takes an ID, making each UiSpec 
     implementation have to declare the ID twice.

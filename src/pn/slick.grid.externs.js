@@ -1136,8 +1136,11 @@ Slick.Data = {};
 
 
 
-/** @constructor */
-Slick.Data.DataView = function() {};
+/** 
+ * @constructor 
+ * @param {Object=} opt_options Optional slick grid DataView options.
+ */
+Slick.Data.DataView = function(opt_options) {};
 Slick.Data.DataView.prototype.beginUpdate = function() {};
 
 
@@ -1166,10 +1169,10 @@ Slick.Data.DataView.prototype.getItems = function() {};
 
 
 /**
- * @param {*} data
- * @param {*}  objectIdProperty
+ * @param {!Array.<!Object>} items The items to set in this data view.
+ * @param {string} objectIdProperty The ID property name .
  */
-Slick.Data.DataView.prototype.setItems = function(data, objectIdProperty) {};
+Slick.Data.DataView.prototype.setItems = function(items, objectIdProperty) {};
 
 
 /**

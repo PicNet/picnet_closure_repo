@@ -51,6 +51,7 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
 // OPTIONAL TEMPLATE METHODS - IMPLEMENT AS REQUIRED
 ////////////////////////////////////////////////////////////////////////////////
 
+
 /**
  * Gets the specifications for the pn.ui.edit.Edit component including all
  *  fields, commands and display details.
@@ -86,6 +87,7 @@ pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
 ////////////////////////////////////////////////////////////////////////////////
 // PUBLIC HELPERS
 ////////////////////////////////////////////////////////////////////////////////
+
 
 /**
  * @param {string} id The id representing this column.

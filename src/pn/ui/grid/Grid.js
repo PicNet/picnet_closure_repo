@@ -8,9 +8,11 @@ goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.app.AppEvents');
+goog.require('pn.json');
 goog.require('pn.storage');
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Config');
+goog.require('pn.ui.grid.DataView');
 goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
@@ -125,7 +127,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {Slick.Data.DataView}
+   * @type {pn.ui.grid.DataView}
    */
   this.dataView_ = null;
 
@@ -203,6 +205,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       c.decorate(element);
     }, this);
   }
+
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
   var width = $(element).width();
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
@@ -216,20 +219,25 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       })
       );
   goog.dom.appendChild(element, parent);
+  var hasData = this.list_.length > 0;
 
-  this.dataView_ = new Slick.Data.DataView();
-  var columns = goog.array.map(this.cctxs_,
-      goog.bind(this.getColumnSlickConfig_, this));
-  this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
-      columns, this.cfg_.toSlick());
+  if (hasData) {
+    this.dataView_ = new pn.ui.grid.DataView();
+    this.registerDisposable(this.dataView_);
 
-  if (this.totalColumns_.length) {
-    this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
-    goog.dom.appendChild(element, this.totalsLegend_);
+    var columns = goog.array.map(this.cctxs_,
+        goog.bind(this.getColumnSlickConfig_, this));
+    this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
+        columns, this.cfg_.toSlick());
+
+    if (this.totalColumns_.length) {
+      this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
+      goog.dom.appendChild(element, this.totalsLegend_);
+    }
   }
 
-  goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
-  goog.style.showElement(this.gridContainer_, true);
+  goog.style.showElement(this.noData_, !hasData);
+  goog.style.showElement(this.gridContainer_, hasData);
 };
 
 
@@ -311,6 +319,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
 /** @inheritDoc */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
+  if (!this.slick_) return; // No data
 
   var hasOrderColumn = !this.cfg_.readonly && goog.array.findIndex(this.cctxs_,
       function(cctx) {
@@ -351,6 +360,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.saveGridState_();
     }, this));
   }
+
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();

@@ -82,10 +82,19 @@ pn.demo.app1.App1Demo.prototype.list_ = function() {
   ];
   var grid = new pn.ui.grid.Grid(this.specs.get('User'), users, cache);
   this.view.showComponent(grid);
+
+  // Test changing data
+  window.setInterval(function() {
+    var user = users[Math.floor(Math.random() * users.length)];
+    user['Phone'] = Math.floor(Math.random() * 99999999);
+    user['DateOfBirth'].setYear(1940 + Math.floor(Math.random() * 70));
+  }, 1000);
 };
 
 /** 
  * @private
  * @param {number} id The id of the User to edit.
  */
-pn.demo.app1.App1Demo.prototype.edit_ = function(id) {};
+pn.demo.app1.App1Demo.prototype.edit_ = function(id) {
+  window.alert('Not supported.');
+};

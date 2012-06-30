@@ -21,6 +21,7 @@ goog.provide('pn.app.BaseApp');
 pn.app.ctx = null;
 
 
+
 /**
  * This is the main starting point to any pn.app application. Extend this class
  * and implement the following methods:
@@ -100,7 +101,7 @@ pn.app.BaseApp = function(opt_cfg) {
   // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
   this.pub = goog.bind(this.bus_.pub, this.bus_);
 
-  this.init_();  
+  this.init_();
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -108,8 +109,9 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 // REQUIRED TEMPLATE METHODS
 ////////////////////////////////////////////////////////////////////////////////
 
+
 /**
- * A template method used to load the schema for the entities being handled by 
+ * A template method used to load the schema for the entities being handled by
  *    this application. This schema is usually loaded from the server and is
  *    expected in the following format:
  *    [
@@ -126,11 +128,12 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
  *    ]
  *
  * @see pn.app.schema
- * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to 
- *    call with the loaded schema which representing the entities for this 
+ * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
+ *    call with the loaded schema which representing the entities for this
  *    application.
  */
 pn.app.BaseApp.prototype.loadSchema = goog.abstractMethod;
+
 
 /**
  * A template method used to get all required UiSpecs.  This method should
@@ -183,9 +186,10 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 // PRIVATE IMPLEMENTATION DETAILS
 ////////////////////////////////////////////////////////////////////////////////
 
+
 /** @private */
 pn.app.BaseApp.prototype.init_ = function() {
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));  
+  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
   this.registerDisposable(this.specs);
@@ -200,10 +204,11 @@ pn.app.BaseApp.prototype.init_ = function() {
   goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
 
   this.loadSchema(goog.bind(this.schemaLoaded_, this));
-}
+};
+
 
 /**
- * @private 
+ * @private
  * @param {!Array.<!Object>} schema The loaded schema object.
  */
 pn.app.BaseApp.prototype.schemaLoaded_ = function(schema) {
@@ -231,6 +236,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.ENTITY_VALIDATION_ERROR] = goog.bind(this.msg.showErrors, this.msg);
   return evs;
 };
+
 
 /**
  * @private
