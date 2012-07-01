@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+goog.require('pn.model.Model');
+goog.require('pn.model.EventType');
+goog.require('pn.model.TimerInstance');
+goog.require('goog.events');
+goog.require('goog.date.Date');
+
+var obj,
+    model,
+    changes;
+
+var setUp = function() {
+  pn.model.TimerInstance.startTimer_ = function() {};
+
+  obj = {
+    'Name': 'Name Value',    
+    'Num': 1,
+    'Date': new goog.date.Date(2000, 0, 1),
+    'ObjRef': {},
+    'ObjEquality': {
+      'Val': 1,
+      clone: function() { return {'Val' : this['Val']}; },
+      equals: function(other) { return this['Val'] == other['Val']; }
+    },
+  };
+  model = new pn.model.Model(obj);  
+  goog.events.listen(model, pn.model.EventType.CHANGE, function(e) {
+    changes = e.changes;
+  });
+  assertEquals(changes, undefined);
+};
+
+var tearDown = function() {
+  goog.dispose(model);
+  changes = undefined;
+};
+
+var test_model_change_event_on_str_change = function () {      
+  obj['Name'] = 'New Name Value';
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(1, changes.length);
+
+  var change = changes[0];
+  assertEquals('Name', change.field);
+  assertEquals('Name Value', change.oldval);
+  assertEquals('New Name Value', change.newval);  
+};
+
+var test_model_change_event_on_num_change = function () {      
+  obj['Num'] = 2;
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(1, changes.length);
+
+  var change = changes[0];
+  assertEquals('Num', change.field);
+  assertEquals(1, change.oldval);
+  assertEquals(2, change.newval);  
+};
+
+var test_model_change_event_on_date_change = function () {      
+  obj['Date'].setYear(2001);
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(1, changes.length);
+
+  var change = changes[0];
+  assertEquals('Date', change.field);
+  assertTrue(new goog.date.Date(2001, 0, 1).equals(change.newval));  
+  assertTrue(new goog.date.Date(2000, 0, 1).equals(change.oldval));
+};
+
+var test_model_change_event_on_obj_ref_change = function () {      
+  obj['ObjRef'] = {};
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(1, changes.length);
+
+  var change = changes[0];
+  assertEquals('ObjRef', change.field);
+};
+
+var test_model_change_event_on_obj_equality_change = function () {      
+  obj['ObjEquality']['Val'] = 2;
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(1, changes.length);
+
+  var change = changes[0];
+  assertEquals('ObjEquality', change.field);
+  assertEquals(1, change.oldval['Val']);
+  assertEquals(2, change.newval['Val']);  
+};
+
+var test_model_change_on_multi_field_change = function() {
+  obj['Name'] = 'New Name Value';
+  obj['Num'] = 2;
+  obj['Date'].setYear(2001);
+  pn.model.TimerInstance.checkForChanges_();  
+  assertEquals(3, changes.length);
+
+  var change = changes[0];
+  assertEquals('Name', change.field);
+  assertEquals('Name Value', change.oldval);
+  assertEquals('New Name Value', change.newval);  
+
+  change = changes[1];
+  assertEquals('Num', change.field);
+  assertEquals(1, change.oldval);
+  assertEquals(2, change.newval);
+
+  change = changes[2];
+  assertEquals('Date', change.field);
+  assertTrue(new goog.date.Date(2001, 0, 1).equals(change.newval));  
+  assertTrue(new goog.date.Date(2000, 0, 1).equals(change.oldval));
+};
+
+
+
+    </script>    
+  </body>
+</html>

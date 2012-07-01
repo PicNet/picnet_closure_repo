@@ -40,7 +40,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
-  /** @type {pn.app.schema.FieldSchema} */
+  /** @type {pn.schema.FieldSchema} */
   this.schema = pn.app.ctx.schema.getFieldSchema(spec);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);

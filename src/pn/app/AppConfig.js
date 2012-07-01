@@ -3,8 +3,8 @@ goog.provide('pn.app.AppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.app.schema.EntitySchema');
-goog.require('pn.app.schema.FieldSchema');
+goog.require('pn.schema.EntitySchema');
+goog.require('pn.schema.FieldSchema');
 
 
 

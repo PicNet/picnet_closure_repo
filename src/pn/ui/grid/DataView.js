@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.DataView');
 
 goog.require('goog.disposable.IDisposable');
 goog.require('goog.events.EventHandler');
-goog.require('pn.app.Model');
+goog.require('pn.model.Collection');
 
 
 
@@ -30,7 +30,7 @@ pn.ui.grid.DataView = function(opt_options) {
 
   /**
    * @private
-   * @type {pn.app.Model}
+   * @type {pn.model.Collection}
    */
   this.model_ = null;
 
@@ -54,20 +54,18 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ =
 
   this.origSetItems_(items, objectIdProperty);
 
-  var changeEvent = pn.app.Model.EventType.CHANGE;
   if (this.model_) {
-    this.eh_.unlisten(this.model_, changeEvent, this.updateGrid_);
+    this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
     goog.dispose(this.model_);
   }
-
-  this.model_ = new pn.app.Model(/** @type {!Array} */ (items));
-  this.eh_.listen(this.model_, changeEvent, this.updateGrid_);
+  this.model_ = new pn.model.Collection(items);
+  this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
 };
 
 
 /**
  * @private
- * @param {!pn.app.Model.ChangeEvent} e The change event with the details of
+ * @param {!pn.model.ChangeEvent} e The change event with the details of
  *    changed items in the grid.
  */
 pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {

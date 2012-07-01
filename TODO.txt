@@ -10,6 +10,7 @@ HI
 
 MED
 ===
+- Edit new entities should not show then tmp negative ID in the url
 - Make the clean_and_compile.bat also run on bash
 - Creating a UiSpec requires registration in the getUiSpecs method with an
     id but UiSpec constructor also takes an ID, making each UiSpec 

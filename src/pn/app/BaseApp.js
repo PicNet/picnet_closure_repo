@@ -5,8 +5,8 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
-goog.require('pn.app.schema.Schema');
 goog.require('pn.log');
+goog.require('pn.schema.Schema');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
@@ -39,7 +39,7 @@ pn.app.ctx = null;
  *   superClass_.disposeInternal.
  *
  * When the application is ready to begin just call the this.initialise method
- *   passing in a pn.app.schema.Schema object describing the data structure.
+ *   passing in a pn.schema.Schema object describing the data structure.
  *
  * If any of the default settings need to be changed just change the appropriate
  *   setting in pn.app.ctx.cfg.
@@ -74,7 +74,7 @@ pn.app.BaseApp = function(opt_cfg) {
   this.cfg = new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
-  /** @type {pn.app.schema.Schema} */
+  /** @type {pn.schema.Schema} */
   this.schema = null;
 
   /**
@@ -127,7 +127,7 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
  *      }
  *    ]
  *
- * @see pn.app.schema
+ * @see pn.schema
  * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
  *    call with the loaded schema which representing the entities for this
  *    application.
@@ -214,7 +214,7 @@ pn.app.BaseApp.prototype.init_ = function() {
 pn.app.BaseApp.prototype.schemaLoaded_ = function(schema) {
   goog.asserts.assert(schema);
 
-  this.schema = new pn.app.schema.Schema(schema);
+  this.schema = new pn.schema.Schema(schema);
   this.registerDisposable(this.schema);
 
   this.router.initialise(this.getRoutes());

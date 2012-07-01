@@ -1,10 +1,10 @@
 
-goog.provide('pn.app.schema.Schema');
+goog.provide('pn.schema.Schema');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.app.schema.EntitySchema');
-goog.require('pn.app.schema.FieldSchema');
+goog.require('pn.schema.EntitySchema');
+goog.require('pn.schema.FieldSchema');
 
 
 
@@ -14,27 +14,27 @@ goog.require('pn.app.schema.FieldSchema');
  * @param {!Array} description The description of the schema from the server (
  *   i.e. Use object property string identifiers.).
  */
-pn.app.schema.Schema = function(description) {
+pn.schema.Schema = function(description) {
   goog.Disposable.call(this);
 
   goog.asserts.assert(description);
 
   /**
    * @private
-   * @type {!Object.<!pn.app.schema.EntitySchema>}
+   * @type {!Object.<!pn.schema.EntitySchema>}
    */
   this.entities_ = {};
 
   goog.array.forEach(description, this.parseEntity_, this);
 };
-goog.inherits(pn.app.schema.Schema, goog.Disposable);
+goog.inherits(pn.schema.Schema, goog.Disposable);
 
 
 /**
  * @param {string} type The type of entities we are ordering.
  * @param {!Array.<!Object>} list The entities to order.
  */
-pn.app.schema.Schema.prototype.orderEntities = function(type, list) {
+pn.schema.Schema.prototype.orderEntities = function(type, list) {
   var entitySchema = this.entities_[type];
   var orderp = type + 'Order';
   var namep = type + 'Name';
@@ -54,9 +54,9 @@ pn.app.schema.Schema.prototype.orderEntities = function(type, list) {
 /**
  * @param {!pn.ui.BaseFieldSpec} fieldSpec The field spec for the field being
  *     queried.
- * @return {pn.app.schema.FieldSchema} The field schema for the specified field.
+ * @return {pn.schema.FieldSchema} The field schema for the specified field.
  */
-pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
+pn.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
   var type = fieldSpec.entitySpec.type;
   var prop = fieldSpec.dataProperty;
   return this.entities_[type].fieldSchemas[prop];
@@ -69,7 +69,7 @@ pn.app.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
  * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.app.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
+pn.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
   var schema = this.getFieldSchema(fctx.spec);
   if (!schema) {
     var desc = fctx.spec.entitySpec.type + '.' + fctx.id;
@@ -90,11 +90,11 @@ pn.app.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
 
 /**
  * @private
- * @param {!pn.app.schema.FieldSchema} fieldSchema The field to determine
+ * @param {!pn.schema.FieldSchema} fieldSchema The field to determine
  *    wether its a number type.
  * @return {boolean} Wether the specified field is a number.
  */
-pn.app.schema.Schema.prototype.isNumericalTypeField_ = function(fieldSchema) {
+pn.schema.Schema.prototype.isNumericalTypeField_ = function(fieldSchema) {
   var t = fieldSchema.type;
   return t === 'Byte ' ||
       t === 'Int16' ||
@@ -111,7 +111,7 @@ pn.app.schema.Schema.prototype.isNumericalTypeField_ = function(fieldSchema) {
  * @param {!Object} entity The description of the entity from the server (
  *   i.e. Use object property string identifiers.).
  */
-pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
+pn.schema.Schema.prototype.parseEntity_ = function(entity) {
   goog.asserts.assert(entity);
 
   var name = entity['name'];
@@ -120,7 +120,7 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
     var fieldSchema = this.parseFieldSchema_(f);
     fields[fieldSchema.name] = fieldSchema;
   }, this);
-  var e = new pn.app.schema.EntitySchema(name, fields);
+  var e = new pn.schema.EntitySchema(name, fields);
   this.entities_[name] = e;
 };
 
@@ -129,12 +129,12 @@ pn.app.schema.Schema.prototype.parseEntity_ = function(entity) {
  * @private
  * @param {!Object} f The description of the field from the server (
  *   i.e. Use object property string identifiers.).
- * @return {!pn.app.schema.FieldSchema} The parsed field.
+ * @return {!pn.schema.FieldSchema} The parsed field.
  */
-pn.app.schema.Schema.prototype.parseFieldSchema_ = function(f) {
+pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
-  return new pn.app.schema.FieldSchema(
+  return new pn.schema.FieldSchema(
       f['name'], f['type'], f['allowNull'], f['length']);
 
 };
