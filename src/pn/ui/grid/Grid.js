@@ -121,12 +121,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {Element}
-   */
-  this.gridContainer_ = null;
-
-  /**
-   * @private
    * @type {pn.ui.grid.DataView}
    */
   this.dataView_ = null;
@@ -208,12 +202,13 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
   var width = $(element).width();
+  var gridContainer;
   var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
       this.noData_ = goog.dom.createDom('div', {
         'class': 'grid-no-data',
         'style': 'display:none'
       }, 'No matches found.'),
-      this.gridContainer_ = goog.dom.createDom('div', {
+      gridContainer = goog.dom.createDom('div', {
         'class': 'grid-container',
         'style': 'width:' + width + 'px;height:' + height
       })
@@ -227,7 +222,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
     var columns = goog.array.map(this.cctxs_,
         goog.bind(this.getColumnSlickConfig_, this));
-    this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
+    this.slick_ = new Slick.Grid(gridContainer, this.dataView_,
         columns, this.cfg_.toSlick());
 
     if (this.totalColumns_.length) {
@@ -237,7 +232,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   }
 
   goog.style.showElement(this.noData_, !hasData);
-  goog.style.showElement(this.gridContainer_, hasData);
+  goog.style.showElement(gridContainer, hasData);
 };
 
 
