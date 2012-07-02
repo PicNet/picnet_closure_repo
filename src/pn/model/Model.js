@@ -31,7 +31,8 @@ pn.model.Model = function(src, opt_register) {
   this.last_ = {};
 
   for (var i in src) {
-    var val = goog.isFunction(src[i].clone) ? src[i].clone() : src[i];
+    var fld = src[i];
+    var val = fld && goog.isFunction(fld.clone) ? fld.clone() : fld;
     this[i] = this.last_[i] = val;
   }
 

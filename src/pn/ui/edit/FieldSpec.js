@@ -139,7 +139,7 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
 goog.inherits(pn.ui.edit.FieldSpec, pn.ui.BaseFieldSpec);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
   if (this.renderer instanceof pn.ui.edit.ComplexRenderer) {

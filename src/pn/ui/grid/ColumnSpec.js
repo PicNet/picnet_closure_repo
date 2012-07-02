@@ -90,7 +90,7 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
 goog.inherits(pn.ui.grid.ColumnSpec, pn.ui.BaseFieldSpec);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
   pn.ui.grid.ColumnSpec.superClass_.extend.call(this, props);
 

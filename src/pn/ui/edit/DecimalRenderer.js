@@ -18,13 +18,13 @@ pn.ui.edit.DecimalRenderer = function() {
 goog.inherits(pn.ui.edit.DecimalRenderer, pn.ui.edit.ComplexRenderer);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.DecimalRenderer.prototype.getValue = function() {
   return this.input_.value ? parseFloat(this.input_.value) : 0;
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.DecimalRenderer.prototype.validate =
     function() {
   if (!this.input_.value) return '';
@@ -36,7 +36,7 @@ pn.ui.edit.DecimalRenderer.prototype.validate =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.DecimalRenderer.prototype.decorateInternal =
     function(element) {
   this.setElementInternal(element);

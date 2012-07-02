@@ -94,7 +94,7 @@ pn.ui.InputDatePicker.prototype.getInput = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.InputDatePicker.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -105,7 +105,7 @@ pn.ui.InputDatePicker.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.InputDatePicker.prototype.enterDocument = function() {
   pn.ui.InputDatePicker.superClass_.enterDocument.call(this);
 

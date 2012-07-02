@@ -18,6 +18,7 @@ goog.inherits(pn.model.ModelBase, goog.events.EventTarget);
 /** @return {!Array} The changes since last time getChanges were called. */
 pn.model.ModelBase.prototype.getChanges = goog.abstractMethod;
 
+
 /**
  * @param {*} a The first item to compare.
  * @param {*} b The second item to compare.
@@ -27,6 +28,7 @@ pn.model.ModelBase.prototype.areSame = function(a, b) {
   if (!goog.isDefAndNotNull(a)) return !goog.isDefAndNotNull(b);
   return goog.isFunction(a.equals) ? a.equals(b) : a === b;
 };
+
 
 /** @override */
 pn.model.ModelBase.prototype.disposeInternal = function() {

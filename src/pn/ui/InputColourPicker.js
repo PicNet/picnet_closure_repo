@@ -65,7 +65,7 @@ pn.ui.InputColourPicker.prototype.getInput = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.InputColourPicker.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -77,7 +77,7 @@ pn.ui.InputColourPicker.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.InputColourPicker.prototype.enterDocument = function() {
   pn.ui.InputColourPicker.superClass_.enterDocument.call(this);
   var changeEvent = goog.events.EventType.CHANGE;

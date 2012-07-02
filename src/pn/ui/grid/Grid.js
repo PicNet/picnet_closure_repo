@@ -190,13 +190,13 @@ pn.ui.grid.Grid.prototype.filterImpl_ = function(item) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -316,7 +316,7 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
   if (!this.slick_) return; // No data
@@ -550,7 +550,7 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
   delete this.selectionHandler_;

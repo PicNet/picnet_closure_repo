@@ -64,7 +64,7 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
 
-/** @inheritDoc. */
+/** @override. */
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
@@ -77,7 +77,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 };
 
 
-/** @inheritDoc. */
+/** @override. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
   this.log_.fine('resetDirty: ' + this.spec.id);
   this.entity = this.getCurrentFormData();
@@ -111,13 +111,13 @@ pn.ui.edit.Edit.prototype.getParentControl = function(id) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -201,7 +201,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.cfg.fCtxs,
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
@@ -221,7 +221,7 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
   if (errors.length) {
@@ -235,7 +235,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.getEditableFields_(),
@@ -253,7 +253,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.entity);
@@ -291,7 +291,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
   var event = new goog.events.Event(command.eventType, this);
   event.data = data;
@@ -299,7 +299,7 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
   goog.array.forEach(this.cfg.fCtxs, this.enterDocumentOnChildrenField_, this);

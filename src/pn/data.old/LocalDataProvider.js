@@ -28,14 +28,14 @@ pn.data.LocalDataProvider = function(repository) {
 goog.inherits(pn.data.LocalDataProvider, goog.Disposable);
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.getEntities = function(type) {
   throw new Error('LocalDataProvider.getEntities not supported');
   // this.repository.getList(type, callback, opt_handler);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.getEntity = function(type, id) {
   throw new Error('LocalDataProvider.getEntity not supported');
   // this.repository.getItem(type, id, callback, opt_handler);
@@ -51,7 +51,7 @@ pn.data.LocalDataProvider.prototype.getEntity = function(type, id) {
 pn.data.LocalDataProvider.prototype.localSaveEntityIndex_ = 0;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.saveEntity =
     function(type, data, callback, opt_handler) {
   var clientid = 0;
@@ -99,7 +99,7 @@ pn.data.LocalDataProvider.prototype.saveUnsavedEntities =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.saveEntities =
     function(data, callback, opt_handler) {
   var types = goog.object.getKeys(data);
@@ -136,7 +136,7 @@ pn.data.LocalDataProvider.prototype.saveEntitiesImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.deleteEntity =
     function(type, id, callback, opt_handler) {
   this.repository.deleteItem('UnsavedEntities|' + type, id, function() {
@@ -148,7 +148,7 @@ pn.data.LocalDataProvider.prototype.deleteEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalDataProvider.prototype.deleteEntities =
     function(type, ids, callback, opt_handler) {
   this.repository.deleteItems('UnsavedEntities|' + type, ids, function() {

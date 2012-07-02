@@ -33,13 +33,13 @@ pn.ui.grid.ExportCommand = function() {
 goog.inherits(pn.ui.grid.ExportCommand, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.select_ = goog.dom.createDom('select', 'export-select',
@@ -53,7 +53,7 @@ pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
   var change = goog.events.EventType.CHANGE;
   this.getHandler().listen(this.select_, change, function() {

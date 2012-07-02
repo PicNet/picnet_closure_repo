@@ -82,13 +82,13 @@ goog.inherits(pn.ui.FileUpload, goog.ui.Component);
 pn.ui.FileUpload.UPLOAD_START = 'upload-start';
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.FileUpload.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.FileUpload.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -105,7 +105,7 @@ pn.ui.FileUpload.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.FileUpload.prototype.enterDocument = function() {
   pn.ui.FileUpload.superClass_.enterDocument.call(this);
   this.getHandler().listen(this.fileInput_, goog.events.EventType.CHANGE,

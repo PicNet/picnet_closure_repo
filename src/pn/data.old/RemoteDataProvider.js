@@ -66,20 +66,20 @@ goog.inherits(pn.data.RemoteDataProvider, goog.Disposable);
 pn.data.RemoteDataProvider.OFFLINE = 'OFFLINE';
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.getEntities = function(type) {
   throw new Error('RemoteDataProvider.getEntities not supported');
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.getEntity = function(type, id) {
   throw new Error('RemoteDataProvider.getEntity not supported');
 
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.saveEntity =
     function(type, data, callback, opt_handler) {
   if (this.onPreSave && !this.onPreSave(type, data)) {
@@ -94,7 +94,7 @@ pn.data.RemoteDataProvider.prototype.saveEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.deleteEntity =
     function(type, id, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('DeleteEntity', {'type': type, 'id': id}, callback,
@@ -104,7 +104,7 @@ pn.data.RemoteDataProvider.prototype.deleteEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.deleteEntities =
     function(type, ids, callback, opt_handler) {
   if (!ids || ids.length === 0) {
@@ -117,7 +117,7 @@ pn.data.RemoteDataProvider.prototype.deleteEntities =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.RemoteDataProvider.prototype.saveEntities =
     function(data, callback, opt_handler) {
   this.ajax_.makeAjaxRequest('SaveEntities', {'data':

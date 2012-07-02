@@ -48,13 +48,13 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
 goog.inherits(pn.ui.grid.Command, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.commandElement_ = new goog.ui.Button(this.name_);
@@ -67,7 +67,7 @@ pn.ui.grid.Command.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.enterDocument = function() {
   var action = goog.ui.Component.EventType.ACTION;
   this.getHandler().listen(this.commandElement_, action, function() {

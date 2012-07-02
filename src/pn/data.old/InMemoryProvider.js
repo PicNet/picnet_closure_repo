@@ -26,19 +26,19 @@ pn.data.InMemoryProvider = function() {
 goog.inherits(pn.data.InMemoryProvider, goog.Disposable);
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.getEntities = function(type) {
   return this.repository.getList(type);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.getEntity = function(type, id) {
   return this.repository.getItem(type, id);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.saveEntity =
     function(type, data, callback, opt_handler) {
   if (data.ID === 0) {
@@ -49,7 +49,7 @@ pn.data.InMemoryProvider.prototype.saveEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.saveEntities =
     function(data, callback, opt_handler) {
   goog.object.forEach(data, function(entities) {
@@ -63,7 +63,7 @@ pn.data.InMemoryProvider.prototype.saveEntities =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.deleteEntity =
     function(type, id, callback, opt_handler) {
   this.repository.deleteItem(type, id);
@@ -71,7 +71,7 @@ pn.data.InMemoryProvider.prototype.deleteEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryProvider.prototype.deleteEntities =
     function(type, ids, callback, opt_handler) {
   this.repository.deleteItems(type, ids);

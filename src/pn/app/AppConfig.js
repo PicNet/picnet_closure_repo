@@ -26,14 +26,26 @@ pn.app.AppConfig = function(opt_opts) {
       rr = pn.ui.edit.ReadOnlyFields,
       cr = pn.ui.grid.ColumnRenderers;
 
+  /**
+   * This application root path.  All requests should be relative to this.
+   * @type {string}
+   */
+  this.appPath = '/';
+
   /** @type {boolean} */
   this.useAsyncEventBus = false;
+
+  /** @type {number} */
+  this.memCacheExpireMins = 15;
 
   /** @type {string} */
   this.viewContainerId = 'view-container';
 
   /** @type {string} */
   this.messagePanelId = 'message';
+
+  /** @type {string} */
+  this.loadingPanelId = 'loading-panel';
 
   /** @type {Object} */
   this.defaultFieldRenderers = {

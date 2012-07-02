@@ -89,7 +89,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
 
   var entity = edit.getCurrentFormData();
   var cb = goog.bind(this.entityAdded_, this, type);
-  pn.app.ctx.pub(pn.oms.OmsEvents.ENTITY_SAVE, type, entity, cb);
+  pn.app.ctx.pub(pn.app.AppEvents.ENTITY_SAVE, type, entity, cb);
 };
 
 

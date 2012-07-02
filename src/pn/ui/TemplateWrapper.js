@@ -49,25 +49,25 @@ pn.ui.TemplateWrapper = function(html, idOfParent, component) {
 goog.inherits(pn.ui.TemplateWrapper, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.TemplateWrapper.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc. */
+/** @override. */
 pn.ui.TemplateWrapper.prototype.isDirty = function() {
   return this.component_.isDirty && this.component_.isDirty();
 };
 
 
-/** @inheritDoc. */
+/** @override. */
 pn.ui.TemplateWrapper.prototype.resetDirty = function() {
   if (this.component_.resetDirty) this.component_.resetDirty();
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.TemplateWrapper.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 

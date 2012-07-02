@@ -44,51 +44,51 @@ pn.data.AbstractRepository = function(databaseName) {
 goog.inherits(pn.data.AbstractRepository, goog.Disposable);
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.isSupported = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.isInitialised = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.init = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.getList = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.saveList = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.getLists = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.deleteList = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.saveItem = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.getItem = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.deleteItem = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.deleteItems = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractRepository.prototype.clearEntireDatabase =
     function(callback, opt_handler) {};
 

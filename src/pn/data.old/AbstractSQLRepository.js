@@ -39,7 +39,7 @@ goog.inherits(pn.data.AbstractSQLRepository,
 pn.data.AbstractSQLRepository.prototype.execute = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.isSupported = goog.abstractMethod;
 
 
@@ -50,7 +50,7 @@ pn.data.AbstractSQLRepository.prototype.isSupported = goog.abstractMethod;
 pn.data.AbstractSQLRepository.prototype.db = function() { };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.isInitialised =
     function(callback, opt_handler) {
   this.execute(
@@ -65,7 +65,7 @@ pn.data.AbstractSQLRepository.prototype.isInitialised =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.getList =
     function(type, callback, opt_handler) {
   this.execute('SELECT value FROM [' + type + ']', [], function(results) {
@@ -78,7 +78,7 @@ pn.data.AbstractSQLRepository.prototype.getList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.getLists =
     function(typeprefix, callback, opt_handler) {
   if (typeprefix === 'UnsavedEntities' || typeprefix === 'DeletedIDs') {
@@ -96,7 +96,7 @@ pn.data.AbstractSQLRepository.prototype.getLists =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.getUnsyncLists =
     function(typename, callback, opt_handler) {
   this.execute('SELECT [TYPE], value FROM [' + typename + '] ORDER BY type', [],
@@ -130,7 +130,7 @@ pn.data.AbstractSQLRepository.prototype.getListsImpl =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.deleteList =
     function(type, callback, opt_handler) {
   this.execute('DELETE FROM [' + type + ']', [], function(results) {
@@ -160,7 +160,7 @@ pn.data.AbstractSQLRepository.prototype.removeLocalUnsavedItems_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.getItem =
     function(type, id, callback, opt_handler) {
   this.execute('SELECT value FROM [' + type + '] WHERE ID = ?', [id],
@@ -172,7 +172,7 @@ pn.data.AbstractSQLRepository.prototype.getItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.deleteItem =
     function(type, id, callback, opt_handler) {
   var typepos = type.split('|');
@@ -186,7 +186,7 @@ pn.data.AbstractSQLRepository.prototype.deleteItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.deleteItems =
     function(type, ids, callback, opt_handler) {
   var typepos = type.split('|');
@@ -201,7 +201,7 @@ pn.data.AbstractSQLRepository.prototype.deleteItems =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.AbstractSQLRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
   var typepos = type.indexOf('|');

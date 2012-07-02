@@ -63,13 +63,13 @@ pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId, showAof) {
 goog.inherits(pn.ui.edit.AddOnFlyRenderer, pn.ui.edit.ComplexRenderer);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
   return parseInt(this.select_.value, 10);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
   goog.asserts.assert(element);
   this.setElementInternal(element);
@@ -82,7 +82,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
   pn.ui.edit.AddOnFlyRenderer.superClass_.enterDocument.call(this);
 

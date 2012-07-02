@@ -106,7 +106,7 @@ pn.ui.grid.Config.prototype.toSlick = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Config.prototype.disposeInternal = function() {
   pn.ui.grid.Config.superClass_.disposeInternal.call(this);
 

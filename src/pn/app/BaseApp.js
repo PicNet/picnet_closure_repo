@@ -5,6 +5,8 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
+goog.require('pn.data.DataLoader');
+goog.require('pn.data.MemCache');
 goog.require('pn.log');
 goog.require('pn.schema.Schema');
 goog.require('pn.ui.MessagePanel');
@@ -91,6 +93,23 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
+
+  /**
+   * @protected
+   * @type {!pn.data.DataLoader}
+   */
+  this.data = new pn.data.DataLoader(
+      pn.dom.getElement(this.cfg.loadingPanelId));
+  this.registerDisposable(this.data);
+
+  /**
+   * @protected
+   * @type {!pn.data.MemCache}
+   */
+  this.cache = new pn.data.MemCache(this.cfg.memCacheExpireMins,
+      goog.bind(this.data.loadEntityLists, this.data));
+  this.registerDisposable(this.cache);
+
   /**
    * @private
    * @type {!pn.app.EventBus}
@@ -108,31 +127,6 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 ////////////////////////////////////////////////////////////////////////////////
 // REQUIRED TEMPLATE METHODS
 ////////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * A template method used to load the schema for the entities being handled by
- *    this application. This schema is usually loaded from the server and is
- *    expected in the following format:
- *    [
- *      {
- *        'name': 'EntityName',
- *        'fields': [
- *          { 'name': 'ID', 'type': 'Int64' },
- *          { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
- *          { 'name': 'IntFieldName', 'type': 'Int32' },
- *          { 'name': 'BoolFieldName', 'type': 'YesNo' },
- *          { 'name': 'DateFieldName', 'type': 'DateTime' }
- *        ]
- *      }
- *    ]
- *
- * @see pn.schema
- * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
- *    call with the loaded schema which representing the entities for this
- *    application.
- */
-pn.app.BaseApp.prototype.loadSchema = goog.abstractMethod;
 
 
 /**
@@ -203,7 +197,35 @@ pn.app.BaseApp.prototype.init_ = function() {
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
 
-  this.loadSchema(goog.bind(this.schemaLoaded_, this));
+  this.loadSchema_(goog.bind(this.schemaLoaded_, this));
+};
+
+
+/**
+ * @private
+ * A method used to load the schema for the entities being handled by
+ *    this application. This schema is usually loaded from the server and is
+ *    expected in the following format:
+ *    [
+ *      {
+ *        'name': 'EntityName',
+ *        'fields': [
+ *          { 'name': 'ID', 'type': 'Int64' },
+ *          { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
+ *          { 'name': 'IntFieldName', 'type': 'Int32' },
+ *          { 'name': 'BoolFieldName', 'type': 'YesNo' },
+ *          { 'name': 'DateFieldName', 'type': 'DateTime' }
+ *        ]
+ *      }
+ *    ]
+ *
+ * @see pn.schema
+ * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
+ *    call with the loaded schema which representing the entities for this
+ *    application.
+ */
+pn.app.BaseApp.prototype.loadSchema_ = function(schemaLoaded) {
+  this.data.loadSchema(schemaLoaded);
 };
 
 
@@ -227,13 +249,29 @@ pn.app.BaseApp.prototype.schemaLoaded_ = function(schema) {
  */
 pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   var evs = {},
-      ae = pn.app.AppEvents;
-  evs[ae.CLEAR_MESSAGE] = goog.bind(this.msg.clearMessage, this.msg);
-  evs[ae.SHOW_MESSAGE] = goog.bind(this.msg.showMessage, this.msg);
-  evs[ae.SHOW_MESSAGES] = goog.bind(this.msg.showMessages, this.msg);
-  evs[ae.SHOW_ERROR] = goog.bind(this.msg.showError, this.msg);
-  evs[ae.SHOW_ERRORS] = goog.bind(this.msg.showErrors, this.msg);
-  evs[ae.ENTITY_VALIDATION_ERROR] = goog.bind(this.msg.showErrors, this.msg);
+      ae = pn.app.AppEvents,
+      bind = goog.bind;
+  // Message
+  evs[ae.CLEAR_MESSAGE] = bind(this.msg.clearMessage, this.msg);
+  evs[ae.SHOW_MESSAGE] = bind(this.msg.showMessage, this.msg);
+  evs[ae.SHOW_MESSAGES] = bind(this.msg.showMessages, this.msg);
+  evs[ae.SHOW_ERROR] = bind(this.msg.showError, this.msg);
+  evs[ae.SHOW_ERRORS] = bind(this.msg.showErrors, this.msg);
+  evs[ae.ENTITY_VALIDATION_ERROR] = bind(this.msg.showErrors, this.msg);
+
+  // Data
+  evs[ae.LOAD_CACHED_ENTITY_LISTS] = bind(this.cache.getLists, this.cache);
+  evs[ae.LOAD_ENTITY_LISTS] = bind(this.data.loadEntityLists, this.data);
+  evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
+  evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
+  evs[ae.ENTITY_SAVE] = bind(this.data.saveEntity, this.data);
+  evs[ae.ENTITY_CLONE] = bind(function(type, entity) {
+    if (!this.acceptDirty_()) return;
+    this.data.cloneEntity(type, entity);
+  }, this);
+  evs[ae.ENTITY_DELETE] = bind(this.data.deleteEntity, this.data);
+  evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
+
   return evs;
 };
 
@@ -248,7 +286,7 @@ pn.app.BaseApp.prototype.acceptDirty_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.app.BaseApp.prototype.disposeInternal = function() {
   pn.app.BaseApp.superClass_.disposeInternal.call(this);
 

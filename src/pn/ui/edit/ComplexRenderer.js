@@ -50,7 +50,7 @@ pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.ComplexRenderer.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };

@@ -26,7 +26,7 @@ pn.MockAjaxProvider = function(types) {
 };
 goog.inherits(pn.MockAjaxProvider, goog.Disposable);
 
-/** @inheritDoc */
+/** @override */
 pn.MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
   this.log.fine('MockAjaxProvider.makeAjaxRequest: ' + method);
   switch (method) {

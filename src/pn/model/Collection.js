@@ -1,8 +1,8 @@
 
 goog.provide('pn.model.Collection');
 
-goog.require('pn.model.ModelBase');
 goog.require('pn.model.Model');
+goog.require('pn.model.ModelBase');
 goog.require('pn.model.TimerInstance');
 
 
@@ -39,34 +39,34 @@ pn.model.Collection.prototype.getChanges = function() {
       last = null,
       now = null,
       len = this.models_.length;
-  for (var idx = 0; idx < len; idx++) { 
+  for (var idx = 0; idx < len; idx++) {
     var model = this.models_[idx];
     last = model.src_;
     now = this.src_[++arridx];
-    
-    if (!this.areSame(last, now)) { 
+
+    if (!this.areSame(last, now)) {
       // Items at same index do not match
       if (!goog.isDef(now)) {
         // This this element is undefined then it was probably deleted with
         // delete array[idx] notation.  All indexes in this case remain the same
-        changes.push({idx: idx, item: last, removed: true});      
-      } else if (this.areSame(last, this.src_[arridx + 1])) { 
+        changes.push({idx: idx, item: last, removed: true});
+      } else if (this.areSame(last, this.src_[arridx + 1])) {
         arridx++;
         // If the expected item is the same as the next item in the current arr
         // then the current item was inserted.
-        changes.push({idx: idx, item: now, inserted: true});      
+        changes.push({idx: idx, item: now, inserted: true});
       } else if (this.areSame(this.models_[idx + 1].src_, now)) {
         // Otherwise if the current arr val is the same as the next 'last' value
         // then the 'last' value was removed.
         arridx--;
-        changes.push({idx: idx, item: last, removed: true});      
+        changes.push({idx: idx, item: last, removed: true});
       } else {
-        // Unfortunatelly the whole model will need to be reset as we cannot 
+        // Unfortunatelly the whole model will need to be reset as we cannot
         // determine what happened. This means that this algorithm only supports
         // single element insertion / deletion.
         return [{notsupported: true}];
       }
-    } else { 
+    } else {
       // Lets see if internal model details have changed.  I.e. Items could
       // be referentially the same but still have different property values.
       var mchanges = model.getChanges();
@@ -75,16 +75,18 @@ pn.model.Collection.prototype.getChanges = function() {
       }
     }
   }
-  
+
   // Get all the new entities at the end of the array.
-  while (now = this.src_[++arridx]) {    
-    changes.push({idx: arridx, item: now, inserted: true});       
-  } 
+  while (now = this.src_[++arridx]) {
+    changes.push({idx: arridx, item: now, inserted: true});
+  }
   return changes;
 };
 
 
 /**
- * @typedef {{idx:number, item: !Object, changes: pn.model.Collection.Change}}
+ * @typedef {
+ *    {idx:number, item: !Object, changes: !Array.<pn.model.Model.Change>}
+ *  }
  */
 pn.model.Collection.CollectionChange;

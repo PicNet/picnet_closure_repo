@@ -81,7 +81,7 @@ pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
   if (errors.length) {
@@ -91,13 +91,13 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.edits, function(c) { c.updateRequiredClasses(); });
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
   goog.array.forEach(this.edits, function(edit) {
@@ -113,7 +113,7 @@ pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.entity);
@@ -124,7 +124,7 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
   return goog.array.findIndex(this.edits, function(edit) {
     return edit.isDirty && edit.isDirty();
@@ -132,7 +132,7 @@ pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
   goog.array.forEach(this.edits, function(edit) {
     if (edit.resetDirty) edit.resetDirty();
@@ -140,13 +140,13 @@ pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   pn.ui.edit.MultiSpecEdit.superClass_.enterDocument.call(this);
 

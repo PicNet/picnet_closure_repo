@@ -34,20 +34,17 @@ pn.model.Timer.prototype.register = function(model) {
 
   this.models_.push(model);
   if (this.intervalId_) { return; }
-  this.startTimer_();  
+  this.startTimer_();
 };
 
 
-/**
- * @private
- * @param {!pn.model.ModelBase} model The model to check for changes on.
- */
+/** @private */
 pn.model.Timer.prototype.checkForChanges_ = function() {
   goog.array.forEach(this.models_, function(model) {
     var changes = model.getChanges();
     if (!changes.length) { return; }
     model.dispatchEvent(new pn.model.ChangeEvent(changes));
-  });  
+  });
 };
 
 
@@ -62,11 +59,13 @@ pn.model.Timer.prototype.deregister = function(model) {
   clearInterval(this.intervalId_);
 };
 
-/** @private. */
-pn.model.Timer.prototype.startTimer_ = function(model) {
+
+/** @private */
+pn.model.Timer.prototype.startTimer_ = function() {
   var cb = goog.bind(this.checkForChanges_, this);
   this.intervalId_ = setInterval(cb, this.REFRESH_MILLIS_);
 };
+
 
 /** @type {!pn.model.Timer} */
 pn.model.TimerInstance = new pn.model.Timer();

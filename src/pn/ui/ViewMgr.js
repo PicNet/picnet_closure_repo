@@ -96,7 +96,7 @@ pn.ui.ViewMgr.prototype.clearExistingState_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.ViewMgr.prototype.disposeInternal = function() {
   pn.ui.ViewMgr.superClass_.disposeInternal.call(this);
 

@@ -85,13 +85,13 @@ pn.ui.srch.SearchGrid.prototype.filterList = function(filters) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.srch.SearchGrid.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -132,7 +132,7 @@ pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.srch.SearchGrid.prototype.enterDocument = function() {
   pn.ui.srch.SearchGrid.superClass_.enterDocument.call(this);
 

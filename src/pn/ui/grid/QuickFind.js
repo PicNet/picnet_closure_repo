@@ -189,7 +189,7 @@ pn.ui.grid.QuickFind.prototype.createFilterInput_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.QuickFind.prototype.disposeInternal = function() {
   pn.ui.grid.QuickFind.superClass_.disposeInternal.call(this);
 
