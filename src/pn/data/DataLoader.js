@@ -49,6 +49,12 @@ pn.data.DataLoader = function(loadingPanel) {
    * @type {Element}
    */
   this.loadingPanel_ = loadingPanel;
+
+  /**
+   * @private
+   * @type {!Object}
+   */
+  this.routes_ = pn.app.ctx.cfg.serverRoutes;
 };
 goog.inherits(pn.data.DataLoader, goog.Disposable);
 
@@ -67,7 +73,7 @@ pn.data.DataLoader.prototype.MAX_BUCKET_SIZE_ = -1;
  *    schema loading.
  */
 pn.data.DataLoader.prototype.loadSchema = function(callback) {
-  this.ajax_('DBSchema.mvc/GetSchema', {}, callback);
+  this.ajax_(this.routes_.loadSchema, {}, callback);
 };
 
 
@@ -104,7 +110,7 @@ pn.data.DataLoader.prototype.loadEntityLists =
 
   var expected = types.length;
   goog.object.forEach(buckets, function(arr) {
-    this.ajax_('GetData.mvc/GetEntityLists',
+    this.ajax_(this.routes_.getEntityLists,
         {
           'types': arr,
           'parentField': opt_parentField,
@@ -137,7 +143,7 @@ pn.data.DataLoader.prototype.loadEntity =
     pn.app.ctx.pub(mediatorEventType, type, en);
   };
   if (id <= 0) { cb({'ID': id }); }
-  else this.ajax_('GetData.mvc/GetEntity', { 'type': type, 'id': id }, cb);
+  else this.ajax_(this.routes_.getEntity, { 'type': type, 'id': id }, cb);
 };
 
 
@@ -155,7 +161,7 @@ pn.data.DataLoader.prototype.saveEntity = function(type, entity, opt_cb) {
   var json = pn.json.serialiseJson(entity);
   var data = { 'type': type, 'entityJson': json };
   var cb = opt_cb || goog.bind(this.saveEntityCallback_, this, type);
-  this.ajax_('SaveEntity.mvc/SaveEntity', data, cb);
+  this.ajax_(this.routes_.saveEntity, data, cb);
 };
 
 
@@ -168,7 +174,7 @@ pn.data.DataLoader.prototype.orderEntities = function(type, ids, opt_cb) {
   goog.asserts.assert(type);
   goog.asserts.assert(ids);
 
-  this.ajax_('GridOrdering.mvc/OrderGrid', {type: type, ids: ids}, opt_cb);
+  this.ajax_(this.routes_.orderGrid, {type: type, ids: ids}, opt_cb);
 };
 
 
@@ -197,10 +203,9 @@ pn.data.DataLoader.prototype.cloneEntity = function(type, entity) {
   pn.app.ctx.validateSecurity(type);
 
   var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
-  this.ajax_('CloneEntity.mvc/CloneEntity', data,
-      function(cloned) {
-        pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
-      });
+  this.ajax_(this.routes_.cloneEntity, data, function(cloned) {
+    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
+  });
 };
 
 
@@ -215,13 +220,12 @@ pn.data.DataLoader.prototype.deleteEntity = function(type, entity) {
   pn.app.ctx.validateSecurity(type);
 
   var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
-  this.ajax_('DeleteEntity.mvc/DeleteEntity', data,
-      function(err) {
-        if (err) { pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, err); }
-        else {
-          pn.app.ctx.pub(pn.app.AppEvents.ENTITY_DELETED, type, entity);
-        }
-      });
+  this.ajax_(this.routes_.deleteEntity, data, function(err) {
+    if (err) { pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, err); }
+    else {
+      pn.app.ctx.pub(pn.app.AppEvents.ENTITY_DELETED, type, entity);
+    }
+  });
 };
 
 
@@ -232,7 +236,7 @@ pn.data.DataLoader.prototype.deleteEntity = function(type, entity) {
  */
 pn.data.DataLoader.prototype.listExport = function(type, format, data) {
   var ed = {'exportType': format, 'exportData': pn.json.serialiseJson(data)};
-  var uri = pn.app.ctx.cfg.appPath + 'ExportData.mvc/ExportData';
+  var uri = pn.app.ctx.cfg.appPath + this.routes_.exportData;
   pn.data.DataDownloader.send(uri, ed);
 };
 

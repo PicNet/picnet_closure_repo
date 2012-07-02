@@ -47,7 +47,34 @@ pn.app.AppConfig = function(opt_opts) {
   /** @type {string} */
   this.loadingPanelId = 'loading-panel';
 
-  /** @type {Object} */
+  /** @type {!Object} */
+  this.serverRoutes = {
+    /** @type {string} */
+    loadSchema: 'DBSchema.mvc/GetSchema',
+
+    /** @type {string} */
+    getEntityLists: 'GetData.mvc/GetEntityLists',
+
+    /** @type {string} */
+    getEntity: 'GetData.mvc/GetEntity',
+
+    /** @type {string} */
+    saveEntity: 'SaveEntity.mvc/SaveEntity',
+
+    /** @type {string} */
+    orderGrid: 'GridOrdering.mvc/OrderGrid',
+
+    /** @type {string} */
+    cloneEntity: 'CloneEntity.mvc/CloneEntity',
+
+    /** @type {string} */
+    deleteEntity: 'DeleteEntity.mvc/DeleteEntity',
+
+    /** @type {string} */
+    exportData: 'ExportData.mvc/ExportData'
+  };
+
+  /** @type {!Object} */
   this.defaultFieldRenderers = {
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
@@ -69,7 +96,7 @@ pn.app.AppConfig = function(opt_opts) {
     textAreaLengthThreshold: 500
   };
 
-  /** @type {Object} */
+  /** @type {!Object} */
   this.defaultReadOnlyFieldRenderers = {
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'YesNo': rr.boolField,
@@ -81,7 +108,7 @@ pn.app.AppConfig = function(opt_opts) {
     'Int32': rr.intField
   };
 
-  /** @type {Object} */
+  /** @type {!Object} */
   this.defaultColumnRenderers = {
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */

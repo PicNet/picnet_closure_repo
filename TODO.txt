@@ -5,12 +5,10 @@ HI
   controls.  May need to integrate soy into the picnet closure repo project.  
 - Model binding - see Model / View examples Backbone.JS
 - Model binding in Edit.js
-- Update models from the server
-- Make the server run on conventions like Backbone.JS
+- Live update models from the server / SignalR
 
 MED
 ===
-- Edit new entities should not show then tmp negative ID in the url
 - Make the clean_and_compile.bat also run on bash
 - Creating a UiSpec requires registration in the getUiSpecs method with an
     id but UiSpec constructor also takes an ID, making each UiSpec 
