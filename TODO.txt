@@ -9,7 +9,6 @@ HI
 
 MED
 ===
-- Make the clean_and_compile.bat also run on bash
 - Creating a UiSpec requires registration in the getUiSpecs method with an
     id but UiSpec constructor also takes an ID, making each UiSpec 
     implementation have to declare the ID twice.

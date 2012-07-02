@@ -5,6 +5,7 @@ goog.require('goog.debug.Logger');
 goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
+goog.require('pn.data.DataDownloader');
 goog.require('pn.json');
 goog.require('pn.log');
 

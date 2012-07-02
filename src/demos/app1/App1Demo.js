@@ -18,8 +18,11 @@ pn.demo.app1.App1Demo = function() {
 goog.inherits(pn.demo.app1.App1Demo, pn.app.BaseApp);
 goog.exportSymbol('pn.demo.app1.App1Demo', pn.demo.app1.App1Demo);
 
-/** @override */
-pn.demo.app1.App1Demo.prototype.loadSchema = function(schemaLoaded) {
+/**
+ * @override
+ * @suppress{visibility} 
+ */
+pn.demo.app1.App1Demo.prototype.loadSchema_ = function(schemaLoaded) {
   schemaLoaded([
     {
       'name': 'User',
