@@ -32,6 +32,14 @@ pn.app.AppConfig = function(opt_opts) {
    */
   this.appPath = '/';
 
+  /**
+   * If true all client data is kept upto date live with the server. That is,
+   *    when any data change is done on the server that change is reflected
+   *    live on the client.
+   * @type {boolean}
+   */
+  this.serverSync = true;
+
   /** @type {boolean} */
   this.useAsyncEventBus = false;
 
@@ -45,33 +53,33 @@ pn.app.AppConfig = function(opt_opts) {
   this.messagePanelId = 'message';
 
   /** @type {string} */
-  this.loadingPanelId = 'loading-panel';
+  this.loadPnlId = 'loading-panel';
 
   /** @type {!Object} */
   this.serverRoutes = {
     /** @type {string} */
-    loadSchema: 'DBSchema.mvc/GetSchema',
+    loadSchema: 'DBSchema/GetSchema',
 
     /** @type {string} */
-    getEntityLists: 'GetData.mvc/GetEntityLists',
+    getEntityLists: 'GetData/GetEntityLists',
 
     /** @type {string} */
-    getEntity: 'GetData.mvc/GetEntity',
+    getEntity: 'GetData/GetEntity',
 
     /** @type {string} */
-    saveEntity: 'SaveEntity.mvc/SaveEntity',
+    saveEntity: 'SaveEntity/SaveEntity',
 
     /** @type {string} */
-    orderGrid: 'GridOrdering.mvc/OrderGrid',
+    orderGrid: 'GridOrdering/OrderGrid',
 
     /** @type {string} */
-    cloneEntity: 'CloneEntity.mvc/CloneEntity',
+    cloneEntity: 'CloneEntity/CloneEntity',
 
     /** @type {string} */
-    deleteEntity: 'DeleteEntity.mvc/DeleteEntity',
+    deleteEntity: 'DeleteEntity/DeleteEntity',
 
     /** @type {string} */
-    exportData: 'ExportData.mvc/ExportData'
+    exportData: 'ExportData/ExportData'
   };
 
   /** @type {!Object} */

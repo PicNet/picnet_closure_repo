@@ -43,7 +43,6 @@ pn.model.Collection.prototype.getChanges = function() {
     var model = this.models_[idx];
     last = model.src_;
     now = this.src_[++arridx];
-
     if (!this.areSame(last, now)) {
       // Items at same index do not match
       if (!goog.isDef(now)) {

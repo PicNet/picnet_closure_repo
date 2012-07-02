@@ -6,5 +6,8 @@ HI
 - Model binding in Edit.js
 - Live update models from the server / SignalR
 
+- Make the authentication model pluggable (Forms/Windows)
+- Make the sync model pluggable (REST / SignalR)
+
 MED
 ===

@@ -5,10 +5,11 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
-goog.require('pn.data.DataLoader');
+goog.require('pn.data.BufferedServerSource');
 goog.require('pn.data.MemCache');
 goog.require('pn.log');
 goog.require('pn.schema.Schema');
+goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
@@ -96,19 +97,17 @@ pn.app.BaseApp = function(opt_cfg) {
 
   /**
    * @protected
-   * @type {!pn.data.DataLoader}
+   * @type {!pn.data.BufferedServerSource}
    */
-  this.data = new pn.data.DataLoader(
-      pn.dom.getElement(this.cfg.loadingPanelId));
+  this.data = new pn.data.BufferedServerSource(this.cfg.memCacheExpireMins);
   this.registerDisposable(this.data);
 
   /**
    * @protected
-   * @type {!pn.data.MemCache}
+   * @type {!pn.ui.LoadingPnl}
    */
-  this.cache = new pn.data.MemCache(this.cfg.memCacheExpireMins,
-      goog.bind(this.data.loadEntityLists, this.data));
-  this.registerDisposable(this.cache);
+  this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));
+  this.registerDisposable(this.loading);
 
   /**
    * @private
@@ -195,6 +194,12 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 pn.app.BaseApp.prototype.init_ = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
+  var sset = pn.data.ServerSource.EventType;
+  goog.events.listen(
+      this.data, sset.LOADING, this.loading.increment, false, this.loading);
+  goog.events.listen(
+      this.data, sset.LOADED, this.loading.decrement, false, this.loading);
+
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
   this.registerDisposable(this.specs);
 
@@ -270,8 +275,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.ENTITY_VALIDATION_ERROR] = bind(this.msg.showErrors, this.msg);
 
   // Data
-  evs[ae.LOAD_CACHED_ENTITY_LISTS] = bind(this.cache.getLists, this.cache);
-  evs[ae.LOAD_ENTITY_LISTS] = bind(this.data.loadEntityLists, this.data);
+  evs[ae.LOAD_ENTITY_LISTS] = bind(this.data.getEntityLists, this.data);
   evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
   evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
   evs[ae.ENTITY_SAVE] = bind(this.data.saveEntity, this.data);
@@ -304,4 +308,10 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
 
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
+
+  var sset = pn.data.ServerSource.EventType;
+  goog.events.listen(
+      this.data, sset.LOADING, this.loading.increment, false, this.loading);
+  goog.events.listen(
+      this.data, sset.LOADED, this.loading.decrement, false, this.loading);
 };

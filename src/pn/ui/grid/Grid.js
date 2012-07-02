@@ -548,22 +548,8 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
 /** @override */
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
-  delete this.selectionHandler_;
-  delete this.quickFind_;
-  delete this.rowOrdering_;
 
-  if (this.slick_) {
-    var columns = this.slick_.getColumns();
-    for (var c in columns) {
-      for (var prop in c) { delete c[prop]; }
-    }
-    this.slick_.destroy();
-  }
-  if (this.dataView_) {
-    this.dataView_.setFilter(null);
-    delete this.dataView_;
-  }
-  delete this.slick_;
+  if (this.slick_) { this.slick_.destroy(); }
 };
 
 

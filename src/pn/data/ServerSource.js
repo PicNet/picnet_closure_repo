@@ -1,11 +1,14 @@
 ﻿;
-goog.provide('pn.data.DataLoader');
+goog.provide('pn.data.ServerSource');
 
 goog.require('goog.debug.Logger');
+goog.require('goog.events.Event');
+goog.require('goog.events.EventTarget');
 goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
 goog.require('pn.data.DataDownloader');
+goog.require('pn.data.IDataSource');
 goog.require('pn.json');
 goog.require('pn.log');
 
@@ -13,12 +16,11 @@ goog.require('pn.log');
 
 /**
  * @constructor
- * @extends {goog.Disposable}
- * @param {Element} loadingPanel The loading panel to use to show when making
- *    ajax calls.
+ * @extends {goog.events.EventTarget}
+ * @implements {pn.data.IDataSource}
  */
-pn.data.DataLoader = function(loadingPanel) {
-  goog.Disposable.call(this);
+pn.data.ServerSource = function() {
+  goog.events.EventTarget.call(this);
 
   /**
    * @private
@@ -31,7 +33,7 @@ pn.data.DataLoader = function(loadingPanel) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.logger_ = pn.log.getLogger('pn.data.DataLoader');
+  this.logger_ = pn.log.getLogger('pn.data.ServerSource');
 
   /**
    * @private
@@ -41,31 +43,11 @@ pn.data.DataLoader = function(loadingPanel) {
 
   /**
    * @private
-   * @type {number}
-   */
-  this.outstandingCount_ = 0;
-
-  /**
-   * @private
-   * @type {Element}
-   */
-  this.loadingPanel_ = loadingPanel;
-
-  /**
-   * @private
    * @type {!Object}
    */
   this.routes_ = pn.app.ctx.cfg.serverRoutes;
 };
-goog.inherits(pn.data.DataLoader, goog.Disposable);
-
-
-/**
- * @private
- * @const
- * @type {number}
- */
-pn.data.DataLoader.prototype.MAX_BUCKET_SIZE_ = -1;
+goog.inherits(pn.data.ServerSource, goog.events.EventTarget);
 
 
 /**
@@ -73,22 +55,13 @@ pn.data.DataLoader.prototype.MAX_BUCKET_SIZE_ = -1;
  * @param {function(!Array.<!Object>):undefined} callback The callback for the
  *    schema loading.
  */
-pn.data.DataLoader.prototype.loadSchema = function(callback) {
+pn.data.ServerSource.prototype.loadSchema = function(callback) {
   this.ajax_(this.routes_.loadSchema, {}, callback);
 };
 
 
-/**
- * @param {Array.<string>} types The entity types to load.
- * @param {function(Object.<Array>):undefined} callback A success callback.
- * @param {boolean=} opt_background Wether the query is to run in
- *    the background. i.e. Without a loading panel.
- * @param {string=} opt_parentField The optional parent field to check for a
- *    parentId match.
- * @param {number=} opt_parentId The optional parent id to check for a match.
- */
-pn.data.DataLoader.prototype.loadEntityLists =
-    function(types, callback, opt_background, opt_parentField, opt_parentId) {
+/** @override */
+pn.data.ServerSource.prototype.getEntityLists = function(types, callback) {
   goog.asserts.assert(types);
   goog.asserts.assert(callback);
 
@@ -97,54 +70,24 @@ pn.data.DataLoader.prototype.loadEntityLists =
     callback(loaded);
     return;
   }
-  if (opt_parentId <= 0) {
-    goog.array.forEach(types, function(t) { loaded[t] = []; });
-    callback(loaded);
-    return;
-  }
-  // Split up large requests in to buckets of MAX_BUCKET_SIZE_ types. If
-  // MAX_BUCKET_SIZE_ is <= 0 then just do 1 bucket
-  var buckets = this.MAX_BUCKET_SIZE_ <= 0 ? {'0': types} :
-      goog.array.bucket(types, goog.bind(function(type, idx) {
-        return Math.floor(idx / this.MAX_BUCKET_SIZE_).toString();
-      }, this));
 
-  var expected = types.length;
-  goog.object.forEach(buckets, function(arr) {
-    this.ajax_(this.routes_.getEntityLists,
-        {
-          'types': arr,
-          'parentField': opt_parentField,
-          'parentId': opt_parentId
-        },
-        function(lists) {
-          expected -= lists.length;
-          goog.array.forEach(lists, function(list, idx) {
-            loaded[arr[idx]] = list;
-          }, this);
-          if (expected === 0) { callback(loaded); }
-        }, opt_background);
-  }, this);
+  this.ajax_(this.routes_.getEntityLists, { 'types': types }, function(res) {
+    for (var i = 0, len = types.length; i < len; i++) {
+      loaded[types[i]] = res[i];
+    }
+    callback(loaded);
+  });
 };
 
 
-/**
- * @param {string} type The entity type to load.
- * @param {number} id The ID to load.
- * @param {function(string, Object):undefined=} opt_callback An optional
- *    callback.
- */
-pn.data.DataLoader.prototype.loadEntity =
-    function(type, id, opt_callback) {
+/** @override */
+pn.data.ServerSource.prototype.getEntity = function(type, id, callback) {
   goog.asserts.assert(type);
   goog.asserts.assert(goog.isNumber(id));
+  goog.asserts.assert(callback);
 
-  var cb = opt_callback || function(en) {
-    var mediatorEventType = pn.app.AppEvents.LOADED_ENTITY;
-    pn.app.ctx.pub(mediatorEventType, type, en);
-  };
-  if (id <= 0) { cb({'ID': id }); }
-  else this.ajax_(this.routes_.getEntity, { 'type': type, 'id': id }, cb);
+  if (id <= 0) { callback({'ID': id }); }
+  else this.ajax_(this.routes_.getEntity, { 'type': type, 'id': id }, callback);
 };
 
 
@@ -153,7 +96,7 @@ pn.data.DataLoader.prototype.loadEntity =
  * @param {Object} entity The entity to save.
  * @param {function((string|Object)):undefined=} opt_cb The optional callback.
  */
-pn.data.DataLoader.prototype.saveEntity = function(type, entity, opt_cb) {
+pn.data.ServerSource.prototype.saveEntity = function(type, entity, opt_cb) {
   goog.asserts.assert(type);
   goog.asserts.assert(entity);
 
@@ -171,7 +114,7 @@ pn.data.DataLoader.prototype.saveEntity = function(type, entity, opt_cb) {
  * @param {!Array.<number>} ids The list of IDs in correct order.
  * @param {function():undefined=} opt_cb The optional callback.
  */
-pn.data.DataLoader.prototype.orderEntities = function(type, ids, opt_cb) {
+pn.data.ServerSource.prototype.orderEntities = function(type, ids, opt_cb) {
   goog.asserts.assert(type);
   goog.asserts.assert(ids);
 
@@ -185,7 +128,7 @@ pn.data.DataLoader.prototype.orderEntities = function(type, ids, opt_cb) {
  * @param {string|Object} saved The error message to 'alert' or the
  *    saved entity.
  */
-pn.data.DataLoader.prototype.saveEntityCallback_ = function(type, saved) {
+pn.data.ServerSource.prototype.saveEntityCallback_ = function(type, saved) {
   if (goog.isString(saved)) { window.alert(saved); }
   else {
     pn.app.ctx.pub(pn.app.AppEvents.ENTITY_SAVED, type, saved);
@@ -197,7 +140,7 @@ pn.data.DataLoader.prototype.saveEntityCallback_ = function(type, saved) {
  * @param {string} type The type of the entity to save.
  * @param {Object} entity The entity to clone.
  */
-pn.data.DataLoader.prototype.cloneEntity = function(type, entity) {
+pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
   goog.asserts.assert(type);
   goog.asserts.assert(entity);
 
@@ -214,7 +157,7 @@ pn.data.DataLoader.prototype.cloneEntity = function(type, entity) {
  * @param {string} type The type of the entity to save.
  * @param {Object} entity The entity to save.
  */
-pn.data.DataLoader.prototype.deleteEntity = function(type, entity) {
+pn.data.ServerSource.prototype.deleteEntity = function(type, entity) {
   goog.asserts.assert(type);
   goog.asserts.assert(entity);
 
@@ -235,7 +178,7 @@ pn.data.DataLoader.prototype.deleteEntity = function(type, entity) {
  * @param {string} format The export format.
  * @param {Array.<Array.<string>>} data The data to export.
  */
-pn.data.DataLoader.prototype.listExport = function(type, format, data) {
+pn.data.ServerSource.prototype.listExport = function(type, format, data) {
   var ed = {'exportType': format, 'exportData': pn.json.serialiseJson(data)};
   var uri = pn.app.ctx.cfg.appPath + this.routes_.exportData;
   pn.data.DataDownloader.send(uri, ed);
@@ -247,18 +190,13 @@ pn.data.DataLoader.prototype.listExport = function(type, format, data) {
  * @param {string} uri The uri to call.
  * @param {!Object.<Object>} data The data to send in the call.
  * @param {Function|!string=} opt_success The success callback or event name.
- * @param {boolean=} opt_background Wether the query is to run in
- *    the background. i.e. Without a loading panel.
  */
-pn.data.DataLoader.prototype.ajax_ =
-    function(uri, data, opt_success, opt_background) {
+pn.data.ServerSource.prototype.ajax_ = function(uri, data, opt_success) {
   goog.asserts.assert(uri);
   goog.asserts.assert(data);
 
-  if (!opt_background) {
-    this.outstandingCount_++;
-    goog.style.showElement(this.loadingPanel_, true);
-  }
+  var eventType = pn.data.ServerSource.EventType;
+  this.dispatchEvent(new goog.events.Event(eventType.LOADING));
 
   var start = goog.now(),
       rid = uri + (this.requestCount_++),
@@ -266,7 +204,6 @@ pn.data.DataLoader.prototype.ajax_ =
       qd = goog.uri.utils.buildQueryDataFromMap(data);
 
   this.xhrMgr_.send(rid, path, 'POST', qd, null, null, goog.bind(function(e) {
-    if (!opt_background) { this.outstandingCount_--; }
     var xhr = e.target;
     if (!xhr.isSuccess()) {
       var error = 'An unexpected error has occurred.';
@@ -275,14 +212,9 @@ pn.data.DataLoader.prototype.ajax_ =
     else { this.ajaxSuccess_(xhr, opt_success); }
 
     var took = goog.now() - start;
-    var msg = 'ajax uri: ' + uri + ' completed. Took: ' + took + 'ms.';
-    this.logger_.info((opt_background ? 'background ' : '') + msg);
+    this.logger_.info('ajax uri: ' + uri + ' completed. Took: ' + took + 'ms.');
 
-    if (!opt_background && this.outstandingCount_ === 0) {
-      goog.Timer.callOnce(function() {
-        goog.style.showElement(this.loadingPanel_, false);
-      }, 1, this);
-    }
+    this.dispatchEvent(new goog.events.Event(eventType.LOADED));
   }, this));
 };
 
@@ -292,7 +224,7 @@ pn.data.DataLoader.prototype.ajax_ =
  * @param {!goog.net.XhrIo} xhr The completed Xhrio.
  * @param {Function|!string=} opt_success The success callback or event name.
  */
-pn.data.DataLoader.prototype.ajaxSuccess_ = function(xhr, opt_success) {
+pn.data.ServerSource.prototype.ajaxSuccess_ = function(xhr, opt_success) {
   var resp = xhr.getResponseText();
   // Do not json deserialise xml response or error
   var parsed = !goog.isDefAndNotNull(resp) ? null :
@@ -303,4 +235,11 @@ pn.data.DataLoader.prototype.ajaxSuccess_ = function(xhr, opt_success) {
   } else if (goog.isDefAndNotNull(opt_success)) {
     opt_success.call(this, parsed);
   }
+};
+
+
+/** @enum {string} */
+pn.data.ServerSource.EventType = {
+  LOADING: 'server-loading',
+  LOADED: 'server-loaded'
 };

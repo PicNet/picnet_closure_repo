@@ -12,7 +12,6 @@ pn.app.AppEvents = {
 
   // DATA LOADER
   LOAD_ENTITY_LISTS: 'load-entity-lists',
-  LOAD_CACHED_ENTITY_LISTS: 'load-cached_entity-lists',
   LOADED_LIST: 'loaded-list',
   CACHED_LOADED_LIST: 'cached-loaded-list',
   LOADED_ENTITY: 'loaded-entity',

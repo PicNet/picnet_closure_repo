@@ -58,8 +58,9 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ =
     this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
     goog.dispose(this.model_);
   }
-  this.model_ = new pn.model.Collection(items);
-  this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
+  // TODO: Dissabled for now, throwing to many changes
+  // this.model_ = new pn.model.Collection(items);
+  // this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
 };
 
 
@@ -72,10 +73,9 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
   goog.asserts.assert(e);
 
   var changes = e.changes;
-
   this.beginUpdate();
   goog.array.forEach(changes, function(details) {
-    this.updateItem(details.item['ID'], details.item);
+    if (details.item) this.updateItem(details.item['ID'], details.item);
   }, this);
   this.endUpdate();
 };

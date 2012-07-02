@@ -12,14 +12,9 @@ goog.require('pn.log');
  * @extends {goog.Disposable}
  * @param {number} maxAgeMinutes The maximum age of entities in the MemCache
  *    before they are considered stale and invalidated.
- * @param {function(!Array.<string>,function(Object.<!Array>)):undefined}
- *    onDataLoadRequired The callback to load the data from a data
- *    source (when not in the cache).
  */
-pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
+pn.data.MemCache = function(maxAgeMinutes) {
   goog.Disposable.call(this);
-
-  goog.asserts.assert(maxAgeMinutes > 0);
 
   /**
    * @private
@@ -27,13 +22,6 @@ pn.data.MemCache = function(maxAgeMinutes, onDataLoadRequired) {
    * @type {number}
    */
   this.maxAgeMinutes_ = maxAgeMinutes;
-
-  /**
-   * @private
-   * @const
-   * @type {function(!Array.<string>,function(Object.<!Array>)):undefined}
-   */
-  this.onDataLoadRequired_ = onDataLoadRequired;
 
   /**
    * @private
@@ -86,38 +74,24 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
 /**
  * Gets an object map of all the specified types and their cached lists.
  * @param {Array.<string>} types The types of entities to load.
- * @param {function(Object.<Array>):undefined} cb A success callback.
+ * @return {!Object.<!Array.<!Object>>} The cached lists in the current cache.
  */
-pn.data.MemCache.prototype.getLists =
-    function(types, cb) {
+pn.data.MemCache.prototype.getLists = function(types) {
   goog.asserts.assert(goog.isDefAndNotNull(types));
-  goog.asserts.assert(cb);
 
   goog.array.removeDuplicates(types);
   var cached = {};
-  var unloaded = goog.array.filter(types, function(type) {
-    if (goog.isDefAndNotNull(this.cache_[type])) {
-      cached[type] = goog.array.clone(this.cache_[type]);
-      return false;
-    } else { return true; }
+  goog.array.forEach(types, function(type) {
+    if (goog.isDef(this.cache_[type])) { cached[type] = this.cache_[type]; }
   }, this);
-
-  if (!unloaded.length) {
-    cb(cached);
-    return;
-  }
-  this.onDataLoadRequired_(unloaded, goog.bind(function(loaded) {
-    for (var type in loaded) {
-      var arr = loaded[type];
-      this.updateList(type, cached[type] = arr);
-    }
-    cb(cached);
-  }, this));
+  return cached;
 };
 
 
 /** @private */
 pn.data.MemCache.prototype.invalidateCache_ = function() {
+  if (this.maxAgeMinutes_ < 0) return;
+
   var now = goog.now();
   var max = now - (this.maxAgeMinutes_ * 60 * 1000);
   for (var type in this.cache_) {
