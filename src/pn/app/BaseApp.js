@@ -80,32 +80,20 @@ pn.app.BaseApp = function(opt_cfg) {
   /** @type {pn.schema.Schema} */
   this.schema = null;
 
-  /**
-   * @protected
-   * @type {!pn.ui.ViewMgr}
-   */
+  /** @type {!pn.ui.ViewMgr} */
   this.view = new pn.ui.ViewMgr(pn.dom.getElement(this.cfg.viewContainerId));
   this.registerDisposable(this.view);
 
-  /**
-   * @protected
-   * @type {!pn.ui.MessagePanel}
-   */
+  /** @type {!pn.ui.MessagePanel} */
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
 
-  /**
-   * @protected
-   * @type {!pn.data.BufferedServerSource}
-   */
+  /** @type {!pn.data.BufferedServerSource} */
   this.data = new pn.data.BufferedServerSource(this.cfg.memCacheExpireMins);
   this.registerDisposable(this.data);
 
-  /**
-   * @protected
-   * @type {!pn.ui.LoadingPnl}
-   */
+  /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));
   this.registerDisposable(this.loading);
 

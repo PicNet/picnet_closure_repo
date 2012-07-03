@@ -46,21 +46,19 @@ goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 /**
  * @private
  * @param {!Array.<!Object>} items The items to set in this data view.
- * @param {string} objectIdProperty The ID property name .
+ * @param {string} idprop The ID property name .
  */
-pn.ui.grid.DataView.prototype.setItemsImpl_ =
-    function(items, objectIdProperty) {
+pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
   goog.asserts.assert(goog.isArray(items));
 
-  this.origSetItems_(items, objectIdProperty);
+  this.origSetItems_(goog.array.clone(items), idprop);
 
   if (this.model_) {
     this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
     goog.dispose(this.model_);
   }
-  // TODO: Dissabled for now, throwing to many changes
-  // this.model_ = new pn.model.Collection(items);
-  // this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
+  this.model_ = new pn.model.Collection(items);
+  this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
 };
 
 
@@ -75,7 +73,13 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
   var changes = e.changes;
   this.beginUpdate();
   goog.array.forEach(changes, function(details) {
-    if (details.item) this.updateItem(details.item['ID'], details.item);
+    if (details.inserted) {
+      this.addItem(details.item);
+    } else if (details.removed) {
+      this.deleteItem(details.item['ID']);
+    } else {
+      this.updateItem(details.item['ID'], details.item);
+    }
   }, this);
   this.endUpdate();
 };

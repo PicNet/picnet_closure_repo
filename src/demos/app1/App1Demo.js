@@ -5,6 +5,10 @@ goog.require('goog.dom');
 goog.require('pn.app.BaseApp');
 goog.require('pn.demo.app1.UserSpec');
 goog.require('goog.date.Date');
+goog.require('pn.app.AppEvents');
+goog.require('pn.demo.app1.ShowListPage');
+goog.require('pn.demo.app1.ShowEditPage');
+goog.require('pn.demo.app1.DemoUtils');
 
 /** 
  * @constructor 
@@ -13,7 +17,12 @@ goog.require('goog.date.Date');
 pn.demo.app1.App1Demo = function() {
   pn.app.BaseApp.call(this);
 
-
+  /** @type {!Array.<Object>} */
+  this.users = [
+    pn.demo.app1.DemoUtils.createUser(),
+    pn.demo.app1.DemoUtils.createUser(),
+    pn.demo.app1.DemoUtils.createUser()
+  ];   
 };
 goog.inherits(pn.demo.app1.App1Demo, pn.app.BaseApp);
 goog.exportSymbol('pn.demo.app1.App1Demo', pn.demo.app1.App1Demo);
@@ -23,19 +32,24 @@ goog.exportSymbol('pn.demo.app1.App1Demo', pn.demo.app1.App1Demo);
  * @suppress{visibility} 
  */
 pn.demo.app1.App1Demo.prototype.loadSchema_ = function(schemaLoaded) {
-  schemaLoaded([
-    {
-      'name': 'User',
-      'fields': [
-        { 'name': 'ID', 'type': 'Int64' },
-        { 'name': 'FirstName', 'type': 'String', 'length': 50 },
-        { 'name': 'LastName', 'type': 'String', 'length': 50 },
-        { 'name': 'Phone', 'type': 'String', 'length': 50 },
-        { 'name': 'DateOfBirth', 'type': 'DateTime' }
-      ]
-    }
-  ]);
+  goog.Timer.callOnce(function() { 
+    schemaLoaded([
+      {
+        'name': 'User',
+        'fields': [
+          { 'name': 'ID', 'type': 'Int64' },
+          { 'name': 'FirstName', 'type': 'String', 'length': 50 },
+          { 'name': 'LastName', 'type': 'String', 'length': 50 },
+          { 'name': 'Phone', 'type': 'String', 'length': 50 },
+          { 'name': 'DateOfBirth', 'type': 'DateTime' }
+        ]
+      }
+    ]);
+  }, 1, this);
 };
+
+/** @override */
+pn.demo.app1.App1Demo.prototype.validateSecurity = function(type) {};
 
 /** @override */
 pn.demo.app1.App1Demo.prototype.getUiSpecs = function() {
@@ -48,56 +62,51 @@ pn.demo.app1.App1Demo.prototype.getUiSpecs = function() {
 pn.demo.app1.App1Demo.prototype.getRoutes = function() {
   return {
     'list': goog.bind(this.list_, this),
-    'edit': goog.bind(this.edit_, this)
+    'edit': goog.bind(this.edit_, this),
+    'add': goog.bind(this.add_, this)
   };
 };
 
 /** @override */
 pn.demo.app1.App1Demo.prototype.getAppEventHandlers = function() {
-  return {
-    'event-name': function() { alert('got event-name'); }
-  };
+  var handlers = {},
+      ae = pn.app.AppEvents;
+  handlers[ae.ENTITY_SELECT] = goog.bind(function(type, id) { 
+    this.router.navigate('edit/' + id);
+  }, this)
+  handlers[ae.ENTITY_ADD] = goog.bind(function() {    
+    this.router.navigate('add');    
+  }, this);
+  handlers[ae.ENTITY_SAVED] = goog.bind(function() {
+    this.msg.showMessage('User Saved');
+    this.view.resetDirty();
+    this.router.back();
+  }, this);
+  handlers[ae.ENTITY_CANCEL] = goog.bind(function() {
+    this.view.resetDirty();
+    this.router.back();
+  }, this);
+  
+  return handlers;
 };
 
 /** @private */
-pn.demo.app1.App1Demo.prototype.list_ = function() {
-  var cache = {};
-  var users = [
-    {
-      'ID': 1,
-      'FirstName': 'Guido', 
-      'LastName': 'Tapia', 
-      'Phone':'1234 1234', 
-      'DateOfBirth': new goog.date.Date(1970, 0, 1) 
-    }, {
-      'ID': 2,
-      'FirstName': 'Jon', 
-      'LastName': 'Sellers', 
-      'Phone':'4567 4567', 
-      'DateOfBirth': new goog.date.Date(1980, 0, 1) 
-    }, {
-      'ID': 3,
-      'FirstName': 'Steve', 
-      'LastName': 'Miller', 
-      'Phone':'9870 9870', 
-      'DateOfBirth': new goog.date.Date(1940, 0, 1) 
-    }
-  ];
-  var grid = new pn.ui.grid.Grid(this.specs.get('User'), users, cache);
-  this.view.showComponent(grid);
-
-  // Test changing data
-  window.setInterval(function() {
-    var user = users[Math.floor(Math.random() * users.length)];
-    user['Phone'] = Math.floor(Math.random() * 99999999);
-    user['DateOfBirth'].setYear(1940 + Math.floor(Math.random() * 70));
-  }, 1000);
+pn.demo.app1.App1Demo.prototype.list_ = function() {  
+  new pn.demo.app1.ShowListPage();  
 };
 
 /** 
  * @private
- * @param {number} id The id of the User to edit.
+ * @param {string} id The id of the User to edit.  Since this ID is read
+ *    from the query string, it will be a string not a number.
  */
 pn.demo.app1.App1Demo.prototype.edit_ = function(id) {
-  window.alert('Not supported.');
+  new pn.demo.app1.ShowEditPage(parseInt(id, 10));  
+};
+
+/** @private */
+pn.demo.app1.App1Demo.prototype.add_ = function() {
+  // Negative IDs are the convention for new entities.
+  var id = new Date().getTime() * -1; 
+  new pn.demo.app1.ShowEditPage(id);    
 };

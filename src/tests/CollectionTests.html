@@ -15,7 +15,8 @@ goog.require('goog.date.Date');
 
 var arr,
     collection,
-    changes;
+    changes,
+    counter = 0;
 
 var setUp = function() {
   pn.model.TimerInstance.startTimer_ = function() {};
@@ -29,6 +30,7 @@ var setUp = function() {
 };
 
 var createObj = function(id) {
+  id = id + (++counter);
   return { 'ID': id, 'Name': 'Name Value', 'Num': 1,
     'Date': new goog.date.Date(2000, 0, 1), 'ObjRef': {}, 
     'ObjEquality': {
@@ -39,19 +41,22 @@ var createObj = function(id) {
   };
 };
 
+var checkForChanges_ = function() {
+  changes = undefined;
+  pn.model.TimerInstance.checkForChanges_();  
+};
+
 var tearDown = function() {
   goog.dispose(collection);
   changes = undefined;
 };
 
-var test_collection_change_event_has_correct_index = function () {        
-  var idxTest = function(idx) {
-    arr[idx]['ID'] = (idx + 1);
-    arr[idx]['Name'] = 'New Name';
-    pn.model.TimerInstance.checkForChanges_();  
+var test_collection_change_event_on_basic_changes_on_all_indexes_of_arr = function () {        
+  var idxTest = function(idx) {    
+    arr[idx]['Name'] = 'New Name';    
+    checkForChanges_();  
     assertEquals(1, changes.length);
     var change = changes[0];
-    assertEquals(idx, change.idx)
     assertEquals(1, change.changes.length);
 
     change = change.changes[0];
@@ -66,121 +71,161 @@ var test_collection_change_event_has_correct_index = function () {
 };
 
 var test_collection_change_event_on_add = function() {
-  arr.push(createObj('added'));
-  pn.model.TimerInstance.checkForChanges_();  
+  var added = createObj('added');
+  arr.push(added);
+
+  checkForChanges_();  
   assertEquals(1, changes.length);
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(3, change.idx);
-  assertEquals('added', change.item['ID']);
+  assertEquals(added['ID'], change.item['ID']);
 };
 
 var test_collection_change_event_on_delete_in_middle = function() {
+  var id = arr[1]['ID'];
   delete arr[1];
-  pn.model.TimerInstance.checkForChanges_();  
+  checkForChanges_();  
+
   assertEquals(1, changes.length);
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(1, change.idx);
-  assertEquals(2, change.item['ID']);
+  assertEquals(id, change.item['ID']);
 };
 
 var test_collection_change_event_on_delete_in_start = function() {
+  var deleted = arr[0];
   delete arr[0];
-  pn.model.TimerInstance.checkForChanges_();  
+  checkForChanges_();  
   assertEquals(1, changes.length);
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(0, change.idx);
-  assertEquals(1, change.item['ID']);
+  assertEquals(deleted['ID'], change.item['ID']);
 };
 
 var test_collection_change_event_on_delete_in_end = function() {
+  var deleted = arr[2];
   delete arr[2];
-  pn.model.TimerInstance.checkForChanges_();  
+  checkForChanges_();  
   assertEquals(1, changes.length);
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(2, change.idx);
-  assertEquals(3, change.item['ID']);
+  assertEquals(deleted['ID'], change.item['ID']);
 };
 
 var test_collection_change_event_on_remove = function() {
+  var removed = arr[1];
   arr.splice(1, 1);
-  pn.model.TimerInstance.checkForChanges_();  
+  checkForChanges_();  
   assertEquals(1, changes.length);
   
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(1, change.idx);
-  assertEquals(2, change.item['ID']);
+  assertEquals(removed['ID'], change.item['ID']);
 };
 
 var test_collection_change_event_on_insert = function() {
-  arr.splice(1, 0, createObj('inserted'));
-  pn.model.TimerInstance.checkForChanges_();  
+  var inserted = createObj('inserted');
+  arr.splice(1, 0, inserted);
+  checkForChanges_();  
   assertEquals(1, changes.length);
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(1, change.idx);  
-  assertEquals('inserted', change.item['ID']);  
+  assertEquals(inserted['ID'], change.item['ID']);  
 };
 
 var test_adding_multiple = function() {
-  arr.push(createObj('added1'));
-  arr.push(createObj('added2'));
-  pn.model.TimerInstance.checkForChanges_();  
+  var added1 = createObj('added1');
+  var added2 = createObj('added2');
+  arr.push(added1);
+  arr.push(added2);
+  checkForChanges_();  
   assertEquals(2, changes.length);
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(3, change.idx);
-  assertEquals('added1', change.item['ID']);
+  assertEquals(added1['ID'], change.item['ID']);
 
   change = changes[1];
   assertTrue(change.inserted);
-  assertEquals(4, change.idx);
-  assertEquals('added2', change.item['ID']);
+  assertEquals(added2['ID'], change.item['ID']);
 };
 
 var test_deleting_multiple = function() {
+  var deleting1 = arr[0];
+  var deleting2 = arr[2];
   delete arr[0];
   delete arr[2];
-  pn.model.TimerInstance.checkForChanges_();  
+  checkForChanges_();  
   assertEquals(2, changes.length);
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(0, change.idx);
-  assertEquals(1, change.item['ID']);
+  assertEquals(deleting1['ID'], change.item['ID']);
 
   change = changes[1];
   assertTrue(change.removed);
-  assertEquals(2, change.idx);
-  assertEquals(3, change.item['ID']);
+  assertEquals(deleting2['ID'], change.item['ID']);
 };
 
-var test_insert_multiple_not_supported = function() {
-  arr.splice(1, 0, createObj('inserted1'), createObj('inserted2'));
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+var test_insert_multiple_fires_correct_details = function() {
+  var inserted1 = createObj('inserted1');
+  var inserted2 = createObj('inserted2');
+  arr.splice(1, 0, inserted1, inserted2);
 
-  var change = changes[0];  
-  assertTrue(change.notsupported);
-};
-
-var test_remove_multiple_not_supported = function() {
-  arr.splice(0, 2);
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+  checkForChanges_();  
+  assertEquals(2, changes.length);
 
   var change = changes[0];
-  assertTrue(change.notsupported);
+  assertTrue(change.inserted);
+  assertEquals(inserted1['ID'], change.item['ID']);
+
+  change = changes[1];
+  assertTrue(change.inserted);
+  assertEquals(inserted2['ID'], change.item['ID']);
+};
+
+var test_remove_multiple_fires_correct_details = function() {
+  var remove1 = arr[0];
+  var remove2 = arr[1];
+  arr.splice(0, 2);
+  checkForChanges_();  
+  assertEquals(2, changes.length);
+
+  change = changes[0];
+  assertTrue(change.removed);
+  assertEquals(remove1['ID'], change.item['ID']);
+
+  change = changes[1];
+  assertTrue(change.removed);
+  assertEquals(remove2['ID'], change.item['ID']);
+};
+
+var test_sorting_or_reversing_is_ignored = function() {  
+  arr.reverse();  
+  checkForChanges_();  
+  assertEquals(undefined, changes);
+};
+
+var test_changes_do_not_get_fired_multiple_times = function() {  
+  arr.push(createObj('added'));
+
+  checkForChanges_();  
+  assertEquals(1, changes.length);  
+
+  checkForChanges_();  
+  assertEquals(undefined, changes);  
+};
+
+var test_multiple_updates_to_the_list = function() {
+  test_adding_multiple();
+  test_adding_multiple();
+  test_collection_change_event_on_delete_in_middle();
+  test_collection_change_event_on_add();  
 };
     </script>    
   </body>

@@ -9,5 +9,9 @@ HI
 - Make the authentication model pluggable (Forms/Windows)
 - Make the sync model pluggable (REST / SignalR)
 
+- Remove Grid.EventType, Grid evens should be able to take any events not
+    just Grid.EventType.  These just get converted to event-<key> anyways.
+    This also applies for Edit.EventType
+
 MED
 ===

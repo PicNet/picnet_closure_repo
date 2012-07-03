@@ -26,6 +26,12 @@ pn.model.Model = function(src, opt_register) {
 
   /**
    * @private
+   * @type {boolean}
+   */
+  this.register_ = opt_register !== false;
+
+  /**
+   * @private
    * @type {!Object}
    */
   this.last_ = {};
@@ -36,7 +42,7 @@ pn.model.Model = function(src, opt_register) {
     this[i] = this.last_[i] = val;
   }
 
-  if (opt_register !== false) { pn.model.TimerInstance.register(this); }
+  if (this.register_) { pn.model.TimerInstance.register(this); }
 };
 goog.inherits(pn.model.Model, pn.model.ModelBase);
 
@@ -53,6 +59,14 @@ pn.model.Model.prototype.getChanges = function() {
     }
   }
   return changes;
+};
+
+
+/** @override */
+pn.model.Model.prototype.disposeInternal = function() {
+  pn.model.Model.superClass_.disposeInternal.call(this);
+
+  if (this.register_) { pn.model.TimerInstance.deregister(this); }
 };
 
 

@@ -293,9 +293,12 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
 
 /** @override */
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
-  var event = new goog.events.Event(command.eventType, this);
-  event.data = data;
-  this.publishEvent_(event);
+  if (command.click) { command.click(data); }
+  else {
+    var event = new goog.events.Event(command.eventType, this);
+    event.data = data;
+    this.publishEvent_(event);
+  }
 };
 
 

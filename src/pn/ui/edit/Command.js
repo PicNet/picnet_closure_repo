@@ -24,11 +24,16 @@ pn.ui.edit.Command = function(name, eventType, opt_validate) {
   /** @type {boolean} */
   this.validate = opt_validate === true;
 
-  /** @type {null|function(Object=):boolean} Wether to
-    continue with the command. */
+  /**
+   * @type {null|function(Object=):boolean} Preclick function that takes the
+   *    current edit entity and returns wether to continue with the command.
+   */
   this.preclick = null;
 
-  /** @type {null|function(string,Object):undefined} The command handler. */
+  /**
+   * @type {null|function(Object):undefined} The command handler. Takes
+   *    the entity being edited.
+   */
   this.click = null;
 
   /** @type {boolean} Wether to display this command on new entitis. */

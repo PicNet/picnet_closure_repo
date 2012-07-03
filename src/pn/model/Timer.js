@@ -31,10 +31,20 @@ pn.model.Timer = function() {
 /** @param {!pn.model.ModelBase} model The model to register. */
 pn.model.Timer.prototype.register = function(model) {
   goog.asserts.assert(model instanceof pn.model.ModelBase);
-
   this.models_.push(model);
   if (this.intervalId_) { return; }
   this.startTimer_();
+};
+
+
+/** @param {!pn.model.ModelBase} model The model to deregister. */
+pn.model.Timer.prototype.deregister = function(model) {
+  goog.asserts.assert(model instanceof pn.model.ModelBase);
+  var idx = goog.array.indexOf(this.models_, model);
+  this.models_.splice(idx, 1);
+  if (this.models_.length) return;
+
+  clearInterval(this.intervalId_);
 };
 
 
@@ -45,18 +55,6 @@ pn.model.Timer.prototype.checkForChanges_ = function() {
     if (!changes.length) { return; }
     model.dispatchEvent(new pn.model.ChangeEvent(changes));
   });
-};
-
-
-/** @param {!pn.model.ModelBase} model The model to deregister. */
-pn.model.Timer.prototype.deregister = function(model) {
-  goog.asserts.assert(model instanceof pn.model.ModelBase);
-
-  var idx = goog.array.indexOf(this.models_, model);
-  this.models_.splice(idx, 1);
-  if (this.models_.length) return;
-
-  clearInterval(this.intervalId_);
 };
 
 

@@ -18,10 +18,12 @@ goog.provide('pn.ui.edit.FieldRenderers');
 pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
   var val = fctx.getEntityValue(entity);
   var dt = null;
-  if (val) {
-    dt = new goog.date.Date();
-    dt.setTime(/** @type {number} */(val));
-    if (dt.getFullYear() <= 1970) dt = null;
+  if (val instanceof Number) {
+    dt = pn.date.fromMillis(/** @type {number} */ (val));
+  } else if (val instanceof goog.date.Date) {
+    dt = val;
+  } else if (val instanceof Date) {
+    dt = pn.date.fromDate(/** @type {Date} */ (val));
   }
 
   var idp = new pn.ui.InputDatePicker(

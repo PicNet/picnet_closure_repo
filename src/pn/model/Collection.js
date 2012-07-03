@@ -23,9 +23,14 @@ pn.model.Collection = function(src) {
    */
   this.src_ = src;
 
-  this.models_ = goog.array.map(src, function(e) {
-    return new pn.model.Model(e, false);
-  });
+  /**
+   * @private
+   * @type {!Object.<!Object>}
+   */
+  this.map_ = {};
+  goog.array.forEach(src, function(e) {
+    this.map_['' + e['ID']] = new pn.model.Model(e, false);
+  }, this);
 
   pn.model.TimerInstance.register(this);
 };
@@ -34,58 +39,49 @@ goog.inherits(pn.model.Collection, pn.model.ModelBase);
 
 /** @override */
 pn.model.Collection.prototype.getChanges = function() {
-  var changes = [],
-      arridx = -1,
-      last = null,
-      now = null,
-      len = this.models_.length;
-  for (var idx = 0; idx < len; idx++) {
-    var model = this.models_[idx];
-    last = model.src_;
-    now = this.src_[++arridx];
-    if (!this.areSame(last, now)) {
-      // Items at same index do not match
-      if (!goog.isDef(now)) {
-        // This this element is undefined then it was probably deleted with
-        // delete array[idx] notation.  All indexes in this case remain the same
-        changes.push({idx: idx, item: last, removed: true});
-      } else if (this.areSame(last, this.src_[arridx + 1])) {
-        arridx++;
-        // If the expected item is the same as the next item in the current arr
-        // then the current item was inserted.
-        changes.push({idx: idx, item: now, inserted: true});
-      } else if (this.areSame(this.models_[idx + 1].src_, now)) {
-        // Otherwise if the current arr val is the same as the next 'last' value
-        // then the 'last' value was removed.
-        arridx--;
-        changes.push({idx: idx, item: last, removed: true});
-      } else {
-        // Unfortunatelly the whole model will need to be reset as we cannot
-        // determine what happened. This means that this algorithm only supports
-        // single element insertion / deletion.
-        return [{notsupported: true}];
-      }
-    } else {
-      // Lets see if internal model details have changed.  I.e. Items could
-      // be referentially the same but still have different property values.
-      var mchanges = model.getChanges();
-      if (mchanges.length) {
-        changes.push({idx: idx, item: model.src_, changes: mchanges});
-      }
+  var map = goog.object.clone(this.map_);
+  var changes = [];
+
+  for (var i = 0, len = this.src_.length; i < len; i++) {
+    var now = this.src_[i];
+    if (!goog.isDef(now)) continue;
+
+    var key = '' + now['ID'];
+    var lastmodel = map[key];
+    var mchanges = lastmodel ? lastmodel.getChanges() : null;
+    delete map[key];
+
+    if (!lastmodel) {
+      goog.asserts.assert(!(key in this.map_));
+      changes.push({item: now, inserted: true});
+      this.map_[key] = new pn.model.Model(now, false);
+    }
+    else if (mchanges.length) {
+      goog.asserts.assert(mchanges.length);
+      changes.push({item: lastmodel.src_, changes: mchanges});
     }
   }
 
-  // Get all the new entities at the end of the array.
-  while (now = this.src_[++arridx]) {
-    changes.push({idx: arridx, item: now, inserted: true});
+  for (var id in map) {
+    var last = map[id];
+    changes.push({item: last.src_, removed: true});
+
+    var model = this.map_[id];
+    goog.dispose(model);
+    delete this.map_[id];
   }
   return changes;
 };
 
 
-/**
- * @typedef {
- *    {idx:number, item: !Object, changes: !Array.<pn.model.Model.Change>}
- *  }
- */
+/** @override */
+pn.model.Collection.prototype.disposeInternal = function() {
+  pn.model.Collection.superClass_.disposeInternal.call(this);
+
+  goog.object.forEach(this.map_, goog.dispose);
+  pn.model.TimerInstance.deregister(this);
+};
+
+
+/** @typedef {{item: !Object, changes: !Array.<pn.model.Model.Change>}} */
 pn.model.Collection.CollectionChange;

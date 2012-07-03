@@ -28,11 +28,3 @@ pn.model.ModelBase.prototype.areSame = function(a, b) {
   if (!goog.isDefAndNotNull(a)) return !goog.isDefAndNotNull(b);
   return goog.isFunction(a.equals) ? a.equals(b) : a === b;
 };
-
-
-/** @override */
-pn.model.ModelBase.prototype.disposeInternal = function() {
-  pn.model.ModelBase.superClass_.disposeInternal.call(this);
-
-  pn.model.TimerInstance.deregister(this);
-};
