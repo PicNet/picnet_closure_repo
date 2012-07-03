@@ -99,16 +99,10 @@ pn.ui.grid.RowOrdering.prototype.init = function() {
 
     self.ordering_ = false;
 
-    var event = new goog.events.Event(pn.ui.grid.RowOrdering.EventType.ORDERED);
+    var event = new goog.events.Event(pn.app.AppEvents.LIST_ORDERED);
     event.ids = goog.array.map(items, function(item) { return item['ID']; });
     self.dispatchEvent(event);
   });
 
   grid.registerPlugin(moveRowsPlugin);
-};
-
-
-/** @enum {string} */
-pn.ui.grid.RowOrdering.EventType = {
-  ORDERED: 'ordererd'
 };

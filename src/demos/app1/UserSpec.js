@@ -21,7 +21,7 @@ pn.demo.app1.UserSpec.prototype.getGridConfig = function(cache) {
     this.createColumn('Phone', cache),
     this.createColumn('DateOfBirth', cache)
   ];  
-  var add = new pn.ui.grid.Command('Add', pn.ui.grid.Grid.EventType.ADD);
+  var add = new pn.ui.grid.Command('Add', pn.app.AppEvents.ENTITY_ADD);
   return new pn.ui.grid.Config(columns, [add]);
 };
 
@@ -34,9 +34,9 @@ pn.demo.app1.UserSpec.prototype.getEditConfig = function(entity, cache) {
     this.createField('Phone', cache),
     this.createField('DateOfBirth', cache)
   ];
-  var save = new pn.ui.edit.Command('Save', 'save', true);
+  var save = new pn.ui.edit.Command('Save', pn.app.AppEvents.ENTITY_SAVE, true);
   save.click = goog.bind(this.save_, this);
-  var back = new pn.ui.edit.Command('Back', 'cancel');
+  var back = new pn.ui.edit.Command('Back', pn.app.AppEvents.ENTITY_CANCEL);
   var commands = [ save, back ];
   return new pn.ui.edit.Config(fields, commands);
 };

@@ -14,7 +14,6 @@ goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
-goog.require('pn.ui.grid.Grid.EventType');
 
 
 

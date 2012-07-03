@@ -1,6 +1,5 @@
 ﻿;
 goog.provide('pn.ui.edit.Edit');
-goog.provide('pn.ui.edit.Edit.EventType');
 
 goog.require('goog.date.Date');
 goog.require('goog.dom');
@@ -225,7 +224,7 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
 pn.ui.edit.Edit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
   if (errors.length) {
-    var et = pn.ui.edit.Edit.EventType.VALIDATION_ERROR;
+    var et = pn.app.AppEvents.ENTITY_VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
     event.errors = errors;
     this.publishEvent_(event);
@@ -324,16 +323,16 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
   var grid = this.controls_[fctx.id][0];
-  var gridet = pn.ui.grid.Grid.EventType;
-  this.getHandler().listen(grid, gridet.ADD, function() {
-    var e = new goog.events.Event(pn.ui.edit.Edit.EventType.ADD_CHILD, this);
+  var ae = pn.app.AppEvents;
+  this.getHandler().listen(grid, ae.ENTITY_ADD, function() {
+    var e = new goog.events.Event(pn.app.AppEvents.CHILD_ENTITY_ADD, this);
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
     e.parentField = fieldSpec.tableParentField;
     this.publishEvent_(e);
   });
-  this.getHandler().listen(grid, gridet.ROW_SELECTED, function(ev) {
-    var e = new goog.events.Event(pn.ui.edit.Edit.EventType.EDIT_CHILD, this);
+  this.getHandler().listen(grid, ae.ENTITY_SELECT, function(ev) {
+    var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
     e.entityId = ev.selected['ID'];
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
@@ -357,29 +356,17 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
   var ae = pn.app.AppEvents;
   var args;
   switch (e.type) {
-    case pn.ui.edit.Edit.EventType.ADD_CHILD:
-      args = [ae.CHILD_ENTITY_ADD, e.parent, e.entityType, e.parentField];
+    case ae.CHILD_ENTITY_ADD:
+      args = [e.type, e.parent, e.entityType, e.parentField];
       break;
-    case pn.ui.edit.Edit.EventType.EDIT_CHILD:
-      args = [ae.ENTITY_SELECT, e.entityType, e.entityId];
+    case ae.ENTITY_SELECT:
+      args = [e.type, e.entityType, e.entityId];
       break;
-    case pn.ui.edit.Edit.EventType.VALIDATION_ERROR:
-      args = [ae.ENTITY_VALIDATION_ERROR, e.errors];
+    case ae.ENTITY_VALIDATION_ERROR:
+      args = [e.type, e.errors];
       break;
     default:
-      args = ['entity-' + e.type, this.spec.type, e.data];
+      args = [e.type, this.spec.type, e.data];
   }
   pn.app.ctx.pub.apply(null, args);
-};
-
-
-/** @enum {string} */
-pn.ui.edit.Edit.EventType = {
-  SAVE: 'save',
-  CANCEL: 'cancel',
-  DELETE: 'delete',
-  CLONE: 'clone',
-  ADD_CHILD: 'add-child',
-  EDIT_CHILD: 'edit-child',
-  VALIDATION_ERROR: 'validation-error'
 };

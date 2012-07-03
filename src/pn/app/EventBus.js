@@ -43,7 +43,8 @@ goog.inherits(pn.app.EventBus, goog.Disposable);
  */
 pn.app.EventBus.prototype.pub = function(topic, args) {
   goog.asserts.assert(topic);
-  goog.asserts.assert(this.pubsub_.getCount(topic) > 0, 'No subscribers found');
+  goog.asserts.assert(this.pubsub_.getCount(topic) > 0,
+      'No subscribers found [' + topic + ']');
 
   var msg = topic;
   if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;

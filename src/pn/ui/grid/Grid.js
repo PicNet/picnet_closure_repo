@@ -1,6 +1,5 @@
 ﻿;
 goog.provide('pn.ui.grid.Grid');
-goog.provide('pn.ui.grid.Grid.EventType');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
@@ -398,8 +397,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick_);
     this.registerDisposable(this.rowOrdering_);
     this.rowOrdering_.init();
-    var ordered = pn.ui.grid.RowOrdering.EventType.ORDERED;
-    this.getHandler().listen(this.rowOrdering_, ordered,
+    this.getHandler().listen(this.rowOrdering_, pn.app.AppEvents.LIST_ORDERED,
         goog.bind(this.publishEvent_, this));
   }
 
@@ -507,7 +505,7 @@ pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
 
   var idx = evData['rows'][0];
   var selected = this.dataView_.getItem(idx);
-  var e = new goog.events.Event(pn.ui.grid.Grid.EventType.ROW_SELECTED, this);
+  var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
   e.selected = selected;
   this.publishEvent_(e);
 };
@@ -525,20 +523,20 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
   }
   var ae = pn.app.AppEvents;
   switch (e.type) {
-    case pn.ui.grid.Grid.EventType.ROW_SELECTED:
+    case ae.ENTITY_SELECT:
       var id = e.selected['ID'];
-      pn.app.ctx.pub(ae.ENTITY_SELECT, this.spec_.type, id);
+      pn.app.ctx.pub(e.type, this.spec_.type, id);
       break;
-    case pn.ui.grid.Grid.EventType.ADD:
-      pn.app.ctx.pub(ae.ENTITY_ADD, this.spec_.type);
+    case ae.ENTITY_ADD:
+      pn.app.ctx.pub(e.type, this.spec_.type);
       break;
-    case pn.ui.grid.Grid.EventType.EXPORT_DATA:
+    case ae.LIST_EXPORT:
       var data = e.target.getGridData();
       var format = e.exportFormat;
-      pn.app.ctx.pub(ae.LIST_EXPORT, this.spec_.type, format, data);
+      pn.app.ctx.pub(e.type, this.spec_.type, format, data);
       break;
-    case pn.ui.grid.RowOrdering.EventType.ORDERED:
-      pn.app.ctx.pub(ae.LIST_ORDERED, this.spec_.type, e.ids);
+    case ae.LIST_ORDERED:
+      pn.app.ctx.pub(e.type, this.spec_.type, e.ids);
       break;
     default: throw new Error('Event: ' + e.type + ' is not supported');
   }
@@ -550,12 +548,4 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
   if (this.slick_) { this.slick_.destroy(); }
-};
-
-
-/** @enum {string} */
-pn.ui.grid.Grid.EventType = {
-  ROW_SELECTED: 'row-selected',
-  ADD: 'add',
-  EXPORT_DATA: 'export-data'
 };

@@ -20,9 +20,9 @@ pn.ui.grid.ExportCommand = function() {
   goog.ui.Component.call(this);
 
   /**
-   * @type {pn.ui.grid.Grid.EventType}
+   * @type {string}
    */
-  this.eventType = pn.ui.grid.Grid.EventType.EXPORT_DATA;
+  this.eventType = pn.app.AppEvents.LIST_EXPORT;
 
   /**
    * @private

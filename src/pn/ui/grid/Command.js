@@ -12,8 +12,7 @@ goog.require('goog.ui.Component');
  * @constructor
  * @extends {goog.ui.Component}
  * @param {string} name The name/caption of this column.
- * @param {pn.ui.grid.Grid.EventType} eventType The event to fire on '
- *    componenet action.
+ * @param {string} eventType The event to fire on the component action.
  * @param {string=} opt_tooltip The optional tooltip for this command.
  */
 pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
@@ -35,7 +34,7 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
   this.tooltip_ = opt_tooltip || name;
 
   /**
-   * @type {pn.ui.grid.Grid.EventType}
+   * @type {string}
    */
   this.eventType = eventType;
 

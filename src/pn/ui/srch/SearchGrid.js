@@ -7,7 +7,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.data.EntityFilter');
 goog.require('pn.ui.grid.Grid');
-goog.require('pn.ui.grid.Grid.EventType');
 goog.require('pn.ui.srch.SearchPanel');
 
 

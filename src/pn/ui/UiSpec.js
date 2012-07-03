@@ -5,13 +5,11 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.style');
 goog.require('pn.ui.edit.Command');
-goog.require('pn.ui.edit.Edit.EventType');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Command');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.ExportCommand');
-goog.require('pn.ui.grid.Grid.EventType');
 goog.require('pn.ui.srch.Config');
 
 

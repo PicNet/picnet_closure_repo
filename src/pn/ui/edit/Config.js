@@ -67,9 +67,9 @@ goog.inherits(pn.ui.edit.Config, goog.Disposable);
  */
 pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
   return [
-    new pn.ui.edit.Command('Save', pn.ui.edit.Edit.EventType.SAVE, true),
-    new pn.ui.edit.Command('Clone', pn.ui.edit.Edit.EventType.CLONE),
+    new pn.ui.edit.Command('Save', pn.app.AppEvents.ENTITY_SAVE, true),
+    new pn.ui.edit.Command('Clone', pn.app.AppEvents.ENTITY_CLONE),
     new pn.ui.edit.DeleteCommand(),
-    new pn.ui.edit.Command('Cancel', pn.ui.edit.Edit.EventType.CANCEL)
+    new pn.ui.edit.Command('Cancel', pn.app.AppEvents.ENTITY_CANCEL)
   ];
 };

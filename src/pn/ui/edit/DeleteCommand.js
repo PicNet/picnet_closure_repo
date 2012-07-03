@@ -8,7 +8,7 @@ goog.provide('pn.ui.edit.DeleteCommand');
  * @extends {pn.ui.edit.Command}
  */
 pn.ui.edit.DeleteCommand = function() {
-  pn.ui.edit.Command.call(this, 'Delete', pn.ui.edit.Edit.EventType.DELETE);
+  pn.ui.edit.Command.call(this, 'Delete', pn.app.AppEvents.ENTITY_DELETE);
 
   this.preclick = function() {
     return window.confirm('Are you sure you want to delete this item?');
