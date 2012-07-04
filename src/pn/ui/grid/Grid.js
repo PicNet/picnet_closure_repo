@@ -436,7 +436,7 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   }
   if (col) {
     this.dataView_.fastSort(col, asc);
-    this.slick_.setSortColumn(col, asc);
+    if (!orderColumn) this.slick_.setSortColumn(col, asc);
   }
 };
 

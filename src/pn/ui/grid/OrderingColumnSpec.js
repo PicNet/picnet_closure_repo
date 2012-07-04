@@ -25,5 +25,6 @@ pn.ui.grid.OrderingColumnSpec = function(id, entitySpec) {
   this.behavior = 'move';
   this.width = 8;
   this.renderer = function() { return ''; };
+  this.sortable = false;
 };
 goog.inherits(pn.ui.grid.OrderingColumnSpec, pn.ui.grid.ColumnSpec);

@@ -78,8 +78,24 @@ pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
 
   /** @type {boolean} */
   this.syncColumnCellResize = true;
+
+  this.init_();
 };
 goog.inherits(pn.ui.grid.Config, goog.Disposable);
+
+
+/** @private */
+pn.ui.grid.Config.prototype.init_ = function() {
+  var hasOrderColumn = !this.readonly && goog.array.findIndex(this.cCtxs,
+      function(cctx) {
+        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
+      }) >= 0;
+  if (hasOrderColumn) {
+    goog.array.forEach(this.cCtxs, function(cctx) {
+      cctx.spec.sortable = false;
+    });
+  }
+};
 
 
 /**
