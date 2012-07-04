@@ -156,7 +156,7 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
     if (ed.getFields) {
       goog.array.forEach(ed.getFields(), function(fctx) {
         if (fctx.id in controls) return;
-        controls[fctx.id] = [ed.getControl(), ed.getParentControl()];
+        controls[fctx.id] = ed.getControl(fctx.id);
       });
     }
     if (ed.getCommandButtons) {

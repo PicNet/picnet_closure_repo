@@ -40,7 +40,7 @@ pn.ui.edit.Interceptor =
 
   /**
    * @private
-   * @type {!Object.<!Array.<!(Element|goog.ui.Component)>>} The controls map
+   * @type {!Object.<!(Element|goog.ui.Component)>} The controls map
    *  for this UI.  The first item is the control for the field.  The second is
    *  the parent.
    */
@@ -77,6 +77,6 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
  * @return {!(Element|goog.ui.Component)} The control for the specified id.
  */
 pn.ui.edit.Interceptor.prototype.getControl = function(id) {
-  goog.asserts.assert(this.controls_[id][0]);
-  return this.controls_[id][0];
+  goog.asserts.assert(this.controls_[id]);
+  return this.controls_[id];
 };

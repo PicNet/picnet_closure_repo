@@ -8,6 +8,3 @@ HI
 
 - Make the authentication model pluggable (Forms/Windows)
 - Make the sync model pluggable (REST / SignalR)
-
-MED
-===

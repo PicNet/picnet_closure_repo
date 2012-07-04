@@ -14,7 +14,7 @@ goog.require('goog.dom');
 pn.ui.edit.EditUtils.isShown = function(control, id) {
   goog.asserts.assert(control, 'control is null - id: ' + id);
 
-  var parent = pn.ui.edit.EditUtils.getFieldContainer_(control, id);
+  var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
   return goog.style.isElementShown(parent);
 };
 
@@ -29,19 +29,18 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
   goog.asserts.assert(control,
       'Could not find a component for field: ' + id);
 
-  var parent = pn.ui.edit.EditUtils.getFieldContainer_(control, id);
+  var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
   goog.style.showElement(parent, visible);
 };
 
 
 /**
- * @private
  * @param {!(Element|goog.ui.Component)} control The element to get the parent
  *    container element for.
  * @param {string} id The id of the field whose parent we need.
  * @return {!Element} The parent container of the speicified field id.
  */
-pn.ui.edit.EditUtils.getFieldContainer_ = function(control, id) {
+pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
   goog.asserts.assert(control, 'control is null - id: ' + id);
 
   var element = control.getElement ? control.getElement() : control;

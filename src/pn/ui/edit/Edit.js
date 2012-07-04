@@ -56,7 +56,7 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!Object.<!Array.<!(Element|goog.ui.Component)>>}
+   * @type {!Object.<!(Element|goog.ui.Component)>}
    */
   this.controls_ = {};
 };
@@ -67,7 +67,7 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
-    var ctl = this.controls_[fctx.id][0];
+    var ctl = this.controls_[fctx.id];
     return fctx.isShown(ctl) &&
         fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
@@ -93,20 +93,9 @@ pn.ui.edit.Edit.prototype.getFields = function() { return this.cfg.fCtxs; };
  *    field id.
  */
 pn.ui.edit.Edit.prototype.getControl = function(id) {
-  var control = this.controls_[id][0];
+  var control = this.controls_[id];
   if (!control) throw new Error('Cound not find the control for id: ' + id);
   return control;
-};
-
-
-/**
- * @param {string} id The id of the field whose control we want.
- * @return {!Element} The component parent for the specified field id.
- */
-pn.ui.edit.Edit.prototype.getParentControl = function(id) {
-  var parent = this.controls_[id][1];
-  if (!parent) throw new Error('Cound not find the parent for id: ' + id);
-  return /** @type {!Element} */ (parent);
 };
 
 
@@ -189,7 +178,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
         }
         this.registerDisposable(input);
         this.registerDisposable(parentComp);
-        this.controls_[fctx.id] = [input, parentComp];
+        this.controls_[fctx.id] = input;
 
         if (!focusSet && input.focus && !fctx.spec.readonly) {
           focusSet = true;
@@ -205,11 +194,10 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.cfg.fCtxs,
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var ctls = this.controls_[fctx.id];
-        if (!ctls) return;
-
-        var parent = ctls[1];
-        if (!parent) return; // Not shown, such as fields not shown on add
+        var ctl = this.controls_[fctx.id];
+        if (!ctl) return;
+        var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.id);
+        if (!parent) return;
 
         if (fctx.isRequired()) {
           goog.dom.classes.add(parent, 'required');
@@ -240,7 +228,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var ctl = this.controls_[fctx.id][0];
+        var ctl = this.controls_[fctx.id];
         if (!fctx.isShown(ctl)) return;
         errors = goog.array.concat(errors, fctx.validate(ctl));
       }, this);
@@ -271,7 +259,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var ctl = this.controls_[fctx.id][0];
+        var ctl = this.controls_[fctx.id];
         var val = fctx.getControlValue(ctl, current);
         if (val !== undefined) current[fctx.spec.dataProperty] = val;
       }, this);
@@ -322,7 +310,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   var fieldSpec = fctx.spec;
   if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
-  var grid = this.controls_[fctx.id][0];
+  var grid = this.controls_[fctx.id];
   var ae = pn.app.AppEvents;
   this.getHandler().listen(grid, ae.ENTITY_ADD, function() {
     var e = new goog.events.Event(pn.app.AppEvents.CHILD_ENTITY_ADD, this);
