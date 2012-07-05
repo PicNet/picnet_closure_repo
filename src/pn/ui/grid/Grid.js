@@ -153,7 +153,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {Object}
    */
-  this.sort_ = null;
+  this.sortState_ = null;
 
   /**
    * @private
@@ -334,18 +334,10 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   if (!hasOrderColumn) {
     // Sorting
     this.slick_.onSort.subscribe(goog.bind(function(e, args) {
-      this.sort_ = {
-        'colid': args['sortCol']['id'],
-        'asc': args['sortAsc']
-      };
-      var fctx = goog.array.find(this.cctxs_, function(fctx1) {
-        return fctx1.id === args['sortCol']['id'];
-      });
-      this.dataView_.sort(function(a, b) {
-        var x = fctx.getCompareableValue(a);
-        var y = fctx.getCompareableValue(b);
-        return (x === y ? 0 : (x > y ? 1 : -1));
-      }, args['sortAsc']);
+      var col = args['sortCol']['id'];
+      var asc = args['sortAsc'];
+      this.sortState_ = { 'colid': col, 'asc': asc };
+      this.sort_(col, asc);
       this.saveGridState_();
     }, this));
   }
@@ -430,9 +422,26 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
     asc = this.cfg_.defaultSortAscending;
   }
   if (col) {
-    this.dataView_.fastSort(col, asc);
     if (!orderColumn) this.slick_.setSortColumn(col, asc);
+    this.sort_(col, asc);
   }
+};
+
+
+/**
+ * @private
+ * @param {string} col The column being sorted.
+ * @param {boolean} asc Wether to sort ascending.
+ */
+pn.ui.grid.Grid.prototype.sort_ = function(col, asc) {
+  var fctx = goog.array.find(this.cctxs_, function(fctx1) {
+    return fctx1.id === col;
+  });
+  this.dataView_.sort(function(a, b) {
+    var x = fctx.getCompareableValue(a);
+    var y = fctx.getCompareableValue(b);
+    return (x === y ? 0 : (x > y ? 1 : -1));
+  }, asc);
 };
 
 
@@ -479,7 +488,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var data = {
     'ids': goog.array.map(columns, function(c) { return c['id']; }),
     'widths': goog.array.map(columns, function(c) { return c['width']; }),
-    'sort': this.sort_
+    'sort': this.sortState_
   };
   if (this.cfg_.persistFilters && this.quickFind_) {
     data['filters'] = this.quickFind_.getFilterStates();
