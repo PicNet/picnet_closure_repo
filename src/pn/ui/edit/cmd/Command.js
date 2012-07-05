@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.ui.edit.Command');
+goog.provide('pn.ui.edit.cmd.Command');
 
 
 
@@ -11,7 +11,7 @@ goog.provide('pn.ui.edit.Command');
  * @param {boolean=} opt_validate Wether to validate the edit details prior
  *    to firing this event.  If not valid then the event will not fire.
  */
-pn.ui.edit.Command = function(name, eventType, opt_validate) {
+pn.ui.edit.cmd.Command = function(name, eventType, opt_validate) {
   goog.asserts.assert(name);
   goog.asserts.assert(eventType);
 
@@ -23,6 +23,13 @@ pn.ui.edit.Command = function(name, eventType, opt_validate) {
 
   /** @type {boolean} */
   this.validate = opt_validate === true;
+
+  /**
+   * @type {string} The keyboard shortcut code for this command.  See:
+   * http://closure-library.googlecode.com/svn/docs/class_goog_ui_KeyboardShortcutHandler.html
+   * for full details on how to define shortcuts.
+   */
+  this.shortcut = '';
 
   /**
    * @type {null|function(Object=):boolean} Preclick function that takes the

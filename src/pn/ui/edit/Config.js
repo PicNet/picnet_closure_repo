@@ -1,8 +1,11 @@
 ﻿;
 goog.provide('pn.ui.edit.Config');
 
-goog.require('pn.ui.edit.Command');
-goog.require('pn.ui.edit.DeleteCommand');
+goog.require('pn.ui.edit.cmd.CancelCommand');
+goog.require('pn.ui.edit.cmd.CloneCommand');
+goog.require('pn.ui.edit.cmd.Command');
+goog.require('pn.ui.edit.cmd.DeleteCommand');
+goog.require('pn.ui.edit.cmd.SaveCommand');
 
 
 
@@ -12,9 +15,9 @@ goog.require('pn.ui.edit.DeleteCommand');
  * @param {!Array.<pn.ui.edit.FieldCtx>} fCtxs An array of field meta
  *    specifications that describe how each of the display fields should be
  *    displayed, captioned and validated.
- * @param {Array.<pn.ui.edit.Command>=} opt_commands An optional commands array
- *    which can also be empty. If not defined then a default set of commands
- *    are used.
+ * @param {Array.<pn.ui.edit.cmd.Command>=} opt_commands An optional commands
+ *    array which can also be empty. If not defined then a default set of
+ *    commands are used.
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
  * @param {function(new:pn.ui.edit.Interceptor,!pn.ui.edit.CommandsComponent,
@@ -31,7 +34,7 @@ pn.ui.edit.Config =
   /** @type {!Array.<pn.ui.edit.FieldCtx>} */
   this.fCtxs = fCtxs;
 
-  /** @type {!Array.<pn.ui.edit.Command>} */
+  /** @type {!Array.<pn.ui.edit.cmd.Command>} */
   this.commands = opt_commands || this.getDefaultCommands_();
   goog.array.forEach(this.commands, this.registerDisposable, this);
 
@@ -62,14 +65,14 @@ goog.inherits(pn.ui.edit.Config, goog.Disposable);
 
 /**
  * @private
- * @return {!Array.<pn.ui.edit.Command>} The default commands used when no
+ * @return {!Array.<pn.ui.edit.cmd.Command>} The default commands used when no
  *    opt_commands are passed into the constructor.
  */
 pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
   return [
-    new pn.ui.edit.Command('Save', pn.app.AppEvents.ENTITY_SAVE, true),
-    new pn.ui.edit.Command('Clone', pn.app.AppEvents.ENTITY_CLONE),
-    new pn.ui.edit.DeleteCommand(),
-    new pn.ui.edit.Command('Cancel', pn.app.AppEvents.ENTITY_CANCEL)
+    new pn.ui.edit.cmd.SaveCommand(),
+    new pn.ui.edit.cmd.CloneCommand(),
+    new pn.ui.edit.cmd.DeleteCommand(),
+    new pn.ui.edit.cmd.CancelCommand()
   ];
 };

@@ -2,7 +2,7 @@ goog.provide('pn.demo.app1.UserSpec');
 
 goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.grid.Config');
-goog.require('pn.ui.edit.Command');
+goog.require('pn.ui.edit.cmd.Command');
 
 /** 
  * @constructor
@@ -34,9 +34,9 @@ pn.demo.app1.UserSpec.prototype.getEditConfig = function(entity, cache) {
     this.createField('Phone', cache),
     this.createField('DateOfBirth', cache)
   ];
-  var save = new pn.ui.edit.Command('Save', pn.app.AppEvents.ENTITY_SAVE, true);
+  var save = new pn.ui.edit.cmd.SaveCommand();
   save.click = goog.bind(this.save_, this);
-  var back = new pn.ui.edit.Command('Back', pn.app.AppEvents.ENTITY_CANCEL);
+  var back = new pn.ui.edit.cmd.Command('Back', pn.app.AppEvents.ENTITY_CANCEL);
   var commands = [ save, back ];
   return new pn.ui.edit.Config(fields, commands);
 };

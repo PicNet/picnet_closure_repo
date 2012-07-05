@@ -6,12 +6,14 @@ goog.require('goog.events.Event');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
-goog.require('pn.ui.edit.Command');
+goog.require('goog.ui.KeyboardShortcutHandler');
+goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.FieldBuilder');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.FieldValidator');
+goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
@@ -61,7 +63,14 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.edit.Command>}
+   * @type {!goog.ui.KeyboardShortcutHandler}
+   */
+  this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
+  this.registerDisposable(this.shortcuts_);
+
+  /**
+   * @private
+   * @type {!Array.<pn.ui.edit.cmd.Command>}
    */
   this.commands_ = goog.array.filter(this.cfg.commands, function(c) {
     return !pn.data.EntityUtils.isNew(entity) || c.showOnNew;
@@ -98,7 +107,7 @@ pn.ui.edit.CommandsComponent.prototype.updateRequiredClasses =
 
 /**
  * @protected
- * @param {pn.ui.edit.Command} command The command to fire.
+ * @param {pn.ui.edit.cmd.Command} command The command to fire.
  * @param {Object} data The current form data.
  */
 pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
@@ -151,10 +160,10 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
   goog.array.forEach(this.commands_, function(c) {
     var className = c.name.toLowerCase();
+    var tooltip = this.getCommandTooltip_(c);
     var button = goog.dom.createDom('button',
-        {'class': 'goog-button ' + className, 'id': c.name, 'title': c.name});
+        {'class': 'goog-button ' + className, 'id': c.name, 'title': tooltip});
     goog.dom.appendChild(parent, button);
-
     this.registerDisposable(button);
     this.commandButtons_[c.name] = button;
   }, this);
@@ -166,12 +175,60 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.enterDocument.call(this);
 
   goog.array.forEach(this.commands_, this.doCommandEvent_, this);
+
+  var shortcut = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
+  this.getHandler().listen(this.shortcuts_, shortcut, this.handleShortcut_);
+  goog.array.forEach(this.commands_, this.registerShortcut_, this);
 };
 
 
 /**
  * @private
- * @param {pn.ui.edit.Command} command The command to attach events to.
+ * @param {!pn.ui.edit.cmd.Command} cmd The command to get the tooltip for.
+ * @return {string} The tooltip for the specified command.
+ */
+pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
+  if (!cmd.shortcut) return cmd.name;
+  var shortcuts = goog.array.map(cmd.shortcut.split(','), function(sc) {
+    var components = goog.array.map(sc.split('+'), function(comp) {
+      return comp.toUpperCase();
+    });
+    return components.join(' + ');
+  });
+  return cmd.name + ' [' + shortcuts.join('] or [') + ']';
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.edit.cmd.Command} cmd The command to register shortcuts for.
+ */
+pn.ui.edit.CommandsComponent.prototype.registerShortcut_ = function(cmd) {
+  if (!cmd.shortcut) return;
+
+  var shortcuts = cmd.shortcut.split(',');
+  goog.array.forEach(shortcuts, function(sc) {
+    this.shortcuts_.registerShortcut(cmd.name, sc);
+  }, this);
+};
+
+
+/**
+ * @private
+ * @param {!goog.events.Event} e The event with the shortcut clicked.
+ */
+pn.ui.edit.CommandsComponent.prototype.handleShortcut_ = function(e) {
+  var command = /** @type {pn.ui.edit.cmd.Command} */ (goog.array.find(
+      this.commands_, function(c) { return c.name === e.identifier; }));
+
+  if (!this.shouldFireCommandEvent(command)) { return; }
+  this.fireCommandEvent(command, this.getCurrentFormData());
+};
+
+
+/**
+ * @private
+ * @param {pn.ui.edit.cmd.Command} command The command to attach events to.
  */
 pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(command) {
   var button = this.commandButtons_[command.name];
@@ -184,7 +241,7 @@ pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(command) {
 
 /**
  * @protected
- * @param {pn.ui.edit.Command} command The command to determine
+ * @param {pn.ui.edit.cmd.Command} command The command to determine
  *    wether to fire or not.
  * @return {boolean} Whether to fire Command Event.
  */
