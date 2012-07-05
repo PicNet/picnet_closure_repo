@@ -1,8 +1,6 @@
 
 HI
 ==
-- Sort not remembered
-
 - Edit.js and Grid.js need to use a better MVC style design. Same goes for all
   controls.
 - Model binding in Edit.js
