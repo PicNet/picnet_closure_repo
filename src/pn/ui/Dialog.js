@@ -19,11 +19,10 @@ goog.inherits(pn.ui.Dialog, goog.ui.Dialog);
 
 /** @override */
 pn.ui.Dialog.prototype.enterDocument = function() {
-  goog.ui.Dialog.superClass_.enterDocument.call(this);
+  pn.ui.Dialog.superClass_.enterDocument.call(this);
 
-  this.getHandler().listen(this,
-      [goog.ui.PopupBase.EventType.SHOW, goog.ui.PopupBase.EventType.HIDE],
-      this.onShowHide_);
+  var et = goog.ui.PopupBase.EventType;
+  this.getHandler().listen(this, [et.SHOW, et.HIDE], this.onShowHide_);
 };
 
 

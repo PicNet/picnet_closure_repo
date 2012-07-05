@@ -25,13 +25,11 @@ pn.ui.KeyShortcutMgr = function() {
    * @type {!goog.events.EventHandler}
    */
   this.eh_ = new goog.events.EventHandler(this);
-  var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
-  this.eh_.listen(this.shortcuts_, eventType, this.handleShortcut_);
   this.registerDisposable(this.eh_);
 
   /**
    * @private
-   * @type {!Object.<function():undefined>}
+   * @type {!Object.<function(string):undefined>}
    */
   this.callbacks_ = {};
 
@@ -40,6 +38,8 @@ pn.ui.KeyShortcutMgr = function() {
    * @type {!Object.<!Array.<string>>}
    */
   this.idShortcuts_ = {};
+
+  this.setAllEnabled(true);
 };
 goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
 
@@ -49,8 +49,8 @@ goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
  *    and can only be registered once.
  * @param {string} shortcuts A comma sepearated list of key sequences to
  *    register against the given ID.
- * @param {function():undefined} callback The callback to call when the given
- *    sequence is fired.
+ * @param {function(string):undefined} callback The callback to call when the
+ *    given sequence is fired.
  */
 pn.ui.KeyShortcutMgr.prototype.register = function(id, shortcuts, callback) {
   if (this.callbacks_[id])
@@ -91,7 +91,9 @@ pn.ui.KeyShortcutMgr.prototype.setEnabled = function(id, enable) {
 
 /** @param {boolean} enable Wether to enable or disable all shortcuts. */
 pn.ui.KeyShortcutMgr.prototype.setAllEnabled = function(enable) {
-  goog.object.forEach(this.callbacks_, function(cb) { cb.disabled = !enable; });
+  var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
+  var func = goog.bind(enable ? this.eh_.listen : this.eh_.unlisten, this.eh_);
+  func(this.shortcuts_, eventType, this.handleShortcut_);
 };
 
 
@@ -105,7 +107,7 @@ pn.ui.KeyShortcutMgr.prototype.handleShortcut_ = function(event) {
   var id = event.identifier;
   var callback = this.callbacks_[id];
   if (!callback || callback.disabled) return;
-  callback();
+  callback(id);
 };
 
 

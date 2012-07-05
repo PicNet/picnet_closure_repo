@@ -63,13 +63,6 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!goog.ui.KeyboardShortcutHandler}
-   */
-  this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
-  this.registerDisposable(this.shortcuts_);
-
-  /**
-   * @private
    * @type {!Array.<pn.ui.edit.cmd.Command>}
    */
   this.commands_ = goog.array.filter(this.cfg.commands, function(c) {
@@ -176,9 +169,11 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 
   goog.array.forEach(this.commands_, this.doCommandEvent_, this);
 
-  var shortcut = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
-  goog.array.forEach(this.commands_, this.registerShortcut_, this);
-  this.getHandler().listen(this.shortcuts_, shortcut, this.handleShortcut_);
+  goog.array.forEach(this.commands_, function(cmd) {
+    if (!cmd.shortcut) return;
+    pn.app.ctx.keys.register(
+        cmd.name, cmd.shortcut, goog.bind(this.handleShortcut_, this));
+  }, this);
 };
 
 
@@ -201,25 +196,11 @@ pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
 
 /**
  * @private
- * @param {!pn.ui.edit.cmd.Command} cmd The command to register shortcuts for.
+ * @param {string} id The id of the shortcut command fired.
  */
-pn.ui.edit.CommandsComponent.prototype.registerShortcut_ = function(cmd) {
-  if (!cmd.shortcut) return;
-
-  var shortcuts = cmd.shortcut.split(',');
-  goog.array.forEach(shortcuts, function(sc) {
-    this.shortcuts_.registerShortcut(cmd.name, sc);
-  }, this);
-};
-
-
-/**
- * @private
- * @param {!goog.events.Event} e The event with the shortcut clicked.
- */
-pn.ui.edit.CommandsComponent.prototype.handleShortcut_ = function(e) {
+pn.ui.edit.CommandsComponent.prototype.handleShortcut_ = function(id) {
   var command = /** @type {pn.ui.edit.cmd.Command} */ (goog.array.find(
-      this.commands_, function(c) { return c.name === e.identifier; }));
+      this.commands_, function(c) { return c.name === id; }));
 
   if (!this.shouldFireCommandEvent(command)) { return; }
   this.fireCommandEvent(command, this.getCurrentFormData());
@@ -251,4 +232,14 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
     return false;
   } if (command.validate && !this.isValidForm()) { return false; }
   return true;
+};
+
+
+/** @override */
+pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
+  pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
+
+  goog.array.forEach(this.commands_, function(cmd) {
+    if (cmd.shortcut) pn.app.ctx.keys.unregister(cmd.name);
+  }, this);
 };

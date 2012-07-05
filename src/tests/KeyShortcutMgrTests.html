@@ -31,7 +31,7 @@ var tearDown = function() {
 };
 
 var test_register_shortcut_receives_callback_on_strokes = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a', function(id) { assertEquals('id1', id); gotcount++; });
   fire(KeyCodes.B, {shiftKey: true});  
   assertEquals(0, gotcount);
   fire(KeyCodes.A, {shiftKey: true});
@@ -40,10 +40,13 @@ var test_register_shortcut_receives_callback_on_strokes = function() {
   assertEquals(2, gotcount);
 };
 
-var test_register_multiple_only_correct_shortcut_gets_called = function() {
+var test_register_multiple_only_correct_shortcut_gets_called = function() {  
+  register('id1', 'shift+a');
   var gotcountb = 0;
-  keys.register('id1', 'shift+a', function() { gotcount++; });
-  keys.register('id2', 'shift+b', function() { gotcountb++; });
+  keys.register('id2', 'shift+b', function(id) { 
+    assertEquals('id2', id);
+    gotcountb++; 
+  });
   fire(KeyCodes.A, {ctrlKey: true});  
   assertEquals(0, gotcount);
   assertEquals(0, gotcountb);
@@ -68,7 +71,7 @@ var test_register_multiple_only_correct_shortcut_gets_called = function() {
 };
 
 var test_unregister_shortcut_does_not_receives_callback_on_strokes = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   fire(KeyCodes.A, {shiftKey: true});
   assertEquals(1, gotcount);
   keys.unregister('id1');
@@ -77,7 +80,7 @@ var test_unregister_shortcut_does_not_receives_callback_on_strokes = function() 
 };
 
 var test_unregister_removes_all_references = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   checkReferences(1);
 
   keys.unregister('id1');
@@ -85,17 +88,17 @@ var test_unregister_removes_all_references = function() {
 };
 
 var test_multiple_regtisters_to_one_id_not_allowed = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   
   try { 
-    keys.register('id1', 'ctrl+a', function() { gotcount++; }); 
+    register('id1', 'ctrl+a'); 
     assertFail('Should fail.');
   }
   catch(ex) {}
 };
 
 var test_register_multiple_shortcuts_to_one_id = function() {
-  keys.register('id1', 'shift+a,ctrl+a', function() { gotcount++; });
+  register('id1', 'shift+a,ctrl+a');
 
   fire(KeyCodes.A, {shiftKey: true});
   assertEquals(1, gotcount);
@@ -105,13 +108,13 @@ var test_register_multiple_shortcuts_to_one_id = function() {
 };
 
 var test_unregister_multiple_shortcuts_to_one_id = function() {
-  keys.register('id1', 'shift+a,ctrl+a', function() { gotcount++; });
+  register('id1', 'shift+a,ctrl+a');
   keys.unregister('id1');
   checkReferences(0);
 };
 
 var test_enable_already_enabled_has_no_side_effects = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   fire(KeyCodes.A, {shiftKey: true});
   assertEquals(1, gotcount);
 
@@ -121,7 +124,7 @@ var test_enable_already_enabled_has_no_side_effects = function() {
 };
 
 var test_disable_stops_callbacks = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   fire(KeyCodes.A, {shiftKey: true});
   assertEquals(1, gotcount);
 
@@ -131,7 +134,7 @@ var test_disable_stops_callbacks = function() {
 };
 
 var test_reenable_restarts_callbacks = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
+  register('id1', 'shift+a');
   fire(KeyCodes.A, {shiftKey: true});
   assertEquals(1, gotcount);
 
@@ -145,8 +148,8 @@ var test_reenable_restarts_callbacks = function() {
 };
 
 var test_disable_all_stops_all_callbacks = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
-  keys.register('id2', 'shift+b', function() { gotcount++; });
+  register('id1', 'shift+a');
+  register('id2', 'shift+b');
   fire(KeyCodes.A, {shiftKey: true});
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount);
@@ -158,8 +161,8 @@ var test_disable_all_stops_all_callbacks = function() {
 };
 
 var test_reenable_all_restarts_all_callbacks = function() {
-  keys.register('id1', 'shift+a', function() { gotcount++; });
-  keys.register('id2', 'shift+b', function() { gotcount++; });
+  register('id1', 'shift+a');
+  register('id2', 'shift+b');
   fire(KeyCodes.A, {shiftKey: true});
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount);
@@ -176,8 +179,8 @@ var test_reenable_all_restarts_all_callbacks = function() {
 };
 
 var test_dispose_removes_all_callbacks_and_references = function() {
-  keys.register('id1', 'shift+a,ctrl+a,alt+a', function() { gotcount++; });
-  keys.register('id2', 'shift+b,ctrl+b,alt+b', function() { gotcount++; });
+  register('id1', 'shift+a,ctrl+a,alt+a');
+  register('id2', 'shift+b,ctrl+b,alt+b');
   keys.dispose();
   checkReferences(0);
 };
@@ -190,6 +193,13 @@ function checkReferences(expectedCount) {
   assertEquals(expectedCount, shortcutsCount);
   assertEquals(expectedCount, goog.object.getKeys(keys.callbacks_).length);
   assertEquals(expectedCount, goog.object.getKeys(keys.idShortcuts_).length);
+}
+
+function register(id, shortcuts) {
+  keys.register(id, shortcuts, function(id2) { 
+    assertEquals(id, id2); 
+    gotcount++; 
+  });
 }
 
 function fire(keycode, opt_opts) {
