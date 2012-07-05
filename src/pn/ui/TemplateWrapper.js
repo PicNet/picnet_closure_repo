@@ -2,6 +2,7 @@
 goog.provide('pn.ui.TemplateWrapper');
 
 goog.require('goog.ui.Component');
+goog.require('pn.dom');
 goog.require('pn.ui.IDirtyAware');
 
 
@@ -71,9 +72,7 @@ pn.ui.TemplateWrapper.prototype.resetDirty = function() {
 pn.ui.TemplateWrapper.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
-  var node = /** @type {!Element} */ (
-      goog.dom.htmlToDocumentFragment(this.html_));
-  goog.dom.appendChild(element, node);
+  pn.dom.addHtml(element, this.html_);
   var parent = pn.dom.getElement(this.idOfParent_);
   this.component_.decorate(parent);
 };

@@ -36,3 +36,31 @@ pn.dom.getComputedPixelWidth = function(e) {
   }
   return parseInt(w, 10);
 };
+
+
+/**
+ * Adds the speicified html string to the DOM element (parent).
+ *
+ * @param {Element} parent The parent to add the given html into.
+ * @param {string} html The html string to add to the speicified parent.
+ * @return {!Element} The created node from the specified HTML.
+ */
+pn.dom.addHtml = function(parent, html) {
+  goog.asserts.assert(parent);
+  goog.asserts.assert(goog.isString(html));
+
+  var el = pn.dom.htmlToEl(html);
+  goog.dom.appendChild(parent, el);
+  return /** @type {!Element} */ (el);
+};
+
+
+/**
+ * @param {string} html The html to convert to an element.
+ * @return {!Element} The generated document fragment element.
+ */
+pn.dom.htmlToEl = function(html) {
+  goog.asserts.assert(goog.isString(html));
+
+  return /** @type {!Element} */ (goog.dom.htmlToDocumentFragment(html));
+};

@@ -1,0 +1,40 @@
+﻿
+{namespace pn.ui.soy}
+
+/**
+ * The Edit.js control.
+ * @param specId The id of the UiSpec being displayed
+ * @param title The title (if any) to display in the page
+ */
+{template .edit}
+<div class='details-container {$specId}'>
+  {if $title}
+    <div class='edit-head'>
+      <div class='edit-title'>{$title}</div>
+      <div class='commands-container'></div>
+    </div>
+  {else}
+    <div class='commands-container'></div>
+  {/if}   
+</div>
+{/template}
+
+
+/**
+ * The Grid.js control. 
+ * @param specId The id of the UiSpec being displayed
+ * @param width The numerical width (in pixels) for the grid.
+ * @param height The numerical height (in pixels) for the grid.
+ * @param hasData Wether the grid has any data.
+ */
+{template .grid}
+<div class='grid-parent {$specId}'>  
+  {if $hasData}
+    <div class='grid-no-data' style='display:none'>No matches found.</div>
+    <div class='grid-container' style='width:{$width}px; height:{$height}px;'>
+    </div>
+  {else}
+    <div class='grid-no-data'>No data found.</div>
+  {/if}  
+</div>
+{/template}

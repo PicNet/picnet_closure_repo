@@ -20,6 +20,7 @@ goog.require('pn.ui.edit.Interceptor');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
+goog.require('pn.ui.soy');
 
 
 
@@ -67,7 +68,7 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
-    var ctl = this.controls_[fctx.id];
+    var ctl = this.getControl(fctx.id);
     return fctx.isShown(ctl) &&
         fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
@@ -84,7 +85,9 @@ pn.ui.edit.Edit.prototype.resetDirty = function() {
 
 
 /** @return {!Array.<!pn.ui.edit.FieldCtx>} All fields. */
-pn.ui.edit.Edit.prototype.getFields = function() { return this.cfg.fCtxs; };
+pn.ui.edit.Edit.prototype.getFieldContexs = function() {
+  return this.cfg.fCtxs;
+};
 
 
 /**
@@ -109,24 +112,17 @@ pn.ui.edit.Edit.prototype.createDom = function() {
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
-  var div = goog.dom.createDom('div', 'details-container ' + this.spec.type);
-  goog.dom.appendChild(element, div);
-  if (this.cfg.titleStrategy) {
-    var headerDiv = goog.dom.createDom('div', 'edit-head');
-    var title = this.cfg.titleStrategy(this.spec, this.entity, this.cache);
-    var titleDiv = goog.dom.createDom('div', 'edit-title');
-    titleDiv.innerHTML = title;
-    goog.dom.appendChild(headerDiv, titleDiv);
-    goog.dom.appendChild(div, headerDiv);
-    pn.ui.edit.Edit.superClass_.decorateInternal.call(this, headerDiv);
-  } else {
-    pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
-  }
-  if (this.cfg.template) {
-    var html = this.cfg.template(this.entity);
-    var templateDiv = goog.dom.htmlToDocumentFragment(html);
-    goog.dom.appendChild(div, templateDiv);
-  }
+  var title = this.cfg.titleStrategy ?
+      this.cfg.titleStrategy(this.spec, this.entity, this.cache) : '';
+
+  var div = pn.dom.addHtml(element,
+      pn.ui.soy.edit({ specId: this.spec.id, title: title }));
+
+  pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
+
+  var template = this.cfg.template;
+  if (template) { pn.dom.addHtml(div, template(this.entity)); }
+
   this.decorateFields_(div);
   this.updateRequiredClasses();
 };
@@ -228,7 +224,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var ctl = this.controls_[fctx.id];
+        var ctl = this.getControl(fctx.id);
         if (!fctx.isShown(ctl)) return;
         errors = goog.array.concat(errors, fctx.validate(ctl));
       }, this);
@@ -259,7 +255,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
   goog.array.forEach(this.getEditableFields_(),
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
-        var ctl = this.controls_[fctx.id];
+        var ctl = this.getControl(fctx.id);
         var val = fctx.getControlValue(ctl, current);
         if (val !== undefined) current[fctx.spec.dataProperty] = val;
       }, this);
@@ -310,7 +306,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   var fieldSpec = fctx.spec;
   if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
-  var grid = this.controls_[fctx.id];
+  var grid = this.getControl(fctx.id);
   var ae = pn.app.AppEvents;
   this.getHandler().listen(grid, ae.ENTITY_ADD, function() {
     var e = new goog.events.Event(pn.app.AppEvents.CHILD_ENTITY_ADD, this);

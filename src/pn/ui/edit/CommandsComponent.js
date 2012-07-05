@@ -135,10 +135,11 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
   goog.asserts.assert(parent);
   if (!this.commands_.length) return;
 
-  var div = goog.dom.getElementsByClass(className)[0] ||
-      goog.dom.createDom('div', className);
-  goog.dom.appendChild(parent, div);
-
+  var div = goog.dom.getElementsByClass(className)[0];
+  if (!div) {
+    div = goog.dom.createDom('div', className);
+    goog.dom.appendChild(parent, div);
+  }
   this.decorateCommands_(div);
 };
 

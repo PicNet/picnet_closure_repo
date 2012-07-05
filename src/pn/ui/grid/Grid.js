@@ -15,6 +15,7 @@ goog.require('pn.ui.grid.DataView');
 goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
+goog.require('pn.ui.soy');
 
 
 
@@ -199,21 +200,18 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     }, this);
   }
 
-  var height = 80 + Math.min(550, this.list_.length * 25) + 'px;';
+  var height = 80 + Math.min(550, this.list_.length * 25);
   var width = $(element).width();
-  var gridContainer;
-  var parent = goog.dom.createDom('div', 'grid-parent ' + this.spec_.type,
-      this.noData_ = goog.dom.createDom('div', {
-        'class': 'grid-no-data',
-        'style': 'display:none'
-      }, 'No matches found.'),
-      gridContainer = goog.dom.createDom('div', {
-        'class': 'grid-container',
-        'style': 'width:' + width + 'px;height:' + height
-      })
-      );
-  goog.dom.appendChild(element, parent);
   var hasData = this.list_.length > 0;
+  var parent = pn.dom.addHtml(element,
+      pn.ui.soy.grid({
+        specId: this.spec_.id,
+        width: width,
+        height: height,
+        hasData: hasData}));
+  this.noData_ = goog.dom.getElementByClass('grid-no-data', parent);
+  var gridContainer = goog.dom.getElementByClass('grid-container', parent);
+
 
   if (hasData) {
     this.dataView_ = new pn.ui.grid.DataView();
@@ -229,9 +227,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       goog.dom.appendChild(element, this.totalsLegend_);
     }
   }
-
-  goog.style.showElement(this.noData_, !hasData);
-  goog.style.showElement(gridContainer, hasData);
 };
 
 

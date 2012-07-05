@@ -52,7 +52,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
 
   /**
    * @protected
-   * @type {!Array.<!pn.ui.edit.CommandsComponent>}
+   * @type {!Array.<!pn.ui.edit.Edit>}
    */
   this.edits = [];
 
@@ -153,15 +153,11 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   var commands = this.getCommandButtons();
 
   goog.array.forEach(this.edits, function(ed) {
-    if (ed.getFields) {
-      goog.array.forEach(ed.getFields(), function(fctx) {
-        if (fctx.id in controls) return;
-        controls[fctx.id] = ed.getControl(fctx.id);
-      });
-    }
-    if (ed.getCommandButtons) {
-      pn.object.uniqueExtend(commands, ed.getCommandButtons());
-    }
+    goog.array.forEach(ed.getFieldContexs(), function(fctx) {
+      if (fctx.id in controls) return;
+      controls[fctx.id] = ed.getControl(fctx.id);
+    });
+    pn.object.uniqueExtend(commands, ed.getCommandButtons());
   }, this);
 
   goog.object.forEach(this.edits, function(edit) {
