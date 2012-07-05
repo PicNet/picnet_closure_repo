@@ -13,6 +13,7 @@ goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
+goog.require('pn.ui.KeyShortcutMgr');
 
 goog.provide('pn.app.BaseApp');
 
@@ -88,7 +89,6 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
-
   /** @type {!pn.data.BufferedServerSource} */
   this.data = new pn.data.BufferedServerSource(this.cfg.memCacheExpireMins);
   this.registerDisposable(this.data);
@@ -96,6 +96,10 @@ pn.app.BaseApp = function(opt_cfg) {
   /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));
   this.registerDisposable(this.loading);
+
+  /** @type {!pn.ui.KeyShortcutMgr} */
+  this.keys = new pn.ui.KeyShortcutMgr();
+  this.registerDisposable(this.keys);
 
   /**
    * @private

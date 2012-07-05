@@ -87,7 +87,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(
       this.spec_.id, this.fctx.cache, this.getNewEntity());
-
+  
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   this.getHandler().listenOnce(this.dialog_, eventType, this.aofAdded_);
   this.dialog_.show();

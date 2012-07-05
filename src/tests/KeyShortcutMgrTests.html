@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('goog.testing.events');
+
+goog.require('pn.ui.KeyShortcutMgr');
+
+var keys;
+var setUp = function() {
+  keys = new KeyShortcutMgr();
+};
+
+var test_register_shortcut_receives_callback_on_strokes = function() {
+  var gotcount = 0;
+  keys.register('id1', 'shift+a', function() {
+    gotcount++;
+  });
+  fire('shift+b');
+  assertEquals(0, gotcount);
+  fire('shift+a');
+  assertEquals(1, gotcount);
+  fire('shift+A');
+  assertEquals(2, gotcount);
+};
+
+var test_register_multiple_only_correct_shortcut_gets_called = function() {};
+
+var test_unregister_shortcut_does_not_receives_callback_on_strokes = function() {};
+
+var test_unregister_removes_all_references = function() {};
+
+var test_enable_already_enabled_has_no_side_effects = function() {};
+
+var test_disable_stops_callbacks = function() {};
+
+var test_reenable_restarts_callbacks = function() {};
+
+function fire(keycode) {
+  return goog.testing.events.fireKeySequence(document, keycode);
+}
+    </script>    
+  </body>
+</html>
+
