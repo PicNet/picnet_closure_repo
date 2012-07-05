@@ -9,11 +9,11 @@ goog.require('pn.data.BufferedServerSource');
 goog.require('pn.data.MemCache');
 goog.require('pn.log');
 goog.require('pn.schema.Schema');
+goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
-goog.require('pn.ui.KeyShortcutMgr');
 
 goog.provide('pn.app.BaseApp');
 

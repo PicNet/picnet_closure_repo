@@ -1,8 +1,10 @@
-﻿
+﻿;
 goog.provide('pn.ui.KeyShortcutMgr');
 
-goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('goog.events.EventHandler');
+goog.require('goog.ui.KeyboardShortcutHandler');
+
+
 
 /**
  * @constructor
@@ -11,35 +13,36 @@ goog.require('goog.events.EventHandler');
 pn.ui.KeyShortcutMgr = function() {
   goog.Disposable.call(this);
 
-  /** 
+  /**
    * @private
-   * @type {!goog.ui.KeyboardShortcutHandler} 
+   * @type {!goog.ui.KeyboardShortcutHandler}
    */
   this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
   this.registerDisposable(this.shortcuts_);
 
-  /** 
+  /**
    * @private
-   * @type {!goog.events.EventHandler} 
+   * @type {!goog.events.EventHandler}
    */
   this.eh_ = new goog.events.EventHandler(this);
-  var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;  
-  this.eh_.listen(this.shortcuts_, eventType, this.handleShortcut_);
   this.registerDisposable(this.eh_);
 
   /**
    * @private
    * @type {!Object.<function():undefined>}
    */
-  this.callbacks_ = {};  
+  this.callbacks_ = {};
 
   /**
    * @private
    * @type {!Object.<!Array.<string>>}
    */
-  this.idShortcuts_ = {};  
+  this.idShortcuts_ = {};
+
+  this.setAllEnabled(true);
 };
 goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
+
 
 /**
  * @param {string} id The ID of the shortcut to register.  This ID is unique
@@ -50,16 +53,17 @@ goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
  *    sequence is fired.
  */
 pn.ui.KeyShortcutMgr.prototype.register = function(id, shortcuts, callback) {
-  if (this.callbacks_[id]) 
+  if (this.callbacks_[id])
     throw new Error('The specified id: ' + id + ' is already registered.');
   this.callbacks_[id] = callback;
   this.idShortcuts_[id] = [];
 
   goog.array.forEach(shortcuts.split(','), function(sc) {
-    this.shortcuts_.registerShortcut(id, sc);    
+    this.shortcuts_.registerShortcut(id, sc);
     this.idShortcuts_[id].push(sc);
-  }, this);  
+  }, this);
 };
+
 
 /** @param {string} id The ID of the shortcut to deregister. */
 pn.ui.KeyShortcutMgr.prototype.unregister = function(id) {
@@ -73,6 +77,7 @@ pn.ui.KeyShortcutMgr.prototype.unregister = function(id) {
   delete this.idShortcuts_[id];
 };
 
+
 /**
  * @param {string} id The ID of the shortcut to enable/disable.
  * @param {boolean} enable Wether to enable or disable the ID.
@@ -83,15 +88,19 @@ pn.ui.KeyShortcutMgr.prototype.setEnabled = function(id, enable) {
   this.callbacks_[id].disabled = !enable;
 };
 
+
 /** @param {boolean} enable Wether to enable or disable all shortcuts. */
 pn.ui.KeyShortcutMgr.prototype.setAllEnabled = function(enable) {
-  goog.object.forEach(this.callbacks_, function(cb) { cb.disabled = !enable; });  
+  var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
+  var func = goog.bind(enable ? this.eh_.listen : this.eh_.unlisten, this.eh_);
+  func(this.shortcuts_, eventType, this.handleShortcut_);
 };
+
 
 /**
  * @private
- * @param {!goog.events.Event} event The event fired by the 
- *    goog.ui.KeyboardShortcutHandler containing the ID (indentifier) of the 
+ * @param {!goog.events.Event} event The event fired by the
+ *    goog.ui.KeyboardShortcutHandler containing the ID (indentifier) of the
  *    registered shortcut pressed.
  */
 pn.ui.KeyShortcutMgr.prototype.handleShortcut_ = function(event) {
@@ -100,6 +109,7 @@ pn.ui.KeyShortcutMgr.prototype.handleShortcut_ = function(event) {
   if (!callback || callback.disabled) return;
   callback();
 };
+
 
 /** @override */
 pn.ui.KeyShortcutMgr.prototype.disposeInternal = function() {

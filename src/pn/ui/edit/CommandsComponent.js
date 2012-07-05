@@ -176,7 +176,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 
   goog.array.forEach(this.commands_, this.doCommandEvent_, this);
 
-  var shortcut = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;  
+  var shortcut = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
   goog.array.forEach(this.commands_, this.registerShortcut_, this);
   this.getHandler().listen(this.shortcuts_, shortcut, this.handleShortcut_);
 };
