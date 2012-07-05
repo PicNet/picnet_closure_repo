@@ -15,9 +15,17 @@ goog.require('pn.ui.edit.Edit');
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.
  * @param {!Object.<!Array.<!Object>>} cache The current context cache.
+ * @param {!Object} entity The entity being created.  Can have some prefilled
+ *    values.
  */
-pn.ui.edit.AddOnFlyDialog = function(specId, cache) {
+pn.ui.edit.AddOnFlyDialog = function(specId, cache, entity) {
   goog.events.EventTarget.call(this);
+
+  /**
+   * @private
+   * @type {!Object}
+   */
+  this.entity_ = entity;
 
   /**
    * @private
@@ -47,7 +55,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
 
   var el = dialog.getContentElement();
-  var edit = new pn.ui.edit.Edit(spec, { 'ID': 0 }, this.cache_);
+  var edit = new pn.ui.edit.Edit(spec, this.entity_, this.cache_);
   this.registerDisposable(edit);
   edit.render(el);
 
