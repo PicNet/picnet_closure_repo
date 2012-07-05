@@ -4,6 +4,7 @@ goog.provide('pn.ui.YesNoDialog');
 goog.require('goog.ui.Dialog');
 goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('goog.ui.Dialog.EventType');
+goog.require('pn.ui.Dialog');
 
 
 
@@ -34,10 +35,9 @@ pn.ui.YesNoDialog = function(title, content) {
 pn.ui.YesNoDialog.prototype.show = function(callback) {
   goog.asserts.assert(callback);
 
-  var dialog = new goog.ui.Dialog();
+  var dialog = new pn.ui.Dialog();
   dialog.setContent(this.content_);
   dialog.setTitle(this.title_);
-  dialog.setModal(true);
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createYesNoCancel());
 
   goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {

@@ -5,6 +5,7 @@ goog.provide('pn.ui.edit.AddOnFlyDialog.EventType');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventTarget');
 goog.require('goog.ui.Dialog');
+goog.require('pn.ui.Dialog');
 goog.require('pn.ui.edit.Edit');
 
 
@@ -44,14 +45,13 @@ goog.inherits(pn.ui.edit.AddOnFlyDialog, goog.events.EventTarget);
 
 /** Shows the dialog */
 pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
-  var dialog = new goog.ui.Dialog();
+  var dialog = new pn.ui.Dialog();
   this.registerDisposable(dialog);
 
   var spec = pn.app.ctx.specs.get(this.specId_);
   this.registerDisposable(spec);
 
   dialog.setTitle('Add ' + spec.name);
-  dialog.setModal(true);
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
 
   var el = dialog.getContentElement();
