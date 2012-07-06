@@ -29,7 +29,7 @@ pn.ui.KeyShortcutMgr = function() {
 
   /**
    * @private
-   * @type {!Object.<function():undefined>}
+   * @type {!Object.<function(string):undefined>}
    */
   this.callbacks_ = {};
 
@@ -49,8 +49,8 @@ goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
  *    and can only be registered once.
  * @param {string} shortcuts A comma sepearated list of key sequences to
  *    register against the given ID.
- * @param {function():undefined} callback The callback to call when the given
- *    sequence is fired.
+ * @param {function(string):undefined} callback The callback to call when the
+ *    given sequence is fired.
  */
 pn.ui.KeyShortcutMgr.prototype.register = function(id, shortcuts, callback) {
   if (this.callbacks_[id])
@@ -107,7 +107,7 @@ pn.ui.KeyShortcutMgr.prototype.handleShortcut_ = function(event) {
   var id = event.identifier;
   var callback = this.callbacks_[id];
   if (!callback || callback.disabled) return;
-  callback();
+  callback(id);
 };
 
 
