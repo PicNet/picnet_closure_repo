@@ -39,35 +39,49 @@ pn.ui.edit.AddOnFlyDialog = function(specId, cache, entity) {
    * @type {!Object.<!Array.<!Object>>}
    */
   this.cache_ = cache;
+
+  /**
+   * @private
+   * @type {pn.ui.Dialog}
+   */
+  this.dialog_ = null;
+
+  /**
+   * @private
+   * @type {!goog.events.EventHandler}
+   */
+  this.eh_ = new goog.events.EventHandler(this);
+  this.registerDisposable(this.eh_);
 };
 goog.inherits(pn.ui.edit.AddOnFlyDialog, goog.events.EventTarget);
 
 
 /** Shows the dialog */
 pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
-  var dialog = new pn.ui.Dialog();
-  this.registerDisposable(dialog);
+  this.dialog_ = new pn.ui.Dialog();
+  this.registerDisposable(this.dialog_);
 
   var spec = pn.app.ctx.specs.get(this.specId_);
   this.registerDisposable(spec);
 
-  dialog.setTitle('Add ' + spec.name);
-  dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
+  this.dialog_.setTitle('Add ' + spec.name);
+  this.dialog_.setButtonSet(goog.ui.Dialog.ButtonSet.createOkCancel());
 
-  var el = dialog.getContentElement();
+  var el = this.dialog_.getContentElement();
   var edit = new pn.ui.edit.Edit(spec, this.entity_, this.cache_);
   this.registerDisposable(edit);
   edit.render(el);
 
-  dialog.setVisible(true);
+  this.dialog_.setVisible(true);
 
-  goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {
+  this.eh_.listen(this.dialog_, goog.ui.Dialog.EventType.SELECT, function(e) {
     if (e.key === 'cancel') {
       // Ensure this dialog cannot be reused.
       goog.dispose(this);
       return;
     }
     if (this.validate_(edit)) { this.doAdd_(edit, spec.type); }
+    return false;
   }, false, this);
 };
 
@@ -107,7 +121,13 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
  * @param {(string|Object)} saved The server error or the entity that was added.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
-  if (goog.isString(saved)) { alert(saved); return; }
+  if (goog.isString(saved)) {
+    pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, saved);
+    return;
+  }
+
+  this.dialog_.setVisible(false);
+
   this.cache_[type].splice(0, 0, saved);
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   var event = new goog.events.Event(eventType, this);
