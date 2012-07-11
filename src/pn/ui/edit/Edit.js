@@ -140,62 +140,58 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
-        // Do not do child tables on new entities
-        var templateParent = goog.dom.getElement(fctx.id);
-        var parentComp = templateParent || fieldset;
+  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
+    // Do not do child tables on new entities
+    var templateParent = goog.dom.getElement(fctx.id);
+    var parentComp = templateParent || fieldset;
 
-        if ((newEntity && !fctx.spec.showOnAdd) ||
+    if ((newEntity && !fctx.spec.showOnAdd) ||
             (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
-          pn.ui.edit.EditUtils.showElement(parentComp, fctx.id, false);
-          return;
-        }
-        var renderer = fctx.getFieldRenderer();
-        if (!templateParent &&
+      pn.ui.edit.EditUtils.showElement(parentComp, fctx.id, false);
+      return;
+    }
+    var renderer = fctx.getFieldRenderer();
+    if (!templateParent &&
             (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {
-          parentComp = fb.getFieldLabel(fctx);
-          goog.dom.appendChild(fieldset, parentComp);
-        }
-        var input = fb.createAndAttach(fctx, parentComp, this.entity);
-        // TODO: This code should not be here, perhaps in FildCtx?
-        // If this is a private '_' field, like an attachment control and we
-        // are using a complex renderer, lets set the initial value on the
-        // current entity so we can use this later for dirty comparison.
-        if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
-          this.entity[fctx.id] = input.getValue();
-        }
-        this.registerDisposable(input);
-        this.registerDisposable(parentComp);
-        this.controls_[fctx.id] = input;
+      parentComp = fb.getFieldLabel(fctx);
+      goog.dom.appendChild(fieldset, parentComp);
+    }
+    var input = fb.createAndAttach(fctx, parentComp, this.entity);
+    // TODO: This code should not be here, perhaps in FildCtx?
+    // If this is a private '_' field, like an attachment control and we
+    // are using a complex renderer, lets set the initial value on the
+    // current entity so we can use this later for dirty comparison.
+    if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
+      this.entity[fctx.id] = input.getValue();
+    }
+    this.registerDisposable(input);
+    this.registerDisposable(parentComp);
+    this.controls_[fctx.id] = input;
 
-        if (!focusSet && input.focus && !fctx.spec.readonly) {
-          focusSet = true;
-          goog.Timer.callOnce(function() {
-            try { input.focus(); } catch (ex) {}
-          }, 1); }
-      }, this);
+    if (!focusSet && input.focus && !fctx.spec.readonly) {
+      focusSet = true;
+      goog.Timer.callOnce(function() {
+        try { input.focus(); } catch (ex) {}
+      }, 1); }
+  }, this);
 };
 
 
 /** @override */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
-        var ctl = this.controls_[fctx.id];
-        if (!ctl) return;
-        var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.id);
-        if (!parent) return;
+  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
+    var ctl = this.controls_[fctx.id];
+    if (!ctl) return;
+    var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.id);
+    if (!parent) return;
 
-        if (fctx.isRequired()) {
-          goog.dom.classes.add(parent, 'required');
-        } else {
-          goog.dom.classes.remove(parent, 'required');
-        }
-      }, this);
+    if (fctx.isRequired()) {
+      goog.dom.classes.add(parent, 'required');
+    } else {
+      goog.dom.classes.remove(parent, 'required');
+    }
+  }, this);
 };
 
 
@@ -216,13 +212,11 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 /** @override */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
-        var ctl = this.getControl(fctx.id);
-        if (!fctx.isShown(ctl)) return;
-        errors = goog.array.concat(errors, fctx.validate(ctl));
-      }, this);
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+    var ctl = this.getControl(fctx.id);
+    if (!fctx.isShown(ctl)) return;
+    errors = goog.array.concat(errors, fctx.validate(ctl));
+  }, this);
   if (this.fireInterceptorEvents && this.interceptor_) {
     var errors2 = this.interceptor_.getCustomValidationErrors();
     errors = goog.array.concat(errors, errors2);
@@ -247,13 +241,11 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
-        var ctl = this.getControl(fctx.id);
-        var val = fctx.getControlValue(ctl, current);
-        if (val !== undefined) current[fctx.spec.dataProperty] = val;
-      }, this);
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+    var ctl = this.getControl(fctx.id);
+    var val = fctx.getControlValue(ctl, current);
+    if (val !== undefined) current[fctx.spec.dataProperty] = val;
+  }, this);
   return current;
 };
 
@@ -264,7 +256,6 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   return goog.array.filter(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) { return fctx.isEditable(this.entity); }, this);
 };
 

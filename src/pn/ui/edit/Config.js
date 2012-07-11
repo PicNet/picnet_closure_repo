@@ -36,7 +36,6 @@ pn.ui.edit.Config =
 
   /** @type {!Array.<pn.ui.edit.cmd.Command>} */
   this.commands = opt_commands || this.getDefaultCommands_();
-  goog.array.forEach(this.commands, this.registerDisposable, this);
 
   /** @type {null|function(?):string} */
   this.template = opt_template || null;

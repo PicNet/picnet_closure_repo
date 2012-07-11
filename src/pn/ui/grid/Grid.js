@@ -65,8 +65,8 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(this.cfg_.cCtxs,
-      function(acc, f) { return acc + f.id; }, ''));
+  this.hash_ = goog.array.reduce(this.cfg_.cCtxs,
+      function(acc, f) { return acc + f.id; }, '');
 
   /**
    * @private
@@ -92,8 +92,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {!Array.<!pn.ui.grid.ColumnCtx>}
    */
   this.totalColumns_ = goog.array.filter(this.cctxs_,
-      /** @param {!pn.ui.grid.ColumnCtx} fctx The field context. */
-      function(fctx) { return !!fctx.spec.total; });
+      function(cctx) { return !!cctx.spec.total; });
 
   /**
    * @private
@@ -232,16 +231,16 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
 /**
  * @private
- * @param {!pn.ui.grid.ColumnCtx} fctx The field context to convert to a slick
+ * @param {!pn.ui.grid.ColumnCtx} cctx The field context to convert to a slick
  *    grid column config.
  * @return {pn.ui.grid.ColumnSpec} A config object for a slick grid column.
  */
-pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(fctx) {
-  var cfg = fctx.spec.toSlick();
-  var renderer = fctx.getColumnRenderer();
+pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(cctx) {
+  var cfg = cctx.spec.toSlick();
+  var renderer = cctx.getColumnRenderer();
   if (renderer) {
     cfg['formatter'] = function(row, cell, value, col, item) {
-      return renderer(fctx, item);
+      return renderer(cctx, item);
     };
   }
   return cfg;
@@ -264,12 +263,11 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
     var cidx = goog.array.findIndex(cctxs,
-        /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
-        function(fctx1) { return fctx1.id === id; });
-    var fctx = cctxs[cidx];
+        function(cctx1) { return cctx1.id === id; });
+    var cctx = cctxs[cidx];
     delete cctxs[cidx];
-    fctx.spec.width = widths[idx];
-    ordered.push(fctx);
+    cctx.spec.width = widths[idx];
+    ordered.push(cctx);
   });
 
   // Add remaining columns (if any)
@@ -284,8 +282,7 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
   var headers = goog.array.map(this.cctxs_,
-      /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
-      function(fctx1) { return fctx1.spec.name; });
+      function(cctx1) { return cctx1.spec.name; });
   var gridData = [headers];
   var lencol = this.cctxs_.length;
   for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
@@ -293,10 +290,10 @@ pn.ui.grid.Grid.prototype.getGridData = function() {
     var rowTxt = [];
 
     for (var cidx = 0; cidx < lencol; cidx++) {
-      var fctx = this.cctxs_[cidx];
-      var val = rowData[fctx.spec.dataProperty];
-      var renderer = fctx.getColumnRenderer();
-      var txt = renderer ? renderer(fctx, rowData) : val;
+      var cctx = this.cctxs_[cidx];
+      var val = rowData[cctx.spec.dataProperty];
+      var renderer = cctx.getColumnRenderer();
+      var txt = renderer ? renderer(cctx, rowData) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);
@@ -322,14 +319,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
-    goog.array.forEach(this.commands_,
-        /** @param {!pn.ui.grid.Command} c The command. */
-        function(c) {
-          this.getHandler().listen(c, c.eventType, function(e) {
-            e.target = this;
-            this.publishEvent_(e);
-          });
-        }, this);
+    goog.array.forEach(this.commands_, function(c) {
+      this.getHandler().listen(c, c.eventType, function(e) {
+        e.target = this;
+        this.publishEvent_(e);
+      });
+    }, this);
   }
   if (!hasOrderColumn) {
     // Sorting
@@ -434,12 +429,12 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
  * @param {boolean} asc Wether to sort ascending.
  */
 pn.ui.grid.Grid.prototype.sort_ = function(col, asc) {
-  var fctx = goog.array.find(this.cctxs_, function(fctx1) {
-    return fctx1.id === col;
+  var cctx = goog.array.find(this.cctxs_, function(cctx1) {
+    return cctx1.id === col;
   });
   this.dataView_.sort(function(a, b) {
-    var x = fctx.getCompareableValue(a);
-    var y = fctx.getCompareableValue(b);
+    var x = cctx.getCompareableValue(a);
+    var y = cctx.getCompareableValue(b);
     return (x === y ? 0 : (x > y ? 1 : -1));
   }, asc);
 };
@@ -450,32 +445,25 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   if (!this.totalColumns_.length) return;
 
   var items = this.dataView_.getItems();
-  var total = goog.array.reduce(items,
-      function(acc, item) {
-        goog.array.forEach(this.totalColumns_,
-            /** @param {!pn.ui.grid.ColumnCtx} fctx The field context. */
-            function(fctx) {
-              if (acc[fctx.id] === undefined) acc[fctx.id] = 0;
-              var itemVal = item[fctx.id];
-              if (itemVal) acc[fctx.id] += itemVal;
-            }, this);
-        return acc;
-      }, {}, this);
+  var total = goog.array.reduce(items, function(acc, item) {
+    goog.array.forEach(this.totalColumns_, function(cctx1) {
+      if (acc[cctx1.id] === undefined) acc[cctx1.id] = 0;
+      var itemVal = item[cctx1.id];
+      if (itemVal) acc[cctx1.id] += itemVal;
+    }, this);
+    return acc;
+  }, {}, this);
   var html = [];
   for (var field in total) {
-    var fctx = /** @type {!pn.ui.grid.ColumnCtx} */ (
-        goog.array.find(this.totalColumns_,
-            /** @param {!pn.ui.grid.ColumnCtx} fctx1 The field context. */
-            function(fctx1) {
-          return fctx1.id === field;
-        }));
+    var cctx = goog.array.find(this.totalColumns_,
+        function(cctx1) { return cctx1.id === field; });
     var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
-    var renderer = fctx.getColumnRenderer();
-    if (renderer) { val = renderer(fctx, mockEntity); }
+    var renderer = cctx.getColumnRenderer();
+    if (renderer) { val = renderer(cctx, mockEntity); }
     else { val = parseInt(total[field], 10); }
-    html.push('Total ' + fctx.spec.name + ': ' + val || '0');
+    html.push('Total ' + cctx.spec.name + ': ' + val || '0');
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +
       html.join('</li><li>') + '</li>';
