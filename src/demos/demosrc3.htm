@@ -1,0 +1,217 @@
+﻿<html xmlns='http://www.w3.org/1999/xhtml' >
+<head>
+    <title>PicNet Table Filter Demo</title>
+    <script src='http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js' type='text/javascript'></script>            
+    <script type='text/javascript' src='picnet.table.filter.full.js'></script>        
+  
+    <script type='text/javascript'>
+      $(document).ready(function() {
+        $('#sortable').tableFilter({
+      })});
+
+    
+    </script>
+
+<style type='text/css'>
+body {
+
+  }
+* {  
+  font-family:arial;
+  line-height:1.5em;
+  }
+h2 {
+  color:#00334e;
+  font-size:1.2em;
+  font-weight:normal;
+  text-shadow:0px 1px 1px #fff;
+  }
+h3 {
+  font-size:1em;
+  }
+.wrapper {
+  width:640px;
+  margin:0 auto;
+  }
+.header {
+  width:640px;
+  margin-bottom:20px;
+  padding-bottom:10px;
+  border-bottom:1px solid #ddd;
+  }
+.content {
+  font-size:8pt;
+  clear:both;
+  }
+.header,
+.picnet_logo, 
+.instructions,
+.column1,
+.column2 {
+  display:inline;
+  position:relative;
+  float:left;
+  }
+.picnet_logo {
+  width:104px;
+  height:110px;
+  background-image:url('http://www.picnet.com.au/images/picnet_logo_full.png');
+  background-repeat:no-repeat;
+  margin-top:20px;
+  }
+.instructions {
+  width:460px;
+  margin-left:40px;
+  }
+.instructions p {
+  font-size:0.8em
+  }
+table,
+td,
+th {
+  border: solid 1px silver;
+  color:#666;
+  padding:5px;
+  font-size:8pt;
+  }
+table {
+  border-collapse:collapse;
+  }
+table tr {
+  background-color:#eee;
+  }
+
+table td, table th{
+    border:1px solid #fff;}
+.column1 {
+  width:480px
+  }
+.column2{
+  width:100px;
+  margin-left:60px;
+  }
+table#demotable2 {
+  width:100px;
+}
+th {
+  background-color:#333;
+  color:#fff;
+  font-size:0.85em
+  }
+a {
+  color:#0079c1;
+  text-decoration:none;
+  }  
+a:hover {
+  text-decoration:underline;
+  }
+.filtering {
+  background-color:light-gray
+  }
+#jqtf_filters {
+  list-style:none;  
+  }
+#jqtf_filters li {
+  display:inline-block; 
+  position:relative; 
+  float:left;
+  margin-bottom:20px
+  }
+#quickfind {
+  width:480px;
+  border:1px solid #ccc;
+  }
+.clear {
+  clear:both
+  }
+hr {
+  margin-top:20px;
+  border:1px dotted #eee;
+  width:640px;
+  }
+#cleanfilters {
+  margin-left:20px;
+}
+  
+</style>
+</head>
+<body>  
+
+ 
+ <table id='sortable'>
+   <thead>
+     <tr>
+       <th rowspan="2">Content-1</th>
+       <th rowspan="2">Content-2</th>
+       <th colspan="3">Example1</th><th colspan="3">Example2</th><th colspan="3">Example3</th>
+     </tr>
+     <tr>
+       <th>Min</th>
+       <th>Max</th>
+       <th>Overage</th>
+       <th>Min</th>
+       <th>Max</th>
+       <th>Overage</th>
+       <th>Min</th>
+       <th>Max</th>
+       <th>Overage</th>
+     </tr>
+     <tr style="display:none">
+            <th>a</th>
+            <th>b</th>
+            <th>c</th>
+            <th>d</th>
+            <th>e</th>
+            <th>f</th>
+            <th>g</th>
+            <th>h</th>
+            <th>i</th>
+            <th>j</th>
+            <th>k</th>
+     </tr>
+   </thead>
+    <tbody>
+        <tr>
+            <td> identifier-1 </td>
+            <td> item1 </td>
+            <td> 0 </td>
+            <td> 1000 </td>
+            <td> 500 </td>
+            <td> 0 </td>
+            <td> 1000 </td>
+            <td> 0 </td>
+            <td> 0 </td>
+            <td> 10 </td>
+            <td> 0 </td>
+        </tr>
+        <tr>
+            <td> identifier-2 </td>
+            <td> item2 </td>
+            <td> 0 </td>
+            <td> 2000 </td>
+            <td> 100 </td>
+            <td> 0 </td>
+            <td> 1000 </td>
+            <td> 0 </td>
+            <td> 0 </td>
+            <td> 10 </td>
+            <td> 0 </td>
+        </tr>
+        <tr>
+            <td> Total </td>
+            <td> Total </td>
+            <td> 0 </td>
+            <td> 66000 </td>
+            <td> 0 </td>
+            <td> 0 </td>
+            <td> 66000 </td>
+            <td> 0 </td>
+            <td> 0 </td>
+            <td> 20 </td>
+            <td> 0 </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

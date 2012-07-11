@@ -1,1 +1,1 @@
-cleancode.bat && compile.bat
+cleancode.bat && compile.bat && compile_tablefilter.bat

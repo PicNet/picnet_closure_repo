@@ -5,8 +5,7 @@ java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^
   src\pn\ui\soy\pn.soy && ^
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\depswriter.py ^
-  --root_with_prefix="src\ ../../../../projects/picnet_closure_repo/src/" ^
-  --root_with_prefix="..\tablefilter\src\ ../../../../projects/tablefilter/src/" ^
+  --root_with_prefix="src\ ../../../../picnet_closure_repo/src/" ^
   --root_with_prefix="U:\shared\lib\closure-templates ../../../../../../../shared/closure-templates/" ^
   --output_file=src\deps.js && ^
 c:\Python27\python.exe ^
@@ -14,7 +13,6 @@ c:\Python27\python.exe ^
   --namespace="pn.closure.repo.demoscripts" ^
   --root=U:\shared\lib\closure-library\ ^
   --root=U:\shared\lib\closure-templates\ ^
-  --root=..\tablefilter\src\pn\ ^
   --root=src\ ^
   --output_mode=compiled ^
   --compiler_jar=U:\shared\lib\picnetcompiler.jar ^

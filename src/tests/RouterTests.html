@@ -8,7 +8,7 @@
 goog.require('goog.testing.jsunit');
     </script>
     <script>
-goog.require('pn.Router');
+goog.require('pn.app.Router');
 
 var startUri = document.location.href.split('#')[0];
 var router;
@@ -18,8 +18,7 @@ var getAction = function(name) {
   return function() { actions.push(name); };
 };
 
-var setUpPage = function() {
-  pn.LogUtils.initialise();
+var setUpPage = function() {  
 };
 
 var setUp = function() {  
@@ -31,19 +30,19 @@ var tearDown = function() {
 };
 
 var testDefaultRouteIsSetOnCreation = function () {      
-  router = new pn.Router({'default': getAction('default')}, 'default', true);
+  router = new pn.app.Router({'default': getAction('default')}, 'default', true);
   assertRoute('default');  
 };
 
 var testInvalidDefaultRouteThrowsError = function() {
   try { 
-    router = new pn.Router({'default':getAction('default')}, 'non-existing', true);  
+    router = new pn.app.Router({'default':getAction('default')}, 'non-existing', true);  
     assertFail('Should have failed as "non-existing" is not in the routes map');
   } catch (ex) {}  
 };
 
 var testSwitchingBetween2ValidRoutes = function() {
-  router = new pn.Router({
+  router = new pn.app.Router({
     'route1': getAction('route1'),
     'route2': getAction('route2')
   }, 'route1', true);  
@@ -57,7 +56,7 @@ var testSwitchingBetween2ValidRoutes = function() {
 };
 
 var testSwitchingToAnInvalidRoute = function() {
-  router = new pn.Router({
+  router = new pn.app.Router({
     'route1': getAction('route1'),
     'route2': getAction('route2')
   }, 'route1', true);    
