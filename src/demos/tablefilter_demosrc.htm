@@ -6,65 +6,58 @@
   <link rel="stylesheet" href="css/demo.css"> 
   
     <script type='text/javascript'>
-        $(document).ready(function() {
+        $(document).ready(function () {
             //  Randomly Create Data Rows
             for (var i = 0; i < 50; i++) {
-              var tr = $('<tr>' +
-                '<td>Value' + Math.floor(Math.random() * 500) + '</td>' +
-                '<td>' + Math.floor(Math.random() * 500) + ' </td>' +
-                '<td>' + (Math.random() > 0.5 ? 'yes' : 'no') + '</td>' +
-                '<td>' + (Math.random() <= 0.333 ? 'Item 1' : Math.random() > 0.5 ? 'Item 2' : 'Item 3') + '</td>' +
-                '<td></td>' +
-                '<td>' + parseInt(10 + Math.random() * 18) + '/' + parseInt(10 + Math.random() * 2) + '/2009</td>' +
-                '<td></td>' +
-                '</tr>');
-              $('#demotable1 tbody').append(tr);
+                var tr = $('<tr>' +
+                  '<td>Value' + Math.floor(Math.random() * 500) + '</td>' +
+                  '<td>' + Math.floor(Math.random() * 500) + ' </td>' +
+                  '<td>' + (Math.random() > 0.5 ? 'yes' : 'no') + '</td>' +
+                  '<td>' + (Math.random() <= 0.333 ? 'Item 1' : Math.random() > 0.5 ? 'Item 2' : 'Item 3') + '</td>' +
+                  '<td></td>' +
+                  '<td>' + parseInt(10 + Math.random() * 18) + '/' + parseInt(10 + Math.random() * 2) + '/2009</td>' +
+                  '<td></td>' +
+                  '</tr>');
+                $('#demotablesrc1 tbody').append(tr);
             }
 
-          for (var i = 0; i < 50; i++) {
-            var tr = $('<tr><td>Value(2) ' + Math.floor(Math.random() * 500) + '</td></tr>');
-            $('#demotable2 tbody').append(tr);
-          }
+            for (var i = 0; i < 50; i++) {
+                var tr = $('<tr><td>Value(2) ' + Math.floor(Math.random() * 500) + '</td></tr>');
+                $('#demotable2 tbody').append(tr);
+            }
 
-          // Initialise Plugin
+            // Initialise Plugin
             var options1 = {
                 additionalFilterTriggers: [$('#onlyyes'), $('#onlyno'), $('#quickfind')],
                 clearFiltersControls: [$('#cleanfilters')],
-                matchingRow: function(state, tr, textTokens) {
-                  if (!state || !state.id) {
-                    return true;
-                  }
-                  var child = tr.children('td:eq(2)');
-                  if (!child) return true;
-                  var val = child.text();
-                  switch (state.id) {
-                  case 'onlyyes':
-                    return state.value !== true || val === 'yes';
-                  case 'onlyno':
-                    return state.value !== true || val === 'no';
-                  default:
-                    return true;
-                  }
+                matchingRow: function (state, tr, textTokens) {
+                    if (!state || !state.id) { return true; }
+                    var child = tr.children('td:eq(2)');
+                    if (!child) return true;
+                    var val = child.text();
+                    switch (state.id) {
+                        case 'onlyyes': return state.value !== true || val === 'yes';
+                        case 'onlyno': return state.value !== true || val === 'no';
+                        default: return true;
+                    }
                 }
             };
 
-            $('#demotable1').tableFilter(options1);
-      
-           var grid2 = $('#demotable2');
-           var options2 = {                
-        
-           filteringRows: function(filterStates) {
-                grid2.addClass('filtering');
-              },
-              filteredRows: function(filterStates) {
-                grid2.removeClass('filtering');
-                setRowCountOnGrid2();
-              }
-            };      
-     
+            $('#demotablesrc1').tableFilter(options1);
+
+            var grid2 = $('#demotable2');
+            var options2 = {
+                filteringRows: function (filterStates) {
+                    grid2.addClass('filtering');
+                },
+                filteredRows: function (filterStates) {
+                    grid2.removeClass('filtering');
+                    setRowCountOnGrid2();
+                }
+            };
             function setRowCountOnGrid2() {
-              var rowcount = grid2.find('tbody tr:not(:hidden)').length;
-              $('#rowcount').text('(Rows ' + rowcount + ')');
+                var rowcount = grid2.find('tbody tr:not(:hidden)').length;
+                $('#rowcount').text('(Rows ' + rowcount + ')');
             }
 
             grid2.tableFilter(options2); // No additional filters      
@@ -73,7 +66,6 @@
     </script>
 <style type='text/css'>
 body {
-
   }
 h3 {
   font-size:1em;
@@ -189,7 +181,7 @@ hr {
     <h3>Additional Filters for Table 1</h3>
     Only Show Yes: <input type='checkbox' id='onlyyes'/>          
     Only Show No: <input type='checkbox' id='onlyno'/>
-         &nbsp;<input type='submit' value='Set Quick Find filter and refresh table' onclick="$('#quickfind').val('12'); $('#demotable1').tableFilterApplyFilterValues();"/>
+        &nbsp;<input type='submit' value='Set Quick Find filter and refresh table' onclick="$('#quickfind').val('12'); $('#demotablesrc1').tableFilterApplyFilterValues();"/>
     <br/>      <br/>    
     Quick Find: <input type='text' id='quickfind'/>
 
@@ -198,7 +190,7 @@ hr {
     <br/>
     <div class='column1'>  
       <h3>Table 1</h3>
-      <table id='demotable1'>
+      <table id='demotablesrc1'>
         <thead>
           <tr><th>Text Column 1</th><th>Number Column</th><th>Yes/No Column</th><th filter-type='ddl'>List Column</th><th filter='false'>No Filter</th><th>Date Column</th><th filter='false'>Empty</th></tr>
         </thead>
