@@ -5,7 +5,7 @@
 * To download PicNet Table Filter: [tablefilter.zip](https://github.com/PicNet/picnet_closure_repo/raw/master/tablefilter.zip)
 
 ## PicNet Closure Repository  ##
-To view the demo please go to: [PicNet Closure Demo] (http://picnet.github.com/picnet_closure_repo/demos/)
+To view a demo of some of the utilities in the picnet closure repo please visit: [PicNet Closure Demo] (http://picnet.github.com/picnet_closure_repo/demos/)
 
 
 
