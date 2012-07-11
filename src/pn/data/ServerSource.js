@@ -225,14 +225,14 @@ pn.data.ServerSource.prototype.ajax_ = function(uri, data, opt_success) {
  * @param {Function|!string=} opt_success The success callback or event name.
  */
 pn.data.ServerSource.prototype.ajaxSuccess_ = function(xhr, opt_success) {
-  var resp = xhr.getResponseText();  
+  var resp = xhr.getResponseText();
   var parsed = resp;
   // Do not json deserialise xml response or error
   if (goog.isString(resp)) {
     try { parsed = pn.json.parseJson(resp); }
     catch (ex) {} // Probably an error message, display as is.
   }
-      
+
   if (goog.isString(opt_success)) {
     pn.app.ctx.pub(opt_success, parsed);
   } else if (goog.isDefAndNotNull(opt_success)) {

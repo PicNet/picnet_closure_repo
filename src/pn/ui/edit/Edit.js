@@ -115,13 +115,12 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   var title = this.cfg.titleStrategy ?
       this.cfg.titleStrategy(this.spec, this.entity, this.cache) : '';
 
-  var div = pn.dom.addHtml(element,
-      pn.ui.soy.edit({ specId: this.spec.id, title: title }));
+
+  var template = this.cfg.template || pn.ui.soy.edit;
+  var opts = { specId: this.spec.id, title: title };
+  var div = pn.dom.addHtml(element, template(opts));
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
-
-  var template = this.cfg.template;
-  if (template) { pn.dom.addHtml(div, template(this.entity)); }
 
   this.decorateFields_(div);
   this.updateRequiredClasses();
@@ -135,9 +134,8 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
 
-  var useTemplate = !!this.cfg.template,
-      focusSet = !this.cfg.autoFocus,
-      fieldset = useTemplate ? null : goog.dom.createDom('fieldset', 'fields'),
+  var focusSet = !this.cfg.autoFocus,
+      fieldset = goog.dom.createDom('fieldset', 'fields'),
       newEntity = pn.data.EntityUtils.isNew(this.entity);
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
@@ -146,19 +144,16 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
       function(fctx) {
         // Do not do child tables on new entities
-        var parentComp = useTemplate ? pn.dom.getElement(fctx.id) : fieldset;
+        var templateParent = goog.dom.getElement(fctx.id);
+        var parentComp = templateParent || fieldset;
 
         if ((newEntity && !fctx.spec.showOnAdd) ||
             (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
-          if (useTemplate) {
-            // Hide the parent only if using templates, otherwise it will try
-            // to hide the parent fieldset which may include other fields.
-            goog.style.showElement(parentComp, false);
-          }
+          pn.ui.edit.EditUtils.showElement(parentComp, fctx.id, false);
           return;
         }
         var renderer = fctx.getFieldRenderer();
-        if (!useTemplate &&
+        if (!templateParent &&
             (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {
           parentComp = fb.getFieldLabel(fctx);
