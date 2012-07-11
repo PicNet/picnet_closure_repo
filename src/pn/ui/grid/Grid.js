@@ -91,7 +91,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @private
    * @type {!Array.<!pn.ui.grid.ColumnCtx>}
    */
-  this.totalColumns_ = goog.array.filter(this.cctxs_, 
+  this.totalColumns_ = goog.array.filter(this.cctxs_,
       function(cctx) { return !!cctx.spec.total; });
 
   /**
@@ -262,7 +262,7 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
   var widths = data['widths'];
   var ordered = [];
   goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(cctxs, 
+    var cidx = goog.array.findIndex(cctxs,
         function(cctx1) { return cctx1.id === id; });
     var cctx = cctxs[cidx];
     delete cctxs[cidx];
@@ -281,7 +281,7 @@ pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
  *    exporting the grid contents.
  */
 pn.ui.grid.Grid.prototype.getGridData = function() {
-  var headers = goog.array.map(this.cctxs_, 
+  var headers = goog.array.map(this.cctxs_,
       function(cctx1) { return cctx1.spec.name; });
   var gridData = [headers];
   var lencol = this.cctxs_.length;
@@ -320,11 +320,11 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
     goog.array.forEach(this.commands_, function(c) {
-          this.getHandler().listen(c, c.eventType, function(e) {
-            e.target = this;
-            this.publishEvent_(e);
-          });
-        }, this);
+      this.getHandler().listen(c, c.eventType, function(e) {
+        e.target = this;
+        this.publishEvent_(e);
+      });
+    }, this);
   }
   if (!hasOrderColumn) {
     // Sorting
@@ -455,8 +455,8 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
   }, {}, this);
   var html = [];
   for (var field in total) {
-    var cctx = goog.array.find(this.totalColumns_, 
-            function(cctx1) { return cctx1.id === field; });
+    var cctx = goog.array.find(this.totalColumns_,
+        function(cctx1) { return cctx1.id === field; });
     var val;
     var mockEntity = {};
     mockEntity[field] = total[field];
