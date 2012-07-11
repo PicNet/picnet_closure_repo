@@ -108,7 +108,7 @@ pn.schema.Schema.prototype.isNumericalTypeField_ = function(fieldSchema) {
 
 /**
  * @private
- * @param {!Object} entity The description of the entity from the server (
+ * @param {Object} entity The description of the entity from the server (
  *   i.e. Use object property string identifiers.).
  */
 pn.schema.Schema.prototype.parseEntity_ = function(entity) {

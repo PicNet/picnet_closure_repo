@@ -71,7 +71,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!Object.<goog.ui.Button>}
+   * @type {!Object.<!Element>}
    */
   this.commandButtons_ = {};
 };
@@ -157,7 +157,6 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
     var button = goog.dom.createDom('button',
         {'class': 'goog-button ' + className, 'id': c.name, 'title': tooltip});
     goog.dom.appendChild(parent, button);
-    this.registerDisposable(button);
     this.commandButtons_[c.name] = button;
   }, this);
 };

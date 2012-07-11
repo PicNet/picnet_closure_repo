@@ -140,9 +140,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
+  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
         // Do not do child tables on new entities
         var templateParent = goog.dom.getElement(fctx.id);
         var parentComp = templateParent || fieldset;
@@ -182,9 +180,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
 /** @override */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
+  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
         var ctl = this.controls_[fctx.id];
         if (!ctl) return;
         var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.id);
@@ -216,9 +212,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 /** @override */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
         var ctl = this.getControl(fctx.id);
         if (!fctx.isShown(ctl)) return;
         errors = goog.array.concat(errors, fctx.validate(ctl));
@@ -247,9 +241,7 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
-      function(fctx) {
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
         var ctl = this.getControl(fctx.id);
         var val = fctx.getControlValue(ctl, current);
         if (val !== undefined) current[fctx.spec.dataProperty] = val;
@@ -263,8 +255,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<!pn.ui.edit.FieldCtx>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  return goog.array.filter(this.cfg.fCtxs,
-      /** @param {!pn.ui.edit.FieldCtx} fctx The field context. */
+  return goog.array.filter(this.cfg.fCtxs, 
       function(fctx) { return fctx.isEditable(this.entity); }, this);
 };
 
