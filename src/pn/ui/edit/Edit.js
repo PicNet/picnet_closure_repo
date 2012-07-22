@@ -133,7 +133,6 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   var cmds = this.getCommandButtons();
   var inputs = {};
   goog.array.forEach(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) { inputs[fctx.id] = fctx.component; });
   this.cfg_.interceptor.init(this, this.entity, this.cache_, inputs, cmds);
 };
@@ -153,62 +152,58 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        // Do not do child tables on new entities
-        fctx.parentComponent = useTemplate ?
+  goog.array.forEach(this.fctxs_, function(fctx) {
+    // Do not do child tables on new entities
+    fctx.parentComponent = useTemplate ?
             pn.dom.getElement(fctx.id) : fieldset;
 
-        if ((newEntity && !fctx.spec.showOnAdd) ||
+    if ((newEntity && !fctx.spec.showOnAdd) ||
             (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
-          if (useTemplate) {
-            // Hide the parent only if using templates, otherwise it will try
-            // to hide the parent fieldset which may include other fields.
-            goog.style.showElement(fctx.parentComponent, false);
-          }
-          return;
-        }
-        var renderer = fctx.getFieldRenderer();
-        if (!useTemplate &&
+      if (useTemplate) {
+        // Hide the parent only if using templates, otherwise it will try
+        // to hide the parent fieldset which may include other fields.
+        goog.style.showElement(fctx.parentComponent, false);
+      }
+      return;
+    }
+    var renderer = fctx.getFieldRenderer();
+    if (!useTemplate &&
             (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {
-          fctx.parentComponent = fb.getFieldLabel(fctx);
-          goog.dom.appendChild(fieldset, fctx.parentComponent);
-        }
-        var input = fb.createAndAttach(fctx);
-        // TODO: This code should not be here, perhaps in FildCtx?
-        // If this is a private '_' field, like an attachment control and we
-        // are using a complex renderer, lets set the initial value on the
-        // current entity so we can use this later for dirty comparison.
-        if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
-          this.entity[fctx.id] = input.getValue();
-        }
-        fctx.component = input;
+      fctx.parentComponent = fb.getFieldLabel(fctx);
+      goog.dom.appendChild(fieldset, fctx.parentComponent);
+    }
+    var input = fb.createAndAttach(fctx);
+    // TODO: This code should not be here, perhaps in FildCtx?
+    // If this is a private '_' field, like an attachment control and we
+    // are using a complex renderer, lets set the initial value on the
+    // current entity so we can use this later for dirty comparison.
+    if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
+      this.entity[fctx.id] = input.getValue();
+    }
+    fctx.component = input;
 
-        if (!focusSet && input.focus && !fctx.spec.readonly) {
-          focusSet = true;
-          goog.Timer.callOnce(function() {
-            try { input.focus(); } catch (ex) {}
-          }, 1); }
-      }, this);
+    if (!focusSet && input.focus && !fctx.spec.readonly) {
+      focusSet = true;
+      goog.Timer.callOnce(function() {
+        try { input.focus(); } catch (ex) {}
+      }, 1); }
+  }, this);
 };
 
 
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        var parent = fctx.parentComponent;
-        if (!parent) return; // Not shown, such as fields not shown on add
+  goog.array.forEach(this.fctxs_, function(fctx) {
+    var parent = fctx.parentComponent;
+    if (!parent) return; // Not shown, such as fields not shown on add
 
-        if (fctx.isRequired()) {
-          goog.dom.classes.add(parent, 'required');
-        } else {
-          goog.dom.classes.remove(parent, 'required');
-        }
-      }, this);
+    if (fctx.isRequired()) {
+      goog.dom.classes.add(parent, 'required');
+    } else {
+      goog.dom.classes.remove(parent, 'required');
+    }
+  }, this);
 };
 
 
@@ -229,12 +224,10 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        if (!this.cfg_.interceptor.isShown(fctx.id)) return;
-        errors = goog.array.concat(errors, fctx.validate());
-      }, this);
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+    if (!this.cfg_.interceptor.isShown(fctx.id)) return;
+    errors = goog.array.concat(errors, fctx.validate());
+  }, this);
   if (this.fireInterceptorEvents) {
     var errors2 = this.cfg_.interceptor.getCustomValidationErrors();
     errors = goog.array.concat(errors, errors2);
@@ -259,12 +252,10 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
-  goog.array.forEach(this.getEditableFields_(),
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
-      function(fctx) {
-        var val = fctx.getControlValue(current);
-        if (val !== undefined) current[fctx.spec.dataProperty] = val;
-      }, this);
+  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+    var val = fctx.getControlValue(current);
+    if (val !== undefined) current[fctx.spec.dataProperty] = val;
+  }, this);
   return current;
 };
 
@@ -275,7 +266,6 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   return goog.array.filter(this.fctxs_,
-      /** @param {!pn.ui.FieldCtx} fctx The field context. */
       function(fctx) { return fctx.isEditable(); });
 };
 

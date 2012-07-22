@@ -49,11 +49,9 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.cfg_ = this.spec_.gridConfig;
 
   /** @type {!Array.<!pn.ui.FieldCtx>} */
-  var fctxs = goog.array.map(this.cfg_.columns,
-      /** @param {!pn.ui.grid.ColumnSpec} c The column. */
-      function(c) {
-        return new pn.ui.FieldCtx(c, {}, cache);
-      });
+  var fctxs = goog.array.map(this.cfg_.columns, function(c) {
+    return new pn.ui.FieldCtx(c, {}, cache);
+  });
 
   /**
    * @private
@@ -317,14 +315,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       this.selectionHandler_ = goog.bind(this.handleSelection_, this);
       this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     }
-    goog.array.forEach(this.commands_,
-        /** @param {!pn.ui.grid.Command} c The command. */
-        function(c) {
-          this.eh_.listen(c, c.eventType, function(e) {
-            e.target = this;
-            this.publishEvent_(e);
-          });
-        }, this);
+    goog.array.forEach(this.commands_, function(c) {
+      this.eh_.listen(c, c.eventType, function(e) {
+        e.target = this;
+        this.publishEvent_(e);
+      });
+    }, this);
   }
   // Sorting
   this.slick_.onSort.subscribe(goog.bind(function(e, args) {

@@ -33,7 +33,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlySpec = function(spec) {
 
 
 /**
- * @param {!pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
+ * @param {pn.ui.edit.FieldSpec} fieldSpec The field to change into readonly.
  */
 pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
   fieldSpec.readonly = true;
@@ -62,6 +62,7 @@ pn.ui.edit.ReadOnlyFields.toReadOnlyField = function(fieldSpec) {
         fieldSpec.renderer = trans[1];
         return true;
       }
+      return false;
     }) < 0) {
       fieldSpec.renderer = rr.textField;
     }

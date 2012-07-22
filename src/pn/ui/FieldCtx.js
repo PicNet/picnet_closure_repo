@@ -11,7 +11,7 @@ goog.require('pn.ui.grid.ColumnRenderers');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!pn.ui.BaseFieldSpec} spec The field specifications.
+ * @param {pn.ui.BaseFieldSpec} spec The field specifications.
  * @param {!Object} entity The current entity being rendererd.
  * @param {!Object.<!Array.<!Object>>} cache The current cache.
  */
@@ -205,7 +205,8 @@ pn.ui.FieldCtx.prototype.getColumnRenderer = function() {
 
 
 /**
- * @return {null|function(!pn.ui.FieldCtx):!(goog.ui.Component|Element)} The
+ * @return {null|pn.ui.edit.ComplexRenderer|
+ *    function(!pn.ui.FieldCtx):!(goog.ui.Component|Text|Element)} The
  *    specified field renderer or an implied renderer from the given column
  *    schema type.
  */

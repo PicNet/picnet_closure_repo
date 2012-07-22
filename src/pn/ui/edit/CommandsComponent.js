@@ -59,7 +59,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity) {
 
   /**
    * @private
-   * @type {!Object.<goog.ui.Button>}
+   * @type {!Object.<!Element>}
    */
   this.commandButtons_ = {};
 };

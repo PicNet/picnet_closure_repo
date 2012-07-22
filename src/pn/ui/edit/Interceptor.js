@@ -110,7 +110,6 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function() {
 
 
 /**
- * @protected
  * @param {string} id The id of the field (and its label) to check
  *    for visibility.
  * @return {boolean} visible Wether the specified field element is currently
