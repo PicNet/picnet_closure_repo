@@ -35,7 +35,8 @@ pn.ui.grid.Column = function(id, name) {
   this.behavior = '';
   /** @type {boolean} */
   this.isParentFormatter = false;
-  /** @type {null|function(number,number,Object,Object,Object):string} */
+  /** @type {null|function(number,number,Object,pn.ui.grid.Column,Object):
+        string} */
   this.renderer = null;
   /** @type {boolean} */
   this.total = false;
@@ -46,8 +47,8 @@ goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 
 
 /**
- * @param {function(number,number,Object,Object,Object):string}
- *    formatter The formatter to use for this column.
+ * @param {null|function(number,number,Object,pn.ui.grid.Column,Object):
+*   (string|null)} formatter The formatter to use for this column.
  * @return {pn.ui.grid.Column} A SlickGrid compative object even when in
  *    COMPILE mode.
  */

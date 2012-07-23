@@ -79,9 +79,13 @@ pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
 
 /**
  * Optional
+ * @param {pn.ui.edit.Field} field The Field to validate.
+ * @param {*} value The value of the field in the current form.
  * @return {string|Array} Any error (if any) for the specified field.
  */
-pn.ui.edit.ComplexRenderer.prototype.validate = function() { return ''; };
+pn.ui.edit.ComplexRenderer.prototype.validate = function(field, value) {
+  return ''; 
+};
 
 
 /** @inheritDoc */

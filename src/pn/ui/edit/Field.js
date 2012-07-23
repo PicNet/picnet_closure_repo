@@ -24,11 +24,11 @@ pn.ui.edit.Field = function(id, name) {
 
   /** @type
       {pn.ui.edit.ComplexRenderer|
-          function(*, Object, !Element, boolean=):!Element} */
+          function(*, Object, !Element, boolean=):
+          !(Element|goog.ui.Component)} */
   this.renderer = null;
 
-  /** @type {null|pn.ui.edit.ValidateInfo|
-      function(pn.ui.edit.Field, *):string} */
+  /** @type {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.Field, *):(string|Array)} */
   this.validator = null;
 
   /** @type {null|function(string, !(Element|goog.ui.Component), Object,

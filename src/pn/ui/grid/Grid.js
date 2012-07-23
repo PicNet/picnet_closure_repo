@@ -483,8 +483,9 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       return c.id === field;
     });
     var val = total[field] / mult;
-    if (spec.renderer) { val = spec.renderer(-1, -1, val, spec, null); }    
-    else { val = this.totalsFormatter_.format(val); }
+    if (spec.renderer) { 
+      val = spec.renderer(-1, -1, /** @type {Object} */ (val), spec, null); 
+    } else { val = this.totalsFormatter_.format(val); }
     html.push('Total ' + spec.name + ': ' + val);
   }
   this.totalsLegend_.innerHTML = '<ul><li>' +

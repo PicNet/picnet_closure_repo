@@ -188,7 +188,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
     var fieldParent = fieldset;
     if (!f.renderer || f.renderer.showLabel !== false) {
-      var required = f.validator && f.validator.required;
+      var required = !!f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
       this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
@@ -260,7 +260,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
     var error;
     if (f.renderer && f.renderer.validate) {
-      error = f.renderer.validate();
+      error = f.renderer.validate(f, val);
       if (goog.isArrayLike(error)) {
         errors = goog.array.concat(errors, error);
       }
