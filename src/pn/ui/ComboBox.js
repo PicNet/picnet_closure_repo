@@ -1,7 +1,9 @@
-﻿;
+﻿
 goog.provide('pn.ui.ComboBox');
+goog.provide('pn.ui.ComboBox.EventType');
 
 goog.require('goog.ui.ComboBox');
+goog.require('goog.events.Event');
 
 
 
@@ -65,8 +67,8 @@ pn.ui.ComboBox.prototype.enterDocument = function() {
 
 
 /** @private */
-pn.ui.ComboBox.prototype.onChanged_ = function() {
-  if (this.ignoreChange_) return;
+pn.ui.ComboBox.prototype.onChanged_ = function() {  
+  if (this.ignoreChange_) return;  
 
   var idx = this.getMenu().getHighlightedIndex();
   if (idx < 0) { this.selectedModel_ = null; }
@@ -74,6 +76,12 @@ pn.ui.ComboBox.prototype.onChanged_ = function() {
     var cbi = this.getMenu().getChildAt(idx);
     this.selectedModel_ = cbi.getModel();
   }
+  goog.Timer.callOnce(function() {
+    if (!this.getMenu().isVisible()) {
+      var event = new goog.events.Event(pn.ui.ComboBox.EventType.CHANGE, this);
+      this.dispatchEvent(event);
+    }  
+  }, 1, this);  
 };
 
 
@@ -82,4 +90,9 @@ pn.ui.ComboBox.prototype.disposeInternal = function() {
   pn.ui.ComboBox.superClass_.disposeInternal.call(this);
 
   delete this.selectedModel_;
+};
+
+/** @enum {string} */
+pn.ui.ComboBox.EventType = {
+  CHANGE: 'cb-chage'
 };
