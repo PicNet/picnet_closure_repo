@@ -451,12 +451,15 @@ pn.ui.grid.Grid.prototype.showTooltip_ = function(text, pos, show) {
 /** @private */
 pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   var state = goog.net.cookies.get(this.hash_);
-  if (!state) return;
-  var data = goog.json.unsafeParse(state);
-  if (data['sort']) {
-    this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
-    this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
+  var data = state ? goog.json.unsafeParse(state) : {};
+  if (!data['sort']) {
+    data['sort'] = {
+    'colid': this.cols_[0].id,
+    'asc': true
+    };
   }
+  this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
+  this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
 };
 
 

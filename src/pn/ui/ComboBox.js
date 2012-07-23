@@ -63,6 +63,9 @@ pn.ui.ComboBox.prototype.enterDocument = function() {
   var handler = this.getHandler();
   handler.listen(this, goog.events.EventType.CHANGE, this.onChanged_);
   pn.ui.ComboBox.superClass_.enterDocument.call(this);
+
+  handler.listen(this.getMenu(), 
+      goog.ui.Component.EventType.ACTION, this.fireChangeEvent_);
 };
 
 
@@ -71,19 +74,20 @@ pn.ui.ComboBox.prototype.onChanged_ = function() {
   if (this.ignoreChange_) return;  
 
   var idx = this.getMenu().getHighlightedIndex();
-  if (idx < 0) { this.selectedModel_ = null; }
-  else {
+  if (idx < 0) {     
+    this.selectedModel_ = null; 
+    this.fireChangeEvent_();
+  } else {
     var cbi = this.getMenu().getChildAt(idx);
     this.selectedModel_ = cbi.getModel();
-  }
-  goog.Timer.callOnce(function() {
-    if (!this.getMenu().isVisible()) {
-      var event = new goog.events.Event(pn.ui.ComboBox.EventType.CHANGE, this);
-      this.dispatchEvent(event);
-    }  
-  }, 1, this);  
+  }    
 };
 
+/** @private */
+pn.ui.ComboBox.prototype.fireChangeEvent_ = function() {
+  var event = new goog.events.Event(pn.ui.ComboBox.EventType.CHANGE, this);
+  this.dispatchEvent(event);
+};
 
 /** @inheritDoc */
 pn.ui.ComboBox.prototype.disposeInternal = function() {
