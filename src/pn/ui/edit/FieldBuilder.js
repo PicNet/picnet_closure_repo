@@ -83,8 +83,9 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   } else if (field.tableType) {
     elem = fb.createChildEntitiesSelectTable_(field, parent, entity, cache);
   } else {
+    var value = goog.isDef(val) ? val : '';
     elem = goog.dom.createDom('input',
-        { 'id': field.id, 'type': 'text', 'value': val || '' });
+        { 'id': field.id, 'type': 'text', 'value': value });
     goog.dom.appendChild(parent, elem);
   }
   // TODO: Add better support for defaultValue
