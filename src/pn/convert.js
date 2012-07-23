@@ -29,3 +29,17 @@ pn.convert.currencyToCents = function(currency) {
   var cents = parseInt(parseFloat(currency) * 100, 10);
   return cents;
 };
+
+
+/**
+ * @param {string} time The 12 Hour format time (i.e. 06:00 AM).
+ * @return {number} The number of minutes form 00:00.
+ */
+pn.convert.timeToMinutes = function(time) {
+  goog.asserts.assert(goog.isDefAndNotNull(time));
+  var hour = parseInt(time, 10);
+  var minutes = parseInt(time.split(':')[1], 10);
+  var isPm = goog.string.endsWith(time, 'PM');
+  if (isPm) hour += 12;
+  return (hour * 60) + minutes;
+};

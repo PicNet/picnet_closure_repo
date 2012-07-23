@@ -42,16 +42,12 @@ pn.ui.edit.FieldRenderers.timeRenderer = function(field) {
     'class': 'time-picker'
   });
 
-  for (var h = 5; h < 22; h++) {
+  for (var h = 5; h < 23; h++) {
     var displayHr = goog.string.padNumber((h % 12) + 1, 2);
     var amPm = h < 11 ? ' AM' : ' PM';
     for (var m = 0; m < 60; m += 15) {
-      var value = h * 60 + m;
-      var opt = goog.dom.createDom('option',
-          {'value': value },
-          displayHr + ':' +
-          goog.string.padNumber(m, 2) +
-          amPm);
+      var display = displayHr + ':' + goog.string.padNumber(m, 2) + amPm;
+      var opt = goog.dom.createDom('option', {'value': display }, display);
       goog.dom.appendChild(picker, opt);
     }
   }
