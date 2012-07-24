@@ -7,6 +7,11 @@
 ## PicNet Closure Repository  ##
 To view a demo of some of the utilities in the picnet closure repo please visit: [PicNet Closure Demo] (http://picnet.github.com/picnet_closure_repo/demos/)
 
+## PicNet Table Filter Readme  ##
+View the [Readme] (https://github.com/PicNet/picnet_closure_repo/blob/master/tablefilter_readme.txt) of Table Filter
+
+
+
 
 
 
