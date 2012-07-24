@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.Config');
 
+goog.require('pn.ui.edit.IInterceptor');
 
 
 /**
@@ -17,4 +18,7 @@ pn.ui.edit.Config = function(type) {
 
   /** @type {string} */
   this.saveEvent = '';
+
+  /** @type {pn.ui.edit.IInterceptor} */
+  this.interceptor = null;
 };

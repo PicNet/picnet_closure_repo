@@ -328,6 +328,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
+  if (this.cfg_.interceptor) this.cfg_.interceptor.init(this.data_);
 };
 
 
