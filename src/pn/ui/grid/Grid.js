@@ -228,6 +228,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
       goog.array.map(this.cols_, function(c) {
+        if (!this.cfg_.sortable) c.sortable = false;
         if (!c.renderer && c.source) {
           c.isParentFormatter = true;
           c.renderer = goog.bind(this.parentColumnFormatter_, this);
@@ -363,20 +364,21 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     }, this);
   }
   // Sorting
-  this.slick_.onSort.subscribe(goog.bind(function(e, args) {
-    this.sort_ = {
-      'colid': args['sortCol']['id'],
-      'asc': args['sortAsc']
-    };
-    this.dataView_.sort(function(a, b) {
-      var x = a[args['sortCol']['field']],
-          y = b[args['sortCol']['field']];
-      return (x === y ? 0 : (x > y ? 1 : -1));
-    }, args['sortAsc']);
-    this.saveGridState_();
-  }, this));
+  if (this.cfg_.sortable) {
+    this.slick_.onSort.subscribe(goog.bind(function(e, args) {
+      this.sort_ = {
+        'colid': args['sortCol']['id'],
+        'asc': args['sortAsc']
+      };
+      this.dataView_.sort(function(a, b) {
+        var x = a[args['sortCol']['field']],
+            y = b[args['sortCol']['field']];
+        return (x === y ? 0 : (x > y ? 1 : -1));
+      }, args['sortAsc']);
+      this.saveGridState_();
+    }, this));
+  }
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
-
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
   }, this));
@@ -427,7 +429,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.initFiltersRow_();
   }
 
-  this.setGridInitialSortState_();
+  if (this.cfg_.sortable) { this.setGridInitialSortState_(); }
 };
 
 

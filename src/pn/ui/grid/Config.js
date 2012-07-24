@@ -23,6 +23,8 @@ pn.ui.grid.Config = function(type) {
   /** @type {boolean} */
   this.editable = true;
   /** @type {boolean} */
+  this.sortable = true;
+  /** @type {boolean} */
   this.checkboxRowSelect = false;
   /** @type {boolean} */
   this.enableQuickFilters = true;
