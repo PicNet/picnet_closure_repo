@@ -171,7 +171,7 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
  */
 pn.ui.FileUpload.prototype.onComplete_ = function() {
   this.fileInput_.disabled = false;
-  this.eh_.unlisten(this.io_, null);
+  this.eh_.unlisten(this.io_, goog.net.EventType.COMPLETE, this.onComplete_);
 
   var et = this.io_.isSuccess() ?
       pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :

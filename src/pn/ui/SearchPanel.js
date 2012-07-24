@@ -267,8 +267,7 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
 /** @private */
 pn.ui.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
-  goog.object.forEach(this.filtersControls_, function(arr) {
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
+  goog.object.forEach(this.filtersControls_, function(arr) {    
     goog.array.forEach(arr, goog.dispose);
   }, this);
   this.filtersControls_ = {};
@@ -330,17 +329,17 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   }
   this.filtersControls_[f.id] = [input, remove, lbl, dom];
 
-  this.eh_.listen(remove, goog.events.EventType.CLICK, function() {
+  var onremove = function() {
     goog.dom.removeNode(dom);
     var arr = this.filtersControls_[f.id];
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
+    this.eh_.unlisten(remove, goog.events.EventType.CLICK, onremove);
     goog.array.forEach(arr, goog.dispose);
     delete this.filtersControls_[f.id];
     goog.style.showElement(option, true);
     this.doSearch_();
-  });
+  };
+  this.eh_.listen(remove, goog.events.EventType.CLICK, onremove);
 };
-
 
 /** @inheritDoc */
 pn.ui.SearchPanel.prototype.disposeInternal = function() {
@@ -358,12 +357,7 @@ pn.ui.SearchPanel.prototype.disposeInternal = function() {
   goog.dispose(this.toggle_);
   goog.dispose(this.resizeShow_);
   goog.dispose(this.resizeHide_);
-
-  goog.object.forEach(this.filtersControls_, function(arr) {
-    goog.array.forEach(arr, function(c) { this.eh_.unlisten(c, null); }, this);
-    goog.array.forEach(arr, goog.dispose);
-  }, this);
-
+  
   delete this.filters_;
   delete this.cache_;
   delete this.filtersControls_;
