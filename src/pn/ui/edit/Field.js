@@ -52,5 +52,8 @@ pn.ui.edit.Field = function(id, name) {
 
   /** @type {*} */
   this.defaultValue = undefined;
+
+  /** @type {string} */
+  this.className = '';
 };
 goog.inherits(pn.ui.edit.Field, pn.ui.SpecDisplayItem);

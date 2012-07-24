@@ -77,6 +77,17 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
   return textarea;
 };
 
+/**
+ * @param {*} val The text to display.
+ * @param {Object} entity The Entity being displayed.
+ * @param {!Element} parent The parent to attach this input control to.
+ * @param {boolean=} opt_search If this field is being created in search mode.
+ * @return {!Element} The textarea control.
+ */
+pn.ui.edit.FieldRenderers.noRenderer = 
+    function(val, entity, parent, opt_search) {
+  return goog.dom.createDom('div');
+};
 
 /**
  * @param {*} val The text to display.
