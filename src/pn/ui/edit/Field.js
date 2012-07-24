@@ -47,6 +47,9 @@ pn.ui.edit.Field = function(id, name) {
   /** @type {string} */
   this.filterColumn = this.id;
 
+  /** @type {string} */
+  this.tooltip = '';
+
   /** @type {*} */
   this.defaultValue = undefined;
 };

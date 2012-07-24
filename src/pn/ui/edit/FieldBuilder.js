@@ -16,17 +16,19 @@ goog.require('pn.ui.UiSpecsRegister');
  *  if ommitted.
  * @param {string=} opt_clazz An optional class name.  Will use 'field' if
  *    not specified.
+ * @param {string=} opt_tooltip An optional tooltip to display on this label.
  * @return {!Element} The label element wrapped in a div.
  */
 pn.ui.edit.FieldBuilder.getFieldLabel =
-    function(id, required, opt_name, opt_clazz) {
+    function(id, required, opt_name, opt_clazz, opt_tooltip) {
   goog.asserts.assert(id);
   var clazz = (opt_clazz || 'field') + (required ? ' required' : '');
-  var dom = goog.dom.createDom('div', clazz,
+  var div = goog.dom.createDom('div', clazz,
       goog.dom.createDom('label', {
         'for': id
       }, opt_name || id));
-  return dom;
+  if (opt_tooltip) { div.title = opt_tooltip; }
+  return div;
 };
 
 

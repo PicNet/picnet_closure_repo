@@ -189,7 +189,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     var fieldParent = fieldset;
     if (!f.renderer || f.renderer.showLabel !== false) {
       var required = !!f.validator && f.validator.required;
-      fieldParent = fb.getFieldLabel(f.id, required, f.name, f.className);
+      fieldParent = fb.getFieldLabel(
+          f.id, required, f.name, f.className, f.tooltip);
       this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
