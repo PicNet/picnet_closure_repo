@@ -511,8 +511,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
     var col = this.cols_[i];
     var header = this.slick_.getHeaderRowColumn(col.id);
     var val = this.quickFilters_[col.id];
-    var input = pn.ui.grid.QuickFilterHelpers.
-        createFilterInput(col, 100, val);
+    var input = pn.ui.grid.QuickFilterHelpers.createFilterInput(col, 100, val);
     input['data-id'] = col.id;
 
     goog.dom.removeChildren(header);
