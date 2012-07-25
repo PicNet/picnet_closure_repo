@@ -366,15 +366,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Sorting
   if (this.cfg_.sortable) {
     this.slick_.onSort.subscribe(goog.bind(function(e, args) {
-      this.sort_ = {
-        'colid': args['sortCol']['id'],
-        'asc': args['sortAsc']
-      };
-      this.dataView_.sort(function(a, b) {
-        var x = a[args['sortCol']['field']],
-            y = b[args['sortCol']['field']];
-        return (x === y ? 0 : (x > y ? 1 : -1));
-      }, args['sortAsc']);
+      this.sortBy_(args['sortCol']['id'], args['sortAsc']);
       this.saveGridState_();
     }, this));
   }
@@ -432,6 +424,22 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   if (this.cfg_.sortable) { this.setGridInitialSortState_(); }
 };
 
+/**
+ * @private
+ * @param {string} col The column ID to sort by
+ * @param {boolean} asc Wether to sort ascending.
+ */
+pn.ui.grid.Grid.prototype.sortBy_ = function(col, asc) {
+  this.sort_ = { 'colid': col, 'asc': asc };
+  var col2 = goog.array.find(this.cols_, function(c) { return c.id === col; });
+  var renderer = col2.renderer;
+  
+  this.dataView_.sort(function(a, b) {
+    var x = renderer ? renderer(0, 0, a[col], col2, a) : a[col],
+        y = renderer ? renderer(0, 0, b[col], col2, b) : b[col];
+    return (x === y ? 0 : (x > y ? 1 : -1));
+  }, asc);  
+};
 
 /**
  * @private
@@ -455,12 +463,9 @@ pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
   var state = goog.net.cookies.get(this.hash_);
   var data = state ? goog.json.unsafeParse(state) : {};
   if (!data['sort']) {
-    data['sort'] = {
-    'colid': this.cols_[0].id,
-    'asc': true
-    };
+    data['sort'] = { 'colid': this.cols_[0].id, 'asc': true };
   }
-  this.dataView_.fastSort(data['sort']['colid'], data['sort']['asc']);
+  this.sortBy_(data['sort']['colid'], data['sort']['asc']);
   this.slick_.setSortColumn(data['sort']['colid'], data['sort']['asc']);
 };
 
