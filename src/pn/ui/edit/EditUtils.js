@@ -15,7 +15,7 @@ pn.ui.edit.EditUtils.isShown = function(control, id) {
   goog.asserts.assert(control, 'control is null - id: ' + id);
 
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
-  return goog.style.isElementShown(parent);
+  return !!parent && goog.style.isElementShown(parent);
 };
 
 
@@ -30,7 +30,7 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
       'Could not find a component for field: ' + id);
 
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
-  goog.style.showElement(parent, visible);
+  if (parent) goog.style.showElement(parent, visible);
 };
 
 
@@ -44,6 +44,6 @@ pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
   goog.asserts.assert(control, 'control is null - id: ' + id);
 
   var element = control.getElement ? control.getElement() : control;
-  while (element.id !== id) { element = element.parentNode; }
+  while (element && element.id !== id) { element = element.parentNode; }
   return /** @type {!Element} */ (element);
 };
