@@ -98,10 +98,8 @@ pn.ui.edit.ComplexRenderer.prototype.createDom =
 /** @inheritDoc */
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
-
-  this.eh.removeAll();
+  
   goog.dispose(this.eh);
-  delete this.eh;
   delete this.val;
   delete this.entity;
   delete this.cache;
