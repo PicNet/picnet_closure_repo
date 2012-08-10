@@ -16,7 +16,7 @@ goog.require('pn.ui.grid.Grid');
  */
 pn.ui.edit.FieldBuilder.getFieldLabel = function(fctx) {
   var className = (fctx.spec.className || 'field');
-  var id = fctx.id;
+  var id = fctx.controlId;
   return goog.dom.createDom('div', {'id': id, 'class': className},
       goog.dom.createDom('label', { 'for': id }, fctx.spec.name || id));
 };

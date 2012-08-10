@@ -37,6 +37,10 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   /** @type {!string} */
   this.id = spec.id;
 
+  /** @type {!string} */
+  this.controlId = (++pn.ui.edit.FieldCtx.ID_COUNTER_) + '___' +
+      spec.id.replace(/\./g, '_');
+
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
@@ -44,6 +48,13 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.schema = pn.app.ctx.schema.getFieldSchema(spec);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);
+
+
+/**
+ * @private
+ * @type {number}
+ */
+pn.ui.edit.FieldCtx.ID_COUNTER_ = 0;
 
 
 /**
@@ -88,7 +99,7 @@ pn.ui.edit.FieldCtx.prototype.getControlValue =
  *    visible.
  */
 pn.ui.edit.FieldCtx.prototype.isShown = function(control) {
-  return pn.ui.edit.EditUtils.isShown(control, this.id);
+  return pn.ui.edit.EditUtils.isShown(control, this.controlId);
 };
 
 
@@ -99,7 +110,7 @@ pn.ui.edit.FieldCtx.prototype.isShown = function(control) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
-  pn.ui.edit.EditUtils.showElement(control, this.id, visible);
+  pn.ui.edit.EditUtils.showElement(control, this.controlId, visible);
 };
 
 

@@ -134,20 +134,18 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
 pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
 
-  var focusSet = !this.cfg.autoFocus,
-      fieldset = goog.dom.createDom('fieldset', 'fields'),
+  var fieldset = goog.dom.createDom('fieldset', 'fields'),
       newEntity = pn.data.EntityUtils.isNew(this.entity);
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
   goog.array.forEach(this.cfg.fCtxs, function(fctx) {
-    // Do not do child tables on new entities
     var templateParent = goog.dom.getElement(fctx.id);
     var parentComp = templateParent || fieldset;
 
     if ((newEntity && !fctx.spec.showOnAdd) ||
             (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
-      pn.ui.edit.EditUtils.showElement(parentComp, fctx.id, false);
+      pn.ui.edit.EditUtils.showElement(parentComp, fctx.controlId, false);
       return;
     }
     var renderer = fctx.getFieldRenderer();
@@ -168,13 +166,29 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     this.registerDisposable(input);
     this.registerDisposable(parentComp);
     this.controls_[fctx.id] = input;
-
-    if (!focusSet && input.focus && !fctx.spec.readonly) {
-      focusSet = true;
-      goog.Timer.callOnce(function() {
-        try { input.focus(); } catch (ex) {}
-      }, 1); }
   }, this);
+  this.autoFocus_();
+};
+
+
+/** @private */
+pn.ui.edit.Edit.prototype.autoFocus_ = function() {
+  if (!this.cfg.autoFocus) return;
+
+  var toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
+    var input = this.controls_[fctx.id];
+    return input.focus && !fctx.spec.readonly && fctx.isRequired();
+  }, this);
+
+  if (!toFocus) toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
+    var input = this.controls_[fctx.id];
+    return input.focus && !fctx.spec.readonly;
+  }, this);
+
+  if (!toFocus) { return; }
+  goog.Timer.callOnce(function() {
+    try { this.controls_[toFocus.id].focus(); } catch (ex) {}
+  }, 1, this);
 };
 
 
@@ -183,7 +197,7 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
   goog.array.forEach(this.cfg.fCtxs, function(fctx) {
     var ctl = this.controls_[fctx.id];
     if (!ctl) return;
-    var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.id);
+    var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.controlId);
     if (!parent) return;
 
     if (fctx.isRequired()) {
