@@ -177,12 +177,12 @@ pn.ui.edit.Edit.prototype.autoFocus_ = function() {
 
   var toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
     var input = this.controls_[fctx.id];
-    return input.focus && !fctx.spec.readonly && fctx.isRequired();
+    return input && input.focus && !fctx.spec.readonly && fctx.isRequired();
   }, this);
 
   if (!toFocus) toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
     var input = this.controls_[fctx.id];
-    return input.focus && !fctx.spec.readonly;
+    return input && input.focus && !fctx.spec.readonly;
   }, this);
 
   if (!toFocus) { return; }
