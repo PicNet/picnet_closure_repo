@@ -59,7 +59,9 @@ pn.schema.Schema.prototype.orderEntities = function(type, list) {
 pn.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
   var type = fieldSpec.entitySpec.type;
   var prop = fieldSpec.dataProperty;
-  return this.entities_[type].fieldSchemas[prop];
+  var entity = this.entities_[type];
+  if (!entity) throw new Error('Could not find the entity schema for: ' + type);
+  return entity.fieldSchemas[prop];
 };
 
 

@@ -56,7 +56,8 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
     renderer.decorate(parent);
     return renderer;
   }
-  return renderer(fctx, parent, entity);
+  var func = /** @type {Function} */ (renderer);
+  return func(fctx, parent, entity);
 };
 
 
