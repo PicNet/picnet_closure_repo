@@ -51,6 +51,18 @@ goog.inherits(pn.data.ServerSource, goog.events.EventTarget);
 
 
 /**
+ * Makes an arbitrary ajax request.
+ *
+ * @param {string} uri The location of the server endpoint.
+ * @param {!Object} data The data to send to the endpoint.
+ * @param {function(?):undefined} callback The callback.
+ */
+pn.data.ServerSource.prototype.ajax = function(uri, data, callback) {
+  this.ajax_(uri, data, callback);
+};
+
+
+/**
  * Loads the data schema from the server.
  * @param {function(!Array.<!Object>):undefined} callback The callback for the
  *    schema loading.
