@@ -18,6 +18,8 @@ goog.require('pn.ui.grid.RowOrdering');
 goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
+goog.require('pn.ui.grid.pipe.OrderingHandler');
+goog.require('pn.ui.grid.pipe.SortingHandler');
 goog.require('pn.ui.soy');
 
 
@@ -139,18 +141,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {Function}
    */
   this.selectionHandler_ = null;
-
-  /**
-   * @private
-   * @type {pn.ui.grid.RowOrdering}
-   */
-  this.rowOrdering_ = null;
-
-  /**
-   * @private
-   * @type {Object}
-   */
-  this.sortState_ = null;
 
   /**
    * @private
@@ -296,19 +286,6 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
   if (!this.slick_) return; // No data
 
-  // Default Handlers
-  this.pipeline_.add(new pn.ui.grid.pipe.FilteringHandler(
-      this.slick_, this.dataView_, this.cfg_,
-      this.hash_, this.cctxs_, this.cache_));
-
-  this.pipeline_.init();
-  this.pipeline_.registerEvents();
-
-
-  var hasOrderColumn = !this.cfg_.readonly && goog.array.findIndex(this.cctxs_,
-      function(cctx) {
-        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
-      }) >= 0;
   var rowSelectionModel = new Slick.RowSelectionModel();
   // Selecting
   if (!this.cfg_.readonly) {
@@ -324,23 +301,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
       });
     }, this);
   }
-  if (!hasOrderColumn) {
-    // Sorting
-    this.slick_.onSort.subscribe(goog.bind(function(e, args) {
-      var col = args['sortCol']['id'];
-      var asc = args['sortAsc'];
-      this.sortState_ = { 'colid': col, 'asc': asc };
-      this.sort_(col, asc);
-      this.saveGridState_();
-    }, this));
-  }
 
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
   }, this));
 
-  // Filtering
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
     this.slick_.render();
@@ -349,76 +315,29 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   }, this));
 
 
-  // Initialise
   this.dataView_.beginUpdate();
   this.dataView_.setItems(this.list_, 'ID');
-  // TODO: See if this is correct?
-  //this.dataView_.setFilter(goog.bind(this.filterImpl_, this));
   this.dataView_.endUpdate();
 
-  if (hasOrderColumn) {
-    this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick_);
-    this.registerDisposable(this.rowOrdering_);
-    this.rowOrdering_.init();
-    this.getHandler().listen(this.rowOrdering_, pn.app.AppEvents.LIST_ORDERED,
-        goog.bind(this.publishEvent_, this));
-  }
-
   var rfr = goog.bind(function() {
-    // TODO: Call pipeline onEvent 'resize'
+    this.fireCustomPipelineEvent('resize');
     this.saveGridState_();
   }, this);
 
   this.slick_.onColumnsReordered.subscribe(rfr);
   this.slick_.onColumnsResized.subscribe(rfr);
 
-  this.setGridInitialSortState_();
-};
+  this.pipeline_.add(new pn.ui.grid.pipe.FilteringHandler(
+      this.slick_, this.dataView_, this.cfg_,
+      this.hash_, this.cctxs_, this.cache_));
+  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(
+      this.slick_, this.dataView_, this.cfg_,
+      this.hash_, this.cctxs_));
+  this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler(
+      this.slick_, this.dataView_, this.cfg_, this.cctxs_));
 
-
-/** @private */
-pn.ui.grid.Grid.prototype.setGridInitialSortState_ = function() {
-  var orderColumn = goog.array.find(this.cctxs_, function(cctx) {
-    return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
-  });
-  var state = pn.storage.get(this.hash_);
-  if (!orderColumn && !state) return;
-  var data = orderColumn ? {
-    'sort': {
-      'colid': orderColumn.spec.dataProperty,
-      'asc': true
-    }
-  } : goog.json.unsafeParse(state);
-  var col = null,
-      asc = true;
-  if (data['sort']) {
-    col = data['sort']['colid'];
-    asc = data['sort']['asc'];
-  } else if (this.cfg_.defaultSortColumn) {
-    col = this.cfg_.defaultSortColumn;
-    asc = this.cfg_.defaultSortAscending;
-  }
-  if (col) {
-    if (!orderColumn) this.slick_.setSortColumn(col, asc);
-    this.sort_(col, asc);
-  }
-};
-
-
-/**
- * @private
- * @param {string} col The column being sorted.
- * @param {boolean} asc Wether to sort ascending.
- */
-pn.ui.grid.Grid.prototype.sort_ = function(col, asc) {
-  var cctx = goog.array.find(this.cctxs_, function(cctx1) {
-    return cctx1.id === col;
-  });
-  this.dataView_.sort(function(a, b) {
-    var x = cctx.getCompareableValue(a);
-    var y = cctx.getCompareableValue(b);
-    return (x === y ? 0 : (x > y ? 1 : -1));
-  }, asc);
+  this.pipeline_.init();
+  this.pipeline_.registerEvents();
 };
 
 
@@ -457,8 +376,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
   var columns = this.slick_.getColumns();
   var data = {
     'ids': goog.array.map(columns, function(c) { return c['id']; }),
-    'widths': goog.array.map(columns, function(c) { return c['width']; }),
-    'sort': this.sortState_
+    'widths': goog.array.map(columns, function(c) { return c['width']; })
   };
   pn.storage.set(this.hash_, pn.json.serialiseJson(data));
 };
@@ -470,9 +388,8 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
  * @param {Object} evData The data for the selection event.
  */
 pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
-  // Ignore if triggered by cell re-ordering.
-  if (window.event.target.className.indexOf('cell-reorder') >= 0 ||
-      (this.rowOrdering_ && this.rowOrdering_.isOrdering())) return;
+  // Ignore if triggered by row re-ordering.
+  if (window.event.target.className.indexOf('reorder') >= 0) return;
 
   var idx = evData['rows'][0];
   var selected = this.dataView_.getItem(idx);
@@ -505,9 +422,6 @@ pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
       var data = e.target.getGridData();
       var format = e.exportFormat;
       pn.app.ctx.pub(e.type, this.spec_.type, format, data);
-      break;
-    case ae.LIST_ORDERED:
-      pn.app.ctx.pub(e.type, this.spec_.type, e.ids);
       break;
     default: throw new Error('Event: ' + e.type + ' is not supported');
   }
