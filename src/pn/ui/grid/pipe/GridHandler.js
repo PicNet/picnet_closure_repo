@@ -8,35 +8,46 @@ goog.require('goog.events.EventHandler');
 /**
  * @constructor
  * @extends {goog.events.EventHandler}
- * @param {Slick.Grid} slick The reference to the slick grid being shown.
- * @param {pn.ui.grid.DataView} view The data view being shown.
- * @param {pn.ui.grid.Config} cfg The grid configuration being used.
  */
-pn.ui.grid.pipe.GridHandler = function(slick, view, cfg) {
+pn.ui.grid.pipe.GridHandler = function() {
   goog.events.EventHandler.call(this);
 
-  /**
-   * @protected
-   * @type {Slick.Grid}
-   */
-  this.slick = slick;
+  /** @type {Slick.Grid} */
+  this.slick = null;
 
-  /**
-   * @protected
-   * @type {pn.ui.grid.DataView}
-   */
-  this.view = view;
+  /** @type {pn.ui.grid.DataView} */
+  this.view = null;
 
-  /**
-   * @protected
-   * @type {pn.ui.grid.Config}
-   */
-  this.cfg = cfg;
+  /** @type {pn.ui.grid.Config} */
+  this.cfg = null;
+
+  /** @type {Array.<!pn.ui.grid.ColumnCtx>} */
+  this.cctxs = null;
 
   /** @type {pn.ui.grid.pipe.HandlerPipeline} */
   this.pipeline = null;
 };
 goog.inherits(pn.ui.grid.pipe.GridHandler, goog.events.EventHandler);
+
+
+/**
+ * Initialises all the handlers in this handler.
+ * @param {Slick.Grid} slick The reference to the slick grid being shown.
+ * @param {pn.ui.grid.DataView} view The data view being shown.
+ * @param {pn.ui.grid.Config} cfg The grid configuration being used.
+ * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
+ *    displayed.
+ * @param {!pn.ui.grid.pipe.HandlerPipeline} pipeline A reference to the
+ *    pipeline.
+ */
+pn.ui.grid.pipe.GridHandler.prototype.setMembers =
+    function(slick, view, cfg, cctxs, pipeline) {
+  this.slick = slick;
+  this.view = view;
+  this.cfg = cfg;
+  this.cctxs = cctxs;
+  this.pipeline = pipeline;
+};
 
 
 /**

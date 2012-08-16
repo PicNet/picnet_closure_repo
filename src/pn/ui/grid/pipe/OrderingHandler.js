@@ -9,26 +9,15 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {Slick.Grid} slick The reference to the slick grid being shown.
- * @param {pn.ui.grid.DataView} view The data view being shown.
- * @param {pn.ui.grid.Config} cfg The grid configuration being used.
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
- *    displayed.
  */
-pn.ui.grid.pipe.OrderingHandler = function(slick, view, cfg, cctxs) {
-  pn.ui.grid.pipe.GridHandler.call(this, slick, view, cfg);
+pn.ui.grid.pipe.OrderingHandler = function() {
+  pn.ui.grid.pipe.GridHandler.call(this);
 
   /**
    * @private
    * @type {pn.ui.grid.RowOrdering}
    */
   this.rowOrdering_ = null;
-
-  /**
-   * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.cctxs_ = cctxs;
 };
 goog.inherits(pn.ui.grid.pipe.OrderingHandler, pn.ui.grid.pipe.GridHandler);
 
@@ -36,7 +25,7 @@ goog.inherits(pn.ui.grid.pipe.OrderingHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.OrderingHandler.prototype.init = function() {
   var orderCol = !this.cfg.readonly &&
-      goog.array.find(this.cctxs_, function(cctx) {
+      goog.array.find(this.cctxs, function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec; });
   if (!orderCol) return; // Not an odering grid
 
@@ -45,7 +34,7 @@ pn.ui.grid.pipe.OrderingHandler.prototype.init = function() {
   this.rowOrdering_.init();
 
   this.listen(this.rowOrdering_, pn.app.AppEvents.LIST_ORDERED, function(e) {
-    var entityType = this.cctxs_[0].spec.entitySpec.type;
+    var entityType = this.cctxs[0].spec.entitySpec.type;
     pn.app.ctx.pub(e.type, entityType, e.ids);
   });
 

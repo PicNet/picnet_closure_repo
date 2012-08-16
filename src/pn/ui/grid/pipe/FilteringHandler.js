@@ -9,23 +9,29 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {Slick.Grid} slick The reference to the slick grid being shown.
- * @param {pn.ui.grid.DataView} view The data view being shown.
- * @param {pn.ui.grid.Config} cfg The grid configuration being used.
  * @param {string} gridId The unique grid id for the current grid.
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
- *    displayed.
  * @param {!Object.<Array>} cache The data cache to use for related entities.
  */
-pn.ui.grid.pipe.FilteringHandler =
-    function(slick, view, cfg, gridId, cctxs, cache) {
-  pn.ui.grid.pipe.GridHandler.call(this, slick, view, cfg);
+pn.ui.grid.pipe.FilteringHandler = function(gridId, cache) {
+  pn.ui.grid.pipe.GridHandler.call(this);
 
   /**
    * @private
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.ui.grid.pipe.FilteringHandler');
+
+  /**
+   * @private
+   * @type {string}
+   */
+  this.gridId_ = gridId;
+
+  /**
+   * @private
+   * @type {!Object.<Array>}
+   */
+  this.cache_ = cache;
 
   /**
    * @private
@@ -38,24 +44,6 @@ pn.ui.grid.pipe.FilteringHandler =
    * @type {pn.ui.grid.QuickFind}
    */
   this.quickFind_ = null;
-
-  /**
-   * @private
-   * @type {string}
-   */
-  this.gridId_ = gridId;
-
-  /**
-   * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.cctxs_ = cctxs;
-
-  /**
-   * @private
-   * @type {!Object.<Array>}
-   */
-  this.cache_ = cache;
 };
 goog.inherits(pn.ui.grid.pipe.FilteringHandler, pn.ui.grid.pipe.GridHandler);
 
@@ -70,7 +58,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.init = function() {
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.initQuickFilters_ = function() {
   this.quickFind_ =
-      new pn.ui.grid.QuickFind(this.cache_, this.cctxs_, this.slick);
+      new pn.ui.grid.QuickFind(this.cache_, this.cctxs, this.slick);
   this.registerDisposable(this.quickFind_);
   this.initPersistentFilters_();
 };

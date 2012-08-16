@@ -310,22 +310,12 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.slick_.onColumnsReordered.subscribe(rfr);
   this.slick_.onColumnsResized.subscribe(rfr);
 
-  this.pipeline_.add(new pn.ui.grid.pipe.FilteringHandler(
-      this.slick_, this.dataView_, this.cfg_,
-      this.hash_, this.cctxs_, this.cache_));
-
-  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(
-      this.slick_, this.dataView_, this.cfg_,
-      this.hash_, this.cctxs_));
-
-  this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler(
-      this.slick_, this.dataView_, this.cfg_, this.cctxs_));
-
-  this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(
-      this.slick_, this.dataView_, this.cfg_,
-      this.cctxs_, this.getElement()));
-
-  this.pipeline_.init();
+  this.pipeline_.add(
+      new pn.ui.grid.pipe.FilteringHandler(this.hash_, this.cache_));
+  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(this.hash_));
+  this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler());
+  this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
+  this.pipeline_.init(this.slick_, this.dataView_, this.cfg_, this.cctxs_);
 
   this.fireCustomPipelineEvent('initialised');
 };

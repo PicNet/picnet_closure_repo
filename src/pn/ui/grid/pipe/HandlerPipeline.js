@@ -39,7 +39,6 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
 
   this.registerDisposable(handler);
 
-  handler.pipeline = this;
   this.handlers_.push(handler);
 };
 
@@ -55,7 +54,6 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.insertAt = function(handler, index) {
 
   this.registerDisposable(handler);
 
-  handler.pipeline = this;
   goog.array.insertAt(this.handlers_, handler, index);
 };
 
@@ -63,11 +61,20 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.insertAt = function(handler, index) {
 /**
  * Initialises all the handlers in this pipeline. This method should only
  *    ever be called once.
+ * @param {Slick.Grid} slick The reference to the slick grid being shown.
+ * @param {pn.ui.grid.DataView} view The data view being shown.
+ * @param {pn.ui.grid.Config} cfg The grid configuration being used.
+ * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
+ *    displayed.
  */
-pn.ui.grid.pipe.HandlerPipeline.prototype.init = function() {
+pn.ui.grid.pipe.HandlerPipeline.prototype.init =
+    function(slick, view, cfg, cctxs) {
   goog.asserts.assert(!this.initialised_);
   this.initialised_ = true;
-  goog.array.forEach(this.handlers_, function(h) { h.init(); });
+  goog.array.forEach(this.handlers_, function(h) {
+    h.setMembers(slick, view, cfg, cctxs, this);
+    h.init();
+  }, this);
 };
 
 

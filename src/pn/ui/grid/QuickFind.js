@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {!Object.<Array>} cache The data cache to use for related entities.
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
+ * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
  *    displayed.
  * @param {Slick.Grid} slick The instance of the slick grid.
  */
@@ -28,7 +28,7 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
+   * @type {Array.<!pn.ui.grid.ColumnCtx>}
    */
   this.cctxs_ = cctxs;
 

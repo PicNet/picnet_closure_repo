@@ -9,18 +9,12 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {Slick.Grid} slick The reference to the slick grid being shown.
- * @param {pn.ui.grid.DataView} view The data view being shown.
- * @param {pn.ui.grid.Config} cfg The grid configuration being used.
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
- *    displayed.
  * @param {Element} parent The parent Grid element container.
  */
-pn.ui.grid.pipe.TotalsHandler =
-    function(slick, view, cfg, cctxs, parent) {
+pn.ui.grid.pipe.TotalsHandler = function(parent) {
   goog.asserts.assert(parent);
 
-  pn.ui.grid.pipe.GridHandler.call(this, slick, view, cfg);
+  pn.ui.grid.pipe.GridHandler.call(this);
 
   /**
    * @private
@@ -30,23 +24,15 @@ pn.ui.grid.pipe.TotalsHandler =
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.cctxs_ = cctxs;
-
-  /**
-   * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.totalColumns_ = goog.array.filter(this.cctxs_,
-      function(cctx) { return !!cctx.spec.total; });
-
-  /**
-   * @private
    * @type {Element}
    */
   this.parent_ = parent;
 
+  /**
+   * @private
+   * @type {Array.<!pn.ui.grid.ColumnCtx>}
+   */
+  this.totalColumns_ = null;
   /**
    * @private
    * @type {Element}
@@ -58,15 +44,17 @@ goog.inherits(pn.ui.grid.pipe.TotalsHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.TotalsHandler.prototype.init = function() {
+  this.totalColumns_ = goog.array.filter(this.cctxs,
+      function(cctx) { return !!cctx.spec.total; });
   if (!this.totalColumns_.length) { return; }
+
   this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
   goog.dom.appendChild(this.parent_, this.totalsLegend_);
 };
 
 
 /** @override */
-pn.ui.grid.pipe.TotalsHandler.prototype.onCustomEvent =
-    function(eventType) {
+pn.ui.grid.pipe.TotalsHandler.prototype.onCustomEvent = function(eventType) {
   if (eventType === 'row-count-changed' || eventType === 'initialised') {
     this.updateTotals_();
   }
@@ -75,7 +63,8 @@ pn.ui.grid.pipe.TotalsHandler.prototype.onCustomEvent =
 
 /** @private */
 pn.ui.grid.pipe.TotalsHandler.prototype.updateTotals_ = function() {
-  if (!this.totalColumns_.length) return;
+  if (!this.totalColumns_ || !this.totalColumns_.length) return;
+
   var items = this.view.getItems();
   var total = goog.array.reduce(items, function(acc, item) {
     goog.array.forEach(this.totalColumns_, function(cctx1) {

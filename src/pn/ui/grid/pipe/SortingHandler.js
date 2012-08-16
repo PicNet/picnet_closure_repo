@@ -9,28 +9,16 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {Slick.Grid} slick The reference to the slick grid being shown.
- * @param {pn.ui.grid.DataView} view The data view being shown.
- * @param {pn.ui.grid.Config} cfg The grid configuration being used.
  * @param {string} gridId The unique grid id for the current grid.
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
- *    displayed.
  */
-pn.ui.grid.pipe.SortingHandler =
-    function(slick, view, cfg, gridId, cctxs) {
-  pn.ui.grid.pipe.GridHandler.call(this, slick, view, cfg);
+pn.ui.grid.pipe.SortingHandler = function(gridId) {
+  pn.ui.grid.pipe.GridHandler.call(this);
 
   /**
    * @private
    * @type {string}
    */
   this.gridId_ = gridId;
-
-  /**
-   * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.cctxs_ = cctxs;
 };
 goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 
@@ -38,7 +26,7 @@ goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.SortingHandler.prototype.init = function() {
   var hasOrderColumn = !this.cfg.readonly &&
-      goog.array.findIndex(this.cctxs_, function(cctx) {
+      goog.array.findIndex(this.cctxs, function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
       }) >= 0;
   // No sorting on orderable grids
@@ -98,7 +86,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
  * @param {boolean} asc Wether to sort ascending.
  */
 pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
-  var cctx = goog.array.find(this.cctxs_,
+  var cctx = goog.array.find(this.cctxs,
       function(cctx1) { return cctx1.id === col; });
 
   this.view.sort(function(a, b) {
