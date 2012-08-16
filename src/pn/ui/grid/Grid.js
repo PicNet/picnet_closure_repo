@@ -16,6 +16,7 @@ goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
 goog.require('pn.ui.grid.pipe.ColWidthsHandler');
+goog.require('pn.ui.grid.pipe.CommandsHandler');
 goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
@@ -81,7 +82,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = goog.array.reduce(this.cfg_.cCtxs,
+  this.gridId_ = goog.array.reduce(this.cfg_.cCtxs,
       function(acc, f) { return acc + f.id; }, '');
 
   /**
@@ -98,12 +99,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {Element}
-   */
-  this.noData_ = null;
-
-  /**
-   * @private
    * @type {Slick.Grid}
    */
   this.slick_ = null;
@@ -115,32 +110,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.dataView_ = null;
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
-
-
-/**
- * @return {Array.<Array.<string>>} The data of the grid. This is used when
- *    exporting the grid contents.
- */
-pn.ui.grid.Grid.prototype.getGridData = function() {
-  var headers = goog.array.map(this.cfg_.cCtxs,
-      function(cctx1) { return cctx1.spec.name; });
-  var gridData = [headers];
-  var lencol = this.cfg_.cCtxs.length;
-  for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
-    var rowData = this.dataView_.getItem(row);
-    var rowTxt = [];
-
-    for (var cidx = 0; cidx < lencol; cidx++) {
-      var cctx = this.cfg_.cCtxs[cidx];
-      var val = rowData[cctx.spec.dataProperty];
-      var renderer = cctx.getColumnRenderer();
-      var txt = renderer ? renderer(cctx, rowData) : val;
-      rowTxt.push(txt);
-    }
-    gridData.push(rowTxt);
-  }
-  return gridData;
-};
 
 
 /**
@@ -170,16 +139,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 
   this.decorateCommands_();
 
-  var height = 80 + Math.min(550, this.list_.length * 25);
-  var width = $(element).width();
-  var parent = pn.dom.addHtml(element,
-      pn.ui.soy.grid({
-        specId: this.spec_.id,
-        width: width,
-        height: height,
-        hasData: this.list_.length > 0}));
-  this.noData_ = goog.dom.getElementByClass('grid-no-data', parent);
-
+  var parent = this.decorateContainer_();
   this.createSlick_(parent);
 };
 
@@ -190,6 +150,24 @@ pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
   goog.array.forEach(this.cfg_.commands, function(c) {
     c.decorate(this.getElement());
   }, this);
+};
+
+
+/**
+ * @private
+ * @return {!Element} The created container for the noData and the slick grid
+ *    controls.
+ */
+pn.ui.grid.Grid.prototype.decorateContainer_ = function() {
+  var height = 80 + Math.min(550, this.list_.length * 25);
+  var width = $(this.getElement()).width();
+  var parent = pn.dom.addHtml(this.getElement(),
+      pn.ui.soy.grid({
+        specId: this.spec_.id,
+        width: width,
+        height: height,
+        hasData: this.list_.length > 0}));
+  return parent;
 };
 
 
@@ -214,20 +192,15 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
 /** @override */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
-  if (!this.slick_) return; // No data
-
-  if (!this.cfg_.readonly) {
-    goog.array.forEach(this.cfg_.commands, function(c) {
-      this.getHandler().listen(c, c.eventType, function(e) {
-        e.target = this;
-        this.publishEvent_(e);
-      });
-    }, this);
-  }
+  // No data, do not display grid. This could cause issues if we ever do need
+  // to support changing data sets i.e. 'pn.model.Collection'
+  if (!this.slick_) return;
 
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
+
+    this.fireCustomPipelineEvent('row-data-changed', args.rows);
   }, this));
 
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
@@ -236,10 +209,9 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.fireCustomPipelineEvent('row-count-changed');
   }, this));
 
-  var rfr = goog.bind(
-      function() { this.fireCustomPipelineEvent('resize'); }, this);
-
-  this.slick_.onColumnsResized.subscribe(rfr);
+  this.slick_.onColumnsResized.subscribe(goog.bind(function() {
+    this.fireCustomPipelineEvent('resize');
+  }, this));
 
   this.initialisePipeline_();
   this.pipeline_.preRender();
@@ -258,49 +230,22 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   this.getHandler().listen(this.pipeline_, et, function(e) {
     var event = e.innerEvent;
     event.target = this;
-    this.publishEvent_(event);
+    this.dispatchEvent(event);
   });
 
   this.pipeline_.add(
-      new pn.ui.grid.pipe.FilteringHandler(this.hash_, this.cache_));
-  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(this.hash_));
+      new pn.ui.grid.pipe.FilteringHandler(this.gridId_, this.cache_));
+  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(this.gridId_));
   this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
   this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
-  this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.hash_));
-  this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(this.noData_));
+  this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_));
+  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.spec_.type));
+  var noData = goog.dom.getElementByClass('grid-no-data', this.getElement());
+  this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(noData));
 
   this.pipeline_.setMembers(
       this.slick_, this.dataView_, this.cfg_, this.cfg_.cCtxs);
-};
-
-
-/**
- * @private
- * @param {!goog.events.Event} e The event to publish using the pn.app.ctx.pub
- *    mechanism.
- */
-pn.ui.grid.Grid.prototype.publishEvent_ = function(e) {
-  if (!this.cfg_.publishEventBusEvents) {
-    this.dispatchEvent(e);
-    return;
-  }
-  var ae = pn.app.AppEvents;
-  switch (e.type) {
-    case ae.ENTITY_SELECT:
-      var id = e.selected['ID'];
-      pn.app.ctx.pub(e.type, this.spec_.type, id);
-      break;
-    case ae.ENTITY_ADD:
-      pn.app.ctx.pub(e.type, this.spec_.type);
-      break;
-    case ae.LIST_EXPORT:
-      var data = e.target.getGridData();
-      var format = e.exportFormat;
-      pn.app.ctx.pub(e.type, this.spec_.type, format, data);
-      break;
-    default: throw new Error('Event: ' + e.type + ' is not supported');
-  }
 };
 
 

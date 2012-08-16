@@ -12,19 +12,34 @@ goog.require('goog.events.EventHandler');
 pn.ui.grid.pipe.GridHandler = function() {
   goog.events.EventHandler.call(this);
 
-  /** @type {Slick.Grid} */
+  /**
+   * @protected
+   * @type {Slick.Grid}
+   */
   this.slick = null;
 
-  /** @type {pn.ui.grid.DataView} */
+  /**
+   * @protected
+   * @type {pn.ui.grid.DataView}
+   */
   this.view = null;
 
-  /** @type {pn.ui.grid.Config} */
+  /**
+   * @protected
+   * @type {pn.ui.grid.Config}
+   */
   this.cfg = null;
 
-  /** @type {Array.<!pn.ui.grid.ColumnCtx>} */
+  /**
+   * @protected
+   * @type {Array.<!pn.ui.grid.ColumnCtx>}
+   */
   this.cctxs = null;
 
-  /** @type {pn.ui.grid.pipe.HandlerPipeline} */
+  /**
+   * @protected
+   * @type {pn.ui.grid.pipe.HandlerPipeline}
+   */
   this.pipeline = null;
 };
 goog.inherits(pn.ui.grid.pipe.GridHandler, goog.events.EventHandler);

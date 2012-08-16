@@ -65,3 +65,31 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
     this.dispatchEvent(e);
   }, false, this);
 };
+
+
+/**
+ * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
+ *    displayed.
+ * @param {Array.<string>} headers The headers of the data.
+ * @param {Slick.Data.DataView} view The DataView with the data to export.
+ * @return {Array.<Array.<string>>} The data of the grid. This is used when
+ *    exporting the grid contents.
+ */
+pn.ui.grid.ExportCommand.getGridData = function(cctxs, headers, view) {
+  var gridData = [headers];
+  var lencol = headers.length;
+  for (var row = 0, len = view.getLength(); row < len; row++) {
+    var rowData = view.getItem(row);
+    var rowTxt = [];
+
+    for (var cidx = 0; cidx < lencol; cidx++) {
+      var cctx = cctxs[cidx];
+      var val = rowData[cctx.spec.dataProperty];
+      var renderer = cctx.getColumnRenderer();
+      var txt = renderer ? renderer(cctx, rowData) : val;
+      rowTxt.push(txt);
+    }
+    gridData.push(rowTxt);
+  }
+  return gridData;
+};

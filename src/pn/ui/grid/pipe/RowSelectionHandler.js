@@ -38,8 +38,5 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
 
   var idx = evData['rows'][0];
   var selected = this.view.getItem(idx);
-  var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
-  e.selected = selected;
-
-  this.pipeline.raiseGridEvent(e);
+  this.fireCustomEvent('select-row', selected);
 };
