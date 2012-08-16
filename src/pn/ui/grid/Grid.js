@@ -19,6 +19,7 @@ goog.require('pn.ui.grid.pipe.ColWidthsHandler');
 goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
+goog.require('pn.ui.grid.pipe.NoDataHandler');
 goog.require('pn.ui.grid.pipe.OrderingHandler');
 goog.require('pn.ui.grid.pipe.RowSelectionHandler');
 goog.require('pn.ui.grid.pipe.SortingHandler');
@@ -85,12 +86,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {goog.debug.Logger}
-   */
-  this.log_ = pn.log.getLogger('pn.ui.grid.Grid');
-
-  /**
-   * @private
    * @type {!Array}
    */
   this.list_ = this.interceptor_ ? this.interceptor_.filterList(list) : list;
@@ -103,21 +98,15 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Array.<pn.ui.grid.Command>}
+   * @type {Element}
    */
-  this.commands_ = this.cfg_.commands;
+  this.noData_ = null;
 
   /**
    * @private
    * @type {Slick.Grid}
    */
   this.slick_ = null;
-
-  /**
-   * @private
-   * @type {Element}
-   */
-  this.noData_ = null;
 
   /**
    * @private
@@ -198,7 +187,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
 /** @private */
 pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
   if (this.cfg_.readonly) { return; }
-  goog.array.forEach(this.commands_, function(c) {
+  goog.array.forEach(this.cfg_.commands, function(c) {
     c.decorate(this.getElement());
   }, this);
 };
@@ -228,7 +217,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   if (!this.slick_) return; // No data
 
   if (!this.cfg_.readonly) {
-    goog.array.forEach(this.commands_, function(c) {
+    goog.array.forEach(this.cfg_.commands, function(c) {
       this.getHandler().listen(c, c.eventType, function(e) {
         e.target = this;
         this.publishEvent_(e);
@@ -245,7 +234,6 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.slick_.updateRowCount();
     this.slick_.render();
     this.fireCustomPipelineEvent('row-count-changed');
-    goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
   var rfr = goog.bind(
@@ -280,6 +268,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
   this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.hash_));
+  this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(this.noData_));
 
   this.pipeline_.setMembers(
       this.slick_, this.dataView_, this.cfg_, this.cfg_.cCtxs);
