@@ -16,18 +16,6 @@ pn.ui.grid.pipe.HandlerPipeline = function() {
    * @type {!Array.<!pn.ui.grid.pipe.GridHandler>}
    */
   this.handlers_ = [];
-
-  /**
-   * @private
-   * @type {boolean}
-   */
-  this.initialised_ = false;
-
-  /**
-   * @private
-   * @type {boolean}
-   */
-  this.eventsRegistered_ = false;
 };
 goog.inherits(pn.ui.grid.pipe.HandlerPipeline, goog.events.EventTarget);
 
@@ -46,21 +34,6 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
 
 
 /**
- * @param {!pn.ui.grid.pipe.GridHandler} handler The handler to insert at the
- *    specified index in the pipeline.
- * @param {number} index The index to insert the handler at.
- */
-pn.ui.grid.pipe.HandlerPipeline.prototype.insertAt = function(handler, index) {
-  goog.asserts.assert(handler);
-  goog.asserts.assert(index >= 0 && index <= this.handlers_.length);
-
-  this.registerDisposable(handler);
-
-  goog.array.insertAt(this.handlers_, handler, index);
-};
-
-
-/**
  * Initialises all the handlers in this pipeline. This method should only
  *    ever be called once.
  * @param {Slick.Grid} slick The reference to the slick grid being shown.
@@ -69,13 +42,26 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.insertAt = function(handler, index) {
  * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
  *    displayed.
  */
-pn.ui.grid.pipe.HandlerPipeline.prototype.init =
+pn.ui.grid.pipe.HandlerPipeline.prototype.setMembers =
     function(slick, view, cfg, cctxs) {
-  goog.asserts.assert(!this.initialised_);
-  this.initialised_ = true;
   goog.array.forEach(this.handlers_, function(h) {
     h.setMembers(slick, view, cfg, cctxs, this);
-    h.init();
+  }, this);
+};
+
+
+/** Called before the grid and dataview have their display data */
+pn.ui.grid.pipe.HandlerPipeline.prototype.preRender = function() {
+  goog.array.forEach(this.handlers_, function(h) {
+    h.preRender();
+  }, this);
+};
+
+
+/** Called after the grid and dataview have their data */
+pn.ui.grid.pipe.HandlerPipeline.prototype.postRender = function() {
+  goog.array.forEach(this.handlers_, function(h) {
+    h.postRender();
   }, this);
 };
 

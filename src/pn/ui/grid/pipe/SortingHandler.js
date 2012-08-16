@@ -18,13 +18,13 @@ pn.ui.grid.pipe.SortingHandler = function(gridId) {
    * @private
    * @type {string}
    */
-  this.gridId_ = gridId;
+  this.storeId_ = gridId + '_sort';
 };
 goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 
 
 /** @override */
-pn.ui.grid.pipe.SortingHandler.prototype.init = function() {
+pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
   var hasOrderColumn = !this.cfg.readonly &&
       goog.array.findIndex(this.cctxs, function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
@@ -51,7 +51,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent =
 
 /** @private */
 pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
-  var state = pn.storage.get(this.gridId_ + '_sort');
+  var state = pn.storage.get(this.storeId_);
   var data = state ? goog.json.unsafeParse(state) : {
     'colid': this.cfg.defaultSortColumn,
     'asc': this.cfg.defaultSortAscending
@@ -76,7 +76,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
   if (!!opt_updateUi) this.slick.setSortColumn(col, asc);
   this.sortImpl_(col, asc);
 
-  pn.storage.set(this.gridId_ + '_sort', pn.json.serialiseJson(sortData));
+  pn.storage.set(this.storeId_, pn.json.serialiseJson(sortData));
 };
 
 

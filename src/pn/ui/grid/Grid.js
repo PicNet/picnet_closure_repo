@@ -15,6 +15,7 @@ goog.require('pn.ui.grid.DataView');
 goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
+goog.require('pn.ui.grid.pipe.ColWidthsHandler');
 goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
@@ -94,13 +95,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    */
   this.list_ = this.interceptor_ ? this.interceptor_.filterList(list) : list;
 
-
-  /**
-   * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.cctxs_ = this.getColumnsWithInitialState_(this.cfg_.cCtxs);
-
   /**
    * @private
    * @type {!Object.<Array>}
@@ -130,14 +124,34 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {pn.ui.grid.DataView}
    */
   this.dataView_ = null;
-
-  /**
-   * @private
-   * @type {Function}
-   */
-  this.selectionHandler_ = null;
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
+
+
+/**
+ * @return {Array.<Array.<string>>} The data of the grid. This is used when
+ *    exporting the grid contents.
+ */
+pn.ui.grid.Grid.prototype.getGridData = function() {
+  var headers = goog.array.map(this.cfg_.cCtxs,
+      function(cctx1) { return cctx1.spec.name; });
+  var gridData = [headers];
+  var lencol = this.cfg_.cCtxs.length;
+  for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
+    var rowData = this.dataView_.getItem(row);
+    var rowTxt = [];
+
+    for (var cidx = 0; cidx < lencol; cidx++) {
+      var cctx = this.cfg_.cCtxs[cidx];
+      var val = rowData[cctx.spec.dataProperty];
+      var renderer = cctx.getColumnRenderer();
+      var txt = renderer ? renderer(cctx, rowData) : val;
+      rowTxt.push(txt);
+    }
+    gridData.push(rowTxt);
+  }
+  return gridData;
+};
 
 
 /**
@@ -150,6 +164,10 @@ pn.ui.grid.Grid.prototype.fireCustomPipelineEvent =
   this.pipeline_.fireCustomEvent(eventType, opt_data);
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// Internals of Grid.js
+///////////////////////////////////////////////////////////////////////////////
+
 
 /** @override */
 pn.ui.grid.Grid.prototype.createDom = function() {
@@ -161,89 +179,46 @@ pn.ui.grid.Grid.prototype.createDom = function() {
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
-  if (!this.cfg_.readonly) {
-    goog.array.forEach(this.commands_, function(c) {
-      c.decorate(element);
-    }, this);
-  }
+  this.decorateCommands_();
 
   var height = 80 + Math.min(550, this.list_.length * 25);
   var width = $(element).width();
-  var hasData = this.list_.length > 0;
   var parent = pn.dom.addHtml(element,
       pn.ui.soy.grid({
         specId: this.spec_.id,
         width: width,
         height: height,
-        hasData: hasData}));
+        hasData: this.list_.length > 0}));
   this.noData_ = goog.dom.getElementByClass('grid-no-data', parent);
-  var gridContainer = goog.dom.getElementByClass('grid-container', parent);
+
+  this.createSlick_(parent);
+};
 
 
-  if (!hasData) { return; }
-
-  this.dataView_ = new pn.ui.grid.DataView();
-  this.registerDisposable(this.dataView_);
-
-  var columns = goog.array.map(this.cctxs_,
-      function(cctx) { return cctx.toSlick(); });
-  this.slick_ = new Slick.Grid(
-      gridContainer, this.dataView_, columns, this.cfg_.toSlick());
+/** @private */
+pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
+  if (this.cfg_.readonly) { return; }
+  goog.array.forEach(this.commands_, function(c) {
+    c.decorate(this.getElement());
+  }, this);
 };
 
 
 /**
  * @private
- * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The unsorted columns.
- * @return {!Array.<!pn.ui.grid.ColumnCtx>} The sorted columns with saved
- *    widths.
+ * @param {!Element} parent The element to add the slick grid to.
  */
-pn.ui.grid.Grid.prototype.getColumnsWithInitialState_ = function(cctxs) {
-  var state = pn.storage.get(this.hash_);
-  if (!state) return cctxs;
+pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
+  if (!this.list_.length) return;
 
-  var data = goog.json.unsafeParse(state);
-  var ids = data['ids'];
-  var widths = data['widths'];
-  var ordered = [];
-  goog.array.forEach(ids, function(id, idx) {
-    var cidx = goog.array.findIndex(cctxs,
-        function(cctx1) { return cctx1.id === id; });
-    var cctx = cctxs[cidx];
-    delete cctxs[cidx];
-    cctx.spec.width = widths[idx];
-    ordered.push(cctx);
-  });
+  var gridContainer = goog.dom.getElementByClass('grid-container', parent);
+  this.dataView_ = new pn.ui.grid.DataView();
+  this.registerDisposable(this.dataView_);
 
-  // Add remaining columns (if any)
-  goog.array.forEach(cctxs, ordered.push);
-  return ordered;
-};
-
-
-/**
- * @return {Array.<Array.<string>>} The data of the grid. This is used when
- *    exporting the grid contents.
- */
-pn.ui.grid.Grid.prototype.getGridData = function() {
-  var headers = goog.array.map(this.cctxs_,
-      function(cctx1) { return cctx1.spec.name; });
-  var gridData = [headers];
-  var lencol = this.cctxs_.length;
-  for (var row = 0, len = this.dataView_.getLength(); row < len; row++) {
-    var rowData = this.dataView_.getItem(row);
-    var rowTxt = [];
-
-    for (var cidx = 0; cidx < lencol; cidx++) {
-      var cctx = this.cctxs_[cidx];
-      var val = rowData[cctx.spec.dataProperty];
-      var renderer = cctx.getColumnRenderer();
-      var txt = renderer ? renderer(cctx, rowData) : val;
-      rowTxt.push(txt);
-    }
-    gridData.push(rowTxt);
-  }
-  return gridData;
+  var columns = goog.array.map(this.cfg_.cCtxs,
+      function(cctx) { return cctx.toSlick(); });
+  this.slick_ = new Slick.Grid(
+      gridContainer, this.dataView_, columns, this.cfg_.toSlick());
 };
 
 
@@ -252,7 +227,6 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
   if (!this.slick_) return; // No data
 
-  // Selecting
   if (!this.cfg_.readonly) {
     goog.array.forEach(this.commands_, function(c) {
       this.getHandler().listen(c, c.eventType, function(e) {
@@ -274,20 +248,19 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
+  var rfr = goog.bind(
+      function() { this.fireCustomPipelineEvent('resize'); }, this);
+
+  this.slick_.onColumnsResized.subscribe(rfr);
+
+  this.initialisePipeline_();
+  this.pipeline_.preRender();
 
   this.dataView_.beginUpdate();
   this.dataView_.setItems(this.list_, 'ID');
   this.dataView_.endUpdate();
 
-  var rfr = goog.bind(function() {
-    this.fireCustomPipelineEvent('resize');
-    this.saveGridState_();
-  }, this);
-
-  this.slick_.onColumnsReordered.subscribe(rfr);
-  this.slick_.onColumnsResized.subscribe(rfr);
-
-  this.initialisePipeline_();
+  this.pipeline_.postRender();
 };
 
 
@@ -306,21 +279,10 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
   this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
+  this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.hash_));
 
-  this.pipeline_.init(this.slick_, this.dataView_, this.cfg_, this.cctxs_);
-
-  this.fireCustomPipelineEvent('initialised');
-};
-
-
-/** @private */
-pn.ui.grid.Grid.prototype.saveGridState_ = function() {
-  var columns = this.slick_.getColumns();
-  var data = {
-    'ids': goog.array.map(columns, function(c) { return c['id']; }),
-    'widths': goog.array.map(columns, function(c) { return c['width']; })
-  };
-  pn.storage.set(this.hash_, pn.json.serialiseJson(data));
+  this.pipeline_.setMembers(
+      this.slick_, this.dataView_, this.cfg_, this.cfg_.cCtxs);
 };
 
 

@@ -18,7 +18,7 @@ goog.inherits(pn.ui.grid.pipe.RowSelectionHandler,
 
 
 /** @override */
-pn.ui.grid.pipe.RowSelectionHandler.prototype.init = function() {
+pn.ui.grid.pipe.RowSelectionHandler.prototype.postRender = function() {
   if (this.cfg.readonly || !this.cfg.allowEdit) { return; }
   this.slick.setSelectionModel(new Slick.RowSelectionModel());
   var selectionHandler = goog.bind(this.handleSelection_, this);

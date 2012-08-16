@@ -51,10 +51,17 @@ pn.ui.grid.pipe.GridHandler.prototype.setMembers =
 
 
 /**
- * Initialise your handler here.  At this stage all fields (slick, view, cfg
- *    and pipeline are available to your.
+ * Override to add functionality to the grid before the grid and dataview have
+ *    their data and are rendered on the page.
  */
-pn.ui.grid.pipe.GridHandler.prototype.init = goog.abstractMethod;
+pn.ui.grid.pipe.GridHandler.prototype.preRender = function() {};
+
+
+/**
+ * Override to add functionality to the grid before the grid and dataview have
+ *    their data and are rendered on the page.
+ */
+pn.ui.grid.pipe.GridHandler.prototype.postRender = function() {};
 
 
 /**

@@ -43,7 +43,7 @@ goog.inherits(pn.ui.grid.pipe.TotalsHandler, pn.ui.grid.pipe.GridHandler);
 
 
 /** @override */
-pn.ui.grid.pipe.TotalsHandler.prototype.init = function() {
+pn.ui.grid.pipe.TotalsHandler.prototype.preRender = function() {
   this.totalColumns_ = goog.array.filter(this.cctxs,
       function(cctx) { return !!cctx.spec.total; });
   if (!this.totalColumns_.length) { return; }
@@ -54,10 +54,14 @@ pn.ui.grid.pipe.TotalsHandler.prototype.init = function() {
 
 
 /** @override */
+pn.ui.grid.pipe.TotalsHandler.prototype.postRender = function() {
+  this.updateTotals_();
+};
+
+
+/** @override */
 pn.ui.grid.pipe.TotalsHandler.prototype.onCustomEvent = function(eventType) {
-  if (eventType === 'row-count-changed' || eventType === 'initialised') {
-    this.updateTotals_();
-  }
+  if (eventType === 'row-count-changed') { this.updateTotals_(); }
 };
 
 

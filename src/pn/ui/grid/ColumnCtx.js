@@ -46,8 +46,8 @@ goog.inherits(pn.ui.grid.ColumnCtx, goog.Disposable);
 pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
   var cfg = this.spec.toSlick();
   var rnd = this.getColumnRenderer();
-  cfg['formatter'] = rnd ? goog.bind(function(row, cell, value, col, item) { 
-    return rnd(this, item); 
+  cfg['formatter'] = rnd ? goog.bind(function(row, cell, value, col, item) {
+    return rnd(this, item);
   }, this) : null;
   return cfg;
 };

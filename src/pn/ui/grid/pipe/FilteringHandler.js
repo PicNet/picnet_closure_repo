@@ -25,7 +25,7 @@ pn.ui.grid.pipe.FilteringHandler = function(gridId, cache) {
    * @private
    * @type {string}
    */
-  this.gridId_ = gridId;
+  this.storeId_ = gridId + '_filters';
 
   /**
    * @private
@@ -49,7 +49,7 @@ goog.inherits(pn.ui.grid.pipe.FilteringHandler, pn.ui.grid.pipe.GridHandler);
 
 
 /** @override */
-pn.ui.grid.pipe.FilteringHandler.prototype.init = function() {
+pn.ui.grid.pipe.FilteringHandler.prototype.postRender = function() {
   this.view.setFilter(goog.bind(this.filterImpl_, this));
   if (this.cfg.enableQuickFilters) { this.initQuickFilters_(); }
 };
@@ -76,7 +76,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.initPersistentFilters_ =
 
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
-  var statesStr = pn.storage.get(this.gridId_ + '_filters');
+  var statesStr = pn.storage.get(this.storeId_);
   if (!statesStr) { return; }
   var filterStates = /** @type {!Object.<string>} */
       (goog.json.unsafeParse(statesStr));
@@ -87,7 +87,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.saveFilterStates_ = function() {
   var jsonData = pn.json.serialiseJson(this.quickFind_.getFilterStates());
-  pn.storage.set(this.gridId_ + '_filters', jsonData);
+  pn.storage.set(this.storeId_, jsonData);
 };
 
 
