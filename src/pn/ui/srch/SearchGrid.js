@@ -78,7 +78,7 @@ goog.inherits(pn.ui.srch.SearchGrid, goog.ui.Component);
  */
 pn.ui.srch.SearchGrid.prototype.filterList = function(filters) {
   goog.asserts.assert(filters);
-  this.grid_.filter(goog.bind(function(entity) {
+  this.grid_.fireCustomPipelineEvent('filter', goog.bind(function(entity) {
     return this.filter_.filterEntity(entity, filters);
   }, this));
 };

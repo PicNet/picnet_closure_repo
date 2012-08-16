@@ -49,6 +49,8 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
    * @type {!pn.ui.filter.SearchEngine}
    */
   this.search_ = new pn.ui.filter.SearchEngine();
+
+  this.init_();
 };
 goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
 
@@ -82,8 +84,11 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
 };
 
 
-/** Initialises the quick filters and attaches the filters row to the grid */
-pn.ui.grid.QuickFind.prototype.init = function() {
+/**
+ * @private
+ * Initialises the quick filters and attaches the filters row to the grid
+ */
+pn.ui.grid.QuickFind.prototype.init_ = function() {
 
   for (var i = 0; i < this.cctxs_.length; i++) {
     var fctx = this.cctxs_[i];

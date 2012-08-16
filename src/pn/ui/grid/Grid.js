@@ -15,6 +15,9 @@ goog.require('pn.ui.grid.DataView');
 goog.require('pn.ui.grid.OrderingColumnSpec');
 goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
+goog.require('pn.ui.grid.pipe.FilteringHandler');
+goog.require('pn.ui.grid.pipe.GridHandler');
+goog.require('pn.ui.grid.pipe.HandlerPipeline');
 goog.require('pn.ui.soy');
 
 
@@ -59,6 +62,13 @@ pn.ui.grid.Grid = function(spec, list, cache) {
   this.interceptor_ = this.cfg_.interceptor ?
       new this.cfg_.interceptor(cache) : null;
   this.registerDisposable(this.interceptor_);
+
+  /**
+   * @private
+   * @type {!pn.ui.grid.pipe.HandlerPipeline}
+   */
+  this.pipeline_ = new pn.ui.grid.pipe.HandlerPipeline();
+  this.registerDisposable(this.pipeline_);
 
   /**
    * @private
@@ -132,18 +142,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {null|function(Object):boolean}
-   */
-  this.currentFilter_ = null;
-
-  /**
-   * @private
-   * @type {pn.ui.grid.QuickFind}
-   */
-  this.quickFind_ = null;
-
-  /**
-   * @private
    * @type {pn.ui.grid.RowOrdering}
    */
   this.rowOrdering_ = null;
@@ -163,23 +161,14 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
 
-/** @param {function(Object):boolean} filter The filter function to apply. */
-pn.ui.grid.Grid.prototype.filter = function(filter) {
-  this.log_.info('Filtering grid');
-  this.currentFilter_ = filter;
-  this.dataView_.refresh();
-  this.slick_.render();
-};
-
-
 /**
- * @private
- * @param {!Object} item The row item to pass to the currentFilter_.
- * @return {boolean} Whether the specified item satisfies the currentFilter.
+ * @param {string} eventType The type of event to fire.
+ * @param {*=} opt_data  The optional data object to pass to the event
+ *    handlers.
  */
-pn.ui.grid.Grid.prototype.filterImpl_ = function(item) {
-  if (this.quickFind_ && !this.quickFind_.matches(item)) { return false; }
-  return !this.currentFilter_ || this.currentFilter_(item);
+pn.ui.grid.Grid.prototype.fireCustomPipelineEvent =
+    function(eventType, opt_data) {
+  this.pipeline_.fireCustomEvent(eventType, opt_data);
 };
 
 
@@ -212,19 +201,19 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   var gridContainer = goog.dom.getElementByClass('grid-container', parent);
 
 
-  if (hasData) {
-    this.dataView_ = new pn.ui.grid.DataView();
-    this.registerDisposable(this.dataView_);
+  if (!hasData) { return; }
 
-    var columns = goog.array.map(this.cctxs_,
-        goog.bind(this.getColumnSlickConfig_, this));
-    this.slick_ = new Slick.Grid(gridContainer, this.dataView_,
-        columns, this.cfg_.toSlick());
+  this.dataView_ = new pn.ui.grid.DataView();
+  this.registerDisposable(this.dataView_);
 
-    if (this.totalColumns_.length) {
-      this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
-      goog.dom.appendChild(element, this.totalsLegend_);
-    }
+  var columns = goog.array.map(this.cctxs_,
+      goog.bind(this.getColumnSlickConfig_, this));
+  this.slick_ = new Slick.Grid(gridContainer, this.dataView_,
+      columns, this.cfg_.toSlick());
+
+  if (this.totalColumns_.length) {
+    this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
+    goog.dom.appendChild(element, this.totalsLegend_);
   }
 };
 
@@ -307,6 +296,15 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
   if (!this.slick_) return; // No data
 
+  // Default Handlers
+  this.pipeline_.add(new pn.ui.grid.pipe.FilteringHandler(
+      this.slick_, this.dataView_, this.cfg_,
+      this.hash_, this.cctxs_, this.cache_));
+
+  this.pipeline_.init();
+  this.pipeline_.registerEvents();
+
+
   var hasOrderColumn = !this.cfg_.readonly && goog.array.findIndex(this.cctxs_,
       function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
@@ -354,26 +352,9 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   // Initialise
   this.dataView_.beginUpdate();
   this.dataView_.setItems(this.list_, 'ID');
-  this.dataView_.setFilter(goog.bind(this.filterImpl_, this));
+  // TODO: See if this is correct?
+  //this.dataView_.setFilter(goog.bind(this.filterImpl_, this));
   this.dataView_.endUpdate();
-
-  // Quick Filters
-  if (this.cfg_.enableQuickFilters) {
-    this.quickFind_ = new pn.ui.grid.QuickFind(
-        this.cache_, this.cctxs_, this.slick_);
-    this.registerDisposable(this.quickFind_);
-    this.quickFind_.init();
-    if (this.cfg_.persistFilters) {
-      var state = pn.storage.get(this.hash_);
-      if (state) {
-        var data = goog.json.unsafeParse(state);
-        this.quickFind_.setFilterStates(data['filters']);
-        var filtered = pn.ui.grid.QuickFind.EventType.FILTERED;
-        this.getHandler().listen(this.quickFind_, filtered,
-            goog.bind(this.saveGridState_, this));
-      }
-    }
-  }
 
   if (hasOrderColumn) {
     this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick_);
@@ -384,9 +365,10 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   }
 
   var rfr = goog.bind(function() {
-    if (this.quickFind_) { this.quickFind_.resize(); }
+    // TODO: Call pipeline onEvent 'resize'
     this.saveGridState_();
   }, this);
+
   this.slick_.onColumnsReordered.subscribe(rfr);
   this.slick_.onColumnsResized.subscribe(rfr);
 
@@ -478,9 +460,6 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c['width']; }),
     'sort': this.sortState_
   };
-  if (this.cfg_.persistFilters && this.quickFind_) {
-    data['filters'] = this.quickFind_.getFilterStates();
-  }
   pn.storage.set(this.hash_, pn.json.serialiseJson(data));
 };
 
