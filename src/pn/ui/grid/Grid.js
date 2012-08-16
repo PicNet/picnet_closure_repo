@@ -19,6 +19,7 @@ goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
 goog.require('pn.ui.grid.pipe.OrderingHandler');
+goog.require('pn.ui.grid.pipe.RowSelectionHandler');
 goog.require('pn.ui.grid.pipe.SortingHandler');
 goog.require('pn.ui.grid.pipe.TotalsHandler');
 goog.require('pn.ui.soy');
@@ -185,27 +186,9 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   this.registerDisposable(this.dataView_);
 
   var columns = goog.array.map(this.cctxs_,
-      goog.bind(this.getColumnSlickConfig_, this));
-  this.slick_ = new Slick.Grid(gridContainer, this.dataView_,
-      columns, this.cfg_.toSlick());
-};
-
-
-/**
- * @private
- * @param {!pn.ui.grid.ColumnCtx} cctx The field context to convert to a slick
- *    grid column config.
- * @return {pn.ui.grid.ColumnSpec} A config object for a slick grid column.
- */
-pn.ui.grid.Grid.prototype.getColumnSlickConfig_ = function(cctx) {
-  var cfg = cctx.spec.toSlick();
-  var renderer = cctx.getColumnRenderer();
-  if (renderer) {
-    cfg['formatter'] = function(row, cell, value, col, item) {
-      return renderer(cctx, item);
-    };
-  }
-  return cfg;
+      function(cctx) { return cctx.toSlick(); });
+  this.slick_ = new Slick.Grid(
+      gridContainer, this.dataView_, columns, this.cfg_.toSlick());
 };
 
 
@@ -269,14 +252,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
   if (!this.slick_) return; // No data
 
-  var rowSelectionModel = new Slick.RowSelectionModel();
   // Selecting
   if (!this.cfg_.readonly) {
-    if (this.cfg_.allowEdit) {
-      this.slick_.setSelectionModel(rowSelectionModel);
-      this.selectionHandler_ = goog.bind(this.handleSelection_, this);
-      this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
-    }
     goog.array.forEach(this.commands_, function(c) {
       this.getHandler().listen(c, c.eventType, function(e) {
         e.target = this;
@@ -310,11 +287,26 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.slick_.onColumnsReordered.subscribe(rfr);
   this.slick_.onColumnsResized.subscribe(rfr);
 
+  this.initialisePipeline_();
+};
+
+
+/** @private */
+pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
+  var et = pn.ui.grid.pipe.HandlerPipeline.EventType.PIPELINE_EVENT;
+  this.getHandler().listen(this.pipeline_, et, function(e) {
+    var event = e.innerEvent;
+    event.target = this;
+    this.publishEvent_(event);
+  });
+
   this.pipeline_.add(
       new pn.ui.grid.pipe.FilteringHandler(this.hash_, this.cache_));
   this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(this.hash_));
   this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
+  this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
+
   this.pipeline_.init(this.slick_, this.dataView_, this.cfg_, this.cctxs_);
 
   this.fireCustomPipelineEvent('initialised');
@@ -329,23 +321,6 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c['width']; })
   };
   pn.storage.set(this.hash_, pn.json.serialiseJson(data));
-};
-
-
-/**
- * @private
- * @param {Event} ev The selection event from the SlickGrid.
- * @param {Object} evData The data for the selection event.
- */
-pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
-  // Ignore if triggered by row re-ordering.
-  if (window.event.target.className.indexOf('reorder') >= 0) return;
-
-  var idx = evData['rows'][0];
-  var selected = this.dataView_.getItem(idx);
-  var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
-  e.selected = selected;
-  this.publishEvent_(e);
 };
 
 

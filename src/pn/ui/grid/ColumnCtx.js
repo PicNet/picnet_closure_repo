@@ -41,6 +41,19 @@ goog.inherits(pn.ui.grid.ColumnCtx, goog.Disposable);
 
 
 /**
+ * @return {pn.ui.grid.ColumnSpec} A config object for a slick grid column.
+ */
+pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
+  var cfg = this.spec.toSlick();
+  var rnd = this.getColumnRenderer();
+  cfg['formatter'] = rnd ? goog.bind(function(row, cell, value, col, item) { 
+    return rnd(this, item); 
+  }, this) : null;
+  return cfg;
+};
+
+
+/**
  * @param {!Object} entity The entity being shown.
  * @return {*} The compareable value of this column, suitable for sorting, etc.
  */

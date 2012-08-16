@@ -1,14 +1,16 @@
 ﻿;
 goog.provide('pn.ui.grid.pipe.HandlerPipeline');
 
+goog.require('goog.events.Event');
+
 
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventTarget}
  */
 pn.ui.grid.pipe.HandlerPipeline = function() {
-  goog.Disposable.call(this);
+  goog.events.EventTarget.call(this);
   /**
    * @private
    * @type {!Array.<!pn.ui.grid.pipe.GridHandler>}
@@ -27,7 +29,7 @@ pn.ui.grid.pipe.HandlerPipeline = function() {
    */
   this.eventsRegistered_ = false;
 };
-goog.inherits(pn.ui.grid.pipe.HandlerPipeline, goog.Disposable);
+goog.inherits(pn.ui.grid.pipe.HandlerPipeline, goog.events.EventTarget);
 
 
 /**
@@ -90,4 +92,22 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.fireCustomEvent =
   goog.array.forEach(this.handlers_, function(h) {
     h.onCustomEvent(eventType, opt_data);
   });
+};
+
+
+/**
+ * @param {goog.events.Event} event The event to push up to the grid for
+ *    impersonation.
+ */
+pn.ui.grid.pipe.HandlerPipeline.prototype.raiseGridEvent = function(event) {
+  var et = pn.ui.grid.pipe.HandlerPipeline.EventType.PIPELINE_EVENT;
+  var e = new goog.events.Event(et, this);
+  e.innerEvent = event;
+  this.dispatchEvent(e);
+};
+
+
+/** @enum {string} */
+pn.ui.grid.pipe.HandlerPipeline.EventType = {
+  PIPELINE_EVENT: 'pipeline-event'
 };
