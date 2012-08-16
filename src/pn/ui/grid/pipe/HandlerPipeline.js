@@ -72,17 +72,6 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.init = function() {
 
 
 /**
- * Registers all events for the handlers in this pipeline. This method should
- *    only ever be called once.
- */
-pn.ui.grid.pipe.HandlerPipeline.prototype.registerEvents = function() {
-  goog.asserts.assert(!this.eventsRegistered_);
-  this.eventsRegistered_ = true;
-  goog.array.forEach(this.handlers_, function(h) { h.registerEvents(); });
-};
-
-
-/**
  * @param {string} eventType The type of event to fire.
  * @param {*=} opt_data  The optional data object to pass to the event
  *    handlers.

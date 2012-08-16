@@ -47,12 +47,6 @@ pn.ui.grid.pipe.GridHandler.prototype.init = goog.abstractMethod;
 
 
 /**
- * Override if any events need to be registerd on the grid or data view.
- */
-pn.ui.grid.pipe.GridHandler.prototype.registerEvents = function() {};
-
-
-/**
  * @param {string} eventType The type of event being fired.
  * @param {*=} opt_data  Any optional data object for this event.
  */

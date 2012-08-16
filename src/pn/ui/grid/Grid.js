@@ -20,6 +20,7 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 goog.require('pn.ui.grid.pipe.HandlerPipeline');
 goog.require('pn.ui.grid.pipe.OrderingHandler');
 goog.require('pn.ui.grid.pipe.SortingHandler');
+goog.require('pn.ui.grid.pipe.TotalsHandler');
 goog.require('pn.ui.soy');
 
 
@@ -101,13 +102,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Array.<!pn.ui.grid.ColumnCtx>}
-   */
-  this.totalColumns_ = goog.array.filter(this.cctxs_,
-      function(cctx) { return !!cctx.spec.total; });
-
-  /**
-   * @private
    * @type {!Object.<Array>}
    */
   this.cache_ = cache;
@@ -141,12 +135,6 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @type {Function}
    */
   this.selectionHandler_ = null;
-
-  /**
-   * @private
-   * @type {Element}
-   */
-  this.totalsLegend_ = null;
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
@@ -200,11 +188,6 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       goog.bind(this.getColumnSlickConfig_, this));
   this.slick_ = new Slick.Grid(gridContainer, this.dataView_,
       columns, this.cfg_.toSlick());
-
-  if (this.totalColumns_.length) {
-    this.totalsLegend_ = goog.dom.createDom('div', 'totals-legend');
-    goog.dom.appendChild(element, this.totalsLegend_);
-  }
 };
 
 
@@ -310,7 +293,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
     this.slick_.render();
-    this.updateTotals_();
+    this.fireCustomPipelineEvent('row-count-changed');
     goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
@@ -330,44 +313,21 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.pipeline_.add(new pn.ui.grid.pipe.FilteringHandler(
       this.slick_, this.dataView_, this.cfg_,
       this.hash_, this.cctxs_, this.cache_));
+
   this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(
       this.slick_, this.dataView_, this.cfg_,
       this.hash_, this.cctxs_));
+
   this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler(
       this.slick_, this.dataView_, this.cfg_, this.cctxs_));
 
+  this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(
+      this.slick_, this.dataView_, this.cfg_,
+      this.cctxs_, this.getElement()));
+
   this.pipeline_.init();
-  this.pipeline_.registerEvents();
-};
 
-
-/** @private */
-pn.ui.grid.Grid.prototype.updateTotals_ = function() {
-  if (!this.totalColumns_.length) return;
-
-  var items = this.dataView_.getItems();
-  var total = goog.array.reduce(items, function(acc, item) {
-    goog.array.forEach(this.totalColumns_, function(cctx1) {
-      if (acc[cctx1.id] === undefined) acc[cctx1.id] = 0;
-      var itemVal = item[cctx1.id];
-      if (itemVal) acc[cctx1.id] += itemVal;
-    }, this);
-    return acc;
-  }, {}, this);
-  var html = [];
-  for (var field in total) {
-    var cctx = goog.array.find(this.totalColumns_,
-        function(cctx1) { return cctx1.id === field; });
-    var val;
-    var mockEntity = {};
-    mockEntity[field] = total[field];
-    var renderer = cctx.getColumnRenderer();
-    if (renderer) { val = renderer(cctx, mockEntity); }
-    else { val = parseInt(total[field], 10); }
-    html.push('Total ' + cctx.spec.name + ': ' + val || '0');
-  }
-  this.totalsLegend_.innerHTML = '<ul><li>' +
-      html.join('</li><li>') + '</li>';
+  this.fireCustomPipelineEvent('initialised');
 };
 
 
