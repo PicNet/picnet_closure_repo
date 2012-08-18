@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E0EBDCE4-C0ED-4280-A299-5A2EE22BA041}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>picnet_closure_repo</RootNamespace>
+    <AssemblyName>picnet_closure_repo</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="cleancode.bat" />
+    <None Include="compile.bat" />
+    <None Include="compile_tablefilter.bat" />
+    <None Include="manual_compile.bat" />
+    <None Include="README.md" />
+    <None Include="release_tablefilter.bat" />
+    <None Include="src\pn\ui\soy\pn.soy" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="generate_externs.html" />
+    <Content Include="src\demos\app1\app1.html" />
+    <Content Include="src\demos\app1\App1Demo.js" />
+    <Content Include="src\demos\app1\DemoUtils.js" />
+    <Content Include="src\demos\app1\ShowEditPage.js" />
+    <Content Include="src\demos\app1\ShowListPage.js" />
+    <Content Include="src\demos\app1\UserSpec.js" />
+    <Content Include="src\demos\css\demo.css" />
+    <Content Include="src\demos\datamanagerdemo.js" />
+    <Content Include="src\demos\daterangepickerdemo.js" />
+    <Content Include="src\demos\dbdemo.js" />
+    <Content Include="src\demos\demoscripts.js" />
+    <Content Include="src\demos\images\window_left_tab.png" />
+    <Content Include="src\demos\images\window_right_tab.png" />
+    <Content Include="src\demos\index.html" />
+    <Content Include="src\demos\indexeddbtest.html" />
+    <Content Include="src\demos\pn.data.DataManager.html" />
+    <Content Include="src\demos\pn.ui.DateRangePicker.html" />
+    <Content Include="src\demos\pn.ui.TabSlideMenu.html" />
+    <Content Include="src\demos\scripts.min.js" />
+    <Content Include="src\demos\tablefilter_demo.htm" />
+    <Content Include="src\demos\tablefilter_demosrc.htm" />
+    <Content Include="src\demos\tablefilter_demosrc2.htm" />
+    <Content Include="src\demos\tablefilter_demosrc3.htm" />
+    <Content Include="src\demos\tabslidemenudemo.js" />
+    <Content Include="src\deps.js" />
+    <Content Include="src\jquery-1.3.2.externs.js" />
+    <Content Include="src\pn\app\AppConfig.js" />
+    <Content Include="src\pn\app\AppEvents.js" />
+    <Content Include="src\pn\app\BaseApp.js" />
+    <Content Include="src\pn\app\EventBus.js" />
+    <Content Include="src\pn\app\Router.js" />
+    <Content Include="src\pn\convert.js" />
+    <Content Include="src\pn\data.old\AbstractRepository.js" />
+    <Content Include="src\pn\data.old\AbstractSQLRepository.js" />
+    <Content Include="src\pn\data.old\DataManager.js" />
+    <Content Include="src\pn\data.old\DefaultRepositoryFactory.js" />
+    <Content Include="src\pn\data.old\GearsRepository.js" />
+    <Content Include="src\pn\data.old\IDataProvider.js" />
+    <Content Include="src\pn\data.old\IEntity.js" />
+    <Content Include="src\pn\data.old\IndexedDBRepository.js" />
+    <Content Include="src\pn\data.old\InMemoryProvider.js" />
+    <Content Include="src\pn\data.old\InMemoryRepository.js" />
+    <Content Include="src\pn\data.old\IRepository.js" />
+    <Content Include="src\pn\data.old\LocalDataProvider.js" />
+    <Content Include="src\pn\data.old\LocalStorageRepository.js" />
+    <Content Include="src\pn\data.old\RemoteDataProvider.js" />
+    <Content Include="src\pn\data.old\TransactionResult.js" />
+    <Content Include="src\pn\data.old\WebSQLRepository.js" />
+    <Content Include="src\pn\data\BaseSource.js" />
+    <Content Include="src\pn\data\BufferedServerSource.js" />
+    <Content Include="src\pn\data\ClientSource.js" />
+    <Content Include="src\pn\data\Data.js" />
+    <Content Include="src\pn\data\DataDownloader.js" />
+    <Content Include="src\pn\data\EntityFilter.js" />
+    <Content Include="src\pn\data\EntityUtils.js" />
+    <Content Include="src\pn\data\MemCache.js" />
+    <Content Include="src\pn\data\ServerSource.js" />
+    <Content Include="src\pn\date.js" />
+    <Content Include="src\pn\dom.js" />
+    <Content Include="src\pn\json.js" />
+    <Content Include="src\pn\log.js" />
+    <Content Include="src\pn\model\ChangeEvent.js" />
+    <Content Include="src\pn\model\Collection.js" />
+    <Content Include="src\pn\model\Model.js" />
+    <Content Include="src\pn\model\ModelBase.js" />
+    <Content Include="src\pn\model\Timer.js" />
+    <Content Include="src\pn\object.js" />
+    <Content Include="src\pn\rx.externs.js" />
+    <Content Include="src\pn\rx.js" />
+    <Content Include="src\pn\schema\EntitySchema.js" />
+    <Content Include="src\pn\schema\FieldSchema.js" />
+    <Content Include="src\pn\schema\Schema.js" />
+    <Content Include="src\pn\slick.grid.externs.js" />
+    <Content Include="src\pn\storage.js" />
+    <Content Include="src\pn\ui\BaseFieldSpec.js" />
+    <Content Include="src\pn\ui\ComboBox.js" />
+    <Content Include="src\pn\ui\css\common.css" />
+    <Content Include="src\pn\ui\css\datepicker.css" />
+    <Content Include="src\pn\ui\css\daterangepicker.css" />
+    <Content Include="src\pn\ui\css\images\rangepicker_sprite.png" />
+    <Content Include="src\pn\ui\css\popupdatepicker.css" />
+    <Content Include="src\pn\ui\css\tabslidemenu.css" />
+    <Content Include="src\pn\ui\DateRangePicker.js" />
+    <Content Include="src\pn\ui\Dialog.js" />
+    <Content Include="src\pn\ui\edit\AddOnFlyDialog.js" />
+    <Content Include="src\pn\ui\edit\AddOnFlyRenderer.js" />
+    <Content Include="src\pn\ui\edit\cmd\CancelCommand.js" />
+    <Content Include="src\pn\ui\edit\cmd\CloneCommand.js" />
+    <Content Include="src\pn\ui\edit\cmd\Command.js" />
+    <Content Include="src\pn\ui\edit\cmd\DeleteCommand.js" />
+    <Content Include="src\pn\ui\edit\cmd\SaveCommand.js" />
+    <Content Include="src\pn\ui\edit\CommandsComponent.js" />
+    <Content Include="src\pn\ui\edit\ComplexRenderer.js" />
+    <Content Include="src\pn\ui\edit\Config.js" />
+    <Content Include="src\pn\ui\edit\DecimalRenderer.js" />
+    <Content Include="src\pn\ui\edit\Edit.js" />
+    <Content Include="src\pn\ui\edit\EditUtils.js" />
+    <Content Include="src\pn\ui\edit\FieldBuilder.js" />
+    <Content Include="src\pn\ui\edit\FieldCtx.js" />
+    <Content Include="src\pn\ui\edit\FieldRenderers.js" />
+    <Content Include="src\pn\ui\edit\FieldSpec.js" />
+    <Content Include="src\pn\ui\edit\FieldValidator.js" />
+    <Content Include="src\pn\ui\edit\Interceptor.js" />
+    <Content Include="src\pn\ui\edit\MultiSpecEdit.js" />
+    <Content Include="src\pn\ui\edit\ReadOnlyFields.js" />
+    <Content Include="src\pn\ui\edit\ValidateInfo.js" />
+    <Content Include="src\pn\ui\FileUpload.js" />
+    <Content Include="src\pn\ui\filter\FilterState.js" />
+    <Content Include="src\pn\ui\filter\GenericListFilter.js" />
+    <Content Include="src\pn\ui\filter\GenericListFilterOptions.js" />
+    <Content Include="src\pn\ui\filter\jQueryPlugin.js" />
+    <Content Include="src\pn\ui\filter\SearchEngine.js" />
+    <Content Include="src\pn\ui\filter\TableFilter.js" />
+    <Content Include="src\pn\ui\filter\TableFilterOptions.js" />
+    <Content Include="src\pn\ui\grid\ColumnCtx.js" />
+    <Content Include="src\pn\ui\grid\ColumnRenderers.js" />
+    <Content Include="src\pn\ui\grid\ColumnSpec.js" />
+    <Content Include="src\pn\ui\grid\Command.js" />
+    <Content Include="src\pn\ui\grid\Config.js" />
+    <Content Include="src\pn\ui\grid\DataView.js" />
+    <Content Include="src\pn\ui\grid\ExportCommand.js" />
+    <Content Include="src\pn\ui\grid\Grid.js" />
+    <Content Include="src\pn\ui\grid\Interceptor.js" />
+    <Content Include="src\pn\ui\grid\OrderingColumnSpec.js" />
+    <Content Include="src\pn\ui\grid\pipe\ColWidthsHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\CommandsHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\FilteringHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\GridHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\HandlerPipeline.js" />
+    <Content Include="src\pn\ui\grid\pipe\NoDataHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\OrderingHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\RowSelectionHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\SortingHandler.js" />
+    <Content Include="src\pn\ui\grid\pipe\TotalsHandler.js" />
+    <Content Include="src\pn\ui\grid\QuickFind.js" />
+    <Content Include="src\pn\ui\grid\RowOrdering.js" />
+    <Content Include="src\pn\ui\IDirtyAware.js" />
+    <Content Include="src\pn\ui\InputColourPicker.js" />
+    <Content Include="src\pn\ui\InputDatePicker.js" />
+    <Content Include="src\pn\ui\KeyShortcutMgr.js" />
+    <Content Include="src\pn\ui\LoadingPnl.js" />
+    <Content Include="src\pn\ui\MessagePanel.js" />
+    <Content Include="src\pn\ui\RelatedTypesCalc.js" />
+    <Content Include="src\pn\ui\soy\pn.compiled.soy.js" />
+    <Content Include="src\pn\ui\srch\Config.js" />
+    <Content Include="src\pn\ui\srch\SearchGrid.js" />
+    <Content Include="src\pn\ui\srch\SearchPanel.js" />
+    <Content Include="src\pn\ui\TabSlideMenu.js" />
+    <Content Include="src\pn\ui\TabSlideMenuSettings.js" />
+    <Content Include="src\pn\ui\TemplateWrapper.js" />
+    <Content Include="src\pn\ui\UiSpec.js" />
+    <Content Include="src\pn\ui\UiSpecsRegister.js" />
+    <Content Include="src\pn\ui\ViewMgr.js" />
+    <Content Include="src\pn\ui\YesNoDialog.js" />
+    <Content Include="src\tests\all_tests.html" />
+    <Content Include="src\tests\all_tests.js" />
+    <Content Include="src\tests\blank.htm" />
+    <Content Include="src\tests\CollectionsTests2.js" />
+    <Content Include="src\tests\CollectionTests.html" />
+    <Content Include="src\tests\GearsDataManagerTests.html" />
+    <Content Include="src\tests\GearsRepositoryTests.html" />
+    <Content Include="src\tests\GenericDataManagerTests.js" />
+    <Content Include="src\tests\GenericRepositoryTests.js" />
+    <Content Include="src\tests\IndexedDBDataManagerTests.html" />
+    <Content Include="src\tests\IndexedDBRepositoryTests.html" />
+    <Content Include="src\tests\KeyShortcutMgrTests.html" />
+    <Content Include="src\tests\LocalDataProviderTests.html" />
+    <Content Include="src\tests\LocalStorageDataManagerTests.html" />
+    <Content Include="src\tests\LocalStorageRepositoryTests.html" />
+    <Content Include="src\tests\MemCacheTests.html" />
+    <Content Include="src\tests\MockAjaxProvider.js" />
+    <Content Include="src\tests\ModelTests.html" />
+    <Content Include="src\tests\NodeServer.js" />
+    <Content Include="src\tests\PicNetUtilsTests.html" />
+    <Content Include="src\tests\RemoteDataProviderTests.html" />
+    <Content Include="src\tests\RemoteDataProviderTests.js" />
+    <Content Include="src\tests\RemoteServerDataProviderTests.html" />
+    <Content Include="src\tests\RouterTests.html" />
+    <Content Include="src\tests\RxTests.html" />
+    <Content Include="src\tests\SearchEngineTests.html" />
+    <Content Include="src\tests\TableFilterTests.js" />
+    <Content Include="src\tests\testtest.html" />
+    <Content Include="src\tests\testtest.html.vb" />
+    <Content Include="src\tests\testtest.js" />
+    <Content Include="src\tests\update_all_tests.bin.js" />
+    <Content Include="src\tests\WebSQLDataManagerTests.html" />
+    <Content Include="src\tests\WebSQLRepositoryTests.html" />
+    <Content Include="tablefilter_readme.txt" />
+    <Content Include="TODO.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
