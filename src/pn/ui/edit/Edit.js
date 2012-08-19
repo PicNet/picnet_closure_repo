@@ -69,8 +69,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
     var ctl = this.getControl(fctx.id);
-    return fctx.isShown(ctl) &&
-        fctx.isDirty(this.entity, ctl);
+    return fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
   this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
   return dirty;

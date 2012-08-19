@@ -161,6 +161,11 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
  *    different than the entity value).
  */
 pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
+  goog.asserts.assert(entity);
+  goog.asserts.assert(control);
+
+  if (!this.isShown(control)) return false;
+
   var orig = this.getEntityValue(entity);
   var curr = this.getControlValue(control);
 
