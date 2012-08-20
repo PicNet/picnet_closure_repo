@@ -116,7 +116,10 @@ pn.app.AppConfig = function(opt_opts) {
     'DateTime': rr.dateField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'Int32': rr.intField
+    'Int32': rr.intField,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'Enumeration': rr.enumField
   };
 
   /** @type {!Object} */
@@ -126,7 +129,10 @@ pn.app.AppConfig = function(opt_opts) {
     'YesNo': cr.yesNoBoolRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'DateTime': cr.dateRenderer
+    'DateTime': cr.dateRenderer,
+
+    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
+    'Enumeration': cr.enumRenderer
   };
 
   if (opt_opts) goog.object.extend(this, opt_opts);

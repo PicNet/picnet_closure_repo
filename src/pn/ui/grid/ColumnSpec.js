@@ -101,6 +101,24 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
     this.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
   }
   if (!this.tooltip) this.tooltip = this.name;
+  if (!this.renderer) this.renderer = this.getDefaultRenderer_();
+};
+
+
+/**
+ * @private
+ * @return {undefined|pn.ui.grid.ColumnSpec.Renderer} The inferred renderer for
+ *    this column.
+ */
+pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
+  goog.asserts.assert(!this.renderer);
+
+  var schema = pn.app.ctx.schema.getFieldSchema(this);
+  var schemaType = schema ? schema.type : '';
+  if (goog.string.startsWith(schemaType, 'enum:')) {
+    schemaType = 'Enumeration';
+  }
+  return pn.app.ctx.cfg.defaultColumnRenderers[schemaType];
 };
 
 

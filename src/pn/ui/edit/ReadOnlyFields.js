@@ -67,6 +67,19 @@ pn.ui.edit.ReadOnlyFields.timeField = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being added.
+ * @return {!Element} The enumeration field.
+ */
+pn.ui.edit.ReadOnlyFields.enumField = function(fctx, parent, entity) {
+  var val = /** @type {number} */ (fctx.getEntityValue(entity));
+  var name = pn.schema.Enumeration.getName(fctx.schema, val);
+  return pn.ui.edit.ReadOnlyFields.createDiv_(name, val, parent);
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to create a control for.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being added.
  * @return {!Element} The readonly cents field.
  */
 pn.ui.edit.ReadOnlyFields.centsField = function(fctx, parent, entity) {
@@ -149,11 +162,23 @@ pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
       fctx.getEntityValue(entity);
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
-  var readonly = goog.dom.createDom('div', 'field');
-  readonly.innerHTML = text;
-  readonly.value = val;
-  goog.dom.appendChild(parent, readonly);
-  return readonly;
+  return pn.ui.edit.ReadOnlyFields.createDiv_(text, val, parent);
+};
+
+
+/**
+ * @private
+ * @param {string} text The text to show in this div.
+ * @param {*} value The value to set in this div.
+ * @param {!Element} parent The parent to attach this control to.
+ * @return {!Element} The readonly text field control.
+ */
+pn.ui.edit.ReadOnlyFields.createDiv_ = function(text, value, parent) {
+  var div = goog.dom.createDom('div', 'field');
+  div.innerHTML = text;
+  div.value = value;
+  goog.dom.appendChild(parent, div);
+  return div;
 };
 
 

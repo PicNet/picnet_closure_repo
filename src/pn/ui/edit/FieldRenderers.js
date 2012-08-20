@@ -298,13 +298,13 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
-        {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' }, 
+        {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
         selectTxt));
   }
   goog.array.forEach(list, function(e) {
     var opts = {'value': e['ID']};
-    if (goog.isDef(selValue) && e['ID'] === selValue) { 
-    opts['selected'] = 'selected'; }
+    if (goog.isDef(selValue) && e['ID'] === selValue) {
+      opts['selected'] = 'selected'; }
     var txt = e['Name'] ? e['Name'].toString() : '';
     goog.asserts.assert(txt !== undefined);
 

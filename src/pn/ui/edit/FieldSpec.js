@@ -179,6 +179,15 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
 pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
   goog.asserts.assert(!this.renderer);
 
+  var schema = pn.app.ctx.schema.getFieldSchema(this);
+  var schemaType = schema ? schema.type : '';
+  if (schemaType === 'String' && schema.length >
+      pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
+    schemaType = 'LongString';
+  } else if (goog.string.startsWith(schemaType, 'enum:')) {
+    schemaType = 'Enumeration';
+  }
+
   if (pn.data.EntityUtils.isParentProperty(this.dataProperty) &&
       !this.tableType) {
     return this.readonly ?
@@ -189,19 +198,11 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
         pn.ui.edit.ReadOnlyFields.itemList :
         pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
   } else if (this.readonly) {
-    var type = pn.app.ctx.schema.getFieldSchema(this).type;
-    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[type] ||
+    if (!schema) throw Error('could not find schema for field: ' + this.id);
+    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[schemaType] ||
         pn.ui.edit.ReadOnlyFields.textField;
   } else {
-    var schema = pn.app.ctx.schema.getFieldSchema(this);
     if (!schema) throw Error('could not find schema for field: ' + this.id);
-    var schemaType = schema.type;
-    if (schemaType === 'String' && schema.length >
-            pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
-      schemaType = 'LongString';
-    } else if (goog.string.startsWith(schemaType, 'enum:')) {
-      schemaType = 'Enumeration';
-    }
     return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] ||
         pn.ui.edit.FieldRenderers.textFieldRenderer;
   }

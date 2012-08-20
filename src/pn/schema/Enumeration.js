@@ -24,3 +24,17 @@ pn.schema.Enumeration = function(type, names, values) {
   this.values = values;
 
 };
+
+
+/**
+ * @param {pn.schema.FieldSchema} fieldSchema The schema representing this
+ *    field.
+ * @param {number} val The value to turn into a name.
+ * @return {string} The name of the specified enum value.
+ */
+pn.schema.Enumeration.getName = function(fieldSchema, val) {
+  var enumeration = pn.app.ctx.schema.getEnum(fieldSchema);
+  var validx = goog.array.findIndex(enumeration.values,
+      function(v) { return v === val; });
+  return validx >= 0 ? enumeration.names[validx] : '';
+};
