@@ -199,6 +199,8 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
     if (schemaType === 'String' && schema.length >
             pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
       schemaType = 'LongString';
+    } else if (goog.string.startsWith(schemaType, 'enum:')) {
+      schemaType = 'Enumeration';
     }
     return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] ||
         pn.ui.edit.FieldRenderers.textFieldRenderer;

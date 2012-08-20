@@ -99,13 +99,14 @@ pn.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
 
 
 /**
- * @param {!pn.schema.FieldSchema} fieldSchema The field to determine
+ * @param {pn.schema.FieldSchema} fieldSchema The field to determine
  *    the enumeration for.
  * @return {!pn.schema.Enumeration} The enumeration for the given field.
  */
 pn.schema.Schema.prototype.getEnum = function(fieldSchema) {
   goog.asserts.assert(fieldSchema);
   goog.asserts.assert(goog.string.startsWith(fieldSchema.type, 'enum:'));
+
   var type = fieldSchema.type.split(':')[1];
   return this.enumerations_[type];
 };

@@ -369,7 +369,7 @@ pn.ui.srch.SearchPanel.prototype.entityParentListSearchField =
  */
 pn.ui.srch.SearchPanel.prototype.getSearchAppropriateFieldSpec_ =
     function(fctx) {
-  var renderer = fctx.getFieldRenderer();
+  var renderer = fctx.spec.renderer;
   if (!renderer) return fctx;
   var sf = /** @type {!pn.ui.edit.FieldCtx} */ (goog.object.clone(fctx));
   var fr = pn.ui.edit.FieldRenderers;

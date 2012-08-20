@@ -206,6 +206,26 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
+ * @return {!Element} The select control.
+ */
+pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
+  var txt = 'Select...';
+  var enumeration = pn.app.ctx.schema.getEnum(fctx.schema);
+  var lst = goog.array.map(enumeration.names, function(name, idx) {
+    return {'ID': enumeration.values[idx], 'Name': name};
+  });
+  var selected = fctx.getEntityValue(entity);
+  var select = pn.ui.edit.FieldRenderers.createDropDownList_(
+      txt, lst, selected, -1);
+  goog.dom.appendChild(parent, select);
+  return select;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being edited.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
@@ -267,20 +287,24 @@ pn.ui.edit.FieldRenderers.entityParentListField =
  * @private
  * @param {string} selectTxt The message to display in the first element of the
  *    list.
- * @param {!Array.<Object>} list The list of entities.
+ * @param {!Array.<{ID:number, Name: string}>} list The list of entities
+ *    (requires an ID and Name field).
  * @param {*} selValue The selected value in the 'ID' field.
+ * @param {number=} opt_noneId The ID to give to the 'Select...' entry.
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
-    function(selectTxt, list, selValue) {
+    function(selectTxt, list, selValue, opt_noneId) {
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
-        {'value': '0' }, selectTxt));
+        {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' }, 
+        selectTxt));
   }
   goog.array.forEach(list, function(e) {
     var opts = {'value': e['ID']};
-    if (selValue && e['ID'] === selValue) { opts['selected'] = 'selected'; }
+    if (goog.isDef(selValue) && e['ID'] === selValue) { 
+    opts['selected'] = 'selected'; }
     var txt = e['Name'] ? e['Name'].toString() : '';
     goog.asserts.assert(txt !== undefined);
 

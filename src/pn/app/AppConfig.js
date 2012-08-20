@@ -100,6 +100,9 @@ pn.app.AppConfig = function(opt_opts) {
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'LongString': fr.textAreaRenderer,
 
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'Enumeration': fr.enumRenderer,
+
     /** @type {number} */
     textAreaLengthThreshold: 500
   };

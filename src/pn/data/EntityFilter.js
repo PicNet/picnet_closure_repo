@@ -127,7 +127,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     if (ev['ID']) return ev['ID'].toString() === fv;
     var fctx = goog.array.find(this.cfg_.fCtxs,
         function(fctx1) { return fctx1.id === fieldId; });
-    var renderer = fctx.getFieldRenderer();
+    var renderer = fctx.spec.renderer;
     if (renderer === FieldRenderers.dateRenderer) {
       var min = parseInt(filterValue, 10);
       var max = min + (24 * 60 * 60 * 1000);

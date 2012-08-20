@@ -13,7 +13,7 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
         !goog.string.endsWith(fctx.spec.dataProperty, 'Entities');
   };
   var arraytise = pn.ui.edit.FieldValidator.arraytise_;
-  var renderer = fctx.getFieldRenderer();
+  var renderer = fctx.spec.renderer;
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
     return arraytise(renderer.validate(), []);
   }

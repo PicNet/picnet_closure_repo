@@ -147,7 +147,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       pn.ui.edit.EditUtils.showElement(parentComp, fctx.controlId, false);
       return;
     }
-    var renderer = fctx.getFieldRenderer();
+    var renderer = fctx.spec.renderer;
     if (!templateParent &&
             (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {

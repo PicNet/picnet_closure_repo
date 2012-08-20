@@ -203,30 +203,6 @@ pn.ui.edit.FieldCtx.prototype.validate = function(control) {
 
 
 /**
- * @return {?pn.ui.edit.FieldSpec.Renderer} The specified field renderer or
- *    an implied renderer from the given column schema type.
- */
-pn.ui.edit.FieldCtx.prototype.getFieldRenderer = function() {
-  goog.asserts.assert(this.spec instanceof pn.ui.edit.FieldSpec);
-  if (this.spec.renderer) return this.spec.renderer;
-  if (!this.schema) return null;
-
-  if (this.spec.readonly) {
-    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[this.schema.type] ||
-        pn.ui.edit.ReadOnlyFields.textField;
-  } else {
-    var schemaType = this.schema.type;
-    if (schemaType === 'String' &&
-        this.schema.length >
-            pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
-      schemaType = 'LongString';
-    }
-    return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] || null;
-  }
-};
-
-
-/**
  * @private
  * @return {*} The default value of  this field.
  */

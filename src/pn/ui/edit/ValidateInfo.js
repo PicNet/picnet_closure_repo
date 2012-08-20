@@ -83,7 +83,7 @@ pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx, control) {
 
   var val = fctx.getControlValue(control);
   var isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty);
-  var renderer = fctx.getFieldRenderer();
+  var renderer = fctx.spec.renderer;
   var isYesNoRenderer = renderer === fr.yesNoRenderer;
   var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
   var isNullDate = renderer === fr.dateRenderer && val === 0;
