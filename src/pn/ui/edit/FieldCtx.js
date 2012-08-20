@@ -149,6 +149,7 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
+      this.spec.entitySpec.type,
       entity,
       this.spec.tableParentField);
 };
@@ -210,7 +211,8 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   goog.asserts.assert(goog.isDefAndNotNull(this.spec.defaultValue));
   var val = this.spec.defaultValue;
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
-    var type = pn.data.EntityUtils.getTypeProperty(this.spec.dataProperty);
+    var type = pn.data.EntityUtils.getTypeProperty(
+        this.entitySpec.type, this.spec.dataProperty);
     var list = this.cache[type];
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;

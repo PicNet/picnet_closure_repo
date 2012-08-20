@@ -16,17 +16,13 @@ pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
   var cfg = spec2.getGridConfig({});
 
   var types = opt_additionals || [];
-  var addIfType = function(prop) {
-    pn.ui.RelatedTypesCalc.addIfType_(types, prop);
-  };
   goog.array.forEach(cfg.cCtxs, function(cctx) {
     var additional = cctx.spec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
-
-    if (cctx.spec.displayPath) {
-      goog.array.forEach(cctx.spec.displayPath.split('.'), addIfType);
-    }
-    addIfType(cctx.spec.dataProperty);
+    pn.ui.RelatedTypesCalc.addAllTypes_(
+        types, cctx.spec.entitySpec.type, cctx.spec.displayPath);
+    pn.ui.RelatedTypesCalc.addAllTypes_(
+        types, cctx.spec.entitySpec.type, cctx.spec.dataProperty);
   });
 
   goog.dispose(cfg);
@@ -50,22 +46,19 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes = function(spec, opt_additionals) {
   var cfg = spec2.getEditConfig({}, {});
 
   var types = opt_additionals || [];
-  var addIfType = function(prop) {
-    pn.ui.RelatedTypesCalc.addIfType_(types, prop);
-  };
 
   goog.array.forEach(cfg.fCtxs, function(fctx) {
 
     var additional = fctx.spec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
 
-    if (fctx.spec.displayPath) {
-      goog.array.forEach(fctx.spec.displayPath.split('.'), addIfType);
-    }
+    pn.ui.RelatedTypesCalc.addAllTypes_(
+        types, fctx.spec.entitySpec.type, fctx.spec.displayPath);
     if (fctx.spec.renderer === pn.ui.edit.FieldRenderers.orderFieldRenderer) {
       types.push(spec.type);
     }
-    addIfType(fctx.spec.dataProperty);
+    pn.ui.RelatedTypesCalc.addAllTypes_(
+        types, fctx.spec.entitySpec.type, fctx.spec.dataProperty);
     if (fctx.spec.tableSpec) {
       types = goog.array.concat(types,
           pn.ui.RelatedTypesCalc.getGridRelatedTypes(fctx.spec.tableSpec));
@@ -81,12 +74,16 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes = function(spec, opt_additionals) {
 
 /**
  * @private
- * @param {!Array.<string>} arr The array to add the type that this property
- *    denotes (if any).
- * @param {string} prop The property to inspect for type denotation.
+ * @param {!Array.<string>} arr The target array to add all types infered from
+ *    the specified base type and property.
+ * @param {string} type The starting entity type.
+ * @param {string} property The path to check for additional types.
  */
-pn.ui.RelatedTypesCalc.addIfType_ = function(arr, prop) {
-  if (!prop) return;
-  var type = pn.data.EntityUtils.getTypeProperty(prop);
-  if (type !== prop) { arr.push(type); }
+pn.ui.RelatedTypesCalc.addAllTypes_ = function(arr, type, property) {
+  var steps = property ? property.split('.') : [];
+  while (!!property && !!type) {
+    property = steps.shift();
+    type = property ? pn.data.EntityUtils.getTypeProperty(type, property) : '';
+    if (type) arr.push(type);
+  }
 };

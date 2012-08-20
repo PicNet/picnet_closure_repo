@@ -136,8 +136,8 @@ pn.ui.edit.ReadOnlyFields.dateField = function(fctx, parent, entity) {
 pn.ui.edit.ReadOnlyFields.entityParentListField =
     function(fctx, parent, entity) {
   var path = fctx.spec.displayPath;
-  var val = pn.data.EntityUtils.
-      getEntityDisplayValue(fctx.cache, path, entity) || '';
+  var val = pn.data.EntityUtils.getEntityDisplayValue(
+      fctx.cache, path, fctx.spec.entitySpec.type, entity) || '';
 
   var div = goog.dom.createDom('div', 'field', val.toString());
   div.value = entity[path.split('.')[0]];

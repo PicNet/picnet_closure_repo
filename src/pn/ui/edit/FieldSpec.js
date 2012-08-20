@@ -150,7 +150,8 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {
     if (!goog.isDef(this.tableType) && !this.renderer) {
-      this.tableType = pn.data.EntityUtils.getTypeProperty(firstStep);
+      this.tableType = pn.data.EntityUtils.getTypeProperty(
+          this.entitySpec.type, firstStep);
     }
     if (!goog.isDef(this.tableSpec) && !this.renderer) {
       this.tableSpec = this.tableType;

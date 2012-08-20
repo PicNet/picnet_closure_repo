@@ -14,6 +14,7 @@ pn.data.EntityUtils.isNew = function(entity) {
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
+ * @param {string} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -25,16 +26,17 @@ pn.data.EntityUtils.isNew = function(entity) {
  * @return {*} The entities name.
  */
 pn.data.EntityUtils.getEntityDisplayValue =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
+  goog.asserts.assert(type);
   goog.asserts.assert(target);
 
   var cacheKey = path + '_cache';
   if (goog.isDef(target[cacheKey])) return target[cacheKey];
 
   var entities = pn.data.EntityUtils.
-      getTargetEntity(cache, path, target, opt_parentField);
+      getTargetEntity(cache, path, type, target, opt_parentField);
   var value = entities.length > 1 ? entities.join(', ') : entities[0];
   return (target[cacheKey] = value);
 };
@@ -43,6 +45,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
+ * @param {string} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -54,9 +57,10 @@ pn.data.EntityUtils.getEntityDisplayValue =
  * @return {!Array.<!Object>} The matched entity/entities (as an array).
  */
 pn.data.EntityUtils.getTargetEntity =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
+  goog.asserts.assert(type);
   goog.asserts.assert(target);
 
   // Lets always work with arrays just to simplify
@@ -69,13 +73,13 @@ pn.data.EntityUtils.getTargetEntity =
 
   if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
-    step = pn.data.EntityUtils.getTypeProperty(step);
-    var entities = pn.data.EntityUtils.getFromCache_(cache, step);
+    type = pn.data.EntityUtils.getTypeProperty(type, step);
+    var entities = pn.data.EntityUtils.getFromCache_(cache, type);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
         function(e) { return goog.array.contains(ids, e['ID']); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
-    step = pn.data.EntityUtils.getTypeProperty(step);
-    next = pn.data.EntityUtils.getFromCache_(cache, step);
+    type = pn.data.EntityUtils.getTypeProperty(type, step);
+    next = pn.data.EntityUtils.getFromCache_(cache, type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
       next = goog.array.filter(next, function(e) {
@@ -83,15 +87,14 @@ pn.data.EntityUtils.getTargetEntity =
       });
       opt_parentField = ''; // Only use once
     }
-    if (!next) { throw new Error('Could not find: ' + step + ' in cache'); }
+    if (!next) { throw new Error('Could not find: ' + type + ' in cache'); }
   } else {
     next = pn.data.EntityUtils.getFromEntities(target, step);
   }
 
   steps.shift();
-  return steps.length > 0 ?
-      pn.data.EntityUtils.getTargetEntity(cache, steps, next, opt_parentField) :
-      next;
+  return steps.length > 0 ? pn.data.EntityUtils.getTargetEntity(
+      cache, steps, type, next, opt_parentField) : next;
 };
 
 
@@ -126,17 +129,19 @@ pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
 
 
 /**
+ * @param {string} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
  *    possible.
  * @return {string} The type name inferred from the property parameter or the
  *    property itself.
  */
-pn.data.EntityUtils.getTypeProperty = function(property) {
-  if (property !== 'ID' && goog.string.endsWith(property, 'ID')) {
-    return property.substring(0, property.length - 2);
-  } else if (goog.string.endsWith(property, 'Entities')) {
-    return property.substring(0, property.length - 8);
-  } else { return property; }
+pn.data.EntityUtils.getTypeProperty = function(type, property) {
+  goog.asserts.assert(type, '"type" not specified');
+  goog.asserts.assert(property, '"property" not specified');
+
+  if (!pn.data.EntityUtils.isRelationshipProperty(property)) return '';
+
+  return pn.app.ctx.schema.getEntitySchema(type).getField(property).entityType;
 };
 
 

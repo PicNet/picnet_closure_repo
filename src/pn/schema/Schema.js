@@ -60,6 +60,18 @@ pn.schema.Schema.prototype.orderEntities = function(type, list) {
 
 
 /**
+ * @param {string} type The type of the entity schema to retreive.
+ * @return {!pn.schema.EntitySchema} The entity schema for the given type.
+ */
+pn.schema.Schema.prototype.getEntitySchema = function(type) {
+  goog.asserts.assert(type);
+  goog.asserts.assert(this.entities_[type]);
+
+  return this.entities_[type];
+};
+
+
+/**
  * @param {!pn.ui.BaseFieldSpec} fieldSpec The field spec for the field being
  *     queried.
  * @return {pn.schema.FieldSchema} The field schema for the specified field.
@@ -159,7 +171,7 @@ pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
   return new pn.schema.FieldSchema(
-      f['name'], f['type'], f['allowNull'], f['length']);
+      f['name'], f['type'], f['entityType'], f['allowNull'], f['length']);
 
 };
 

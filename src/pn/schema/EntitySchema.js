@@ -17,3 +17,15 @@ pn.schema.EntitySchema = function(name, fieldSchemas) {
    */
   this.fieldSchemas = fieldSchemas;
 };
+
+
+/**
+ * @param {string} field The name of the field whose schema we need.
+ * @return {!pn.schema.FieldSchema} The schema for the specified field.
+ */
+pn.schema.EntitySchema.prototype.getField = function(field) {
+  goog.asserts.assert(field);
+  goog.asserts.assert(this.fieldSchemas[field]);
+
+  return this.fieldSchemas[field];
+};

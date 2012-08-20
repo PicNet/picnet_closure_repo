@@ -97,9 +97,9 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
 
-  var res = fieldId.indexOf('.') > 0 ?
-      pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity)[0] :
-      entity[fieldId];
+  var entityType = this.spec_.type;
+  var res = fieldId.indexOf('.') > 0 ? pn.data.EntityUtils.getTargetEntity(
+      this.cache_, fieldId, entityType, entity)[0] : entity[fieldId];
   if (!res) return false;
   if (res['ID']) { res = res['ID']; }
   return this.matchesFilter_(res, filterValue, fieldId);

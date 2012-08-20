@@ -71,7 +71,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       var renderer = cctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, cctx.spec.displayPath, entity) || '').toString() : '';
+            this.cache_, cctx.spec.displayPath,
+            cctx.spec.entitySpec.type, entity) || '').toString() : '';
       } else if (renderer) {
         val = renderer(cctx, entity);
       }

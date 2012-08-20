@@ -1,6 +1,11 @@
 ﻿;
 goog.provide('pn.ui.BaseFieldSpec');
 
+goog.require('goog.Disposable');
+goog.require('goog.array');
+goog.require('goog.asserts');
+goog.require('pn.data.EntityUtils');
+
 
 
 /**
@@ -106,27 +111,73 @@ pn.ui.BaseFieldSpec.prototype.extend = function(props) {
 
   goog.object.extend(this, props);
 
-  var steps = this.id.split('.');
-  if (!this.name) {
-    var nameProp = steps[steps.length - 1];
-    if (goog.string.endsWith(nameProp, 'Entities')) {
-      nameProp = pn.data.EntityUtils.getTypeProperty(nameProp) + 's';
-    } else {
-      nameProp = pn.data.EntityUtils.getTypeProperty(nameProp);
-    }
+  this.inferName_();
+  this.inferDataProperty_();
+  this.inderDisplayPath_();
+};
 
-    this.name = nameProp.replace(/([A-Z])/g, ' $1');
+
+/** @private */
+pn.ui.BaseFieldSpec.prototype.inferName_ = function() {
+  if (this.name) { return; }
+
+  var steps = this.id.split('.');
+  var nameProperty = steps[steps.length - 1];
+
+  // Not using EntityUtils.getTypeProperty as this is the name not the type
+  // property.  I.e. This could be a field called 'ReviewerID' not
+  // just 'UserID' and the name should be 'Reviewer' not 'User'.
+  if (goog.string.endsWith(nameProperty, 'Entities')) {
+    nameProperty = nameProperty.substring(0, nameProperty.length - 8) + 's';
+  } else if (goog.string.endsWith(nameProperty, 'ID')) {
+    nameProperty = nameProperty.substring(0, nameProperty.length - 2);
   }
 
-  if (!this.dataProperty) { this.dataProperty = steps[0]; }
-  if (!this.displayPath &&
-      pn.data.EntityUtils.isRelationshipProperty(steps[0])) {
-    this.displayPath = this.id;
-    var last = steps[steps.length - 1];
-    var type = pn.data.EntityUtils.getTypeProperty(last);
-    if (type !== last) {
-      steps.push(type + 'Name');
-      this.displayPath = steps.join('.');
-    }
+  this.name = goog.string.trim(nameProperty.replace(/([A-Z])/g, ' $1'));
+};
+
+
+/** @private */
+pn.ui.BaseFieldSpec.prototype.inferDataProperty_ = function() {
+  if (this.dataProperty) return;
+  this.dataProperty = this.id.split('.')[0];
+};
+
+
+/** @private */
+pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
+  if (this.displayPath) return;
+  var steps = this.id.split('.');
+  // Only infer displayPath for relations
+  if (!pn.data.EntityUtils.isRelationshipProperty(steps[0])) { return; }
+
+  this.displayPath = this.id;
+  var last = steps[steps.length - 1];
+  if (!pn.data.EntityUtils.isRelationshipProperty(last)) { return; }
+
+  // Need to append 'Name' to the last step to get the last entity name
+  var type = this.getLastRelationshipType_(this.entitySpec.type, steps);
+  steps.push(type + 'Name');
+  this.displayPath = steps.join('.');
+};
+
+
+/**
+ * @private
+ * @param {string} type The starting entity type for the path.
+ * @param {!Array.<string>} steps The path to the target entity property.
+ * @return {string} The final entity type in this entity path.
+ */
+pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
+  goog.asserts.assert(type);
+  goog.asserts.assert(steps.length);
+  steps = goog.array.clone(steps);
+
+  var ltype = type;
+  while (true) {
+    var step = steps.shift();
+    if (!step || !pn.data.EntityUtils.isRelationshipProperty(step))
+      return ltype;
+    ltype = pn.data.EntityUtils.getTypeProperty(ltype, step);
   }
 };
