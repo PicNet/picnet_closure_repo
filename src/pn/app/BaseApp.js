@@ -213,18 +213,27 @@ pn.app.BaseApp.prototype.init_ = function() {
  * A method used to load the schema for the entities being handled by
  *    this application. This schema is usually loaded from the server and is
  *    expected in the following format:
- *    [
- *      {
- *        'name': 'EntityName',
- *        'fields': [
- *          { 'name': 'ID', 'type': 'Int64' },
- *          { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
- *          { 'name': 'IntFieldName', 'type': 'Int32' },
- *          { 'name': 'BoolFieldName', 'type': 'YesNo' },
- *          { 'name': 'DateFieldName', 'type': 'DateTime' }
- *        ]
- *      }
- *    ]
+ *    {
+ *      entities: [
+ *        {
+ *          'name': 'EntityName',
+ *          'fields': [
+ *            { 'name': 'ID', 'type': 'Int64' },
+ *            { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
+ *            { 'name': 'IntFieldName', 'type': 'Int32' },
+ *            { 'name': 'BoolFieldName', 'type': 'YesNo' },
+ *            { 'name': 'DateFieldName', 'type': 'DateTime' }
+ *          ]
+ *        }
+ *      ],
+ *      enumerations: [
+ *        {
+ *          type: 'Namespace.Type, AssemblyName',
+ *          names: ['Val1', 'Val2'],
+ *          values: [0, 1]
+ *        }
+ *      ]
+ *    }
  *
  * @see pn.schema
  * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
