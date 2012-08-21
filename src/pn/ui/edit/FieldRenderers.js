@@ -359,8 +359,8 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(fctx, parent, entity) {
     var manyToManys = goog.array.filter(fctx.cache[mappingEntity],
-        function(abrand) {
-          return abrand[parentIdField] === entity['ID'];
+        function(manyToMany) {
+          return manyToMany[parentIdField] === entity['ID'];
         });
     var adminIDs = goog.array.map(manyToManys, function(mm) {
       return mm[adminEntity + 'ID'];
