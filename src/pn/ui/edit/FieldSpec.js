@@ -211,7 +211,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
 
 
 /**
- * @typedef {pn.ui.edit.ComplexRenderer|
+ * @typedef {!pn.ui.edit.ComplexRenderer|
  *     function(!pn.ui.edit.FieldCtx,!Element,!Object):
  *       !(Element|goog.ui.Component|Text)}
  */
