@@ -22,6 +22,16 @@ pn.dom.getElement = function(id) {
 
 
 /**
+ * Finds an element with the given id.  If that element does not exist an
+ *    error is thrown.
+ *
+ * @param {string} id The element ID.
+ * @return {!Element} the element with the specified ID.
+ */
+pn.dom.get = pn.dom.getElement;
+
+
+/**
  * Gets the computed pixel width from the element or its ancestors.
  *
  * @param {!Element} e The element whose pixel width we want.
