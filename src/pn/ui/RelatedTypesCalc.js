@@ -35,15 +35,19 @@ pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
 /**
  * @param {pn.ui.UiSpec|string} spec The UiSpec or the ID of the UiSpec to
  *    parse for related types.
+ * @param {!Object} entity The entity about to be edited.  This is usually only
+ *    ever used if a field's additionalCacheTypes property is dependant on some
+ *    property of the entity, i.e. If its a new entity.
  * @param {Array.<string>=} opt_additionals Any additional types to include in
  *    the returned array.
  * @return {!Array.<string>} The list of types related to this entity.
  */
-pn.ui.RelatedTypesCalc.getEditRelatedTypes = function(spec, opt_additionals) {
+pn.ui.RelatedTypesCalc.getEditRelatedTypes =
+    function(spec, entity, opt_additionals) {
   var createSpec = goog.isString(spec);
   var spec2 = createSpec ? pn.app.ctx.specs.get(/** @type {string} */ (spec)) :
       /** @type {pn.ui.UiSpec} */ (spec);
-  var cfg = spec2.getEditConfig({}, {});
+  var cfg = spec2.getEditConfig(entity, {});
 
   var types = opt_additionals || [];
 
