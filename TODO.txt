@@ -9,3 +9,7 @@
     var fld = this.createField('ID', cache, { renderer: .... }); 
     fld.spec.renderer = new pn....ComplexRenderer(fld, entity, cache);
 - Navigating relationships is very ugly lots of arr map/filter/find everywhere 
+- RelatedTypesCalc creates a spec so that Application can create the spec again
+  with the correct cache, this spaghettiness is not right.  Consider adding
+  getAdditionalTypes method somewhere else (Static contect perhaps?) and not
+  requiring and instance of the spec to create the spec.
