@@ -33,8 +33,10 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.postRender = function() {
  */
 pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
     function(ev, evData) {
+  var target = window.event.target || window.event.srcElement;
+
   // Ignore if triggered by row re-ordering.
-  if (window.event.target.className.indexOf('reorder') >= 0) return;
+  if (target.className.indexOf('reorder') >= 0) return;
 
   var idx = evData['rows'][0];
   var selected = this.view.getItem(idx);
