@@ -11,6 +11,7 @@ goog.require('pn.data.DataDownloader');
 goog.require('pn.data.IDataSource');
 goog.require('pn.json');
 goog.require('pn.log');
+goog.require('pn.data.BaseSource');
 
 
 
@@ -78,14 +79,15 @@ pn.data.ServerSource.prototype.getEntityLists = function(types, callback) {
   goog.asserts.assert(callback);
 
   var loaded = {};
-  if (!types.length) {
-    callback(loaded);
-    return;
-  }
+  if (!types.length) { callback(loaded); return; }
+  goog.asserts.assert(goog.isFunction(types[0]));
 
-  this.ajax_(this.routes_.getEntityLists, { 'types': types }, function(res) {
+  var stypes = goog.array.map(types, function(t) { return t.type; });
+  this.ajax_(this.routes_.getEntityLists, { 'types': stypes }, function(res) {
     for (var i = 0, len = types.length; i < len; i++) {
-      loaded[types[i]] = res[i];
+      loaded[types[i].type] = goog.array.map(res[i], function(e) {
+        return pn.data.BaseSource.parseEntity(types[i], e);
+      });
     }
     callback(loaded);
   });
@@ -98,10 +100,14 @@ pn.data.ServerSource.prototype.getEntity = function(type, id, callback) {
   goog.asserts.assert(goog.isNumber(id));
   goog.asserts.assert(callback);
 
-  if (id <= 0) { callback({'ID': id }); }
-  else this.ajax_(this.routes_.getEntity, { 'type': type, 'id': id }, callback);
+  if (id <= 0) { 
+    callback(pn.data.BaseSource.parseEntity(type, {'ID': id })); 
+  } else {
+    this.ajax_(this.routes_.getEntity, { 'type': type.type, 'id': id }, function(e) {
+      callback(pn.data.BaseSource.parseEntity(type, e));
+    });
+  }
 };
-
 
 /**
  * @param {string} type The type of the entity to save.
@@ -248,10 +254,10 @@ pn.data.ServerSource.prototype.ajaxSuccess_ = function(xhr, opt_success) {
   if (goog.isString(opt_success)) {
     pn.app.ctx.pub(opt_success, parsed);
   } else if (goog.isDefAndNotNull(opt_success)) {
+    parsed = parsed;
     opt_success.call(this, parsed);
   }
 };
-
 
 /** @enum {string} */
 pn.data.ServerSource.EventType = {

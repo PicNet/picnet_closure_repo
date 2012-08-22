@@ -79,11 +79,11 @@ var test_collection_change_event_on_add = function() {
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(added['ID'], change.item['ID']);
+  assertEquals(added.id, change.item.id);
 };
 
 var test_collection_change_event_on_delete_in_middle = function() {
-  var id = arr[1]['ID'];
+  var id = arr[1].id;
   delete arr[1];
   checkForChanges_();  
 
@@ -91,7 +91,7 @@ var test_collection_change_event_on_delete_in_middle = function() {
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(id, change.item['ID']);
+  assertEquals(id, change.item.id);
 };
 
 var test_collection_change_event_on_delete_in_start = function() {
@@ -102,7 +102,7 @@ var test_collection_change_event_on_delete_in_start = function() {
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(deleted['ID'], change.item['ID']);
+  assertEquals(deleted.id, change.item.id);
 };
 
 var test_collection_change_event_on_delete_in_end = function() {
@@ -113,7 +113,7 @@ var test_collection_change_event_on_delete_in_end = function() {
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(deleted['ID'], change.item['ID']);
+  assertEquals(deleted.id, change.item.id);
 };
 
 var test_collection_change_event_on_remove = function() {
@@ -124,7 +124,7 @@ var test_collection_change_event_on_remove = function() {
   
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(removed['ID'], change.item['ID']);
+  assertEquals(removed.id, change.item.id);
 };
 
 var test_collection_change_event_on_insert = function() {
@@ -135,7 +135,7 @@ var test_collection_change_event_on_insert = function() {
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(inserted['ID'], change.item['ID']);  
+  assertEquals(inserted.id, change.item.id);  
 };
 
 var test_adding_multiple = function() {
@@ -148,11 +148,11 @@ var test_adding_multiple = function() {
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(added1['ID'], change.item['ID']);
+  assertEquals(added1.id, change.item.id);
 
   change = changes[1];
   assertTrue(change.inserted);
-  assertEquals(added2['ID'], change.item['ID']);
+  assertEquals(added2.id, change.item.id);
 };
 
 var test_deleting_multiple = function() {
@@ -165,11 +165,11 @@ var test_deleting_multiple = function() {
 
   var change = changes[0];
   assertTrue(change.removed);
-  assertEquals(deleting1['ID'], change.item['ID']);
+  assertEquals(deleting1.id, change.item.id);
 
   change = changes[1];
   assertTrue(change.removed);
-  assertEquals(deleting2['ID'], change.item['ID']);
+  assertEquals(deleting2.id, change.item.id);
 };
 
 var test_insert_multiple_fires_correct_details = function() {
@@ -182,11 +182,11 @@ var test_insert_multiple_fires_correct_details = function() {
 
   var change = changes[0];
   assertTrue(change.inserted);
-  assertEquals(inserted1['ID'], change.item['ID']);
+  assertEquals(inserted1.id, change.item.id);
 
   change = changes[1];
   assertTrue(change.inserted);
-  assertEquals(inserted2['ID'], change.item['ID']);
+  assertEquals(inserted2.id, change.item.id);
 };
 
 var test_remove_multiple_fires_correct_details = function() {
@@ -198,11 +198,11 @@ var test_remove_multiple_fires_correct_details = function() {
 
   change = changes[0];
   assertTrue(change.removed);
-  assertEquals(remove1['ID'], change.item['ID']);
+  assertEquals(remove1.id, change.item.id);
 
   change = changes[1];
   assertTrue(change.removed);
-  assertEquals(remove2['ID'], change.item['ID']);
+  assertEquals(remove2.id, change.item.id);
 };
 
 var test_sorting_or_reversing_is_ignored = function() {  

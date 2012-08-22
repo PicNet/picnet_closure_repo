@@ -216,7 +216,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     var list = this.cache[type];
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
-    }, this)['ID'];
+    }, this).id;
   } else if (goog.string.startsWith(this.schema.type, 'enum:')) {
     var enumeration = pn.app.ctx.schema.getEnum(this.schema);
     val = enumeration.values[goog.array.indexOf(enumeration.names, val)];

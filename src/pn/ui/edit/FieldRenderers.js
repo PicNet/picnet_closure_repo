@@ -272,7 +272,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var namePath = cascading ? entityType + 'Name' : steps.join('.');
   list = goog.array.map(list, function(e) {
     return {
-      'ID': e['ID'],
+      'ID': e.id,
       'Name': pn.data.EntityUtils.getEntityDisplayValue(
           fctx.cache, namePath, fctx.spec.entitySpec.type, e)
     };
@@ -303,8 +303,8 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
         selectTxt));
   }
   goog.array.forEach(list, function(e) {
-    var opts = {'value': e['ID']};
-    if (goog.isDef(selValue) && e['ID'] === selValue) {
+    var opts = {'value': e.id};
+    if (goog.isDef(selValue) && e.id === selValue) {
       opts['selected'] = 'selected'; }
     var txt = e['Name'] ? e['Name'].toString() : '';
     goog.asserts.assert(txt !== undefined);
@@ -327,13 +327,13 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
 pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
     function(fctx, parent, entity) {
   goog.asserts.assert(fctx.spec.tableType);
-  goog.asserts.assert(entity['ID'] != 0);
+  goog.asserts.assert(entity.id != 0);
 
-  var parentId = entity['ID'];
+  var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
   var list = fctx.cache[fctx.spec.tableType];
-  if (!list) list = fctx.cache[goog.string.remove(fctx['id'], 'Entities')];
+  if (!list) list = fctx.cache[goog.string.remove(fctx.id, 'Entities')];
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : goog.array.filter(list,
@@ -360,7 +360,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
   var renderer = function(fctx, parent, entity) {
     var manyToManys = goog.array.filter(fctx.cache[mappingEntity],
         function(manyToMany) {
-          return manyToMany[parentIdField] === entity['ID'];
+          return manyToMany[parentIdField] === entity.id;
         });
     var adminIDs = goog.array.map(manyToManys, function(mm) {
       return mm[adminEntity + 'ID'];
@@ -377,9 +377,9 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
           ae[adminEntity + 'Name'];
       var opt = goog.dom.createDom('option', {
         'text': text,
-        'value': ae['ID'],
+        'value': ae.id,
         'selected': goog.array.findIndex(adminIDs, function(adminID) {
-          return ae['ID'] === adminID;
+          return ae.id === adminID;
         }) >= 0
       });
       select.options.add(opt);

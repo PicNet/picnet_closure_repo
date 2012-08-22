@@ -101,7 +101,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   var res = fieldId.indexOf('.') > 0 ? pn.data.EntityUtils.getTargetEntity(
       this.cache_, fieldId, entityType, entity)[0] : entity[fieldId];
   if (!res) return false;
-  if (res['ID']) { res = res['ID']; }
+  res = res.id ? res.id : res;
   return this.matchesFilter_(res, filterValue, fieldId);
 };
 
@@ -124,7 +124,8 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ', arguments);
-    if (ev['ID']) return ev['ID'].toString() === fv;
+    if (ev.id) return ev.id.toString() === fv;
+
     var fctx = goog.array.find(this.cfg_.fCtxs,
         function(fctx1) { return fctx1.id === fieldId; });
     var renderer = fctx.spec.renderer;

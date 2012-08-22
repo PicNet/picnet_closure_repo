@@ -7,7 +7,8 @@ goog.provide('pn.ui.RelatedTypesCalc');
  *    parse for related types.
  * @param {Array.<string>=} opt_additionals Any additional types to include in
  *    the returned array.
- * @return {!Array.<string>} The list of types related to this entity.
+ * @return {!Array.<pn.data.EntityFactory>} The list of types related to 
+ *    this entity.
  */
 pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
   var createSpec = goog.isString(spec);
@@ -28,7 +29,9 @@ pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
   goog.dispose(cfg);
   if (createSpec) goog.dispose(spec2);
   goog.array.removeDuplicates(types);
-  return types;
+  
+  return goog.array.map(types, 
+      function(t) { return pn.data.Entity.fromName(t); });
 };
 
 
@@ -72,7 +75,9 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes =
   goog.dispose(cfg);
   if (createSpec) goog.dispose(spec2);
   goog.array.removeDuplicates(types);
-  return types;
+  
+  return goog.array.map(types, 
+      function(t) { return pn.data.Entity.fromName(t); });
 };
 
 

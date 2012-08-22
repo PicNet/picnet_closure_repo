@@ -7,7 +7,7 @@ goog.provide('pn.data.EntityUtils');
  * @return {boolean} Wether the specified entity is new.
  */
 pn.data.EntityUtils.isNew = function(entity) {
-  return entity['ID'] <= 0;
+  return entity.id <= 0;
 };
 
 
@@ -76,7 +76,7 @@ pn.data.EntityUtils.getTargetEntity =
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     var entities = pn.data.EntityUtils.getFromCache_(cache, type);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
-        function(e) { return goog.array.contains(ids, e['ID']); }));
+        function(e) { return goog.array.contains(ids, e.id); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = pn.data.EntityUtils.getFromCache_(cache, type);

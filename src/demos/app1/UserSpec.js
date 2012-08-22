@@ -47,12 +47,12 @@ pn.demo.app1.UserSpec.prototype.getEditConfig = function(entity, cache) {
  */
 pn.demo.app1.UserSpec.prototype.save_ = function(entity) {
   var users = pn.app.ctx.users;
-  if (entity['ID'] <= 0) { // New entity
-    entity['ID'] = (++pn.demo.app1.DemoUtils.counter);
+  if (entity.id <= 0) { // New entity
+    entity.id = (++pn.demo.app1.DemoUtils.counter);
     users.push(entity);
   } else { // Edit
     for (var i = 0, len = users.length; i < len; i++) {
-      if (users[i]['ID'] === entity['ID']) {
+      if (users[i].id === entity.id) {
         users[i] = entity;
         break;
       }

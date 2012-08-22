@@ -29,7 +29,7 @@ pn.model.Collection = function(src) {
    */
   this.map_ = {};
   goog.array.forEach(src, function(e) {
-    this.map_['' + e['ID']] = new pn.model.Model(e, false);
+    this.map_[e.id] = new pn.model.Model(e, false);
   }, this);
 
   pn.model.TimerInstance.register(this);
@@ -46,7 +46,7 @@ pn.model.Collection.prototype.getChanges = function() {
     var now = this.src_[i];
     if (!goog.isDef(now)) continue;
 
-    var key = '' + now['ID'];
+    var key = now.id.toString();
     var lastmodel = map[key];
     var mchanges = lastmodel ? lastmodel.getChanges() : null;
     delete map[key];

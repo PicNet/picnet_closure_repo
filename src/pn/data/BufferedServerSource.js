@@ -42,7 +42,7 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
 
   var loaded = this.cache_.getLists(types);
   var unloaded = goog.array.filter(types, function(type) {
-    return !goog.isDef(loaded[type]);
+    return !goog.isDef(loaded[type.type]);
   });
 
   if (!unloaded.length) {
@@ -61,17 +61,17 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
 /**
  * Removes a type from the cache, meaning that next time the request for this
  *    type comes in, it will need to be sourced from the server.
- * @param {string} type The type to remove from the cache.
+ * @param {pn.data.EntityFactory} type The type to remove from the cache.
  */
 pn.data.BufferedServerSource.prototype.invalidateCache = function(type) {
-  this.cache_.invalidateCache(type);
+  this.cache_.invalidateCache(type.type);
 };
 
 
 /**
- * @param {string} type The type to retreive from the cache.
+ * @param {pn.data.EntityFactory} type The type to retreive from the cache.
  * @return {Array.<!Object>} The cached list if it exists in the cache.
  */
 pn.data.BufferedServerSource.prototype.getCachedList = function(type) {
-  return this.cache_.getCachedList(type);
+  return this.cache_.getCachedList(type.type);
 };

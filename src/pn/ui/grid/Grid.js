@@ -217,7 +217,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.pipeline_.preRender();
 
   this.dataView_.beginUpdate();
-  this.dataView_.setItems(this.list_, 'ID');
+  this.dataView_.setItems(this.list_, 'id');
   this.dataView_.endUpdate();
 
   this.pipeline_.postRender();

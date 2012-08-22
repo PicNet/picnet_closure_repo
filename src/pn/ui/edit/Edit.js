@@ -316,7 +316,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   });
   this.getHandler().listen(grid, ae.ENTITY_SELECT, function(ev) {
     var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
-    e.entityId = ev.selected['ID'];
+    e.entityId = ev.selected.id;
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
     e.parentField = fieldSpec.tableParentField;

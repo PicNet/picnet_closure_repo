@@ -132,7 +132,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
   this.cache_[type].splice(0, 0, saved);
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   var event = new goog.events.Event(eventType, this);
-  event.entityId = saved['ID'];
+  event.entityId = saved.id;
   this.dispatchEvent(event);
 };
 
