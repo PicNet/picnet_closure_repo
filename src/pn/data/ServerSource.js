@@ -122,7 +122,7 @@ pn.data.ServerSource.prototype.saveEntity = function(type, entity, opt_cb) {
 
   var json = pn.json.serialiseJson(entity);
   var data = { 'type': type.type, 'entityJson': json };
-  var cb = function(edata) {    
+  var cb = function(edata) {
     var saved = pn.data.BaseSource.parseEntity(type, edata);
     (opt_cb || goog.bind(this.saveEntityCallback_, this, type))(saved);
   };

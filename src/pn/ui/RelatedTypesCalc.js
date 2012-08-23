@@ -21,9 +21,9 @@ pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
   var types = opt_additionals || [];
   goog.array.forEach(cfg.cCtxs, function(cctx) {
     var additional = cctx.spec.additionalCacheTypes;
-    if (additional.length) { 
+    if (additional.length) {
       goog.asserts.assert(goog.isFunction(additional[0]));
-      types = goog.array.concat(types, additional); 
+      types = goog.array.concat(types, additional);
     }
     pn.ui.RelatedTypesCalc.addAllTypes_(
         types, cctx.spec.entitySpec.type, cctx.spec.displayPath);
@@ -59,9 +59,9 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes =
   goog.array.forEach(cfg.fCtxs, function(fctx) {
 
     var additional = fctx.spec.additionalCacheTypes;
-    if (additional.length) { 
+    if (additional.length) {
       goog.asserts.assert(goog.isFunction(additional[0]));
-      types = goog.array.concat(types, additional); 
+      types = goog.array.concat(types, additional);
     }
 
     pn.ui.RelatedTypesCalc.addAllTypes_(
@@ -83,9 +83,9 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes =
   });
 
   goog.dispose(cfg);
-  if (createSpec) goog.dispose(spec2);      
+  if (createSpec) goog.dispose(spec2);
 
-  goog.array.removeDuplicates(types);  
+  goog.array.removeDuplicates(types);
   return types;
 };
 

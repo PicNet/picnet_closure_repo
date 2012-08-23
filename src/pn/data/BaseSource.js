@@ -31,6 +31,18 @@ pn.data.BaseSource.prototype.getEntity = function(type, id, callback) {
 
 
 /**
+ * @param {pn.data.Type} type The type of the entities to attempt to
+ *    parse.
+ * @param {!Array} data The data to attempt to parse.
+ * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.
+ */
+pn.data.BaseSource.parseEntities = function(type, data) {
+  var action = goog.partial(pn.data.BaseSource.parseEntity, type);
+  return goog.array.map(data, action);
+};
+
+
+/**
  * @param {pn.data.Type} type The type of the entity to attempt to
  *    parse.
  * @param {Object} data The data to attempt to parse.

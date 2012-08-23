@@ -173,7 +173,7 @@ pn.schema.Schema.prototype.parseEntity_ = function(entity) {
 pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
-  var entityType = f['entityType'] ? 
+  var entityType = f['entityType'] ?
       pn.data.Entity.fromName(f['entityType']) : null;
   return new pn.schema.FieldSchema(
       f['name'], f['type'], entityType, f['allowNull'], f['length']);

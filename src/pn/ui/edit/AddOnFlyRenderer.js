@@ -131,9 +131,9 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
   }));
   goog.array.forEach(list, function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
-      'value': e['ID'],
+      'value': e.id,
       'text': e[this.spec_.type + 'Name'],
-      'selected': e['ID'] === selectedId
+      'selected': e.id === selectedId
     }));
   }, this);
 };
