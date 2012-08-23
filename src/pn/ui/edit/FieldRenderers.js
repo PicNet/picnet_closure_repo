@@ -210,7 +210,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
-  var enumeration = entity[fctx.id + 'EnumType']();
+  var enumeration = pn.rr.dal.getEnum(fctx.schema.type);
   var lst = [];
 
   goog.object.forEach(enumeration, function(val, name) {

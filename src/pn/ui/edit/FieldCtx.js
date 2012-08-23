@@ -126,7 +126,7 @@ pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
   if (goog.isDef(v)) return v;
   if (pn.data.EntityUtils.isNew(entity)) {
     if (goog.isDefAndNotNull(this.spec.defaultValue)) {
-      return this.getDefaultFieldValue_(entity);
+      return this.getDefaultFieldValue_();
     }
     return v;
   }
@@ -204,10 +204,9 @@ pn.ui.edit.FieldCtx.prototype.validate = function(control) {
 
 /**
  * @private
- * @param {!Object} entity The new entity.
  * @return {*} The default value of  this field.
  */
-pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function(entity) {
+pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   goog.asserts.assert(goog.isDefAndNotNull(this.spec.defaultValue));
 
   var val = this.spec.defaultValue;
@@ -219,7 +218,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function(entity) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;
   } else if (goog.string.startsWith(this.schema.type, 'enum:')) {
-    var enumeration = entity[this.id + 'EnumType']();
+    var enumeration = pn.rr.dal.getEnum(this.schema.type);
     for (var name in enumeration) {
       if (name === val) { val = enumeration[name]; }
     }
