@@ -93,7 +93,7 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
    *    if the id is: ChildrenEntities then the tableType will become
    *    'Children'.
    *
-   * @type {string|undefined}
+   * @type {pn.data.Type|undefined}
    */
   this.tableType = undefined;
 
@@ -154,7 +154,7 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
           this.entitySpec.type, firstStep);
     }
     if (!goog.isDef(this.tableSpec) && !this.renderer) {
-      this.tableSpec = this.tableType;
+      this.tableSpec = this.tableType.type;
     }
   }
 

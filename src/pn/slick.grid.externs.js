@@ -1136,8 +1136,8 @@ Slick.Data = {};
 
 
 
-/** 
- * @constructor 
+/**
+ * @constructor
  * @param {Object=} opt_options Optional slick grid DataView options.
  */
 Slick.Data.DataView = function(opt_options) {};
@@ -1399,6 +1399,7 @@ onPagingInfoChanged.prototype.notify = function(args, e, scope) {};
 ////////////////////////////////////////////////////////////////////////////////
 
 
+
 /** @constructor */
 Slick.RowSelectionModel = function() {};
 
@@ -1469,8 +1470,10 @@ onSelectedRangesChanged.prototype.notify = function(args, e, scope) {};
 ////////////////////////////////////////////////////////////////////////////////
 
 
+
 /** @constructor */
 Slick.RowMoveManager = function() {};
+
 
 
 /** @constructor */
@@ -1500,6 +1503,8 @@ onBeforeMoveRows.prototype.unsubscribe = function(fn) {};
  * @return {*}
  */
 onBeforeMoveRows.prototype.notify = function(args, e, scope) {};
+
+
 
 /** @constructor */
 function onMoveRows() {}

@@ -93,7 +93,7 @@ pn.ui.BaseFieldSpec = function(id, entitySpec) {
    *    when showing this field.  This is only required if this entity type
    *    cannot be inferred by the dataProperty or displayPath.
    *
-   * @type {!Array}
+   * @type {!Array.<pn.data.Type>}
    */
   this.additionalCacheTypes = [];
 };
@@ -157,19 +157,19 @@ pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
 
   // Need to append 'Name' to the last step to get the last entity name
   var type = this.getLastRelationshipType_(this.entitySpec.type, steps);
-  steps.push(type + 'Name');
+  steps.push(type.type + 'Name');
   this.displayPath = steps.join('.');
 };
 
 
 /**
  * @private
- * @param {string} type The starting entity type for the path.
+ * @param {pn.data.Type} type The starting entity type for the path.
  * @param {!Array.<string>} steps The path to the target entity property.
- * @return {string} The final entity type in this entity path.
+ * @return {pn.data.Type} The final entity type in this entity path.
  */
 pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
-  goog.asserts.assert(type);
+  goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(steps.length);
   steps = goog.array.clone(steps);
 

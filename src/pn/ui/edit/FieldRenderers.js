@@ -212,7 +212,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
   var enumeration = pn.app.ctx.schema.getEnum(fctx.schema);
   var lst = goog.array.map(enumeration.names, function(name, idx) {
-    return {'ID': enumeration.values[idx], 'Name': name};
+    return { id: enumeration.values[idx], name: name};
   });
   var selected = fctx.getEntityValue(entity);
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
@@ -230,7 +230,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   var order = pn.data.EntityUtils.isNew(entity) ?
-      fctx.cache[fctx.entitySpec.type].length :
+      fctx.cache[fctx.entitySpec.type.type].length :
       fctx.getEntityValue(entity);
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
@@ -257,12 +257,12 @@ pn.ui.edit.FieldRenderers.entityParentListField =
     function(fctx, parent, entity, opt_filter) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
-  var entityType = /** @type {string} */ (cascading ?
+  var entityType = cascading ?
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(
-          fctx.spec.entitySpec.type, fctx.spec.dataProperty));
-  var list = fctx.cache[entityType];
-  if (!list) throw new Error('Expected access to "' + entityType +
+          fctx.spec.entitySpec.type, fctx.spec.dataProperty);
+  var list = fctx.cache[entityType.type];
+  if (!list) throw new Error('Expected access to "' + entityType.type +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   pn.app.ctx.schema.orderEntities(entityType, list);
   if (opt_filter) list = opt_filter(entity, list);
@@ -272,8 +272,8 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var namePath = cascading ? entityType + 'Name' : steps.join('.');
   list = goog.array.map(list, function(e) {
     return {
-      'ID': e.id,
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(
+      id: e.id,
+      name: pn.data.EntityUtils.getEntityDisplayValue(
           fctx.cache, namePath, fctx.spec.entitySpec.type, e)
     };
   });
@@ -306,7 +306,7 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
     var opts = {'value': e.id};
     if (goog.isDef(selValue) && e.id === selValue) {
       opts['selected'] = 'selected'; }
-    var txt = e['Name'] ? e['Name'].toString() : '';
+    var txt = e.name ? e.name.toString() : '';
     goog.asserts.assert(txt !== undefined);
 
     if (txt) {
@@ -332,7 +332,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache[fctx.spec.tableType];
+  var list = fctx.cache[fctx.spec.tableType.type];
   if (!list) list = fctx.cache[goog.string.remove(fctx.id, 'Entities')];
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));

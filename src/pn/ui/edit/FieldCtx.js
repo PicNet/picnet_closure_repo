@@ -213,7 +213,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
     var type = pn.data.EntityUtils.getTypeProperty(
         this.entitySpec.type, this.spec.dataProperty);
-    var list = this.cache[type];
+    var list = this.cache[type.type];
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;

@@ -39,13 +39,16 @@ goog.inherits(pn.schema.Schema, goog.Disposable);
 
 
 /**
- * @param {string} type The type of entities we are ordering.
+ * @param {pn.data.Type} type The type of entities we are ordering.
  * @param {!Array.<!Object>} list The entities to order.
  */
 pn.schema.Schema.prototype.orderEntities = function(type, list) {
-  var entitySchema = this.entities_[type];
-  var orderp = type + 'Order';
-  var namep = type + 'Name';
+  goog.asserts.assert(goog.isFunction(type));
+
+  var stype = type.type;
+  var entitySchema = this.entities_[stype];
+  var orderp = stype + 'Order';
+  var namep = stype + 'Name';
   var order = entitySchema.fieldSchemas[orderp];
   var name = entitySchema.fieldSchemas[namep];
 
@@ -60,14 +63,14 @@ pn.schema.Schema.prototype.orderEntities = function(type, list) {
 
 
 /**
- * @param {string} type The type of the entity schema to retreive.
+ * @param {pn.data.Type} type The type of the entity schema to retreive.
  * @return {!pn.schema.EntitySchema} The entity schema for the given type.
  */
 pn.schema.Schema.prototype.getEntitySchema = function(type) {
-  goog.asserts.assert(type);
-  goog.asserts.assert(this.entities_[type]);
+  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(this.entities_[type.type]);
 
-  return this.entities_[type];
+  return this.entities_[type.type];
 };
 
 
@@ -79,7 +82,7 @@ pn.schema.Schema.prototype.getEntitySchema = function(type) {
 pn.schema.Schema.prototype.getFieldSchema = function(fieldSpec) {
   var type = fieldSpec.entitySpec.type;
   var prop = fieldSpec.dataProperty;
-  var entity = this.entities_[type];
+  var entity = this.entities_[type.type];
   if (!entity) throw new Error('Could not find the entity schema for: ' + type);
   return entity.fieldSchemas[prop];
 };
@@ -170,8 +173,10 @@ pn.schema.Schema.prototype.parseEntity_ = function(entity) {
 pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
+  var entityType = f['entityType'] ? 
+      pn.data.Entity.fromName(f['entityType']) : null;
   return new pn.schema.FieldSchema(
-      f['name'], f['type'], f['entityType'], f['allowNull'], f['length']);
+      f['name'], f['type'], entityType, f['allowNull'], f['length']);
 
 };
 

@@ -7,11 +7,11 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
+goog.require('pn.data.BaseSource');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.IDataSource');
 goog.require('pn.json');
 goog.require('pn.log');
-goog.require('pn.data.BaseSource');
 
 
 
@@ -100,35 +100,38 @@ pn.data.ServerSource.prototype.getEntity = function(type, id, callback) {
   goog.asserts.assert(goog.isNumber(id));
   goog.asserts.assert(callback);
 
-  if (id <= 0) { 
-    callback(pn.data.BaseSource.parseEntity(type, {'ID': id })); 
+  if (id <= 0) {
+    callback(pn.data.BaseSource.parseEntity(type, {'ID': id }));
   } else {
-    this.ajax_(this.routes_.getEntity, { 'type': type.type, 'id': id }, function(e) {
-      callback(pn.data.BaseSource.parseEntity(type, e));
-    });
+    this.ajax_(this.routes_.getEntity, { 'type': type.type, 'id': id },
+        function(e) { callback(pn.data.BaseSource.parseEntity(type, e)); });
   }
 };
 
+
 /**
- * @param {string} type The type of the entity to save.
+ * @param {pn.data.Type} type The type of the entity to save.
  * @param {Object} entity The entity to save.
  * @param {function((string|Object)):undefined=} opt_cb The optional callback.
  */
 pn.data.ServerSource.prototype.saveEntity = function(type, entity, opt_cb) {
-  goog.asserts.assert(type);
+  goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(entity);
 
   pn.app.ctx.validateSecurity(type);
 
   var json = pn.json.serialiseJson(entity);
-  var data = { 'type': type, 'entityJson': json };
-  var cb = opt_cb || goog.bind(this.saveEntityCallback_, this, type);
+  var data = { 'type': type.type, 'entityJson': json };
+  var cb = function(edata) {    
+    var saved = pn.data.BaseSource.parseEntity(type, edata);
+    (opt_cb || goog.bind(this.saveEntityCallback_, this, type))(saved);
+  };
   this.ajax_(this.routes_.saveEntity, data, cb);
 };
 
 
 /**
- * @param {string} type The type of the entity to order.
+ * @param {pn.data.Type} type The type of the entity to order.
  * @param {!Array.<number>} ids The list of IDs in correct order.
  * @param {function():undefined=} opt_cb The optional callback.
  */
@@ -136,26 +139,24 @@ pn.data.ServerSource.prototype.orderEntities = function(type, ids, opt_cb) {
   goog.asserts.assert(type);
   goog.asserts.assert(ids);
 
-  this.ajax_(this.routes_.orderGrid, {type: type, ids: ids}, opt_cb);
+  this.ajax_(this.routes_.orderGrid, {type: type.type, ids: ids}, opt_cb);
 };
 
 
 /**
  * @private
- * @param {string} type The type of the entity that was saved.
+ * @param {pn.data.Type} type The type of the entity that was saved.
  * @param {string|Object} saved The error message to 'alert' or the
  *    saved entity.
  */
 pn.data.ServerSource.prototype.saveEntityCallback_ = function(type, saved) {
   if (goog.isString(saved)) { window.alert(saved); }
-  else {
-    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_SAVED, type, saved);
-  }
+  else { pn.app.ctx.pub(pn.app.AppEvents.ENTITY_SAVED, type, saved); }
 };
 
 
 /**
- * @param {string} type The type of the entity to save.
+ * @param {pn.data.Type} type The type of the entity to save.
  * @param {Object} entity The entity to clone.
  */
 pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
@@ -164,7 +165,7 @@ pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
 
   pn.app.ctx.validateSecurity(type);
 
-  var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
+  var data = { 'type': type.type, 'entityJson': pn.json.serialiseJson(entity) };
   this.ajax_(this.routes_.cloneEntity, data, function(cloned) {
     pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
   });
@@ -172,7 +173,7 @@ pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
 
 
 /**
- * @param {string} type The type of the entity to save.
+ * @param {pn.data.Type} type The type of the entity to save.
  * @param {Object} entity The entity to save.
  */
 pn.data.ServerSource.prototype.deleteEntity = function(type, entity) {
@@ -181,7 +182,7 @@ pn.data.ServerSource.prototype.deleteEntity = function(type, entity) {
 
   pn.app.ctx.validateSecurity(type);
 
-  var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
+  var data = { 'type': type.type, 'entityJson': pn.json.serialiseJson(entity) };
   this.ajax_(this.routes_.deleteEntity, data, function(err) {
     if (err) { pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, err); }
     else {
@@ -192,7 +193,10 @@ pn.data.ServerSource.prototype.deleteEntity = function(type, entity) {
 
 
 /**
- * @param {string} type The type of the entity being exported.
+ * @param {pn.data.Type} type The type of the entity being exported.
+ *    This is not used in this fuction but must be there as this is a generic
+ *    fireing of event that contains type as the first parameter. See
+ *    ExportCommand for details. TODO: Fix this.
  * @param {string} format The export format.
  * @param {Array.<Array.<string>>} data The data to export.
  */
@@ -258,6 +262,7 @@ pn.data.ServerSource.prototype.ajaxSuccess_ = function(xhr, opt_success) {
     opt_success.call(this, parsed);
   }
 };
+
 
 /** @enum {string} */
 pn.data.ServerSource.EventType = {

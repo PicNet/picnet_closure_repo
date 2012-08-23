@@ -14,7 +14,7 @@ pn.data.EntityUtils.isNew = function(entity) {
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
- * @param {string} type The type of the current target enity(s).
+ * @param {pn.data.Type} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -45,7 +45,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
 /**
  * @param {!Object.<Array>} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
- * @param {string} type The type of the current target enity(s).
+ * @param {pn.data.Type} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -60,7 +60,7 @@ pn.data.EntityUtils.getTargetEntity =
     function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
-  goog.asserts.assert(type);
+  goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(target);
 
   // Lets always work with arrays just to simplify
@@ -114,7 +114,7 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
 
 /**
  * @param {!Object.<Array.<!Object>>} cache The cache to search for the entity.
- * @param {string} type The type of entity to find.
+ * @param {pn.data.Type} type The type of entity to find.
  * @param {*} val The value (default to ID) to match.
  * @param {string=} opt_prop The property to match 'ID' if not specified.
  * @return {Object} The matched entity (or null).
@@ -129,17 +129,32 @@ pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
 
 
 /**
- * @param {string} type The entity type to enfer the property type from.
+ * @param {pn.data.Type} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
  *    possible.
- * @return {string} The type name inferred from the property parameter or the
- *    property itself.
+ * @return {pn.data.Type} The type name inferred from the property
+ *    parameter or the property itself.
  */
 pn.data.EntityUtils.getTypeProperty = function(type, property) {
-  goog.asserts.assert(type, '"type" not specified');
+  var typep = pn.data.EntityUtils.tryGetTypeProperty(type, property);
+  if (!typep) throw new Error('Could not get the type property for type: ' +
+      type.type + ' property: ' + property);
+  return typep;
+};
+
+
+/**
+ * @param {pn.data.Type} type The entity type to enfer the property type from.
+ * @param {string} property The entity property to convert to a type name if
+ *    possible.
+ * @return {?pn.data.Type} The type name inferred from the property
+ *    parameter or the property itself.
+ */
+pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
+  goog.asserts.assert(goog.isFunction(type), '"type" not specified');
   goog.asserts.assert(property, '"property" not specified');
 
-  if (!pn.data.EntityUtils.isRelationshipProperty(property)) return '';
+  if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
 
   return pn.app.ctx.schema.getEntitySchema(type).getField(property).entityType;
 };
@@ -186,10 +201,14 @@ pn.data.EntityUtils.isChildrenProperty = function(property) {
  * @private
  * @param {!Object.<!Array.<!Object>>} cache The cache to search for the
  *    specified type.
- * @param {string} type The type to get.
+ * @param {pn.data.Type} type The type to get.
  * @return {!Array.<!Object>} The objects of the specified type.
  */
 pn.data.EntityUtils.getFromCache_ = function(cache, type) {
-  if (type in cache) return cache[type];
-  throw new Error('Could not find "' + type + '" in the cache.');
+  goog.asserts.assert(cache);
+  goog.asserts.assert(goog.isFunction(type));
+
+  var stype = type.type;
+  if (stype in cache) return cache[stype];
+  throw new Error('Could not find "' + stype + '" in the cache.');
 };

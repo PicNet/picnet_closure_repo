@@ -7,6 +7,7 @@ goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BufferedServerSource');
 goog.require('pn.data.MemCache');
+goog.require('pn.data.Type');
 goog.require('pn.log');
 goog.require('pn.schema.Schema');
 goog.require('pn.ui.KeyShortcutMgr');
@@ -124,7 +125,7 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
  * A template method used to validate the current user can edit a specific
  *    entity type.
  *
- * @param {string} type The entity type that needs to be checked for edit
+ * @param {pn.data.Type} type The entity type that needs to be checked for edit
  *    access.
  */
 pn.app.BaseApp.prototype.validateSecurity = goog.abstractMethod;

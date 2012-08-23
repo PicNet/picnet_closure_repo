@@ -1,7 +1,8 @@
-﻿
+﻿;
 goog.provide('pn.data.BaseSource');
 
 goog.require('pn.data.IDataSource');
+
 
 
 /**
@@ -29,10 +30,10 @@ pn.data.BaseSource.prototype.getEntity = function(type, id, callback) {
 };
 
 
-/** 
- * @param {pn.data.EntityFactory} type The type of the entity to attempt to 
+/**
+ * @param {pn.data.Type} type The type of the entity to attempt to
  *    parse.
- * @param {Object} data The data to attempt to parse
+ * @param {Object} data The data to attempt to parse.
  * @return {pn.data.Entity} The parsed entity or the original data.
  */
 pn.data.BaseSource.parseEntity = function(type, data) {
