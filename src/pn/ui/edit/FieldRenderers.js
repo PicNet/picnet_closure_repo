@@ -210,9 +210,11 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
-  var enumeration = pn.app.ctx.schema.getEnum(fctx.schema);
-  var lst = goog.array.map(enumeration.names, function(name, idx) {
-    return { id: enumeration.values[idx], name: name};
+  var enumeration = entity[fctx.id + 'EnumType']();
+  var lst = [];
+
+  goog.object.forEach(enumeration, function(val, name) {
+    if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
   var selected = fctx.getEntityValue(entity);
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(

@@ -73,8 +73,7 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.enumRenderer = function(cctx, entity) {
-  var val = /** @type {number} */ (cctx.getEntityValue(entity));
-  return pn.schema.Enumeration.getName(cctx.schema, val);
+  return entity[cctx.id + 'EnumName']();
 };
 
 

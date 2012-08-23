@@ -5,7 +5,6 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('pn.data.TypeRegister');
 goog.require('pn.schema.EntitySchema');
-goog.require('pn.schema.Enumeration');
 goog.require('pn.schema.FieldSchema');
 
 
@@ -27,14 +26,7 @@ pn.schema.Schema = function(description) {
    */
   this.entities_ = {};
 
-  /**
-   * @private
-   * @type {!Object.<!pn.schema.Enumeration>}
-   */
-  this.enumerations_ = {};
-
   goog.array.forEach(description['entities'], this.parseEntity_, this);
-  goog.array.forEach(description['enumerations'], this.parseEnumeration_, this);
 };
 goog.inherits(pn.schema.Schema, goog.Disposable);
 
@@ -115,20 +107,6 @@ pn.schema.Schema.prototype.getValidationErrors = function(fctx, control) {
 
 
 /**
- * @param {pn.schema.FieldSchema} fieldSchema The field to determine
- *    the enumeration for.
- * @return {!pn.schema.Enumeration} The enumeration for the given field.
- */
-pn.schema.Schema.prototype.getEnum = function(fieldSchema) {
-  goog.asserts.assert(fieldSchema);
-  goog.asserts.assert(goog.string.startsWith(fieldSchema.type, 'enum:'));
-
-  var type = fieldSchema.type.split(':')[1];
-  return this.enumerations_[type];
-};
-
-
-/**
  * @private
  * @param {!pn.schema.FieldSchema} fieldSchema The field to determine
  *    wether its a number type.
@@ -179,19 +157,4 @@ pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   return new pn.schema.FieldSchema(
       f['name'], f['type'], entityType, f['allowNull'], f['length']);
 
-};
-
-
-/**
- * @private
- * @param {Object} enumeration The description of the enumeration from the
- *    server (i.e. Use object property string identifiers.).
- */
-pn.schema.Schema.prototype.parseEnumeration_ = function(enumeration) {
-  goog.asserts.assert(enumeration);
-
-  var type = enumeration['type'];
-  var names = enumeration['names'];
-  var values = enumeration['values'];
-  this.enumerations_[type] = new pn.schema.Enumeration(type, names, values);
 };
