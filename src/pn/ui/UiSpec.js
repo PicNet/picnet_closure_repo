@@ -4,7 +4,7 @@ goog.provide('pn.ui.UiSpec');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.style');
-goog.require('pn.data.Entity');
+goog.require('pn.data.TypeRegister');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.ColumnSpec');
@@ -39,7 +39,7 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
   this.id = id;
 
   /** @type {pn.data.Type} */
-  this.type = opt_type || pn.data.Entity.fromName(this.id);
+  this.type = opt_type || pn.data.TypeRegister.fromName(this.id);
 
   /** @type {string} */
   this.name = opt_name || this.type.type;

@@ -3,6 +3,7 @@ goog.provide('pn.schema.Schema');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
+goog.require('pn.data.TypeRegister');
 goog.require('pn.schema.EntitySchema');
 goog.require('pn.schema.Enumeration');
 goog.require('pn.schema.FieldSchema');
@@ -174,7 +175,7 @@ pn.schema.Schema.prototype.parseFieldSchema_ = function(f) {
   goog.asserts.assert(f);
 
   var entityType = f['entityType'] ?
-      pn.data.Entity.fromName(f['entityType']) : null;
+      pn.data.TypeRegister.fromName(f['entityType']) : null;
   return new pn.schema.FieldSchema(
       f['name'], f['type'], entityType, f['allowNull'], f['length']);
 
