@@ -42,35 +42,35 @@ goog.inherits(pn.data.MemCache, goog.Disposable);
 
 
 /**
- * @param {pn.data.Type} type The type of entity list to retreive.
+ * @param {string} type The type of entity list to retreive.
  * @return {Array} The cached list or null/undefined if its not cached.
  */
 pn.data.MemCache.prototype.getCachedList = function(type) {
-  goog.asserts.assert(goog.isFunction(type));
-  return this.cache_[type.type];
+  goog.asserts.assert(goog.isString(type));
+  return this.cache_[type];
 };
 
 
 /**
- * @param {pn.data.Type} type The type of entity list to load.
+ * @param {string} type The type of entity list to load.
  */
 pn.data.MemCache.prototype.invalidateCache = function(type) {
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
 
-  delete this.cache_[type.type];
+  delete this.cache_[type];
 };
 
 
 /**
- * @param {pn.data.Type} type The type of entity list to load.
+ * @param {string} type The type of entity list to load.
  * @param {Array} lst The loaded list from the server.
  */
 pn.data.MemCache.prototype.updateList = function(type, lst) {
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(type);
   goog.asserts.assert(lst);
 
-  this.cache_[type.type] = lst;
-  this.cache_[type.type].lastUpdate = goog.now();
+  this.cache_[type] = lst;
+  this.cache_[type].lastUpdate = goog.now();
 };
 
 
@@ -80,11 +80,15 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
  * @return {!Object.<!Array.<!Object>>} The cached lists in the current cache.
  */
 pn.data.MemCache.prototype.getLists = function(types) {
-  goog.asserts.assert(goog.isDefAndNotNull(types));
+  goog.asserts.assert(goog.isArray(types));
+  if (!types.length) return {};
 
   goog.array.removeDuplicates(types);
   var cached = {};
+
   goog.array.forEach(types, function(type) {
+    goog.asserts.assert(goog.isString(type));
+
     if (goog.isDef(this.cache_[type])) { cached[type] = this.cache_[type]; }
   }, this);
   return cached;

@@ -40,10 +40,10 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
   goog.asserts.assert(types);
   goog.asserts.assert(callback);
 
-  var loaded = this.cache_.getLists(types);
-  var unloaded = goog.array.filter(types, function(type) {
-    return !goog.isDef(loaded[type.type]);
-  });
+  var strtypes = goog.array.map(types, function(t) { return t.type; });
+  var loaded = this.cache_.getLists(strtypes);
+  var unloaded = goog.array.filter(types,
+      function(type) { return !goog.isDef(loaded[type.type]); });
 
   if (!unloaded.length) {
     callback(loaded);
@@ -51,10 +51,12 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
   }
 
   pn.data.BufferedServerSource.superClass_.getEntityLists.call(this, types,
-      function(results) {
+      goog.bind(function(results) {
+        goog.object.forEach(results,
+            function(arr, type) { this.cache_.updateList(type, arr); }, this);
         goog.object.extend(loaded, results);
         callback(loaded);
-      });
+      }, this));
 };
 
 
@@ -64,7 +66,8 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
  * @param {pn.data.Type} type The type to remove from the cache.
  */
 pn.data.BufferedServerSource.prototype.invalidateCache = function(type) {
-  this.cache_.invalidateCache(type);
+  goog.asserts.assert(goog.isFunction(type));
+  this.cache_.invalidateCache(type.type);
 };
 
 
@@ -73,5 +76,6 @@ pn.data.BufferedServerSource.prototype.invalidateCache = function(type) {
  * @return {Array.<!Object>} The cached list if it exists in the cache.
  */
 pn.data.BufferedServerSource.prototype.getCachedList = function(type) {
-  return this.cache_.getCachedList(type);
+  goog.asserts.assert(goog.isFunction(type));
+  return this.cache_.getCachedList(type.type);
 };
