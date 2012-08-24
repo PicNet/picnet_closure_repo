@@ -96,7 +96,7 @@ pn.data.ServerSource.prototype.getEntityLists = function(types, callback) {
 
 /** @override */
 pn.data.ServerSource.prototype.getEntity = function(type, id, callback) {
-  goog.asserts.assert(type);
+  goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(goog.isNumber(id));
   goog.asserts.assert(callback);
 
