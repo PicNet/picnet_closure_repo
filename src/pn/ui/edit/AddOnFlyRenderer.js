@@ -121,7 +121,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.aofAdded_ = function(e) {
  * @param {number} selectedId The ID of the entity to select.
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
-  var list = this.fctx.cache[this.spec_.type];
+  var list = this.fctx.cache[this.spec_.type.type];
   pn.data.EntityUtils.orderEntities(this.spec_.type, list);
 
   goog.dom.removeChildren(this.select_);
@@ -132,7 +132,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
   goog.array.forEach(list, function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e.id,
-      'text': e[this.spec_.type + 'Name'],
+      'text': e[this.spec_.type.type + 'Name'],
       'selected': e.id === selectedId
     }));
   }, this);
