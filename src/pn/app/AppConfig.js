@@ -3,8 +3,6 @@ goog.provide('pn.app.AppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-goog.require('pn.schema.EntitySchema');
-goog.require('pn.schema.FieldSchema');
 
 
 
@@ -86,16 +84,16 @@ pn.app.AppConfig = function(opt_opts) {
   this.defaultFieldRenderers = {
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'YesNo': fr.boolRenderer,
+    'boolean': fr.boolRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'DateTime': fr.dateRenderer,
+    'goog.date.Date': fr.dateRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'String': fr.textFieldRenderer,
+    'string': fr.textFieldRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'Int32': fr.intRenderer,
+    'number': fr.intRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'LongString': fr.textAreaRenderer,
@@ -110,13 +108,13 @@ pn.app.AppConfig = function(opt_opts) {
   /** @type {!Object} */
   this.defaultReadOnlyFieldRenderers = {
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'YesNo': rr.boolField,
+    'boolean': rr.boolField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'DateTime': rr.dateField,
+    'goog.date.Date': rr.dateField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'Int32': rr.intField,
+    'number': rr.intField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'Enumeration': rr.enumField
@@ -126,10 +124,10 @@ pn.app.AppConfig = function(opt_opts) {
   this.defaultColumnRenderers = {
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'YesNo': cr.yesNoBoolRenderer,
+    'boolean': cr.yesNoBoolRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'DateTime': cr.dateRenderer,
+    'goog.date.Date': cr.dateRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'Enumeration': cr.enumRenderer

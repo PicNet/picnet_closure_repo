@@ -210,10 +210,9 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
-  var enumeration = pn.rr.dal.getEnum(fctx.schema.type);
   var lst = [];
 
-  goog.object.forEach(enumeration, function(val, name) {
+  goog.object.forEach(fctx.schema.entityType, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
   var selected = fctx.getEntityValue(entity);
@@ -266,7 +265,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var list = fctx.cache[entityType.type];
   if (!list) throw new Error('Expected access to "' + entityType.type +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  pn.app.ctx.schema.orderEntities(entityType, list);
+  pn.data.EntityUtils.orderEntities(entityType, list);
   if (opt_filter) list = opt_filter(entity, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';

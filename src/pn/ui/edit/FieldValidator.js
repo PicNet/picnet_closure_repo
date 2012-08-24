@@ -17,8 +17,7 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
     return arraytise(renderer.validate(), []);
   }
-  var errors = isDBField() ?
-      pn.app.ctx.schema.getValidationErrors(fctx, control) : [];
+  var errors = isDBField() ? fctx.getValidationErrors(control) : [];
   // Always return schema issues before checking other errors as other
   // validations may conflic or duplicate these errors.
   if (errors.length || !fctx.spec.validator) { return errors; }

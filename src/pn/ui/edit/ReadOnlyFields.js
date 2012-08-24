@@ -71,7 +71,7 @@ pn.ui.edit.ReadOnlyFields.timeField = function(fctx, parent, entity) {
  */
 pn.ui.edit.ReadOnlyFields.enumField = function(fctx, parent, entity) {
   var val = /** @type {number} */ (fctx.getEntityValue(entity));
-  var name = pn.rr.dal.getEnumName(fctx.schema.type, val);
+  var name = pn.data.EntityUtils.getEnumName(fctx.schema.entityType, val);
   return pn.ui.edit.ReadOnlyFields.createDiv_(name, val, parent);
 };
 

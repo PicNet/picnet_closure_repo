@@ -180,15 +180,12 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
 pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
   goog.asserts.assert(!this.renderer);
 
-  var schema = pn.app.ctx.schema.getFieldSchema(this);
+  var schema = this.entitySpec.type.getFieldSchema(this.id);
   var schemaType = schema ? schema.type : '';
-  if (schemaType === 'String' && schema.length >
+  if (schemaType === 'string' && schema.length >
       pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
     schemaType = 'LongString';
-  } else if (goog.string.startsWith(schemaType, 'enum:')) {
-    schemaType = 'Enumeration';
   }
-
   if (pn.data.EntityUtils.isParentProperty(this.dataProperty) &&
       !this.tableType) {
     return this.readonly ?

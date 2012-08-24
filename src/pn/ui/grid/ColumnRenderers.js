@@ -74,7 +74,7 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
  */
 pn.ui.grid.ColumnRenderers.enumRenderer = function(cctx, entity) {
   var val = /** @type {number} */ (cctx.getEntityValue(entity));
-  return pn.rr.dal.getEnumName(cctx.schema.type, val);
+  return pn.data.EntityUtils.getEnumName(cctx.schema.entityType, val);
 };
 
 

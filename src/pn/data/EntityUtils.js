@@ -156,7 +156,7 @@ pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
 
   if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
 
-  return pn.app.ctx.schema.getEntitySchema(type).getField(property).entityType;
+  return type.getFieldSchema(property).entityType;
 };
 
 
@@ -211,4 +211,50 @@ pn.data.EntityUtils.getFromCache_ = function(cache, type) {
   var stype = type.type;
   if (stype in cache) return cache[stype];
   throw new Error('Could not find "' + stype + '" in the cache.');
+};
+
+
+/**
+ * @param {pn.data.Type} type The type of entities we are ordering.
+ * @param {!Array.<!Object>} list The entities to order.
+ */
+pn.data.EntityUtils.orderEntities = function(type, list) {
+  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(list);
+  if (!list.length) return;
+
+  var template = list[0];
+  var orderp = type.type + 'Order';
+  var namep = type.type + 'Name';
+
+  var ordert = goog.isDef(template[orderp]) ?
+      type.getFieldSchema(orderp).entityType : null;
+  var namet = goog.isDef(template[namep]) ?
+      type.getFieldSchema(namep).entityType : null;
+
+  if (ordert === 'number') {
+    goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });
+  } else if (namet === 'string') {
+    goog.array.sort(list, function(a, b) {
+      return goog.string.caseInsensitiveCompare(a[namep], b[namep]);
+    });
+  }
+};
+
+
+/**
+ * @param {Object.<number>} enumeration The enumeration.
+ * @param {number} val The value to convert to a name.
+ * @return {string} The name of the given value in the specified enumeration.
+ */
+pn.data.EntityUtils.getEnumName = function(enumeration, val) {
+  goog.asserts.assert(goog.isObject(enumeration));
+  goog.asserts.assert(goog.isNumber(val));
+
+  for (var name in enumeration) {
+    var eval = enumeration[name];
+    if (eval === val) return name;
+  }
+  throw new Error('Could not find the value: ' + val +
+      ' in the specified enumeration');
 };

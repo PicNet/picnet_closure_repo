@@ -44,8 +44,9 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
-  /** @type {pn.schema.FieldSchema} */
-  this.schema = pn.app.ctx.schema.getFieldSchema(spec);
+  /** @type {pn.data.FieldSchema} */
+  this.schema = goog.string.startsWith(this.id, '_') ?
+      null : this.entitySpec.type.getFieldSchema(this.id);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);
 
@@ -193,12 +194,28 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
  *    no errors found).
  */
 pn.ui.edit.FieldCtx.prototype.validate = function(control) {
+  // TODO: Its messy that this calls FieldValidator who calls
+  // this.getValidationErrors below.
   var errs = pn.ui.edit.FieldValidator.validateFieldValue(this, control);
   if (errs.length) {
     var val = this.getControlValue(control);
     this.log_.info('Field: ' + this.id + ' val: ' + val + ' error: ' + errs);
   }
   return errs;
+};
+
+
+/**
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @return {!Array.<string>} Any errors (if any) for the specified field.
+ */
+pn.ui.edit.FieldCtx.prototype.getValidationErrors = function(control) {
+  var validator = new pn.ui.edit.ValidateInfo();
+  validator.required = !this.schema.allowNull;
+  if (this.length) { validator.maxLength = this.schema.length; }
+  if (this.schema.type === 'number') { validator.isNumber = true; }
+  var error = validator.validateField(this, control);
+  return error ? [error] : [];
 };
 
 
@@ -217,10 +234,9 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;
-  } else if (goog.string.startsWith(this.schema.type, 'enum:')) {
-    var enumeration = pn.rr.dal.getEnum(this.schema.type);
-    for (var name in enumeration) {
-      if (name === val) { val = enumeration[name]; }
+  } else if (this.schema.type === 'Enumeration') {
+    for (var name in this.schema.entityType) {
+      if (name === val) { val = this.schema.entityType[name]; }
     }
   }
   return val;
