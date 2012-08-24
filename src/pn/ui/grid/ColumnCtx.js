@@ -35,7 +35,7 @@ pn.ui.grid.ColumnCtx = function(spec, cache) {
   this.entitySpec = spec.entitySpec;
 
   /** @type {pn.data.FieldSchema} */
-  this.schema = this.entitySpec.type.getFieldSchema(spec);
+  this.schema = this.entitySpec.type.getFieldSchema(this.id);
 };
 goog.inherits(pn.ui.grid.ColumnCtx, goog.Disposable);
 

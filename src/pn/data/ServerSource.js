@@ -118,8 +118,6 @@ pn.data.ServerSource.prototype.saveEntity = function(type, entity, opt_cb) {
   goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(entity);
 
-  pn.app.ctx.validateSecurity(type);
-
   var json = pn.json.serialiseJson(entity);
   var data = { 'type': type.type, 'entityJson': json };
   var cb = function(edata) {
@@ -163,8 +161,6 @@ pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
   goog.asserts.assert(type);
   goog.asserts.assert(entity);
 
-  pn.app.ctx.validateSecurity(type);
-
   var data = { 'type': type.type, 'entityJson': pn.json.serialiseJson(entity) };
   this.ajax_(this.routes_.cloneEntity, data, function(cloned) {
     pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
@@ -179,8 +175,6 @@ pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
 pn.data.ServerSource.prototype.deleteEntity = function(type, entity) {
   goog.asserts.assert(type);
   goog.asserts.assert(entity);
-
-  pn.app.ctx.validateSecurity(type);
 
   var data = { 'type': type.type, 'entityJson': pn.json.serialiseJson(entity) };
   this.ajax_(this.routes_.deleteEntity, data, function(err) {

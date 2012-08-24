@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.data.Entity');
+goog.provide('pn.data.Type');
 
 goog.require('pn.data.FieldSchema');
 
@@ -26,12 +27,20 @@ pn.data.Entity = function(type, id) {
 };
 
 
-/**  @type {string}  */
+/**
+ * @expose
+ * @type {string}
+ */
 pn.data.Entity.type = '';
 
 
 /**
+ * @expose
  * @param {string} name The name of the field.
  * @return {pn.data.FieldSchema} The schema for the given field.
  */
 pn.data.Entity.getFieldSchema = goog.abstractMethod;
+
+
+/** @typedef {function(new:pn.data.Entity, !Object)} */
+pn.data.Type;

@@ -136,10 +136,7 @@ pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.getTypeProperty = function(type, property) {
-  var typep = pn.data.EntityUtils.tryGetTypeProperty(type, property);
-  if (!typep) throw new Error('Could not get the type property for type: ' +
-      type.type + ' property: ' + property);
-  return typep;
+  return type.getFieldSchema(property).entityType;
 };
 
 

@@ -1,7 +1,5 @@
 
 - Enums always throging dirty.
-- Application.validateSecurity is dodgy, the client should not validate security
-  leave this to the server.
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 - Edit.js needs to use a better MVC style design. And modularisation.

@@ -115,16 +115,6 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 
 
 /**
- * A template method used to validate the current user can edit a specific
- *    entity type.
- *
- * @param {pn.data.Type} type The entity type that needs to be checked for edit
- *    access.
- */
-pn.app.BaseApp.prototype.validateSecurity = goog.abstractMethod;
-
-
-/**
  * A template method used to get all required UiSpecs.  This method should
  *    return an object map (id/ctor pair) with types such as:
  *    {
