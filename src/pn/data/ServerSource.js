@@ -163,6 +163,7 @@ pn.data.ServerSource.prototype.cloneEntity = function(type, entity) {
 
   var data = { 'type': type.type, 'entityJson': pn.json.serialiseJson(entity) };
   this.ajax_(this.routes_.cloneEntity, data, function(cloned) {
+    cloned = pn.data.BaseSource.parseEntity(type, cloned);
     pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
   });
 };
