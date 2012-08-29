@@ -31,7 +31,9 @@ pn.ui.ComboBox.prototype.getSelectedModel = function() {
 pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
   if (!goog.isDefAndNotNull(value)) {
     this.selectedModel_ = null;
+    this.enable_(false);
     this.setValue('');
+    this.enable_(true);
     return;
   }
 
@@ -40,7 +42,9 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
     var item = this.getItemAt(i);
     if (item.getModel() === value) {
       this.selectedModel_ = value;
+      this.enable_(false);
       this.setValue(/** @type {string} */ (item.getCaption()));
+      this.enable_(true);
       return;
     }
   }
@@ -50,9 +54,21 @@ pn.ui.ComboBox.prototype.setSelectedModel = function(value) {
 
 /** @override */
 pn.ui.ComboBox.prototype.enterDocument = function() {
-  var handler = this.getHandler();
-  handler.listen(this, goog.events.EventType.CHANGE, this.onChanged_);
+  this.enable_(true);
   pn.ui.ComboBox.superClass_.enterDocument.call(this);
+};
+
+
+/**
+ * @private
+ * @param {boolean} enabled Wether to listen (or unlisten) to the change
+ *    vents. For internal state setting all events should be ignored to fix
+ *    duplicate text handling.
+ */
+pn.ui.ComboBox.prototype.enable_ = function(enabled) {
+  var et = goog.events.EventType.CHANGE;
+  if (enabled) this.getHandler().listen(this, et, this.onChanged_);
+  else this.getHandler().unlisten(this, et, this.onChanged_);
 };
 
 
