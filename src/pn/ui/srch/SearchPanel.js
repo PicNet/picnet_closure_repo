@@ -249,7 +249,13 @@ pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(control);
 
     // Ensure that all parent lists select whole text field (not just part)
-    if (control.options && goog.isString(val)) val = [val];
+    if (control.options && goog.isString(val)) {
+      if (val.indexOf('[') === 0) {
+        val = val.substring(1, val.length - 1).split(',');
+      } else {
+        val = [val];
+      }
+    }
 
     if (!goog.isDefAndNotNull(val) ||
         val === '' ||

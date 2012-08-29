@@ -94,22 +94,33 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
 
-  var list = fctx.cache[entityType];
-  if (!list) throw new Error('Expected access to "' + entityType +
+  var rawList = fctx.cache[entityType];
+  if (!rawList) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
-  var namePath = cascading ? entityType + 'Name' : steps.join('.');
-  list = goog.array.map(list, function(e) {
-    return {
-      'ID': e['ID'],
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
-    };
+  var namep = cascading ? entityType + 'Name' : steps.join('.');
+  var nameAndIds = {};
+  goog.array.forEach(rawList, function(e) {
+    var id = e['ID'];
+    var name = pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namep, e);
+    if (name in nameAndIds) {
+      nameAndIds[name].push(id);
+    } else {
+      nameAndIds[name] = [id];
+    }
+  });
+  var uniqueList = [];
+  goog.object.forEach(nameAndIds, function(ids, name) {
+    goog.asserts.assert(ids.length);
+
+    var id = ids.length === 1 ? ids[0] : '[' + ids.join(',') + ']';
+    uniqueList.push({ 'ID': id, 'Name': name });
   });
   var sort = fctx.spec.additionalProperties['sortedValues'];
   if (!goog.isDef(sort)) sort = true;
   return pn.ui.edit.FieldBuilder.createDropDownList_(
-      selTxt, list, fctx.getEntityValue(), sort);
+      selTxt, uniqueList, fctx.getEntityValue(), sort);
 };
 
 

@@ -204,12 +204,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
       if (!value) { return '<ul class="empty"><li>No items found.</li></ul>'; }
       var items = value.split(', ');
       return '<ul><li>' + items.join('</li><li>') + '</li></ul>';
-    case ft.TIME:
-      var hours = Math.floor(value / 60);
-      var minutes = Math.floor(value % 60);
-      var displayHr = goog.string.padNumber((hours % 12) + 1, 2);
-      var displayMin = goog.string.padNumber(minutes, 2);
-      return displayHr + ':' + displayMin + ' ' + (hours < 11 ? ' AM' : ' PM');
+    case ft.TIME: return /** @type {string} */ (value);
     case ft.DATE:
       var date = !value ? null : new Date(value);
       return !date ? '' : pn.date.dateFormat.format(date);
