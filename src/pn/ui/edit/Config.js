@@ -60,7 +60,7 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
     new pn.ui.edit.Command('Save', pn.ui.edit.Edit.EventType.SAVE, true),
     new pn.ui.edit.Command('Clone', pn.ui.edit.Edit.EventType.CLONE),
     new pn.ui.edit.DeleteCommand(),
-    new pn.ui.edit.Command('Cancel', pn.ui.edit.Edit.EventType.CANCEL)
+    new pn.ui.edit.Command('Back', pn.ui.edit.Edit.EventType.CANCEL)
   ];
 };
 
