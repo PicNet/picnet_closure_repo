@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.Interceptor');
  *    columns to display in this grid.
  * @param {!Array.<pn.ui.grid.Command>} commands All the commands supported by
  *    this grid.
- * @param {function(new:pn.ui.grid.Interceptor, !Object.<!Array.<!Object>>)=}
+ * @param {function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)=}
  *    opt_interceptor An optional interceptor ctor to use to modify the
  *    internal workings of the grid.
  */
@@ -49,7 +49,7 @@ pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
 
   /**
    * @type {null|
-   *    function(new:pn.ui.grid.Interceptor, !Object.<!Array.<!Object>>)}
+   *    function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)}
    */
   this.interceptor = opt_interceptor || null;
 

@@ -25,7 +25,7 @@ goog.require('pn.ui.grid.Grid');
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} entity The entity being edited.
- * @param {!Object.<!Array.<!Object>>} cache The entities cache to use for
+ * @param {!pn.data.BaseDalCache} cache The entities cache to use for
  *    related entities.
  */
 pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
@@ -50,7 +50,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
 
   /**
    * @protected
-   * @type {!Object.<!Array.<!Object>>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache = cache;
 

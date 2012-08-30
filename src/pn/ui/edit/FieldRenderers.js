@@ -231,7 +231,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   var order = pn.data.EntityUtils.isNew(entity) ?
-      fctx.cache[fctx.entitySpec.type.type].length :
+      fctx.cache.get(fctx.entitySpec.type.type).length :
       fctx.getEntityValue(entity);
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
@@ -262,7 +262,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(
           fctx.spec.entitySpec.type, fctx.spec.dataProperty);
-  var list = fctx.cache[entityType.type];
+  var list = fctx.cache.get(entityType.type);
   if (!list) throw new Error('Expected access to "' + entityType.type +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   pn.data.EntityUtils.orderEntities(entityType, list);
@@ -333,8 +333,8 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache[fctx.spec.tableType.type];
-  if (!list) list = fctx.cache[goog.string.remove(fctx.id, 'Entities')];
+  var list = fctx.cache.get(fctx.spec.tableType.type);
+  if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : goog.array.filter(list,
@@ -359,7 +359,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(fctx, parent, entity) {
-    var manyToManys = goog.array.filter(fctx.cache[mappingEntity],
+    var manyToManys = goog.array.filter(fctx.cache.get(mappingEntity),
         function(manyToMany) {
           return manyToMany[parentIdField] === entity.id;
         });
@@ -372,7 +372,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     entity[mappingEntity + 'Entities'] = adminIDs;
 
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
-    goog.array.forEach(fctx.cache[adminEntity], function(ae) {
+    goog.array.forEach(fctx.cache.get(adminEntity), function(ae) {
       var text = opt_displayStrategy ?
           opt_displayStrategy(ae) :
           ae[adminEntity + 'Name'];

@@ -38,6 +38,15 @@ pn.app.AppConfig = function(opt_opts) {
    */
   this.serverSync = true;
 
+  /**
+   * This is the type of the DAL type system away DalCache and is just a ctor
+   *    that returns a subclass of BaseDalCache which is generated from the
+   *    PicNet2.Data generators.
+   * @type {null|function(new:pn.data.BaseDalCache,
+   *    !Object.<Array.<pn.data.Entity>>)}
+   */
+  this.dalCacheType = null;
+
   /** @type {boolean} */
   this.useAsyncEventBus = false;
 

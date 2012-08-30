@@ -10,7 +10,8 @@ goog.require('pn.ui.grid.pipe.GridHandler');
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
  * @param {string} gridId The unique grid id for the current grid.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.grid.pipe.FilteringHandler = function(gridId, cache) {
   pn.ui.grid.pipe.GridHandler.call(this);
@@ -29,7 +30,7 @@ pn.ui.grid.pipe.FilteringHandler = function(gridId, cache) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 

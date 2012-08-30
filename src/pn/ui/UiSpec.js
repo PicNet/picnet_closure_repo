@@ -56,7 +56,7 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
  *  fields, commands and display details.
  *
  * @param {!Object} entity The entity being edited.
- * @param {!Object.<!Array.<!Object>>} cache The current cache context.
+ * @param {!pn.data.BaseDalCache} cache The current cache context.
  * @return {!pn.ui.edit.Config} The edit page config.
  */
 pn.ui.UiSpec.prototype.getEditConfig = goog.abstractMethod;
@@ -66,7 +66,7 @@ pn.ui.UiSpec.prototype.getEditConfig = goog.abstractMethod;
  * Gets the specifications for the pn.ui.srch.SearchPanel component including
  *    all fields to be searcheable.
  *
- * @param {!Object.<!Array.<!Object>>} cache The current cache context.
+ * @param {!pn.data.BaseDalCache} cache The current cache context.
  * @return {!pn.ui.srch.Config} The search component config.
  */
 pn.ui.UiSpec.prototype.getSearchConfig = goog.abstractMethod;
@@ -78,7 +78,7 @@ pn.ui.UiSpec.prototype.getSearchConfig = goog.abstractMethod;
  *    configuration object is used by any pn.ui.grid.Grid entity to display
  *    a grid of entities of this type.
  *
- * @param {!Object.<!Array.<!Object>>} cache The current cache context.
+ * @param {!pn.data.BaseDalCache} cache The current cache context.
  * @return {!pn.ui.grid.Config} The grid configuration.
  */
 pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
@@ -90,7 +90,7 @@ pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
 
 /**
  * @param {string} id The id representing this column.
- * @param {!Object.<!Array.<!Object>>} cache The current context cache.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
  * @param {Object=} opt_props Any additional properties for this column.
  * @return {!pn.ui.grid.ColumnCtx} The created column.
  */
@@ -105,7 +105,7 @@ pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
 
 /**
  * @param {string} id The id representing this ordering column.
- * @param {!Object.<!Array.<!Object>>} cache The current context cache.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
  * @return {!pn.ui.grid.ColumnCtx} The created column.
  */
 pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
@@ -119,7 +119,7 @@ pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
 
 /**
  * @param {string} id The id representing this field.
- * @param {!Object.<!Array.<!Object>>} cache The current context cache.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
  * @param {Object=} opt_props Any additional properties for this field.
  * @return {!pn.ui.edit.FieldCtx} The field created.
  */

@@ -121,7 +121,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.aofAdded_ = function(e) {
  * @param {number} selectedId The ID of the entity to select.
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
-  var list = this.fctx.cache[this.spec_.type.type];
+  var list = this.fctx.cache.get(this.spec_.type.type);
   pn.data.EntityUtils.orderEntities(this.spec_.type, list);
 
   goog.dom.removeChildren(this.select_);

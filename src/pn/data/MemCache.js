@@ -25,7 +25,7 @@ pn.data.MemCache = function(maxAgeMinutes) {
 
   /**
    * @private
-   * @type {Object.<Array>}
+   * @type {!Object.<Array>}
    */
   this.cache_ = {};
 

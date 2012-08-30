@@ -31,7 +31,8 @@ goog.require('pn.ui.soy');
  *
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} entity The entity object to edit, {} for new entity.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(spec);

@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.RelatedTypesCalc');
 
+goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.Entity');
 
 
@@ -16,7 +17,7 @@ pn.ui.RelatedTypesCalc.getGridRelatedTypes = function(spec, opt_additionals) {
   var createSpec = goog.isString(spec);
   var spec2 = createSpec ? pn.app.ctx.specs.get(/** @type {string} */ (spec)) :
       /** @type {pn.ui.UiSpec} */ (spec);
-  var cfg = spec2.getGridConfig({});
+  var cfg = spec2.getGridConfig(new pn.data.BaseDalCache({}));
 
   var types = opt_additionals || [];
   goog.array.forEach(cfg.cCtxs, function(cctx) {
@@ -53,7 +54,7 @@ pn.ui.RelatedTypesCalc.getEditRelatedTypes =
   var createSpec = goog.isString(spec);
   var spec2 = createSpec ? pn.app.ctx.specs.get(/** @type {string} */ (spec)) :
       /** @type {pn.ui.UiSpec} */ (spec);
-  var cfg = spec2.getEditConfig(entity, {});
+  var cfg = spec2.getEditConfig(entity, new pn.data.BaseDalCache({}));
 
   var types = opt_additionals || [];
   goog.array.forEach(cfg.fCtxs, function(fctx) {

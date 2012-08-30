@@ -40,12 +40,20 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
   goog.asserts.assert(types);
   goog.asserts.assert(callback);
 
-  var strtypes = goog.array.map(types, function(t) { return t.type; });
+  var strtypes = goog.array.map(types, function(t) {
+    goog.asserts.assert(goog.isString(t.type),
+        'getEntityLists called without pn.data.Type arguments: ' + t);
+
+    return t.type;
+  });
   var loaded = this.cache_.getLists(strtypes);
   var unloaded = goog.array.filter(types,
       function(type) { return !goog.isDef(loaded[type.type]); });
 
   if (!unloaded.length) {
+    if (pn.app.ctx.cfg.dalCacheType) {
+      loaded = new pn.app.ctx.cfg.dalCacheType(loaded);
+    }
     callback(loaded);
     return;
   }
@@ -55,6 +63,9 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
         goog.object.forEach(results,
             function(arr, type) { this.cache_.updateList(type, arr); }, this);
         goog.object.extend(loaded, results);
+        if (pn.app.ctx.cfg.dalCacheType) {
+          loaded = new pn.app.ctx.cfg.dalCacheType(loaded);
+        }
         callback(loaded);
       }, this));
 };

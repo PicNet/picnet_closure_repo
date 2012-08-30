@@ -8,7 +8,7 @@ goog.require('goog.events.EventHandler');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Object.<!Array.<!Object>>} cache The cache with all
+ * @param {!pn.data.BaseDalCache} cache The cache with all
  *    related entities.
  */
 pn.ui.grid.Interceptor = function(cache) {
@@ -16,7 +16,7 @@ pn.ui.grid.Interceptor = function(cache) {
 
   /**
    * @protected
-   * @type {!Object.<!Array.<!Object>>} The cache with all related entities.
+   * @type {!pn.data.BaseDalCache} The cache with all related entities.
    */
   this.cache = cache;
 };

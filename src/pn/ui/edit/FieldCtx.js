@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.ColumnRenderers');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.edit.FieldSpec} spec The field specifications.
- * @param {!Object.<!Array.<!Object>>} cache The current cache.
+ * @param {!pn.data.BaseDalCache} cache The current cache.
  */
 pn.ui.edit.FieldCtx = function(spec, cache) {
   goog.asserts.assert(spec);
@@ -31,7 +31,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.spec = spec;
   this.registerDisposable(this.spec);
 
-  /** @type {!Object.<!Array.<!Object>>} */
+  /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
 
   /** @type {!string} */
@@ -230,7 +230,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
     var type = pn.data.EntityUtils.getTypeProperty(
         this.entitySpec.type, this.spec.dataProperty);
-    var list = this.cache[type.type];
+    var list = this.cache.get(type.type);
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;

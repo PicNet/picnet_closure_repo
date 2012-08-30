@@ -39,7 +39,8 @@ goog.require('pn.ui.soy');
  * @param {!pn.ui.UiSpec} spec The specs for the entities in
  *    this grid.
  * @param {!Array} list The entities to display.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.grid.Grid = function(spec, list, cache) {
   goog.asserts.assert(spec);
@@ -93,7 +94,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 

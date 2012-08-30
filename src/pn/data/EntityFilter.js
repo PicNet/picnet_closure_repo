@@ -12,7 +12,8 @@ goog.require('pn.ui.filter.SearchEngine');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  * @param {!pn.ui.UiSpec} spec The spec being filtered.
  */
 pn.data.EntityFilter = function(cache, spec) {
@@ -20,7 +21,7 @@ pn.data.EntityFilter = function(cache, spec) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 
