@@ -79,7 +79,11 @@ pn.data.ServerSource.prototype.getEntityLists = function(types, callback) {
   goog.asserts.assert(callback);
 
   var loaded = {};
-  if (!types.length) { callback(loaded); return; }
+  var cb = function(raw) {
+    var ctor = pn.app.ctx.cfg.dalCacheType || pn.data.BaseDalCache;
+    callback(new ctor(raw));
+  };
+  if (!types.length) { cb(loaded); return; }
   goog.asserts.assert(goog.isFunction(types[0]));
 
   var stypes = goog.array.map(types, function(t) { return t.type; });
@@ -89,7 +93,7 @@ pn.data.ServerSource.prototype.getEntityLists = function(types, callback) {
         return pn.data.BaseSource.parseEntity(types[i], e);
       });
     }
-    callback(loaded);
+    cb(loaded);
   });
 };
 

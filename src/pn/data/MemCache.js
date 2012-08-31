@@ -66,8 +66,8 @@ pn.data.MemCache.prototype.invalidateCache = function(type) {
  * @param {Array} lst The loaded list from the server.
  */
 pn.data.MemCache.prototype.updateList = function(type, lst) {
-  goog.asserts.assert(type);
-  goog.asserts.assert(lst);
+  goog.asserts.assert(goog.isString(type));
+  goog.asserts.assert(goog.isArray(lst));
 
   this.cache_[type] = lst;
   this.cache_[type].lastUpdate = goog.now();
@@ -81,6 +81,7 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
  */
 pn.data.MemCache.prototype.getLists = function(types) {
   goog.asserts.assert(goog.isArray(types));
+
   if (!types.length) return {};
 
   goog.array.removeDuplicates(types);

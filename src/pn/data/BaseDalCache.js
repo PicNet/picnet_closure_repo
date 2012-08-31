@@ -8,7 +8,8 @@ goog.provide('pn.data.BaseDalCache');
  * @param {!Object.<!Array.<pn.data.Entity>>} cache The current context cache.
  */
 pn.data.BaseDalCache = function(cache) {
-  goog.asserts.assert(cache);
+  goog.asserts.assert(goog.isObject(cache));
+  goog.asserts.assert(goog.object.every(cache, goog.isArray));
 
   /**
    * @private

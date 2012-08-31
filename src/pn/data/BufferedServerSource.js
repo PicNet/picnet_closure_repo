@@ -50,24 +50,22 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
   var unloaded = goog.array.filter(types,
       function(type) { return !goog.isDef(loaded[type.type]); });
 
-  if (!unloaded.length) {
-    if (pn.app.ctx.cfg.dalCacheType) {
-      loaded = new pn.app.ctx.cfg.dalCacheType(loaded);
-    }
-    callback(loaded);
-    return;
-  }
+  var cb = function(raw) {
+    var ctor = pn.app.ctx.cfg.dalCacheType || pn.data.BaseDalCache;
+    callback(new ctor(raw));
+  };
 
-  pn.data.BufferedServerSource.superClass_.getEntityLists.call(this, types,
-      goog.bind(function(results) {
-        goog.object.forEach(results,
-            function(arr, type) { this.cache_.updateList(type, arr); }, this);
-        goog.object.extend(loaded, results);
-        if (pn.app.ctx.cfg.dalCacheType) {
-          loaded = new pn.app.ctx.cfg.dalCacheType(loaded);
-        }
-        callback(loaded);
-      }, this));
+  if (!unloaded.length) { cb(loaded); return; }
+
+  pn.data.BufferedServerSource.superClass_.getEntityLists.
+      call(this, types, goog.bind(function(dalCache) {
+    goog.object.forEach(types, function(type) {
+      var arr = dalCache.get(type.type);
+      this.cache_.updateList(type.type, arr);
+      loaded[type.type] = arr;
+    }, this);
+    cb(loaded);
+  }, this));
 };
 
 

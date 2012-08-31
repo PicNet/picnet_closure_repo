@@ -9,7 +9,7 @@ pn.data.IDataSource = function() {};
 
 /**
  * @param {Array.<pn.data.Type>} types The entity types to load.
- * @param {function(!Object.<Array.<pn.data.Entity>>):undefined} callback A
+ * @param {function(!pn.data.BaseDalCache):undefined} callback A
  *    success callback that takes an map of entities for each type.
  */
 pn.data.IDataSource.prototype.getEntityLists = function(types, callback) {};
