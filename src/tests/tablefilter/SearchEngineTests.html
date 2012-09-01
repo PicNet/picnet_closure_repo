@@ -42,110 +42,110 @@ var testParseSearchTokensFromNumericExpression = function() {
 var testSimpleANDMatches = function() {
   var tokens1 = se.parseSearchTokens('text1 and text2');
 
-  assertFalse(se.doesTextMatchTokens("text1", tokens1, false));
-  assertFalse(se.doesTextMatchTokens("text1 text3", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text1 text2", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text2 text1", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text2 text 3text1", tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1"], tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1 text3"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1 text2"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text2 text1"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text2 text 3text1"], tokens1, false));
 };  
 
 var testSimpleORMatches = function() {
   var tokens1 = se.parseSearchTokens('text1 or text2');
 
-  assertTrue(se.doesTextMatchTokens("text1", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text1 text3", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text1 text2", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text2 text1", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text2 text 3text1", tokens1, false));
-  assertFalse(se.doesTextMatchTokens("text3 text4", tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1 text3"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1 text2"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text2 text1"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text2 text 3text1"], tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text3 text4"], tokens1, false));
 };  
 
 var testSimpleNOTMatches = function() {
   var tokens1 = se.parseSearchTokens('not text2');
-  assertTrue(se.doesTextMatchTokens("text1", tokens1, false));
-  assertFalse(se.doesTextMatchTokens("text1 text2", tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1"], tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1 text2"], tokens1, false));
 };  
 
 var testSimpleGroupMatches = function() {
   var tokens1 = se.parseSearchTokens('(text1 and text2) or text3');
-  assertFalse(se.doesTextMatchTokens("text1", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text1 text2", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text3", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("text33", tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text1 text2"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text3"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["text33"], tokens1, false));
 };  
 
 var testSimpleQuoteMatches = function() {
   var tokens1 = se.parseSearchTokens('"text1 is not text2" t3e3x3t3');
 
-  assertFalse(se.doesTextMatchTokens("text1 not is text2 t3e3x3t3", tokens1, false));
-  assertFalse(se.doesTextMatchTokens("text1 is not t3e3x3t3 text3", tokens1, false));
-  assertTrue(se.doesTextMatchTokens("this will match text1 is not text2 yet3e3x3t3ssss ", tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1 not is text2 t3e3x3t3"], tokens1, false));
+  assertFalse(se.doesTextMatchTokens(["text1 is not t3e3x3t3 text3"], tokens1, false));
+  assertTrue(se.doesTextMatchTokens(["this will match text1 is not text2 yet3e3x3t3ssss "], tokens1, false));
 };  
   
 var testComplexSearch_1 = function() {
   var tokens1 = se.parseSearchTokens('apples and not("red apples" or "green apples")');
 
-  assertTrue(se.doesTextMatchTokens("applesinacan", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("applesinacan", tokens1, true));    
-  assertTrue(se.doesTextMatchTokens("apples", tokens1, true));    
-  assertTrue(se.doesTextMatchTokens("yellow apples", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("red apples", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("green apples", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("green apples and yellow apples", tokens1, false));// Contains green apples so do not match
+  assertTrue(se.doesTextMatchTokens(["applesinacan"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["applesinacan"], tokens1, true));    
+  assertTrue(se.doesTextMatchTokens(["apples"], tokens1, true));    
+  assertTrue(se.doesTextMatchTokens(["yellow apples"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["red apples"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["green apples"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["green apples and yellow apples"], tokens1, false));// Contains green apples so do not match
 };  
 
 var testEquals = function() {
   var tokens1 = se.parseSearchTokens('= 10');
 
-  assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("10sadf", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["10sadf"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 
 var testNotEquals = function() {
   var tokens1 = se.parseSearchTokens('!= 10');
 
-  assertTrue(se.doesTextMatchTokens("7", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("10sadf", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["10sadf"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 
 var testGreaterThan = function() {
   var tokens1 = se.parseSearchTokens('> 10');
 
-  assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("10", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["10"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 
 var testGreaterThanOrEquals = function() {
   var tokens1 = se.parseSearchTokens('>= 10');
 
-  assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("10", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["10"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 
 var testLessThan = function() {
   var tokens1 = se.parseSearchTokens('< 10');
 
-  assertTrue(se.doesTextMatchTokens("7", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("10", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["10"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 
 var testLessThanOrEquals = function() {
   var tokens1 = se.parseSearchTokens('<=10');
 
-  assertTrue(se.doesTextMatchTokens("7", tokens1, false));    
-  assertTrue(se.doesTextMatchTokens("10", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11", tokens1, false));    
-  assertFalse(se.doesTextMatchTokens("11asdasd", tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["7"], tokens1, false));    
+  assertTrue(se.doesTextMatchTokens(["10"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11"], tokens1, false));    
+  assertFalse(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
 var testCase = goog.testing.AsyncTestCase.createAndInstall();
         </script>

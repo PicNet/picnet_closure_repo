@@ -103,6 +103,15 @@ var testQuickFindFilter = function() {
   assertEquals(3, visibletrs.length);
 };  
 
+var testQuickFindFilterWithNumericalExpression = function() {         
+  var qf = $('#quickfind');
+  qf.val('> 1');
+  goog.testing.events.fireKeySequence(qf[0], 0);  
+
+  var visibletrs = table.find('tbody tr:visible');  
+  assertEquals(2, visibletrs.length);  
+};  
+
 var testAdditionalCheckBoxFilter_yes = function() {         
   var yes = $('#onlyyes');
   yes.attr('checked', 'checked');  

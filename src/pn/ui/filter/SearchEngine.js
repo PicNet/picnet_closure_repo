@@ -1,7 +1,8 @@
 
 goog.provide('pn.ui.filter.SearchEngine');
 
-
+goog.require('goog.asserts');
+goog.require('goog.array');
 
 /**
  * @constructor
@@ -26,17 +27,17 @@ pn.ui.filter.SearchEngine = function() {
  *    text.
  * @return {boolean} Wether the given expression matches the given text.
  */
-pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {
+pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {  
   if (!expression) return true;
   if (!text) return false;
 
   var tokens = this.parseSearchTokens(expression);
-  return this.doesTextMatchTokens(text, tokens, false);
+  return this.doesTextMatchTokens([text], tokens, false);
 };
 
 
 /**
- * @param {string} textToMatch The text to match against the filter tokens.
+ * @param {!Array.<string>} textToMatch The text to match against the filter tokens.
  * @param {Array.<string>} postFixTokens The filter tokens to match against the
  *    specified text.
  * @param {boolean} exactMatch Wether an exact match is needed.
@@ -44,7 +45,25 @@ pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {
  */
 pn.ui.filter.SearchEngine.prototype.doesTextMatchTokens =
     function(textToMatch, postFixTokens, exactMatch) {
-  if (!postFixTokens) return true;
+  goog.asserts.assert(goog.isArray(textToMatch));
+
+  return !postFixTokens || goog.array.findIndex(textToMatch, function(txt) {
+    return this.doesTextMatchTokensImpl_(txt, postFixTokens, exactMatch);
+  }, this) >= 0;
+};
+
+/**
+ * @private
+ * @param {string} textToMatch The text to match against the filter tokens.
+ * @param {Array.<string>} postFixTokens The filter tokens to match against the
+ *    specified text.
+ * @param {boolean} exactMatch Wether an exact match is needed.
+ * @return {boolean} Wether the given text matches the specified filter tokens.
+ */
+pn.ui.filter.SearchEngine.prototype.doesTextMatchTokensImpl_ =
+    function(textToMatch, postFixTokens, exactMatch) {
+  goog.asserts.assert(goog.isString(textToMatch));
+
   textToMatch = exactMatch ? textToMatch : textToMatch.toLowerCase();
   var stackResult = [];
   var stackResult1;

@@ -570,15 +570,16 @@ pn.ui.filter.GenericListFilter.prototype.hideElementsThatDoNotMatchAnyFiltres_ =
  *    a match.
  * @param {!Element} item The DOM element for the filter.
  * @param {Array.<string>} textTokens The filter text tokens.
- * @param {string=} opt_txt The text to match against.
+ * @param {Array.<string>=} opt_txt The text to match against.
  * @return {boolean} Wether the filter matches the specified text.
  */
 pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
     function(state, item, textTokens, opt_txt) {
+  goog.asserts.assert(!goog.isDef(opt_txt) || goog.isArray(opt_txt));
+
   var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
-  var matches = opt_txt ?
-      this.doesTextContainTextImpl(opt_txt, textTokens, exact) :
-      this.doesTextContainText(item, textTokens, exact);
+  var txt = opt_txt || [goog.string.trim(goog.dom.getTextContent(item))];
+  var matches = this.doesTextContainText(txt, textTokens, exact);
   return matches && this.checkMatchingElementCallback_(state, item, textTokens);
 };
 
@@ -599,29 +600,16 @@ pn.ui.filter.GenericListFilter.prototype.checkMatchingElementCallback_ =
   return this.options['matchingElement'](state, object, textTokens);
 };
 
-
 /**
  * @protected
- * @param {!Element} item The DOM element for the filter.
+ * @param {!Array.<string>} text The filter expression text.
  * @param {Array.<string>} textTokens The filter text tokens.
  * @param {boolean} exact Wether an exact match is required.
  * @return {boolean} Wether the filter matches the specified text.
  */
 pn.ui.filter.GenericListFilter.prototype.doesTextContainText =
-    function(item, textTokens, exact) {
-  var trimmed = goog.string.trim(goog.dom.getTextContent(item));
-  return this.doesTextContainTextImpl(trimmed, textTokens, exact);
-};
-
-
-/**
- * @protected
- * @param {string} text The filter expression text.
- * @param {Array.<string>} textTokens The filter text tokens.
- * @param {boolean} exact Wether an exact match is required.
- * @return {boolean} Wether the filter matches the specified text.
- */
-pn.ui.filter.GenericListFilter.prototype.doesTextContainTextImpl =
     function(text, textTokens, exact) {
+  goog.asserts.assert(goog.isArray(text));
+
   return this.search_.doesTextMatchTokens(text, textTokens, exact);
 };

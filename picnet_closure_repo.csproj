@@ -223,11 +223,8 @@
     <Content Include="src\tests\RemoteServerDataProviderTests.html" />
     <Content Include="src\tests\RouterTests.html" />
     <Content Include="src\tests\RxTests.html" />
-    <Content Include="src\tests\SearchEngineTests.html" />
-    <Content Include="src\tests\TableFilterTests.js" />
     <Content Include="src\tests\tablefilter\SearchEngineTests.html" />
     <Content Include="src\tests\tablefilter\TableFilterTests.html" />
-    <Content Include="src\tests\tablefilter\tests.html" />
     <Content Include="src\tests\update_all_tests.bin.js" />
     <Content Include="src\tests\WebSQLDataManagerTests.html" />
     <Content Include="src\tests\WebSQLRepositoryTests.html" />

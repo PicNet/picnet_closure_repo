@@ -277,7 +277,7 @@ pn.ui.filter.TableFilter.prototype.doesElementContainText =
       txt.push(goog.string.trim(goog.dom.getTextContent(cells[i])));
     }
     return pn.ui.filter.TableFilter.superClass_.doesElementContainText.
-        call(this, state, tr, textTokens, txt.join('\t'));
+        call(this, state, tr, textTokens, txt);
   }
   else {
     return pn.ui.filter.TableFilter.superClass_.doesElementContainText.
