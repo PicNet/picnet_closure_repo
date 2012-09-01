@@ -7,8 +7,8 @@
     <ProjectGuid>{E0EBDCE4-C0ED-4280-A299-5A2EE22BA041}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>picnet_closure_repo</RootNamespace>
-    <AssemblyName>picnet_closure_repo</AssemblyName>
+    <RootNamespace>pn</RootNamespace>
+    <AssemblyName>pn</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -202,7 +202,6 @@
     <Content Include="src\tests\all_tests.html" />
     <Content Include="src\tests\all_tests.js" />
     <Content Include="src\tests\blank.htm" />
-    <Content Include="src\tests\CollectionsTests2.js" />
     <Content Include="src\tests\CollectionTests.html" />
     <Content Include="src\tests\GearsDataManagerTests.html" />
     <Content Include="src\tests\GearsRepositoryTests.html" />
@@ -226,9 +225,9 @@
     <Content Include="src\tests\RxTests.html" />
     <Content Include="src\tests\SearchEngineTests.html" />
     <Content Include="src\tests\TableFilterTests.js" />
-    <Content Include="src\tests\testtest.html" />
-    <Content Include="src\tests\testtest.html.vb" />
-    <Content Include="src\tests\testtest.js" />
+    <Content Include="src\tests\tablefilter\SearchEngineTests.html" />
+    <Content Include="src\tests\tablefilter\TableFilterTests.html" />
+    <Content Include="src\tests\tablefilter\tests.html" />
     <Content Include="src\tests\update_all_tests.bin.js" />
     <Content Include="src\tests\WebSQLDataManagerTests.html" />
     <Content Include="src\tests\WebSQLRepositoryTests.html" />

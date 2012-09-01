@@ -3,7 +3,7 @@
     <head></head>
     <body>
         <script type="text/javascript" src="http://localhost/shared/closure-library/closure/goog/base.js"></script> 
-        <script type="text/javascript" src="../deps.js"></script>        
+        <script type="text/javascript" src="../../deps.js"></script>        
         <script>goog.require("goog.testing.jsunit");</script>
         <script>goog.require("goog.testing.AsyncTestCase");</script>
 
@@ -12,9 +12,9 @@
 goog.require('pn.ui.filter.SearchEngine');
 
 var se;    
-var setUp = function () { se = new pn.ui.filter.SearchEngine(); }
+var setUp = function () { se = new pn.ui.filter.SearchEngine(); };
   
-testArgumentParsing = function() {         
+var testArgumentParsing = function() {         
   var tokens1 = se.parseSearchTokens('text1 and text2');
   var tokens2 = se.parseSearchTokens('text1 text2');
   assertArrayEquals(tokens1, tokens2);
@@ -24,7 +24,7 @@ testArgumentParsing = function() {
   assertArrayEquals(tokens1, tokens2);      
 };  
 
-testGetTokensFromExpression = function() {    
+var testGetTokensFromExpression = function() {    
   assertArrayEquals(['text1', 'and', 'text2'], se.getTokensFromExpression_('text1 and text2'));    
   assertArrayEquals(['text1', 'and', '(text2', 'or', 'text3)'], se.getTokensFromExpression_('text1 and (text2 or text3)'));        
   assertArrayEquals(['phrase 1'], se.getTokensFromExpression_('"phrase 1"'));    
@@ -32,14 +32,14 @@ testGetTokensFromExpression = function() {
   assertArrayEquals(['t1', 'and', 't2' , 'and', 'p 1', 'and', 'p 2', 'or' , '(t3', 'and', 't4', 'and' , 'p 3', 'and', 'p 4', ')'], se.getTokensFromExpression_('t1 and t2 and "p 1" and "p 2" or (t3 and t4 and "p 3" and "p 4")'));    
 };  
 
-testParseSearchTokensFromNumericExpression = function() {    
+var testParseSearchTokensFromNumericExpression = function() {    
   assertArrayEquals(['>10'], se.parseSearchTokens('>10'));    
   assertArrayEquals(['>10'], se.parseSearchTokens('> 10'));    
   assertArrayEquals(['<=10'], se.parseSearchTokens('<=10'));    
   assertArrayEquals(['<=10'], se.parseSearchTokens('<= 10'));    
 };  
   
-testSimpleANDMatches = function() {
+var testSimpleANDMatches = function() {
   var tokens1 = se.parseSearchTokens('text1 and text2');
 
   assertFalse(se.doesTextMatchTokens("text1", tokens1, false));
@@ -49,7 +49,7 @@ testSimpleANDMatches = function() {
   assertTrue(se.doesTextMatchTokens("text2 text 3text1", tokens1, false));
 };  
 
-testSimpleORMatches = function() {
+var testSimpleORMatches = function() {
   var tokens1 = se.parseSearchTokens('text1 or text2');
 
   assertTrue(se.doesTextMatchTokens("text1", tokens1, false));
@@ -60,13 +60,13 @@ testSimpleORMatches = function() {
   assertFalse(se.doesTextMatchTokens("text3 text4", tokens1, false));
 };  
 
-testSimpleNOTMatches = function() {
+var testSimpleNOTMatches = function() {
   var tokens1 = se.parseSearchTokens('not text2');
   assertTrue(se.doesTextMatchTokens("text1", tokens1, false));
   assertFalse(se.doesTextMatchTokens("text1 text2", tokens1, false));
 };  
 
-testSimpleGroupMatches = function() {
+var testSimpleGroupMatches = function() {
   var tokens1 = se.parseSearchTokens('(text1 and text2) or text3');
   assertFalse(se.doesTextMatchTokens("text1", tokens1, false));
   assertTrue(se.doesTextMatchTokens("text1 text2", tokens1, false));
@@ -74,7 +74,7 @@ testSimpleGroupMatches = function() {
   assertTrue(se.doesTextMatchTokens("text33", tokens1, false));
 };  
 
-testSimpleQuoteMatches = function() {
+var testSimpleQuoteMatches = function() {
   var tokens1 = se.parseSearchTokens('"text1 is not text2" t3e3x3t3');
 
   assertFalse(se.doesTextMatchTokens("text1 not is text2 t3e3x3t3", tokens1, false));
@@ -82,7 +82,7 @@ testSimpleQuoteMatches = function() {
   assertTrue(se.doesTextMatchTokens("this will match text1 is not text2 yet3e3x3t3ssss ", tokens1, false));
 };  
   
-testComplexSearch_1 = function() {
+var testComplexSearch_1 = function() {
   var tokens1 = se.parseSearchTokens('apples and not("red apples" or "green apples")');
 
   assertTrue(se.doesTextMatchTokens("applesinacan", tokens1, false));    
@@ -94,7 +94,7 @@ testComplexSearch_1 = function() {
   assertFalse(se.doesTextMatchTokens("green apples and yellow apples", tokens1, false));// Contains green apples so do not match
 };  
 
-testEquals = function() {
+var testEquals = function() {
   var tokens1 = se.parseSearchTokens('= 10');
 
   assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
@@ -103,7 +103,7 @@ testEquals = function() {
   assertFalse(se.doesTextMatchTokens("11asdasd", tokens1, false));    
 };  
 
-testNotEquals = function() {
+var testNotEquals = function() {
   var tokens1 = se.parseSearchTokens('!= 10');
 
   assertTrue(se.doesTextMatchTokens("7", tokens1, false));    
@@ -112,7 +112,7 @@ testNotEquals = function() {
   assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
 };  
 
-testGreaterThan = function() {
+var testGreaterThan = function() {
   var tokens1 = se.parseSearchTokens('> 10');
 
   assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
@@ -121,7 +121,7 @@ testGreaterThan = function() {
   assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
 };  
 
-testGreaterThanOrEquals = function() {
+var testGreaterThanOrEquals = function() {
   var tokens1 = se.parseSearchTokens('>= 10');
 
   assertFalse(se.doesTextMatchTokens("7", tokens1, false));    
@@ -130,7 +130,7 @@ testGreaterThanOrEquals = function() {
   assertTrue(se.doesTextMatchTokens("11asdasd", tokens1, false));    
 };  
 
-testLessThan = function() {
+var testLessThan = function() {
   var tokens1 = se.parseSearchTokens('< 10');
 
   assertTrue(se.doesTextMatchTokens("7", tokens1, false));    
@@ -139,7 +139,7 @@ testLessThan = function() {
   assertFalse(se.doesTextMatchTokens("11asdasd", tokens1, false));    
 };  
 
-testLessThanOrEquals = function() {
+var testLessThanOrEquals = function() {
   var tokens1 = se.parseSearchTokens('<=10');
 
   assertTrue(se.doesTextMatchTokens("7", tokens1, false));    

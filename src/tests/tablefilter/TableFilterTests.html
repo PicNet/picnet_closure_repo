@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <h2>Testing Panel</h2>Yes:<input type="checkbox" id="onlyyes"/>No:<input type="checkbox" id="onlyno"/><input type="text" id="quickfind"/><a id="cleanfilters" href="#">clear</a>
+    <table id='testtable'>
+      <thead><tr><th>text</th><th>num</th><th>yes/no</th><th filter-type='ddl'>list</th><th filter='false'>nofilter</th><th>date</th><th filter='false'>empty</th></tr></thead>
+      <tbody>
+        <tr><td>Sydney</td><td>1</td><td>yes</td><td>hot</td><td>no filter text</td><td>1/Jan/2000</td><td>&nbsp;</td></tr>
+        <tr><td>Melbourne</td><td>2</td><td>no</td><td>cold</td><td>no filter text</td><td>2/Feb/2001</td><td>&nbsp;</td></tr>
+        <tr><td>Brisbane</td><td>3</td><td>no</td><td>hot</td><td>no filter text</td><td>3/Mar/2002</td><td>&nbsp;</td></tr>
+      </tbody>
+    </table>    
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://localhost/shared/closure-library/closure/goog/base.js"></script> 
+    <script type="text/javascript" src="../../deps.js"></script>        
+    <script>goog.require("goog.testing.jsunit");</script>
+    <script>goog.require("goog.testing.AsyncTestCase");</script>
+
+    <script>
+goog.require('pn.ui.filter.SearchEngine');
+goog.require('pn.ui.filter.TableFilter');
+goog.require('goog.testing.events');
+
+// $.cookie('testtable_filters', '', { expires: 999 }); // Clear the cookie
+var options = {
+  filterDelay: -1, // Instant
+  selectOptionLabel: 'Select...',
+  additionalFilterTriggers: [$('#onlyyes'), $('#onlyno'), $('#quickfind')],
+  clearFiltersControls: [$('#cleanfilters')],
+  matchingRow: function(state, tr) {                
+    if (!state || !state.id) { return true; }          
+    var val =  tr.children('td:eq(2)').text();
+    var ret;
+    switch (state.id) {
+      case 'onlyyes': 
+        ret = state.value !== true || val === 'yes'; 
+        break;
+      case 'onlyno': ret = state.value !== true || val === 'no'; break;
+      default: ret = true; break;
+    }
+    return ret;
+  }
+};
+
+
+var table;
+var tf;
+var headers;
+
+var setUp = function() {
+  table = $('#testtable');  
+  tf = new pn.ui.filter.TableFilter(table[0], options);        
+  headers = table.find('thead tr td');
+  tf.clearAllFilters();
+};
+
+var testDemoSetupCorrectly = function() {                   
+  assertEquals(3, table.find('tbody tr').length);
+  assertEquals(4, headers.find('input').length);
+  assertEquals(1, headers.find('select').length);
+  assertEquals(3, table.find('tbody tr:visible').length);
+};
+
+var testNoFilterColumn = function() {         
+  var headers = table.find('thead tr td');
+  // Col 4 and 6 have filter='false'
+  assertEquals(0, $(headers[4]).children().length); 
+  assertEquals(0, $(headers[6]).children().length);
+};  
+
+var testTextColumnFilter = function() {         
+  var filter = table.find('thead tr td:first input');    
+  filter.val('Sydney');
+  goog.testing.events.fireKeySequence(filter[0], 0);  
+
+  var visibletrs = table.find('tbody tr:visible');
+  assertEquals(1, visibletrs.length);
+  assertEquals('Sydney', visibletrs.find('td:first').text());        
+};  
+
+var testSelectOneTableFilter = function() {         
+  var select = table.find('thead tr td select:first');
+  assertEquals(3, select.find('option').length);
+  assertEquals('Select...', select.find('option:first').html());
+  assertEquals('cold', select.find('option:eq(1)').html());
+  assertEquals('hot', select.find('option:eq(2)').html());
+};  
+
+var testQuickFindFilter = function() {         
+  var qf = $('#quickfind');
+  qf.val('MelbourNE');
+  goog.testing.events.fireKeySequence(qf[0], 0);  
+
+  var visibletrs = table.find('tbody tr:visible');  
+  assertEquals(1, visibletrs.length);
+  assertEquals('Melbourne', visibletrs.find('td:first').text());        
+
+  qf.val('');
+  goog.testing.events.fireKeySequence(qf[0], 0);  
+  visibletrs = table.find('tbody tr:visible');  
+  assertEquals(3, visibletrs.length);
+};  
+
+var testAdditionalCheckBoxFilter_yes = function() {         
+  var yes = $('#onlyyes');
+  yes.attr('checked', 'checked');  
+  goog.testing.events.fireClickSequence(yes[0]);
+
+  var visibletrs = table.find('tbody tr:visible');
+  assertEquals(1, visibletrs.length);
+  assertEquals('Sydney', visibletrs.find('td:first').text());        
+};  
+
+var testAdditionalCheckBoxFilter_no = function() {         
+  var no = $('#onlyno');
+  no.attr('checked', true);  
+  goog.testing.events.fireClickSequence(no[0]);
+  
+  var visibletrs = table.find('tbody tr:visible');
+  assertEquals(2, visibletrs.length);
+  assertEquals('MelbourneBrisbane', visibletrs.find('td:first').text());        
+};  
+
+var testAdditionalCheckBoxFilter_yes_and_no = function() {         
+  var yes = $('#onlyyes');
+  var no = $('#onlyno');
+  no.attr('checked', 'checked');
+  yes.attr('checked', 'checked');  
+  goog.testing.events.fireClickSequence(no[0]);
+
+  var visibletrs = table.find('tbody tr:visible');
+  assertEquals(0, visibletrs.length);    
+};  
+
+var testCleanFilters_yesno_filters = function() {         
+  var yes = $('#onlyyes');
+  var no = $('#onlyno');
+  no.attr('checked', 'checked');
+  yes.attr('checked', 'checked');  
+  goog.testing.events.fireClickSequence(no[0]);  
+  goog.testing.events.fireClickSequence($('#cleanfilters')[0]);
+
+  assertEquals(3, table.find('tbody tr:visible').length);  
+
+  var qf = $('#quickfind');
+  qf.val('MelbourNE');  
+  goog.testing.events.fireKeySequence(qf[0], 0);  
+};  
+
+var testCleanFilters_quickfind = function() {         
+  var qf = $('#quickfind');
+  qf.val('MelbourNE');
+  goog.testing.events.fireKeySequence(qf[0], 0);  
+
+  goog.testing.events.fireClickSequence($('#cleanfilters')[0]);
+
+  assertEquals(3, table.find('tbody tr:visible').length);  
+};  
+    </script>
+  </body>
+</html>
