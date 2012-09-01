@@ -3,6 +3,7 @@
   <head></head>
   <body>
     <h2>Testing Panel</h2>Yes:<input type="checkbox" id="onlyyes"/>No:<input type="checkbox" id="onlyno"/><input type="text" id="quickfind"/><a id="cleanfilters" href="#">clear</a>
+    
     <table id='testtable'>
       <thead><tr><th>text</th><th>num</th><th>yes/no</th><th filter-type='ddl'>list</th><th filter='false'>nofilter</th><th>date</th><th filter='false'>empty</th></tr></thead>
       <tbody>
@@ -23,7 +24,6 @@ goog.require('pn.ui.filter.SearchEngine');
 goog.require('pn.ui.filter.TableFilter');
 goog.require('goog.testing.events');
 
-// $.cookie('testtable_filters', '', { expires: 999 }); // Clear the cookie
 var options = {
   filterDelay: -1, // Instant
   selectOptionLabel: 'Select...',
@@ -47,16 +47,16 @@ var options = {
 
 var table;
 var tf;
-var headers;
 
 var setUp = function() {
-  table = $('#testtable');  
+  table = $('#testtable');      
+
   tf = new pn.ui.filter.TableFilter(table[0], options);        
-  headers = table.find('thead tr td');
   tf.clearAllFilters();
 };
 
 var testDemoSetupCorrectly = function() {                   
+  var headers = table.find('thead tr td');
   assertEquals(3, table.find('tbody tr').length);
   assertEquals(4, headers.find('input').length);
   assertEquals(1, headers.find('select').length);
