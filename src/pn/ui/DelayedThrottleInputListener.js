@@ -16,7 +16,7 @@ goog.require('goog.events.EventType');
  * @extends {goog.events.EventTarget}
  */
 pn.ui.DelayedThrottleInputListener = function(delay) {
-  goog.asserts.assert(goog.isNumber(delay) && delay > 0);
+  goog.asserts.assert(goog.isNumber(delay));
 
   goog.events.EventTarget.call(this);
 
@@ -109,9 +109,9 @@ pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
 
 
 /** @private */
-pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {
+pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {  
   var curtime = new Date().getTime();
-  if (curtime - this.lastInputTime_ >= this.delay_) {
+  if (!this.delay_ || curtime - this.lastInputTime_ >= this.delay_) {
     this.fireIfChanged_();
     this.timerId_ = 0;
   } else {

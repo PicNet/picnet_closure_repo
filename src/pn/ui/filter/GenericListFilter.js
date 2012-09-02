@@ -10,6 +10,7 @@ goog.require('goog.style');
 goog.require('pn.ui.filter.FilterState');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
+goog.require('pn.ui.DelayedThrottleInputListener');
 
 goog.provide('pn.ui.filter.GenericListFilter');
 
@@ -70,7 +71,7 @@ pn.ui.filter.GenericListFilter = function(input, list, options) {
    * @type {!pn.ui.DelayedThrottleInputListener}
    */
   this.inputListener_ = new pn.ui.DelayedThrottleInputListener(
-      this.options['filterDelay']);
+      parseInt(this.options['filterDelay'], 10) || 200);
   this.registerDisposable(this.inputListener_);
 
   /**
