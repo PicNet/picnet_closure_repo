@@ -12,7 +12,8 @@ goog.require('pn.ui.filter.SearchEngine');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  * @param {!pn.ui.UiSpec} spec The spec being filtered.
  */
 pn.data.EntityFilter = function(cache, spec) {
@@ -20,7 +21,7 @@ pn.data.EntityFilter = function(cache, spec) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 
@@ -97,11 +98,11 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
 
-  var res = fieldId.indexOf('.') > 0 ?
-      pn.data.EntityUtils.getTargetEntity(this.cache_, fieldId, entity)[0] :
-      entity[fieldId];
+  var entityType = this.spec_.type;
+  var res = fieldId.indexOf('.') > 0 ? pn.data.EntityUtils.getTargetEntity(
+      this.cache_, fieldId, entityType, entity)[0] : entity[fieldId];
   if (!res) return false;
-  if (res['ID']) { res = res['ID']; }
+  res = res.id ? res.id : res;
   return this.matchesFilter_(res, filterValue, fieldId);
 };
 
@@ -124,10 +125,11 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ', arguments);
-    if (ev['ID']) return ev['ID'].toString() === fv;
+    if (ev.id) return ev.id.toString() === fv;
+
     var fctx = goog.array.find(this.cfg_.fCtxs,
         function(fctx1) { return fctx1.id === fieldId; });
-    var renderer = fctx.getFieldRenderer();
+    var renderer = fctx.spec.renderer;
     if (renderer === FieldRenderers.dateRenderer) {
       var min = parseInt(filterValue, 10);
       var max = min + (24 * 60 * 60 * 1000);

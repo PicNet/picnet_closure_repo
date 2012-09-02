@@ -11,8 +11,10 @@ goog.require('pn.ui.edit.Edit');
 pn.demo.app1.ShowEditPage = function(id) {
   var spec = pn.app.ctx.specs.get('User');
   var users = pn.app.ctx.users;
-  var user = id <= 0 ? { 'ID': id } : /** @type {!Object} */ (
-      goog.array.find(users, function(u) { return u['ID'] === id; }));
+  var user = id <= 0 ? 
+      new pn.data.Entity('User', { 'ID': id }) : 
+      goog.array.find(users, function(u) { return u.id === id; });
+
   var edit = new pn.ui.edit.Edit(spec, user, {});
   pn.app.ctx.view.showComponent(edit);
 };

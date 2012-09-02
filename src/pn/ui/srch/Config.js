@@ -8,7 +8,7 @@ goog.require('pn.ui.edit.Config');
 /**
  * @constructor
  * @extends {pn.ui.edit.Config} // Should this be grid.Config??
- * @param {string} type The type of the entity being searched.
+ * @param {pn.data.Type} type The type of the entity being searched.
  * @param {!Array.<pn.ui.edit.FieldCtx>} fCtxs An array of field context meta
  *    specifications that describes all fields to be searched.
  */
@@ -20,7 +20,7 @@ pn.ui.srch.Config = function(type, fCtxs) {
 
   /**
    * @private
-   * @type {string}
+   * @type {pn.data.Type}
    */
   this.type_ = type;
 

@@ -76,9 +76,9 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
     if (details.inserted) {
       this.addItem(details.item);
     } else if (details.removed) {
-      this.deleteItem(details.item['ID']);
+      this.deleteItem(details.item.id);
     } else {
-      this.updateItem(details.item['ID'], details.item);
+      this.updateItem(details.item.id, details.item);
     }
   }, this);
   this.endUpdate();

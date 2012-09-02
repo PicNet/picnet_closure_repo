@@ -33,6 +33,8 @@ goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
  * @return {!pn.ui.UiSpec} The SpecBase specified by the 'id' arg.
  */
 pn.ui.UiSpecsRegister.prototype.get = function(id) {
+  goog.asserts.assert(goog.isString(id));
+
   goog.asserts.assert(this.map_[id],
       'ID "' + id + ' was not found in the UiSpec register.');
 

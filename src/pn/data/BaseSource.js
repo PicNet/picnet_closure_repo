@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.data.BaseSource');
-goog.provide('pn.data.IDataSource');
+
+goog.require('pn.data.IDataSource');
 
 
 
@@ -22,29 +23,33 @@ pn.data.BaseSource.prototype.getEntityLists = goog.abstractMethod;
 /** @override */
 pn.data.BaseSource.prototype.getEntity = function(type, id, callback) {
   this.getEntityLists([type], function(results) {
-    var list = results[type];
-    var entity = goog.array.find(list, function(e) { return e['ID'] === id; });
-    callback(entity);
+    var list = results[type.type];
+    var entity = goog.array.find(list, function(e) { return e.id === id; });
+    callback(this.parseEntity(entity));
   });
 };
 
 
-
-/** @interface */
-pn.data.IDataSource = function() {};
+/**
+ * @param {pn.data.Type} type The type of the entities to attempt to
+ *    parse.
+ * @param {!Array} data The data to attempt to parse.
+ * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.
+ */
+pn.data.BaseSource.parseEntities = function(type, data) {
+  var action = goog.partial(pn.data.BaseSource.parseEntity, type);
+  return goog.array.map(data, action);
+};
 
 
 /**
- * @param {Array.<string>} types The entity types to load.
- * @param {function(!Object.<Array>):undefined} callback A success callback.
+ * @param {pn.data.Type} type The type of the entity to attempt to
+ *    parse.
+ * @param {Object} data The data to attempt to parse.
+ * @return {pn.data.Entity} The parsed entity or the original data.
  */
-pn.data.IDataSource.prototype.getEntityLists = function(types, callback) {};
-
-
-/**
- * @param {string} type The entity type to load.
- * @param {number} id The entity ID of the specified type to load.
- * @param {function(Object):undefined} callback A success callback that takes
- *    the loaded entity or null.
- */
-pn.data.IDataSource.prototype.getEntity = function(type, id, callback) {};
+pn.data.BaseSource.parseEntity = function(type, data) {
+  goog.asserts.assert(goog.isFunction(type), 'type is not a ctor');
+  if (!goog.isObject(data)) return data;
+  return new type(data);
+};

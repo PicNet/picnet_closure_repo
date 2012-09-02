@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.grid.ColumnSpec} spec The field specifications.
- * @param {!Object.<!Array.<!Object>>} cache The current cache.
+ * @param {!pn.data.BaseDalCache} cache The current cache.
  */
 pn.ui.grid.ColumnCtx = function(spec, cache) {
   goog.asserts.assert(spec);
@@ -25,7 +25,7 @@ pn.ui.grid.ColumnCtx = function(spec, cache) {
   this.spec = spec;
   this.registerDisposable(this.spec);
 
-  /** @type {!Object.<!Array.<!Object>>} */
+  /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
 
   /** @type {!string} */
@@ -34,8 +34,8 @@ pn.ui.grid.ColumnCtx = function(spec, cache) {
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
-  /** @type {pn.schema.FieldSchema} */
-  this.schema = pn.app.ctx.schema.getFieldSchema(spec);
+  /** @type {pn.data.FieldSchema} */
+  this.schema = this.entitySpec.type.getFieldSchema(this.id);
 };
 goog.inherits(pn.ui.grid.ColumnCtx, goog.Disposable);
 

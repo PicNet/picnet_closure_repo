@@ -51,7 +51,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
  * @return {Element|goog.ui.Component|Text} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
-  var renderer = fctx.getFieldRenderer();
+  var renderer = fctx.spec.renderer;
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
     renderer.decorate(parent);
     return renderer;

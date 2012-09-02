@@ -1,3 +1,4 @@
+ECHO %CD%
 set ARGS=--strict -r src\pn\ ^
 -x src\deps.js,src\pn\slick.grid.externs.js,src\pn\rx.externs.js,src\pn\ui\soy\pn.compiled.soy.js
 

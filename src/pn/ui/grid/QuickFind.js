@@ -12,7 +12,8 @@ goog.require('pn.ui.grid.ColumnSpec');
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
  *    displayed.
  * @param {Slick.Grid} slick The instance of the slick grid.
@@ -22,7 +23,7 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 
@@ -71,7 +72,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       var renderer = cctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
         val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, cctx.spec.displayPath, entity) || '').toString() : '';
+            this.cache_, cctx.spec.displayPath,
+            cctx.spec.entitySpec.type, entity) || '').toString() : '';
       } else if (renderer) {
         val = renderer(cctx, entity);
       }

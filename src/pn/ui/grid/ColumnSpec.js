@@ -101,6 +101,21 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
     this.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
   }
   if (!this.tooltip) this.tooltip = this.name;
+  if (!this.renderer) this.renderer = this.getDefaultRenderer_();
+};
+
+
+/**
+ * @private
+ * @return {undefined|pn.ui.grid.ColumnSpec.Renderer} The inferred renderer for
+ *    this column.
+ */
+pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
+  goog.asserts.assert(!this.renderer);
+
+  var schema = this.entitySpec.type.getFieldSchema(this.id);
+  var schemaType = schema ? schema.type : '';
+  return pn.app.ctx.cfg.defaultColumnRenderers[schemaType];
 };
 
 

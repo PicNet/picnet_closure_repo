@@ -7,13 +7,14 @@ goog.provide('pn.data.EntityUtils');
  * @return {boolean} Wether the specified entity is new.
  */
 pn.data.EntityUtils.isNew = function(entity) {
-  return entity['ID'] <= 0;
+  return entity.id <= 0;
 };
 
 
 /**
- * @param {!Object.<Array>} cache The data cache to use to get entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
+ * @param {pn.data.Type} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -25,24 +26,26 @@ pn.data.EntityUtils.isNew = function(entity) {
  * @return {*} The entities name.
  */
 pn.data.EntityUtils.getEntityDisplayValue =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
+  goog.asserts.assert(type);
   goog.asserts.assert(target);
 
   var cacheKey = path + '_cache';
   if (goog.isDef(target[cacheKey])) return target[cacheKey];
 
   var entities = pn.data.EntityUtils.
-      getTargetEntity(cache, path, target, opt_parentField);
+      getTargetEntity(cache, path, type, target, opt_parentField);
   var value = entities.length > 1 ? entities.join(', ') : entities[0];
   return (target[cacheKey] = value);
 };
 
 
 /**
- * @param {!Object.<Array>} cache The data cache to use to get entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
+ * @param {pn.data.Type} type The type of the current target enity(s).
  * @param {(Object|Array.<!Object>)} target The current entity or entity
  *    array.
  * @param {string=} opt_parentField The property to use to point back to the
@@ -54,9 +57,10 @@ pn.data.EntityUtils.getEntityDisplayValue =
  * @return {!Array.<!Object>} The matched entity/entities (as an array).
  */
 pn.data.EntityUtils.getTargetEntity =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
+  goog.asserts.assert(goog.isFunction(type));
   goog.asserts.assert(target);
 
   // Lets always work with arrays just to simplify
@@ -69,13 +73,13 @@ pn.data.EntityUtils.getTargetEntity =
 
   if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
-    step = pn.data.EntityUtils.getTypeProperty(step);
-    var entities = pn.data.EntityUtils.getFromCache_(cache, step);
+    type = pn.data.EntityUtils.getTypeProperty(type, step);
+    var entities = cache.get(type.type);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
-        function(e) { return goog.array.contains(ids, e['ID']); }));
+        function(e) { return goog.array.contains(ids, e.id); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
-    step = pn.data.EntityUtils.getTypeProperty(step);
-    next = pn.data.EntityUtils.getFromCache_(cache, step);
+    type = pn.data.EntityUtils.getTypeProperty(type, step);
+    next = cache.get(type.type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
       next = goog.array.filter(next, function(e) {
@@ -83,15 +87,14 @@ pn.data.EntityUtils.getTargetEntity =
       });
       opt_parentField = ''; // Only use once
     }
-    if (!next) { throw new Error('Could not find: ' + step + ' in cache'); }
+    if (!next) { throw new Error('Could not find: ' + type + ' in cache'); }
   } else {
     next = pn.data.EntityUtils.getFromEntities(target, step);
   }
 
   steps.shift();
-  return steps.length > 0 ?
-      pn.data.EntityUtils.getTargetEntity(cache, steps, next, opt_parentField) :
-      next;
+  return steps.length > 0 ? pn.data.EntityUtils.getTargetEntity(
+      cache, steps, type, next, opt_parentField) : next;
 };
 
 
@@ -110,14 +113,14 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
 
 
 /**
- * @param {!Object.<Array.<!Object>>} cache The cache to search for the entity.
- * @param {string} type The type of entity to find.
+ * @param {!pn.data.BaseDalCache} cache The cache to search for the entity.
+ * @param {pn.data.Type} type The type of entity to find.
  * @param {*} val The value (default to ID) to match.
  * @param {string=} opt_prop The property to match 'ID' if not specified.
  * @return {Object} The matched entity (or null).
  */
 pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
-  var entities = pn.data.EntityUtils.getFromCache_(cache, type);
+  var entities = cache.get(type.type);
   var prop = opt_prop || 'ID';
   return /** @type {Object} */ (goog.array.find(entities, function(e) {
     return e[prop] === val;
@@ -126,17 +129,31 @@ pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
 
 
 /**
+ * @param {pn.data.Type} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
  *    possible.
- * @return {string} The type name inferred from the property parameter or the
- *    property itself.
+ * @return {pn.data.Type} The type name inferred from the property
+ *    parameter or the property itself.
  */
-pn.data.EntityUtils.getTypeProperty = function(property) {
-  if (property !== 'ID' && goog.string.endsWith(property, 'ID')) {
-    return property.substring(0, property.length - 2);
-  } else if (goog.string.endsWith(property, 'Entities')) {
-    return property.substring(0, property.length - 8);
-  } else { return property; }
+pn.data.EntityUtils.getTypeProperty = function(type, property) {
+  return type.getFieldSchema(property).entityType;
+};
+
+
+/**
+ * @param {pn.data.Type} type The entity type to enfer the property type from.
+ * @param {string} property The entity property to convert to a type name if
+ *    possible.
+ * @return {?pn.data.Type} The type name inferred from the property
+ *    parameter or the property itself.
+ */
+pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
+  goog.asserts.assert(goog.isFunction(type), '"type" not specified');
+  goog.asserts.assert(property, '"property" not specified');
+
+  if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
+
+  return type.getFieldSchema(property).entityType;
 };
 
 
@@ -178,13 +195,46 @@ pn.data.EntityUtils.isChildrenProperty = function(property) {
 
 
 /**
- * @private
- * @param {!Object.<!Array.<!Object>>} cache The cache to search for the
- *    specified type.
- * @param {string} type The type to get.
- * @return {!Array.<!Object>} The objects of the specified type.
+ * @param {pn.data.Type} type The type of entities we are ordering.
+ * @param {!Array.<!Object>} list The entities to order.
  */
-pn.data.EntityUtils.getFromCache_ = function(cache, type) {
-  if (type in cache) return cache[type];
-  throw new Error('Could not find "' + type + '" in the cache.');
+pn.data.EntityUtils.orderEntities = function(type, list) {
+  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(list);
+  if (!list.length) return;
+
+  var template = list[0];
+  var orderp = type.type + 'Order';
+  var namep = type.type + 'Name';
+
+  var ordert = goog.isDef(template[orderp]) ?
+      type.getFieldSchema(orderp).entityType : null;
+  var namet = goog.isDef(template[namep]) ?
+      type.getFieldSchema(namep).entityType : null;
+
+  if (ordert === 'number') {
+    goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });
+  } else if (namet === 'string') {
+    goog.array.sort(list, function(a, b) {
+      return goog.string.caseInsensitiveCompare(a[namep], b[namep]);
+    });
+  }
+};
+
+
+/**
+ * @param {Object.<number>} enumeration The enumeration.
+ * @param {number} val The value to convert to a name.
+ * @return {string} The name of the given value in the specified enumeration.
+ */
+pn.data.EntityUtils.getEnumName = function(enumeration, val) {
+  goog.asserts.assert(goog.isObject(enumeration));
+  goog.asserts.assert(goog.isNumber(val));
+
+  for (var name in enumeration) {
+    var eval = enumeration[name];
+    if (eval === val) return name;
+  }
+  throw new Error('Could not find the value: ' + val +
+      ' in the specified enumeration');
 };

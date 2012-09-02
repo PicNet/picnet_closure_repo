@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.ColumnRenderers');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.edit.FieldSpec} spec The field specifications.
- * @param {!Object.<!Array.<!Object>>} cache The current cache.
+ * @param {!pn.data.BaseDalCache} cache The current cache.
  */
 pn.ui.edit.FieldCtx = function(spec, cache) {
   goog.asserts.assert(spec);
@@ -31,7 +31,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.spec = spec;
   this.registerDisposable(this.spec);
 
-  /** @type {!Object.<!Array.<!Object>>} */
+  /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
 
   /** @type {!string} */
@@ -44,8 +44,9 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   /** @type {!pn.ui.UiSpec} */
   this.entitySpec = spec.entitySpec;
 
-  /** @type {pn.schema.FieldSchema} */
-  this.schema = pn.app.ctx.schema.getFieldSchema(spec);
+  /** @type {pn.data.FieldSchema} */
+  this.schema = goog.string.startsWith(this.id, '_') ?
+      null : this.entitySpec.type.getFieldSchema(this.id);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);
 
@@ -124,7 +125,6 @@ pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
   var prop = this.spec.dataProperty;
   var v = entity[prop];
   if (goog.isDef(v)) return v;
-
   if (pn.data.EntityUtils.isNew(entity)) {
     if (goog.isDefAndNotNull(this.spec.defaultValue)) {
       return this.getDefaultFieldValue_();
@@ -149,6 +149,7 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
+      this.spec.entitySpec.type,
       entity,
       this.spec.tableParentField);
 };
@@ -161,6 +162,11 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
  *    different than the entity value).
  */
 pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
+  goog.asserts.assert(entity);
+  goog.asserts.assert(control);
+
+  if (!this.isShown(control)) return false;
+
   var orig = this.getEntityValue(entity);
   var curr = this.getControlValue(control);
 
@@ -188,6 +194,8 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
  *    no errors found).
  */
 pn.ui.edit.FieldCtx.prototype.validate = function(control) {
+  // TODO: Its messy that this calls FieldValidator who calls
+  // this.getValidationErrors below.
   var errs = pn.ui.edit.FieldValidator.validateFieldValue(this, control);
   if (errs.length) {
     var val = this.getControlValue(control);
@@ -198,26 +206,16 @@ pn.ui.edit.FieldCtx.prototype.validate = function(control) {
 
 
 /**
- * @return {?pn.ui.edit.FieldSpec.Renderer} The specified field renderer or
- *    an implied renderer from the given column schema type.
+ * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.ui.edit.FieldCtx.prototype.getFieldRenderer = function() {
-  goog.asserts.assert(this.spec instanceof pn.ui.edit.FieldSpec);
-  if (this.spec.renderer) return this.spec.renderer;
-  if (!this.schema) return null;
-
-  if (this.spec.readonly) {
-    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[this.schema.type] ||
-        pn.ui.edit.ReadOnlyFields.textField;
-  } else {
-    var schemaType = this.schema.type;
-    if (schemaType === 'String' &&
-        this.schema.length >
-            pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
-      schemaType = 'LongString';
-    }
-    return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] || null;
-  }
+pn.ui.edit.FieldCtx.prototype.getValidationErrors = function(control) {
+  var validator = new pn.ui.edit.ValidateInfo();
+  validator.required = !this.schema.allowNull;
+  if (this.length) { validator.maxLength = this.schema.length; }
+  if (this.schema.type === 'number') { validator.isNumber = true; }
+  var error = validator.validateField(this, control);
+  return error ? [error] : [];
 };
 
 
@@ -227,13 +225,19 @@ pn.ui.edit.FieldCtx.prototype.getFieldRenderer = function() {
  */
 pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   goog.asserts.assert(goog.isDefAndNotNull(this.spec.defaultValue));
+
   var val = this.spec.defaultValue;
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
-    var type = pn.data.EntityUtils.getTypeProperty(this.spec.dataProperty);
-    var list = this.cache[type];
+    var type = pn.data.EntityUtils.getTypeProperty(
+        this.entitySpec.type, this.spec.dataProperty);
+    var list = this.cache.get(type.type);
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
-    }, this)['ID'];
+    }, this).id;
+  } else if (this.schema.type === 'Enumeration') {
+    for (var name in this.schema.entityType) {
+      if (name === val) { val = this.schema.entityType[name]; }
+    }
   }
   return val;
 };

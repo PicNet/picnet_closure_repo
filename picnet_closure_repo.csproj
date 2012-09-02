@@ -35,15 +35,15 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <None Include="cleancode.bat" />
-    <None Include="compile.bat" />
-    <None Include="compile_tablefilter.bat" />
+    <None Include="build\cleancode.bat" />
+    <None Include="build\compile.bat" />
+    <None Include="build\compile_tablefilter.bat" />
     <None Include="README.md" />
-    <None Include="release_tablefilter.bat" />
+    <None Include="build\release_tablefilter.bat" />
     <None Include="src\pn\ui\soy\pn.soy" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="generate_externs.html" />
+    <Content Include="build\generate_externs.html" />
     <Content Include="src\demos\app1\app1.html" />
     <Content Include="src\demos\app1\App1Demo.js" />
     <Content Include="src\demos\app1\DemoUtils.js" />
@@ -69,7 +69,6 @@
     <Content Include="src\demos\tablefilter_demosrc3.htm" />
     <Content Include="src\demos\tabslidemenudemo.js" />
     <Content Include="src\deps.js" />
-    <Content Include="src\jquery-1.3.2.externs.js" />
     <Content Include="src\pn\app\AppConfig.js" />
     <Content Include="src\pn\app\AppEvents.js" />
     <Content Include="src\pn\app\BaseApp.js" />

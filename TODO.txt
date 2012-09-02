@@ -1,8 +1,14 @@
 
-HI
-==
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
-- Edit.js needs to use a better MVC style design. And modularisation.
 
 - Make the authentication model pluggable (Forms/Windows)
+- Creating Complex renderers is ugly as they need the fctx in the contrstructor
+  so you are left with code like this:
+    var fld = this.createField('ID', cache, { renderer: .... }); 
+    fld.spec.renderer = new pn....ComplexRenderer(fld, entity, cache);
+- Navigating relationships is very ugly lots of arr map/filter/find everywhere 
+- RelatedTypesCalc creates a spec so that Application can create the spec again
+  with the correct cache, this spaghettiness is not right.  Consider adding
+  getAdditionalTypes method somewhere else (Static contect perhaps?) and not
+  requiring and instance of the spec to create the spec.

@@ -31,7 +31,8 @@ goog.require('pn.ui.soy');
  *
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
  * @param {!Object} entity The entity object to edit, {} for new entity.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(spec);
@@ -69,8 +70,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
     var ctl = this.getControl(fctx.id);
-    return fctx.isShown(ctl) &&
-        fctx.isDirty(this.entity, ctl);
+    return fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
   this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
   return dirty;
@@ -148,7 +148,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       pn.ui.edit.EditUtils.showElement(parentComp, fctx.controlId, false);
       return;
     }
-    var renderer = fctx.getFieldRenderer();
+    var renderer = fctx.spec.renderer;
     if (!templateParent &&
             (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
                 renderer.showLabel !== false)) {
@@ -317,7 +317,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   });
   this.getHandler().listen(grid, ae.ENTITY_SELECT, function(ev) {
     var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
-    e.entityId = ev.selected['ID'];
+    e.entityId = ev.selected.id;
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
     e.parentField = fieldSpec.tableParentField;

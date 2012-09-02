@@ -57,7 +57,8 @@ pn.ui.ViewMgr.prototype.showComponent = function(component) {
  * @param {!pn.ui.UiSpec} spec The specs of the object being
  *    edited.
  * @param {!Object} entity The entity to display/edit.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
   goog.asserts.assert(spec && spec.type);

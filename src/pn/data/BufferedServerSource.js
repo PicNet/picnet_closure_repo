@@ -40,38 +40,51 @@ pn.data.BufferedServerSource.prototype.getEntityLists =
   goog.asserts.assert(types);
   goog.asserts.assert(callback);
 
-  var loaded = this.cache_.getLists(types);
-  var unloaded = goog.array.filter(types, function(type) {
-    return !goog.isDef(loaded[type]);
+  var strtypes = goog.array.map(types, function(t) {
+    goog.asserts.assert(goog.isString(t.type),
+        'getEntityLists called without pn.data.Type arguments: ' + t);
+
+    return t.type;
   });
+  var loaded = this.cache_.getLists(strtypes);
+  var unloaded = goog.array.filter(types,
+      function(type) { return !goog.isDef(loaded[type.type]); });
 
-  if (!unloaded.length) {
-    callback(loaded);
-    return;
-  }
+  var cb = function(raw) {
+    var ctor = pn.app.ctx.cfg.dalCacheType || pn.data.BaseDalCache;
+    callback(new ctor(raw));
+  };
 
-  pn.data.BufferedServerSource.superClass_.getEntityLists.call(this, types,
-      function(results) {
-        goog.object.extend(loaded, results);
-        callback(loaded);
-      });
+  if (!unloaded.length) { cb(loaded); return; }
+
+  pn.data.BufferedServerSource.superClass_.getEntityLists.
+      call(this, types, goog.bind(function(dalCache) {
+    goog.object.forEach(types, function(type) {
+      var arr = dalCache.get(type.type);
+      this.cache_.updateList(type.type, arr);
+      loaded[type.type] = arr;
+    }, this);
+    cb(loaded);
+  }, this));
 };
 
 
 /**
  * Removes a type from the cache, meaning that next time the request for this
  *    type comes in, it will need to be sourced from the server.
- * @param {string} type The type to remove from the cache.
+ * @param {pn.data.Type} type The type to remove from the cache.
  */
 pn.data.BufferedServerSource.prototype.invalidateCache = function(type) {
-  this.cache_.invalidateCache(type);
+  goog.asserts.assert(goog.isFunction(type));
+  this.cache_.invalidateCache(type.type);
 };
 
 
 /**
- * @param {string} type The type to retreive from the cache.
+ * @param {pn.data.Type} type The type to retreive from the cache.
  * @return {Array.<!Object>} The cached list if it exists in the cache.
  */
 pn.data.BufferedServerSource.prototype.getCachedList = function(type) {
-  return this.cache_.getCachedList(type);
+  goog.asserts.assert(goog.isFunction(type));
+  return this.cache_.getCachedList(type.type);
 };

@@ -67,21 +67,11 @@ pn.ui.filter.GenericListFilter = function(input, list, options) {
 
   /**
    * @private
-   * @type {number}
+   * @type {!pn.ui.DelayedThrottleInputListener}
    */
-  this.lastkeytime_ = 0;
-
-  /**
-   * @private
-   * @type {number}
-   */
-  this.lastTimerID_ = 0;
-
-  /**
-   * @private
-   * @type {boolean}
-   */
-  this.cancelQuickFind_ = false;
+  this.inputListener_ = new pn.ui.DelayedThrottleInputListener(
+      this.options['filterDelay']);
+  this.registerDisposable(this.inputListener_);
 
   /**
    * @private
@@ -142,11 +132,10 @@ pn.ui.filter.GenericListFilter.prototype.initialiseFilters = function() {
 /** @private */
 pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     function() {
+  var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
+  this.eh_.listen(this.inputListener_, eventtype, this.refresh);
   goog.array.forEach(this.filters, function(filter) {
-    this.eh_.listen(filter, filter.getAttribute('type') === 'text' ?
-        goog.events.EventType.KEYUP :
-        goog.events.EventType.CHANGE,
-        this.onFilterChanged_, false, this);
+    this.inputListener_.addInput(filter);
   }, this);
 
   if (this.options['clearFiltersControls']) {
@@ -168,23 +157,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     if (trigger.length) { // Remove jQueryObject
       trigger = this.options['additionalFilterTriggers'][i] = trigger[0];
     }
-
-    var type = trigger.options ? 'select-one' : trigger.getAttribute('type');
-    var et = goog.events.EventType;
-    switch (type) {
-      case 'select-one':
-        this.eh_.listen(trigger, et.CHANGE, this.onFilterChanged_, false, this);
-        break;
-      case 'text':
-        trigger.setAttribute('title', this.options['filterToolTipMessage']);
-        this.eh_.listen(trigger, et.KEYUP, this.onFilterChanged_, false, this);
-        break;
-      case 'checkbox':
-        this.eh_.listen(trigger, et.CLICK, this.onFilterChanged_, false, this);
-        break;
-      default:
-        throw 'Filter type ' + type + ' is not supported';
-    }
+    this.inputListener_.addInput(trigger);
   }
 };
 
@@ -295,37 +268,8 @@ pn.ui.filter.GenericListFilter.prototype.loadFiltersFromCookie_ = function() {
 };
 
 
-/** @private */
-pn.ui.filter.GenericListFilter.prototype.onFilterChanged_ = function() {
-  this.lastkeytime_ = new Date().getTime();
-  this.quickFindTimer_();
-};
-
-
-/** @private */
-pn.ui.filter.GenericListFilter.prototype.quickFindTimer_ = function() {
-  if (this.lastTimerID_) {
-    clearTimeout(this.lastTimerID_);
-    this.lastTimerID_ = 0;
-  }
-  this.cancelQuickFind_ = true;
-
-  var curtime = new Date().getTime();
-  var delay = this.options['filterDelay'];
-  if (curtime - this.lastkeytime_ >= delay) {
-    this.refresh();
-  } else {
-    this.lastTimerID_ = goog.Timer.callOnce(function() {
-      this.quickFindTimer_.call(this);
-    }, delay / 3, this);
-  }
-};
-
-
 /** Refreshes the filtering states, usefull in ajax contexts */
 pn.ui.filter.GenericListFilter.prototype.refresh = function() {
-  this.cancelQuickFind_ = false;
-  clearTimeout(this.lastTimerID_);
   var filterStates = this.getFilterStates();
   this.applyFilterStates_(filterStates, false);
   this.saveFiltersToCookie_(filterStates);

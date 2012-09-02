@@ -1,5 +1,5 @@
 
-goog.provide('pn.schema.FieldSchema');
+goog.provide('pn.data.FieldSchema');
 
 
 
@@ -7,11 +7,17 @@ goog.provide('pn.schema.FieldSchema');
  * @constructor
  * @param {string} name The name of this field.
  * @param {string} type The type of this field.
+ * @param {(pn.data.Type|Object.<number>)?} entityType The type of this field
+ *    if this field is a relationship or the enumeration object.
  * @param {boolean} allowNull Wether this field allows null values.
  * @param {number} length The length of this field (only applicable to
  *     string fields).
  */
-pn.schema.FieldSchema = function(name, type, allowNull, length) {
+pn.data.FieldSchema = function(name, type, entityType, allowNull, length) {
+  goog.asserts.assert(name);
+  goog.asserts.assert(type);
+  goog.asserts.assert(
+      !entityType || goog.isFunction(entityType) || goog.isObject(entityType));
 
   /**
    * The name of this field
@@ -24,6 +30,12 @@ pn.schema.FieldSchema = function(name, type, allowNull, length) {
    * @type {string}
    */
   this.type = type;
+
+  /**
+   * The entity type of this field if this field is a relationship.
+   * @type {(pn.data.Type|Object.<number>)?}
+   */
+  this.entityType = entityType;
 
   /**
    * Wether this field allows null values

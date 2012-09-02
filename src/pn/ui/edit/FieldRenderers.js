@@ -206,11 +206,32 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!Object} entity The entity being edited.
+ * @return {!Element} The select control.
+ */
+pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
+  var txt = 'Select...';
+  var lst = [];
+
+  goog.object.forEach(fctx.schema.entityType, function(val, name) {
+    if (goog.isNumber(val)) lst.push({ id: val, name: name});
+  });
+  var selected = fctx.getEntityValue(entity);
+  var select = pn.ui.edit.FieldRenderers.createDropDownList_(
+      txt, lst, selected, -1);
+  goog.dom.appendChild(parent, select);
+  return select;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!Object} entity The entity being edited.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   var order = pn.data.EntityUtils.isNew(entity) ?
-      fctx.cache[fctx.entitySpec.type].length :
+      fctx.cache.get(fctx.entitySpec.type.type).length :
       fctx.getEntityValue(entity);
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
@@ -237,14 +258,14 @@ pn.ui.edit.FieldRenderers.entityParentListField =
     function(fctx, parent, entity, opt_filter) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
-  var entityType = /** @type {string} */ (cascading ?
+  var entityType = cascading ?
       fctx.spec.tableType :
-      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty));
-
-  var list = fctx.cache[entityType];
-  if (!list) throw new Error('Expected access to "' + entityType +
+      pn.data.EntityUtils.getTypeProperty(
+          fctx.spec.entitySpec.type, fctx.spec.dataProperty);
+  var list = fctx.cache.get(entityType.type);
+  if (!list) throw new Error('Expected access to "' + entityType.type +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  pn.app.ctx.schema.orderEntities(entityType, list);
+  pn.data.EntityUtils.orderEntities(entityType, list);
   if (opt_filter) list = opt_filter(entity, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
@@ -252,8 +273,9 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var namePath = cascading ? entityType + 'Name' : steps.join('.');
   list = goog.array.map(list, function(e) {
     return {
-      'ID': e['ID'],
-      'Name': pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namePath, e)
+      id: e.id,
+      name: pn.data.EntityUtils.getEntityDisplayValue(
+          fctx.cache, namePath, fctx.spec.entitySpec.type, e)
     };
   });
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
@@ -267,21 +289,25 @@ pn.ui.edit.FieldRenderers.entityParentListField =
  * @private
  * @param {string} selectTxt The message to display in the first element of the
  *    list.
- * @param {!Array.<Object>} list The list of entities.
+ * @param {!Array.<{ID:number, Name: string}>} list The list of entities
+ *    (requires an ID and Name field).
  * @param {*} selValue The selected value in the 'ID' field.
+ * @param {number=} opt_noneId The ID to give to the 'Select...' entry.
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
-    function(selectTxt, list, selValue) {
+    function(selectTxt, list, selValue, opt_noneId) {
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
-        {'value': '0' }, selectTxt));
+        {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
+        selectTxt));
   }
   goog.array.forEach(list, function(e) {
-    var opts = {'value': e['ID']};
-    if (selValue && e['ID'] === selValue) { opts['selected'] = 'selected'; }
-    var txt = e['Name'] ? e['Name'].toString() : '';
+    var opts = {'value': e.id};
+    if (goog.isDef(selValue) && e.id === selValue) {
+      opts['selected'] = 'selected'; }
+    var txt = e.name ? e.name.toString() : '';
     goog.asserts.assert(txt !== undefined);
 
     if (txt) {
@@ -302,13 +328,13 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
 pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
     function(fctx, parent, entity) {
   goog.asserts.assert(fctx.spec.tableType);
-  goog.asserts.assert(entity['ID'] != 0);
+  goog.asserts.assert(entity.id != 0);
 
-  var parentId = entity['ID'];
+  var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache[fctx.spec.tableType];
-  if (!list) list = fctx.cache[goog.string.remove(fctx['id'], 'Entities')];
+  var list = fctx.cache.get(fctx.spec.tableType.type);
+  if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : goog.array.filter(list,
@@ -333,9 +359,9 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(fctx, parent, entity) {
-    var manyToManys = goog.array.filter(fctx.cache[mappingEntity],
-        function(abrand) {
-          return abrand[parentIdField] === entity['ID'];
+    var manyToManys = goog.array.filter(fctx.cache.get(mappingEntity),
+        function(manyToMany) {
+          return manyToMany[parentIdField] === entity.id;
         });
     var adminIDs = goog.array.map(manyToManys, function(mm) {
       return mm[adminEntity + 'ID'];
@@ -346,15 +372,15 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     entity[mappingEntity + 'Entities'] = adminIDs;
 
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
-    goog.array.forEach(fctx.cache[adminEntity], function(ae) {
+    goog.array.forEach(fctx.cache.get(adminEntity), function(ae) {
       var text = opt_displayStrategy ?
           opt_displayStrategy(ae) :
           ae[adminEntity + 'Name'];
       var opt = goog.dom.createDom('option', {
         'text': text,
-        'value': ae['ID'],
+        'value': ae.id,
         'selected': goog.array.findIndex(adminIDs, function(adminID) {
-          return ae['ID'] === adminID;
+          return ae.id === adminID;
         }) >= 0
       });
       select.options.add(opt);

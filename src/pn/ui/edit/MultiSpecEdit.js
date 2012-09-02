@@ -29,7 +29,7 @@ goog.require('pn.ui.grid.Grid');
  * @implements {pn.ui.IDirtyAware}
  *
  * @param {!Object} entity The entity to edit, null for new entity.
- * @param {!Object.<Array>} cache The entities cache to use for
+ * @param {!pn.data.BaseDalCache} cache The entities cache to use for
  *    related entities.
  * @param {!Object.<!pn.ui.UiSpec>} specs The edit specifications.
  * @param {string} mainSpecId The main specs id.  This is the specs that

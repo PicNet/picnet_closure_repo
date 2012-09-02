@@ -7,8 +7,8 @@ goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BufferedServerSource');
 goog.require('pn.data.MemCache');
+goog.require('pn.data.Type');
 goog.require('pn.log');
-goog.require('pn.schema.Schema');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
@@ -42,9 +42,6 @@ pn.app.ctx = null;
  * disposeInternal: Dispose any created entity here.  Ensure you call
  *   superClass_.disposeInternal.
  *
- * When the application is ready to begin just call the this.initialise method
- *   passing in a pn.schema.Schema object describing the data structure.
- *
  * If any of the default settings need to be changed just change the appropriate
  *   setting in pn.app.ctx.cfg.
  *
@@ -77,9 +74,6 @@ pn.app.BaseApp = function(opt_cfg) {
   /** @type {!pn.app.AppConfig} */
   this.cfg = new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
-
-  /** @type {pn.schema.Schema} */
-  this.schema = null;
 
   /** @type {!pn.ui.ViewMgr} */
   this.view = new pn.ui.ViewMgr(pn.dom.getElement(this.cfg.viewContainerId));
@@ -118,16 +112,6 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 ////////////////////////////////////////////////////////////////////////////////
 // REQUIRED TEMPLATE METHODS
 ////////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * A template method used to validate the current user can edit a specific
- *    entity type.
- *
- * @param {string} type The entity type that needs to be checked for edit
- *    access.
- */
-pn.app.BaseApp.prototype.validateSecurity = goog.abstractMethod;
 
 
 /**
@@ -203,48 +187,6 @@ pn.app.BaseApp.prototype.init_ = function() {
 
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
-
-  this.loadSchema_(goog.bind(this.schemaLoaded_, this));
-};
-
-
-/**
- * @private
- * A method used to load the schema for the entities being handled by
- *    this application. This schema is usually loaded from the server and is
- *    expected in the following format:
- *    [
- *      {
- *        'name': 'EntityName',
- *        'fields': [
- *          { 'name': 'ID', 'type': 'Int64' },
- *          { 'name': 'StringFieldName', 'type': 'String', 'length': 50 },
- *          { 'name': 'IntFieldName', 'type': 'Int32' },
- *          { 'name': 'BoolFieldName', 'type': 'YesNo' },
- *          { 'name': 'DateFieldName', 'type': 'DateTime' }
- *        ]
- *      }
- *    ]
- *
- * @see pn.schema
- * @param {function(!Array.<!Object>):undefined} schemaLoaded A callback to
- *    call with the loaded schema which representing the entities for this
- *    application.
- */
-pn.app.BaseApp.prototype.loadSchema_ = function(schemaLoaded) {
-  this.data.loadSchema(schemaLoaded);
-};
-
-
-/**
- * @private
- * @param {!Array.<!Object>} schema The loaded schema object.
- */
-pn.app.BaseApp.prototype.schemaLoaded_ = function(schema) {
-  goog.asserts.assert(schema);
-
-  this.schema = new pn.schema.Schema(schema);
-  this.registerDisposable(this.schema);
 
   this.router.initialise(this.getRoutes());
 };

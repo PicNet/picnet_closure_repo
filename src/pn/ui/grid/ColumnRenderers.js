@@ -10,7 +10,7 @@ goog.require('pn.date');
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(cctx, entity) {
   return cctx.getEntityValue(entity) === true ? 'Y' : 'N';
@@ -20,7 +20,7 @@ pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(cctx, entity) {
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateRenderer = function(cctx, entity) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
@@ -31,7 +31,7 @@ pn.ui.grid.ColumnRenderers.dateRenderer = function(cctx, entity) {
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(cctx, entity) {
   return pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_(
@@ -45,7 +45,7 @@ pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(cctx, entity) {
  * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
  *    this time/date value;.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
     function(cctx, formatter, entity) {
@@ -59,7 +59,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
   var val = /** @type {number} */ (cctx.getEntityValue(entity));
@@ -70,11 +70,23 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
+ */
+pn.ui.grid.ColumnRenderers.enumRenderer = function(cctx, entity) {
+  var val = /** @type {number} */ (cctx.getEntityValue(entity));
+  return pn.data.EntityUtils.getEnumName(cctx.schema.entityType, val);
+};
+
+
+/**
+ * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
+ * @param {!Object} entity The entity being displayed.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(cctx, entity) {
   return (pn.data.EntityUtils.getEntityDisplayValue(
-      cctx.cache, cctx.spec.displayPath, entity) || '').toString();
+      cctx.cache, cctx.spec.displayPath, cctx.spec.entitySpec.type, entity) ||
+          '').toString();
 };
 
 
@@ -95,7 +107,7 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(cctx, entity) {
  * @param {!string} parentField The child field used to match this
  *    entities children.
  * @param {!Object} entity The entity being displayed.
- * @return {string} The html value to display in this cell;.
+ * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
     function(cctx, parentField, entity) {
@@ -103,6 +115,6 @@ pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
   goog.asserts.assert(cctx.spec.id.indexOf('Entities') >= 0);
 
   return (pn.data.EntityUtils.getEntityDisplayValue(
-      cctx.cache, cctx.spec.displayPath, entity, parentField) || '').
-      toString();
+      cctx.cache, cctx.spec.displayPath, cctx.spec.entitySpec.type,
+      entity, parentField) || '').toString();
 };

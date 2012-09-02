@@ -10,14 +10,15 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {string} entityType The entity being displayed on the current grid.
+ * @param {pn.data.Type} entityType The entity being displayed on the current
+ *    grid.
  */
 pn.ui.grid.pipe.CommandsHandler = function(entityType) {
   pn.ui.grid.pipe.GridHandler.call(this);
 
   /**
    * @private
-   * @type {string}
+   * @type {pn.data.Type}
    */
   this.entityType_ = entityType;
 };
@@ -77,7 +78,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
   var ae = pn.app.AppEvents;
   switch (e.type) {
     case ae.ENTITY_SELECT:
-      var id = e.selected['ID'];
+      var id = e.selected.id;
       pn.app.ctx.pub(e.type, this.entityType_, id);
       break;
     case ae.ENTITY_ADD:

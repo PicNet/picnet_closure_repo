@@ -17,7 +17,8 @@ goog.require('pn.ui.srch.SearchPanel');
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The spec.
  * @param {!Array} list The entities to display.
- * @param {!Object.<Array>} cache The data cache to use for related entities.
+ * @param {!pn.data.BaseDalCache} cache The data cache to use for related
+ *    entities.
  */
 pn.ui.srch.SearchGrid = function(spec, list, cache) {
   goog.asserts.assert(list);
@@ -47,7 +48,7 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
 
   /**
    * @private
-   * @type {!Object.<Array>}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache_ = cache;
 
