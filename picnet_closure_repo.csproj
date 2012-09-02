@@ -126,6 +126,7 @@
     <Content Include="src\pn\ui\css\popupdatepicker.css" />
     <Content Include="src\pn\ui\css\tabslidemenu.css" />
     <Content Include="src\pn\ui\DateRangePicker.js" />
+    <Content Include="src\pn\ui\DelayedThrottleInputListener.js" />
     <Content Include="src\pn\ui\Dialog.js" />
     <Content Include="src\pn\ui\edit\AddOnFlyDialog.js" />
     <Content Include="src\pn\ui\edit\AddOnFlyRenderer.js" />
