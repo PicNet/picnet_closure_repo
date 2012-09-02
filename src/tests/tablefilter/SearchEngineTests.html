@@ -4,9 +4,7 @@
     <body>
         <script type="text/javascript" src="http://localhost/shared/closure-library/closure/goog/base.js"></script> 
         <script type="text/javascript" src="../../deps.js"></script>        
-        <script>goog.require("goog.testing.jsunit");</script>
-        <script>goog.require("goog.testing.AsyncTestCase");</script>
-
+        <script>goog.require("goog.testing.jsunit");</script>        
         <script>
 
 goog.require('pn.ui.filter.SearchEngine');
@@ -147,7 +145,6 @@ var testLessThanOrEquals = function() {
   assertFalse(se.doesTextMatchTokens(["11"], tokens1, false));    
   assertFalse(se.doesTextMatchTokens(["11asdasd"], tokens1, false));    
 };  
-var testCase = goog.testing.AsyncTestCase.createAndInstall();
         </script>
     </body>
 </html>

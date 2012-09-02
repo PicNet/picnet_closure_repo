@@ -127,7 +127,7 @@ pn.ui.filter.TableFilter.prototype.initialiseControlCaches = function() {
 
 /**
  * @private
- * @param {!Element} f The filter whose index in the table we are after.
+ * @param {Element} f The filter whose index in the table we are after.
  * @return {number} The index of the given filter in the parent row.
  */
 pn.ui.filter.TableFilter.prototype.getColumnIndexOfFilter_ = function(f) {
@@ -252,7 +252,7 @@ pn.ui.filter.TableFilter.prototype.getFilterStates = function() {
 
 /**
  * @protected
- * @param {!Element} filter The filter whose state we require.
+ * @param {Element} filter The filter whose state we require.
  * @return {pn.ui.filter.FilterState} The filter state for the specified filter.
  */
 pn.ui.filter.TableFilter.prototype.getFilterStateForFilter = function(filter) {

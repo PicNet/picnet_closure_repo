@@ -20,13 +20,15 @@
     <script type="text/javascript" src="QuickFindTests.js"></script>
     <script type="text/javascript" src="AdditionalFiltersTests.js"></script>
     <script type="text/javascript" src="TextColumnTests.js"></script>
-    <script>goog.require("goog.testing.jsunit");</script>
-    <script>goog.require("goog.testing.AsyncTestCase");</script>
+    <script type="text/javascript" src="AjaxDataLoadTests.js"></script>
+
+    <script>goog.require("goog.testing.jsunit");</script>    
 
     <script>
 goog.require('pn.ui.filter.SearchEngine');
 goog.require('pn.ui.filter.TableFilter');
 goog.require('goog.testing.events');
+goog.require('goog.dom');
 
 var options = {
   filterDelay: -1, // Instant

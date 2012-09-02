@@ -38,7 +38,6 @@
     <None Include="cleancode.bat" />
     <None Include="compile.bat" />
     <None Include="compile_tablefilter.bat" />
-    <None Include="manual_compile.bat" />
     <None Include="README.md" />
     <None Include="release_tablefilter.bat" />
     <None Include="src\pn\ui\soy\pn.soy" />
@@ -224,8 +223,9 @@
     <Content Include="src\tests\RouterTests.html" />
     <Content Include="src\tests\RxTests.html" />
     <Content Include="src\tests\tablefilter\AdditionalFiltersTests.js" />
+    <Content Include="src\tests\tablefilter\AjaxDataLoadTests.js" />
     <Content Include="src\tests\tablefilter\QuickFindTests.js" />
-    <Content Include="src\tests\tablefilter\TestHarness.html" />
+    <Content Include="src\tests\tablefilter\TableFilterTests.html" />
     <Content Include="src\tests\tablefilter\TextColumnTests.js" />
     <Content Include="src\tests\tablefilter\SearchEngineTests.html" />
     <Content Include="src\tests\tablefilter\BasicTests.js" />

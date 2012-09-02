@@ -27,6 +27,11 @@ jq.tableFilter = function(element, opts) {
   plugin.reset = function(list) {
     pn.ui.filter.TableFilter.superClass_.resetList.call(tf, list);
   };
+  
+  plugin.clearFilters = function() {
+    pn.ui.filter.TableFilter.superClass_.clearAllFilters.call(tf);
+  };
+
   plugin.init();
 
 };
