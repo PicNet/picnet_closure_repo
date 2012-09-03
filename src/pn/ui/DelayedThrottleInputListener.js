@@ -109,7 +109,7 @@ pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
 
 
 /** @private */
-pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {  
+pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {
   var curtime = new Date().getTime();
   if (!this.delay_ || curtime - this.lastInputTime_ >= this.delay_) {
     this.fireIfChanged_();

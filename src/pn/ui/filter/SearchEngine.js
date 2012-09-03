@@ -1,8 +1,10 @@
 
 goog.provide('pn.ui.filter.SearchEngine');
 
-goog.require('goog.asserts');
 goog.require('goog.array');
+goog.require('goog.asserts');
+
+
 
 /**
  * @constructor
@@ -27,7 +29,7 @@ pn.ui.filter.SearchEngine = function() {
  *    text.
  * @return {boolean} Wether the given expression matches the given text.
  */
-pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {  
+pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {
   if (!expression) return true;
   if (!text) return false;
 
@@ -37,7 +39,8 @@ pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {
 
 
 /**
- * @param {!Array.<string>} textToMatch The text to match against the filter tokens.
+ * @param {!Array.<string>} textToMatch The text to match against the filter
+ *    tokens.
  * @param {Array.<string>} postFixTokens The filter tokens to match against the
  *    specified text.
  * @param {boolean} exactMatch Wether an exact match is needed.
@@ -51,6 +54,7 @@ pn.ui.filter.SearchEngine.prototype.doesTextMatchTokens =
     return this.doesTextMatchTokensImpl_(txt, postFixTokens, exactMatch);
   }, this) >= 0;
 };
+
 
 /**
  * @private

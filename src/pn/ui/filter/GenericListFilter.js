@@ -7,10 +7,10 @@ goog.require('goog.events');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.cookies');
 goog.require('goog.style');
+goog.require('pn.ui.DelayedThrottleInputListener');
 goog.require('pn.ui.filter.FilterState');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
-goog.require('pn.ui.DelayedThrottleInputListener');
 
 goog.provide('pn.ui.filter.GenericListFilter');
 
@@ -544,6 +544,7 @@ pn.ui.filter.GenericListFilter.prototype.checkMatchingElementCallback_ =
   if (window['jQuery']) object = window['jQuery'](item);
   return this.options['matchingElement'](state, object, textTokens);
 };
+
 
 /**
  * @protected
