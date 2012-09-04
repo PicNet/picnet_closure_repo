@@ -96,7 +96,6 @@ pn.ui.DelayedThrottleInputListener.prototype.inferEventType_ = function(inp) {
  */
 pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
   goog.asserts.assert(e && e.target);
-
   this.currentValue_ = e.target.value;
   this.lastInputTime_ = new Date().getTime();
 
