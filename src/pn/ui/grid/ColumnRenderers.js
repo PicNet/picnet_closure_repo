@@ -52,6 +52,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
   var val = cctx.getEntityValue(entity);
   if (val && goog.isNumber(val)) val = new Date(val);
   if (val && val.getFullYear() <= 1753) { val = null; }
+
   return val ? formatter.format(/** @type {Date} */ (val)) : '';
 };
 

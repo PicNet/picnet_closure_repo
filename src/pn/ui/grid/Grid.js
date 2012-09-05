@@ -256,3 +256,10 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 
   if (this.slick_) { this.slick_.destroy(); }
 };
+
+
+/**
+ * @const
+ * @type {string}
+ */
+pn.ui.grid.Grid.SELECTED = 'grid-row-selected';

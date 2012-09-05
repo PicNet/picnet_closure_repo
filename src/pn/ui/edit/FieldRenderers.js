@@ -1,5 +1,5 @@
 ﻿;
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.ui.InputDatePicker');
 goog.require('goog.ui.LabelInput');
 goog.require('pn.convert');
@@ -20,7 +20,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
   var dt = null;
   if (val instanceof Number) {
     dt = pn.date.fromMillis(/** @type {number} */ (val));
-  } else if (val instanceof goog.date.Date) {
+  } else if (val instanceof goog.date.DateTime) {
     dt = val;
   } else if (val instanceof Date) {
     dt = pn.date.fromDate(/** @type {Date} */ (val));

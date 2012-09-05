@@ -11,7 +11,7 @@ goog.require('pn.model.Collection');
 goog.require('pn.model.EventType');
 goog.require('pn.model.TimerInstance');
 goog.require('goog.events');
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 
 var arr,
     collection,
@@ -32,7 +32,7 @@ var setUp = function() {
 var createObj = function(id) {
   id = id + (++counter);
   return { 'ID': id, 'Name': 'Name Value', 'Num': 1,
-    'Date': new goog.date.Date(2000, 0, 1), 'ObjRef': {}, 
+    'Date': new goog.date.DateTime(2000, 0, 1), 'ObjRef': {}, 
     'ObjEquality': {
       'Val': 1,
       clone: function() { return {'Val' : this['Val']}; },

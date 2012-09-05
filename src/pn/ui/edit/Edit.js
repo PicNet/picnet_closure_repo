@@ -1,7 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.Edit');
 
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');

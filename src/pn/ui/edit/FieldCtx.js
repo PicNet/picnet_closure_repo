@@ -1,7 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.FieldCtx');
 
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.edit.EditUtils');
 goog.require('pn.ui.edit.FieldRenderers');

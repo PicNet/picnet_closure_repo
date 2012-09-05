@@ -1,7 +1,7 @@
 
 goog.provide('pn.demo.app1.DemoUtils');
 
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 
 /** @type {number} */
 pn.demo.app1.DemoUtils.counter = 0;
@@ -17,6 +17,6 @@ pn.demo.app1.DemoUtils.createUser = function() {
     'FirstName': 'Name: ' + id, 
     'LastName': 'Surname: ' + id, 
     'Phone': Math.floor(Math.random() * 99999999), 
-    'DateOfBirth': new goog.date.Date(year, 0, 1) 
+    'DateOfBirth': new goog.date.DateTime(year, 0, 1) 
   };
 };

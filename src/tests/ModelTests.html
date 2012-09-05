@@ -11,7 +11,7 @@ goog.require('pn.model.Model');
 goog.require('pn.model.EventType');
 goog.require('pn.model.TimerInstance');
 goog.require('goog.events');
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 
 var obj,
     model,
@@ -23,7 +23,7 @@ var setUp = function() {
   obj = {
     'Name': 'Name Value',    
     'Num': 1,
-    'Date': new goog.date.Date(2000, 0, 1),
+    'Date': new goog.date.DateTime(2000, 0, 1),
     'ObjRef': {},
     'ObjEquality': {
       'Val': 1,
@@ -72,8 +72,8 @@ var test_model_change_event_on_date_change = function () {
 
   var change = changes[0];
   assertEquals('Date', change.field);
-  assertTrue(new goog.date.Date(2001, 0, 1).equals(change.newval));  
-  assertTrue(new goog.date.Date(2000, 0, 1).equals(change.oldval));
+  assertTrue(new goog.date.DateTime(2001, 0, 1).equals(change.newval));  
+  assertTrue(new goog.date.DateTime(2000, 0, 1).equals(change.oldval));
 };
 
 var test_model_change_event_on_obj_ref_change = function () {      
@@ -115,8 +115,8 @@ var test_model_change_on_multi_field_change = function() {
 
   change = changes[2];
   assertEquals('Date', change.field);
-  assertTrue(new goog.date.Date(2001, 0, 1).equals(change.newval));  
-  assertTrue(new goog.date.Date(2000, 0, 1).equals(change.oldval));
+  assertTrue(new goog.date.DateTime(2001, 0, 1).equals(change.newval));  
+  assertTrue(new goog.date.DateTime(2000, 0, 1).equals(change.oldval));
 };
 
 

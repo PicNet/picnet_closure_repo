@@ -1,5 +1,5 @@
 
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.json');
 goog.require('pn.date');
 
@@ -29,7 +29,7 @@ pn.json.parseJson = function(json) {
 pn.json.serialiseJson = function(o) {
   if (!goog.isDefAndNotNull(o)) return '';
   return goog.json.serialize(o, function(id, val) {
-    if (val instanceof goog.date.Date || val instanceof Date) {
+    if (val instanceof goog.date.DateTime || val instanceof Date) {
       return val.getTime();
     }
     return val;

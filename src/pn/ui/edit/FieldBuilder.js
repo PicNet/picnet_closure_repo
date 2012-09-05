@@ -1,7 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.FieldBuilder');
 
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');

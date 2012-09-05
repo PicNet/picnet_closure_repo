@@ -4,7 +4,7 @@ goog.provide('pn.demo.app1.App1Demo');
 goog.require('goog.dom');
 goog.require('pn.app.BaseApp');
 goog.require('pn.demo.app1.UserSpec');
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('pn.app.AppEvents');
 goog.require('pn.demo.app1.ShowListPage');
 goog.require('pn.demo.app1.ShowEditPage');

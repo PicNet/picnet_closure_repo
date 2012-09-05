@@ -96,7 +96,7 @@ pn.app.AppConfig = function(opt_opts) {
     'boolean': fr.boolRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'goog.date.Date': fr.dateRenderer,
+    'goog.date.DateTime': fr.dateRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'string': fr.textFieldRenderer,
@@ -120,7 +120,7 @@ pn.app.AppConfig = function(opt_opts) {
     'boolean': rr.boolField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
-    'goog.date.Date': rr.dateField,
+    'goog.date.DateTime': rr.dateField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'number': rr.intField,
@@ -136,7 +136,7 @@ pn.app.AppConfig = function(opt_opts) {
     'boolean': cr.yesNoBoolRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
-    'goog.date.Date': cr.dateRenderer,
+    'goog.date.DateTime': cr.dateRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'Enumeration': cr.enumRenderer

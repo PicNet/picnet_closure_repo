@@ -2,7 +2,7 @@
 goog.provide('pn.ui.InputDatePicker');
 
 goog.require('goog.array');
-goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventType');
@@ -64,16 +64,16 @@ pn.ui.InputDatePicker = function(opt_dtf, opt_dtp, opt_label) {
 goog.inherits(pn.ui.InputDatePicker, goog.ui.Component);
 
 
-/** @param {goog.date.Date?} date The date to set in the control. */
+/** @param {goog.date.DateTime?} date The date to set in the control. */
 pn.ui.InputDatePicker.prototype.setDate = function(date) {
   this.idp_.setDate(date);
 };
 
 
-/** @return {goog.date.Date} The selected date. */
+/** @return {goog.date.DateTime} The selected date. */
 pn.ui.InputDatePicker.prototype.getDate = function() {
   var d = this.idp_.getDate();
-  if (d) d = new goog.date.Date(d.getYear(), d.getMonth(), d.getDate());
+  if (d) d = new goog.date.DateTime(d.getYear(), d.getMonth(), d.getDate());
   return d;
 };
 
@@ -81,7 +81,7 @@ pn.ui.InputDatePicker.prototype.getDate = function() {
 /**
 * Returns the selected date, if any.  Compares the dates from the date picker
 * and the input field, causing them to be synced if different.
-* @return {goog.date.Date} The selected date.
+* @return {goog.date.DateTime} The selected date.
 */
 pn.ui.InputDatePicker.prototype.getValue = function() {
   return this.getDate();

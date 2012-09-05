@@ -1,5 +1,6 @@
 
 goog.require('goog.date.Date');
+goog.require('goog.date.DateTime');
 goog.require('goog.i18n.DateTimeFormat');
 goog.require('goog.i18n.DateTimeParse');
 
@@ -31,7 +32,8 @@ pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
 
 /**
- * @param {!goog.date.Date} date The date to check, if its a weekday (MON-FRI).
+ * @param {!goog.date.DateTime} date The date to check, if its a
+ *    weekday (MON-FRI).
  * @return {boolean} Wether the specified date is a weekday.
  */
 pn.date.isWeekday = function(date) {
@@ -43,7 +45,8 @@ pn.date.isWeekday = function(date) {
 
 
 /**
- * @param {!goog.date.Date} date The date to check, if its a weekend (SAT, SUN).
+ * @param {!goog.date.DateTime} date The date to check, if its a
+ *    weekend (SAT, SUN).
  * @return {boolean} Wether the specified date is a weekend.
  */
 pn.date.isWeekend = function(date) {
@@ -52,7 +55,7 @@ pn.date.isWeekend = function(date) {
 
 
 /**
- * @param {!goog.date.Date} date The date to check, if its today.
+ * @param {!goog.date.DateTime} date The date to check, if its today.
  * @return {boolean} Wether the specified date is today.
  */
 pn.date.isToday = function(date) {
@@ -63,7 +66,7 @@ pn.date.isToday = function(date) {
 
 
 /**
- * @param {!goog.date.Date} date The date to check, if its in the future.
+ * @param {!goog.date.DateTime} date The date to check, if its in the future.
  * @return {boolean} Wether the specified date is in the future.
  */
 pn.date.isFuture = function(date) {
@@ -76,7 +79,7 @@ pn.date.isFuture = function(date) {
 
 
 /**
- * @param {!goog.date.Date} date The date to check, if its in the past.
+ * @param {!goog.date.DateTime} date The date to check, if its in the past.
  * @return {boolean} Wether the specified date is in the past.
  */
 pn.date.isPast = function(date) {
@@ -90,10 +93,10 @@ pn.date.isPast = function(date) {
 
 /**
  * @param {number} millis The number of milliseconds from 1970.
- * @return {goog.date.Date} The goog.Date from the specified millis.
+ * @return {goog.date.DateTime} The goog.Date from the specified millis.
  */
 pn.date.fromMillis = function(millis) {
-  var date = new goog.date.Date();
+  var date = new goog.date.DateTime();
   date.setTime(millis);
   return date.getYear() <= 1753 ? null : date;
 };
@@ -101,10 +104,10 @@ pn.date.fromMillis = function(millis) {
 
 /**
  * @param {Date} d The JS Date object.
- * @return {!goog.date.Date} The goog.Date from the specified Date.
+ * @return {!goog.date.DateTime} The goog.Date from the specified Date.
  */
 pn.date.fromDate = function(d) {
-  var date = new goog.date.Date();
+  var date = new goog.date.DateTime();
   date.setTime(d.getTime());
   return date;
 };
