@@ -167,35 +167,35 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   }
 
   if (!this.renderer) {
-    this.renderer = this.getDefaultRenderer_();
+    this.renderer = this.getDefaultRenderer();
     goog.asserts.assert(this.renderer);
   }
 };
 
 
 /**
- * @private
+ * @param {boolean=} opt_readonly Wether to force the genration of a readonly
+ *    renderer.
  * @return {pn.ui.edit.FieldSpec.Renderer} The inferred renderer for this field.
  */
-pn.ui.edit.FieldSpec.prototype.getDefaultRenderer_ = function() {
-  goog.asserts.assert(!this.renderer);
-
+pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
   var schema = this.entitySpec.type.getFieldSchema(this.id);
   var schemaType = schema ? schema.type : '';
   if (schemaType === 'string' && schema.length >
       pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
     schemaType = 'LongString';
   }
+  var readonly = opt_readonly || this.readonly;
   if (pn.data.EntityUtils.isParentProperty(this.dataProperty) &&
       !this.tableType) {
-    return this.readonly ?
+    return readonly ?
         pn.ui.edit.ReadOnlyFields.entityParentListField :
         pn.ui.edit.FieldRenderers.entityParentListField;
   } else if (this.tableType) {
-    return this.readonly ?
+    return readonly ?
         pn.ui.edit.ReadOnlyFields.itemList :
         pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
-  } else if (this.readonly) {
+  } else if (readonly) {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
     return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[schemaType] ||
         pn.ui.edit.ReadOnlyFields.textField;
