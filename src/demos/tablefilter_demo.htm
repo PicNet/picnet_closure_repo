@@ -19,12 +19,12 @@
                 '<td></td>' +
                 '</tr>');
               $('#demotable1 tbody').append(tr);
-            }
+          }
 
           for (var i = 0; i < 50; i++) {
             var tr = $('<tr><td>Value(2) ' + Math.floor(Math.random() * 500) + '</td></tr>');
             $('#demotable2 tbody').append(tr);
-          }
+        }
 
           // Initialise Plugin
             var options1 = {
@@ -33,7 +33,7 @@
                 matchingRow: function(state, tr, textTokens) {
                   if (!state || !state.id) {
                     return true;
-                  }
+                }
                   var child = tr.children('td:eq(2)');
                   if (!child) return true;
                   var val = child.text();
@@ -44,9 +44,9 @@
                     return state.value !== true || val === 'no';
                   default:
                     return true;
-                  }
                 }
-            };
+              }
+          };
 
             $('#demotable1').tableFilter(options1);
       
@@ -55,43 +55,43 @@
         
            filteringRows: function(filterStates) {
                 grid2.addClass('filtering');
-              },
+            },
               filteredRows: function(filterStates) {
                 grid2.removeClass('filtering');
                 setRowCountOnGrid2();
-              }
-            };      
+            }
+          };      
      
             function setRowCountOnGrid2() {
               var rowcount = grid2.find('tbody tr:not(:hidden)').length;
               $('#rowcount').text('(Rows ' + rowcount + ')');
-            }
+          }
 
             grid2.tableFilter(options2); // No additional filters      
             setRowCountOnGrid2();
-        });
+      });
     </script>
 <style type='text/css'>
 body {
 
-  }
+}
 h3 {
   font-size:1em;
-  }
+}
 .wrapper {
   width:640px;
   margin:0 auto;
-  }
+}
 .header {
   width:640px;
   margin-bottom:20px;
   padding-bottom:10px;
   border-bottom:1px solid #ddd;
-  }
+}
 .content {
   font-size:8pt;
   clear:both;
-  }
+}
 .header,
 .picnet_logo, 
 .instructions,
@@ -100,7 +100,7 @@ h3 {
   display:inline;
   position:relative;
   float:left;
-  }
+}
 
 table,
 td,
@@ -109,23 +109,23 @@ th {
   color:#666;
   padding:5px;
   font-size:8pt;
-  }
+}
 table {
   border-collapse:collapse;
-  }
+}
 table tr {
   background-color:#eee;
-  }
+}
 
 table td, table th{
     border:1px solid #fff;}
 .column1 {
   width:480px
-  }
+}
 .column2{
   width:100px;
   margin-left:60px;
-  }
+}
 table#demotable2 {
   width:100px;
 }
@@ -133,41 +133,41 @@ th {
   background-color:#333;
   color:#fff;
   font-size:0.85em
-  }
+}
 a {
   color:#0079c1;
   text-decoration:none;
-  }  
+}  
 a:hover {
   text-decoration:underline;
-  }
+}
 .filtering {
-  background-color:light-gray
-  }
+  background-color:lightgray;
+}
 #jqtf_filters {
   list-style:none;  
-  }
+}
 #jqtf_filters li {
   display:inline-block; 
   position:relative; 
   float:left;
   margin-bottom:20px
-  }
+}
 #quickfind {
   width:480px;
   border:1px solid #ccc;
-  }
+}
 .clear {
   clear:both
-  }
+}
 hr {
   margin-top:20px;
   border:1px dotted #eee;
   width:640px;
-  }
+}
 #cleanfilters {
   margin-left:20px;
-  }
+}
   
 </style>
 </head>
