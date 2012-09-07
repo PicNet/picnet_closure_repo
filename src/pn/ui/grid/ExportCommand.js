@@ -25,6 +25,16 @@ pn.ui.grid.ExportCommand = function() {
   this.eventType = pn.app.AppEvents.LIST_EXPORT;
 
   /**
+   * @type {boolean}
+   */
+  this.visibleOnEmpty = false;
+
+  /**
+   * @type {boolean}
+   */
+  this.visibleOnReadOnly = true;
+
+  /**
    * @private
    * @type {Element}
    */

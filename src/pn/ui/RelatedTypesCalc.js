@@ -104,10 +104,10 @@ pn.ui.RelatedTypesCalc.addAllTypes_ = function(arr, type, prop) {
 
   var target = /** @type {?pn.data.Type} */ (type);
   var steps = prop ? prop.split('.') : [];
-  while (!!prop && !!type) {
+  while (!!prop && !!target) {
     prop = steps.shift();
     if (prop && pn.data.EntityUtils.isRelationshipProperty(prop)) {
-      target = pn.data.EntityUtils.getTypeProperty(type, prop);
+      target = pn.data.EntityUtils.getTypeProperty(target, prop);
     }
     if (target) {
       goog.asserts.assert(goog.isFunction(target));

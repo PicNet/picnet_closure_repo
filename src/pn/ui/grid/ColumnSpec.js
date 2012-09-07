@@ -113,8 +113,13 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
 pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
   goog.asserts.assert(!this.renderer);
 
-  var schema = this.entitySpec.type.getFieldSchema(this.id);
-  var schemaType = schema ? schema.type : '';
+  var schemaType;
+  if (this.id.indexOf('.') > 0) {
+    schemaType = 'parent';
+  } else {
+    var schema = this.entitySpec.type.getFieldSchema(this.id);
+    schemaType = schema ? schema.type : '';
+  }
   return pn.app.ctx.cfg.defaultColumnRenderers[schemaType];
 };
 

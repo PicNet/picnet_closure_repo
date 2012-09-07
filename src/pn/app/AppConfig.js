@@ -105,6 +105,9 @@ pn.app.AppConfig = function(opt_opts) {
     'number': fr.intRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'parent': fr.entityParentListField,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'LongString': fr.textAreaRenderer,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
@@ -126,6 +129,9 @@ pn.app.AppConfig = function(opt_opts) {
     'number': rr.intField,
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
+    'parent': rr.entityParentListField,
+
+    /** @type {pn.ui.edit.FieldSpec.Renderer} */
     'Enumeration': rr.enumField
   };
 
@@ -137,6 +143,9 @@ pn.app.AppConfig = function(opt_opts) {
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'goog.date.DateTime': cr.dateRenderer,
+
+    /** @type {pn.ui.grid.ColumnSpec.Renderer} */
+    'parent': cr.parentColumnRenderer,
 
     /** @type {pn.ui.grid.ColumnSpec.Renderer} */
     'Enumeration': cr.enumRenderer

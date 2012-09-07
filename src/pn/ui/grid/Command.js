@@ -22,6 +22,21 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
   goog.ui.Component.call(this);
 
   /**
+   * @type {string}
+   */
+  this.eventType = eventType;
+
+  /**
+   * @type {boolean}
+   */
+  this.visibleOnEmpty = true;
+
+  /**
+   * @type {boolean}
+   */
+  this.visibleOnReadOnly = false;
+
+  /**
    * @private
    * @type {string}
    */
@@ -32,11 +47,6 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
    * @type {string}
    */
   this.tooltip_ = opt_tooltip || name;
-
-  /**
-   * @type {string}
-   */
-  this.eventType = eventType;
 
   /**
    * @private

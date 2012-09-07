@@ -1,4 +1,4 @@
-
+- grid.Command / grid.ExportCommand hierarchy (or lack there of) is really ugly.
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 
