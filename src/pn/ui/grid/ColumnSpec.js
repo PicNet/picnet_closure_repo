@@ -125,12 +125,12 @@ pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
 
 
 /**
- * @return {pn.ui.grid.ColumnSpec} A SlickGrid compative object even when in
+ * @return {!Object} A SlickGrid compative object even when in
  *    COMPILE mode.
  */
 pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   // Need to copy twice as we need this to also work in compiled mode.
-  var col = /** @type {pn.ui.grid.ColumnSpec} */ ({
+  return {
     'id': this.id,
     'dataColumn': this.dataProperty,
     'field': this.id,
@@ -144,23 +144,11 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
     'headerCssClass': this.headerCssClass,
     'cssClass': this.cssClass,
     'behavior': this.behavior,
-    'source': this.displayPath
-  });
-  col.id = this.id;
-  col.dataColumn = this.dataProperty;
-  col.field = this.id;
-  col.name = this.name;
-  col.tooltip = this.tooltip;
-  col.resizable = this.resizable;
-  col.sortable = this.sortable;
-  col.minWidth = this.minWidth;
-  col.width = this.width;
-  col.rerenderOnResize = this.rerenderOnResize;
-  col.headerCssClass = this.headerCssClass;
-  col.cssClass = this.cssClass;
-  col.behavior = this.behavior;
-  col.source = this.displayPath;
-  return col;
+    'source': this.displayPath,
+    'formatter': this.renderer ? goog.bind(function(row, cell, value, col, item) {
+      return this.renderer(item);
+    }, this) : null    
+  };
 };
 
 

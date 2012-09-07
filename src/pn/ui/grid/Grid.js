@@ -189,7 +189,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   this.registerDisposable(this.dataView_);
 
   var columns = goog.array.map(this.cfg_.cCtxs,
-      function(cctx) { return cctx.toSlick(); });
+      function(cctx) { return cctx.spec.toSlick(); });
   this.slick_ = new Slick.Grid(
       gridContainer, this.dataView_, columns, this.cfg_.toSlick());
 };
