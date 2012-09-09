@@ -4,6 +4,8 @@ goog.provide('pn.ui.edit.DecimalRenderer');
 
 
 /**
+ * TODO: Need to refactor out the parseFloats out of this class.  Perhaps use
+ *    pn.convert cents functions.
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
  */
