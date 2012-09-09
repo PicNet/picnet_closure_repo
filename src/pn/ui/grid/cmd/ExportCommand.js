@@ -8,21 +8,16 @@ goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.Option');
 goog.require('goog.ui.Select');
 
-goog.provide('pn.ui.grid.ExportCommand');
+goog.provide('pn.ui.grid.cmd.ExportCommand');
 
 
 
 /**
  * @constructor
- * @extends {goog.ui.Component}
+ * @extends {pn.ui.grid.cmd.Command}
  */
-pn.ui.grid.ExportCommand = function() {
-  goog.ui.Component.call(this);
-
-  /**
-   * @type {string}
-   */
-  this.eventType = pn.app.AppEvents.LIST_EXPORT;
+pn.ui.grid.cmd.ExportCommand = function() {
+  pn.ui.grid.cmd.Command.call(this, 'Export', pn.app.AppEvents.LIST_EXPORT);
 
   /**
    * @type {boolean}
@@ -40,17 +35,17 @@ pn.ui.grid.ExportCommand = function() {
    */
   this.select_ = null;
 };
-goog.inherits(pn.ui.grid.ExportCommand, goog.ui.Component);
+goog.inherits(pn.ui.grid.cmd.ExportCommand, pn.ui.grid.cmd.Command);
 
 
 /** @override */
-pn.ui.grid.ExportCommand.prototype.createDom = function() {
+pn.ui.grid.cmd.ExportCommand.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /** @override */
-pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
+pn.ui.grid.cmd.ExportCommand.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.select_ = goog.dom.createDom('select', 'export-select',
       goog.dom.createDom('option', {'value': '0'}, 'Export Data...'),
@@ -64,7 +59,7 @@ pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
 
 
 /** @override */
-pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
+pn.ui.grid.cmd.ExportCommand.prototype.enterDocument = function() {
   var change = goog.events.EventType.CHANGE;
   this.getHandler().listen(this.select_, change, function() {
     var exportFormat = this.select_.value;
@@ -85,7 +80,7 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
  *    exporting the grid contents.
  */
-pn.ui.grid.ExportCommand.getGridData = function(cctxs, headers, view) {
+pn.ui.grid.cmd.ExportCommand.getGridData = function(cctxs, headers, view) {
   var gridData = [headers];
   var lencol = headers.length;
   for (var row = 0, len = view.getLength(); row < len; row++) {

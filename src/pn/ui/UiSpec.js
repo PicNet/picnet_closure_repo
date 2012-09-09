@@ -8,9 +8,9 @@ goog.require('pn.data.TypeRegister');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.ColumnSpec');
-goog.require('pn.ui.grid.Command');
+goog.require('pn.ui.grid.cmd.Command');
 goog.require('pn.ui.grid.Config');
-goog.require('pn.ui.grid.ExportCommand');
+goog.require('pn.ui.grid.cmd.ExportCommand');
 goog.require('pn.ui.srch.Config');
 
 

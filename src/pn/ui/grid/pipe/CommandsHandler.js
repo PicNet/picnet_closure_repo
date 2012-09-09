@@ -46,7 +46,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCustomEvent =
 
 /**
  * @private
- * @param {pn.ui.grid.Command} cmd The command to listen to.
+ * @param {pn.ui.grid.cmd.Command} cmd The command to listen to.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
   goog.asserts.assert(cmd);
@@ -87,7 +87,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
     case ae.LIST_EXPORT:
       var cols = this.cctxs;
       var hdrs = goog.array.map(cols, function(c) { return c.spec.name; });
-      var data = pn.ui.grid.ExportCommand.getGridData(cols, hdrs, this.view);
+      var data = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
       pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, data);
       break;
     default: throw new Error('Event: ' + e.type + ' is not supported');

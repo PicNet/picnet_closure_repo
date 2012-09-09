@@ -1,6 +1,7 @@
 ﻿;
-goog.provide('pn.ui.grid.Command');
+goog.provide('pn.ui.grid.cmd.Command');
 
+goog.require('pn.ui.grid.cmd.ICommand');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
@@ -11,11 +12,12 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
+ * @implements {pn.ui.grid.cmd.ICommand}
  * @param {string} name The name/caption of this column.
  * @param {string} eventType The event to fire on the component action.
  * @param {string=} opt_tooltip The optional tooltip for this command.
  */
-pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
+pn.ui.grid.cmd.Command = function(name, eventType, opt_tooltip) {
   goog.asserts.assert(name);
   goog.asserts.assert(eventType);
 
@@ -54,17 +56,17 @@ pn.ui.grid.Command = function(name, eventType, opt_tooltip) {
    */
   this.commandElement_ = null;
 };
-goog.inherits(pn.ui.grid.Command, goog.ui.Component);
+goog.inherits(pn.ui.grid.cmd.Command, goog.ui.Component);
 
 
 /** @override */
-pn.ui.grid.Command.prototype.createDom = function() {
+pn.ui.grid.cmd.Command.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /** @override */
-pn.ui.grid.Command.prototype.decorateInternal = function(element) {
+pn.ui.grid.cmd.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.commandElement_ = new goog.ui.Button(this.name_);
   this.registerDisposable(this.commandElement_);
@@ -77,7 +79,7 @@ pn.ui.grid.Command.prototype.decorateInternal = function(element) {
 
 
 /** @override */
-pn.ui.grid.Command.prototype.enterDocument = function() {
+pn.ui.grid.cmd.Command.prototype.enterDocument = function() {
   var action = goog.ui.Component.EventType.ACTION;
   this.getHandler().listen(this.commandElement_, action, function() {
     this.dispatchEvent(new goog.events.Event(this.eventType, this));
