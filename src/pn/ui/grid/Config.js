@@ -11,8 +11,8 @@ goog.require('pn.ui.grid.Interceptor');
  * @extends {goog.Disposable}
  * @param {!Array.<pn.ui.grid.ColumnCtx>} cCtxs The specification of all the
  *    columns to display in this grid.
- * @param {!Array.<pn.ui.grid.cmd.Command>} commands All the commands supported by
- *    this grid.
+ * @param {!Array.<pn.ui.grid.cmd.Command>} commands All the commands
+ *    supported by this grid.
  * @param {function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)=}
  *    opt_interceptor An optional interceptor ctor to use to modify the
  *    internal workings of the grid.

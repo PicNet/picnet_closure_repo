@@ -1,11 +1,11 @@
 ﻿;
 goog.provide('pn.ui.grid.cmd.Command');
 
-goog.require('pn.ui.grid.cmd.ICommand');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
+goog.require('pn.ui.grid.cmd.ICommand');
 
 
 
