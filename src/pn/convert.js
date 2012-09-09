@@ -26,7 +26,9 @@ pn.convert.currencyToCents = function(currency) {
   if (goog.isNumber(currency)) return /** @type {number} */ (currency);
 
   if (currency.indexOf('$') === 0) currency = currency.substring(1);
-  var cents = parseInt(parseFloat(currency) * 100, 10);
+  var dollarsAndCents = currency.split('.');
+  var cents = parseInt(dollarsAndCents[0], 10) * 100;
+  if (dollarsAndCents.length > 1) cents += parseInt(dollarsAndCents[1], 10);
   return cents;
 };
 
