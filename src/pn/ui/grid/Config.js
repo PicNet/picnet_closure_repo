@@ -99,18 +99,26 @@ pn.ui.grid.Config.prototype.init_ = function() {
 
 
 /**
- * @return {!Object} A SlickGrid compative object even when
+ * @return {pn.ui.grid.Config} A SlickGrid compative object even when
  *    in COMPILE mode.
  */
 pn.ui.grid.Config.prototype.toSlick = function() {
-  return {
+  // Need to copy twice as we need this to also work in compiled mode.
+  var cfg = /** @type {pn.ui.grid.Config} */ ({
     'enableColumnReorder': this.enableColumnReorder,
     'forceFitColumns': this.forceFitColumns,
     'multiSelect': this.multiSelect,
     'editable': this.editable,
     'showHeaderRow': this.enableQuickFilters,
     'syncColumnCellResize': this.syncColumnCellResize
-  };
+  });
+  cfg.enableColumnReorder = this.enableColumnReorder;
+  cfg.forceFitColumns = this.forceFitColumns;
+  cfg.multiSelect = this.multiSelect;
+  cfg.editable = this.editable;
+  cfg.showHeaderRow = this.enableQuickFilters;
+  cfg.syncColumnCellResize = this.syncColumnCellResize;
+  return cfg;
 };
 
 
