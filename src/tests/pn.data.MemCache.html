@@ -36,7 +36,7 @@ var data = [1, 2, 3],
 var setUp = function()
 {
   dataRequests = [];
-  setInterval = function(cb) { checkForExpiredClosure = cb;};
+  window.setInterval = function(cb) { checkForExpiredClosure = cb;};
   cache = new pn.data.MemCache(cacheTimeoutMinutes, dataRequiredRef);      
   clock = new goog.testing.MockClock();
 };
@@ -79,50 +79,30 @@ var test_updateList_updates_the_list = function() {
   assertEquals(data2, cache.cache_[type]);    
 };
 
-var test_getCachedLists_returns_expected_object = function() {
+var test_getLists_returns_expected_object = function() {
   var data2 = [4, 5, 6];
   var type2 = type + '2';
   cache.updateList(type, data);
-  cache.updateList(type2, data2);  
-  asyncTestCase.waitForAsync();
+  cache.updateList(type2, data2);    
 
-  cache.getCachedLists([type, type2], function(result) {
-    asyncTestCase.continueTesting();
-    assertTrue(goog.array.equals(data, result[type]));
-    assertTrue(goog.array.equals(data2, result[type2]));
-  });
+  var result = cache.getLists([type, type2]);
+  assertTrue(goog.array.equals(data, result[type]));
+  assertTrue(goog.array.equals(data2, result[type2]));  
 };
 
-var test_getCachedLists_hits_the_data_loader_appropriatelly = function() {
+var test_getLists_hits_the_data_loader_appropriatelly = function() {
   var data2 = [4, 5, 6];
-  var data3 = [7, 8, 9];
   var type2 = type + '2';
   var type3 = type + '3';
 
   cache.updateList(type, data);
   cache.updateList(type2, data2);  
-
-  dataRequiredImpl = function(types, cb) {
-    assertTrue(goog.array.equals([type3], types));
-
-    var loaded = {};
-    loaded[type3] = data3;
-    cb(loaded);
-  };  
-
-  cache.getCachedLists([type, type2, type3], function(result) {    
-    asyncTestCase.continueTesting();
-
-    assertTrue(goog.array.equals(data, result[type]));
-    assertTrue(goog.array.equals(data2, result[type2]));
-    assertTrue(goog.array.equals(data3, result[type3]));
-  });
+  
+  var result = cache.getLists([type, type2, type3]);
+  assertTrue(goog.array.equals(data, result[type]));
+  assertTrue(goog.array.equals(data2, result[type2]));
+  assertUndefined(result[type3]);
 };
-
-
-
-var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
-asyncTestCase.stepTimeout = 10000;
         </script>
     </body>
 </html>

@@ -27,30 +27,6 @@ pn.demo.app1.App1Demo = function() {
 goog.inherits(pn.demo.app1.App1Demo, pn.app.BaseApp);
 goog.exportSymbol('pn.demo.app1.App1Demo', pn.demo.app1.App1Demo);
 
-/**
- * @override
- * @suppress{visibility} 
- */
-pn.demo.app1.App1Demo.prototype.loadSchema_ = function(schemaLoaded) {
-  goog.Timer.callOnce(function() { 
-    schemaLoaded([
-      {
-        'name': 'User',
-        'fields': [
-          { 'name': 'ID', 'type': 'Int64' },
-          { 'name': 'FirstName', 'type': 'String', 'length': 50 },
-          { 'name': 'LastName', 'type': 'String', 'length': 50 },
-          { 'name': 'Phone', 'type': 'String', 'length': 50 },
-          { 'name': 'DateOfBirth', 'type': 'DateTime' }
-        ]
-      }
-    ]);
-  }, 1, this);
-};
-
-/** @override */
-pn.demo.app1.App1Demo.prototype.validateSecurity = function(type) {};
-
 /** @override */
 pn.demo.app1.App1Demo.prototype.getUiSpecs = function() {
   return {

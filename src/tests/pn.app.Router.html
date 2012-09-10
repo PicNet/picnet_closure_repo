@@ -6,10 +6,9 @@
     <script src="../deps.js"></script>
     <script>
 goog.require('goog.testing.jsunit');
+goog.require('pn.app.Router');
     </script>
     <script>
-goog.require('pn.app.Router');
-
 var startUri = document.location.href.split('#')[0];
 var router;
 var actions = [];
@@ -18,34 +17,29 @@ var getAction = function(name) {
   return function() { actions.push(name); };
 };
 
-var setUpPage = function() {  
-};
+var setUp = function() {  actions = []; };
 
-var setUp = function() {  
-  var actions = [];
-};
-
-var tearDown = function() {
-  goog.dispose(router);
-};
+var tearDown = function() { goog.dispose(router); };
 
 var testDefaultRouteIsSetOnCreation = function () {      
-  router = new pn.app.Router({'default': getAction('default')}, 'default', true);
+  router = new pn.app.Router('default', 'all_tests.html');
+  router.initialise({'default': getAction('default')});
   assertRoute('default');  
 };
 
 var testInvalidDefaultRouteThrowsError = function() {
   try { 
-    router = new pn.app.Router({'default':getAction('default')}, 'non-existing', true);  
+    router = new pn.app.Router({'default':getAction('default')}, 'non-existing', 'all_tests.html');  
     assertFail('Should have failed as "non-existing" is not in the routes map');
   } catch (ex) {}  
 };
 
 var testSwitchingBetween2ValidRoutes = function() {
-  router = new pn.app.Router({
+  router = new pn.app.Router('route1', 'all_tests.html');  
+  router.initialise({
     'route1': getAction('route1'),
     'route2': getAction('route2')
-  }, 'route1', true);  
+  });
   assertRoute('route1');
     
   router.navigate('route2');
@@ -56,10 +50,11 @@ var testSwitchingBetween2ValidRoutes = function() {
 };
 
 var testSwitchingToAnInvalidRoute = function() {
-  router = new pn.app.Router({
+  router = new pn.app.Router('route1', 'all_tests.html');    
+  router.initialise({
     'route1': getAction('route1'),
     'route2': getAction('route2')
-  }, 'route1', true);    
+  });
     
   try { 
     router.navigate('invalid-route');

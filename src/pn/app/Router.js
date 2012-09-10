@@ -54,7 +54,8 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    * @type {!goog.History}
    */
   this.history_ = new goog.History(opt_invisible,
-      opt_invisible ? 'blank.htm' : '');
+      opt_invisible ? (goog.isString(opt_invisible) 
+          ? opt_invisible : 'blank.htm') : '');
   this.registerDisposable(this.history_);
 };
 goog.inherits(pn.app.Router, goog.events.EventTarget);

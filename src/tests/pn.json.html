@@ -13,20 +13,22 @@ var setUp = function() {};
 
 var testSimpleJSONSerialise = function () {    
   if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
-  var simpleObject = {'stringval':'stringvalue','numberval':10.1,'boolval':true,'objval':{'str':'string'}};
+  var obj = { stringval:'stringvalue', numberval:10.1, boolval:true, objval :{ str: 'string'}};
 
-  var jsonstr1 = JSON.stringify(simpleObject);
-  var jsonstr2 = pn.Utils.serialiseJson(simpleObject);  
-  assertEquals(jsonstr1, jsonstr2);
+  var exp = JSON.stringify(obj);
+  var actual = pn.json.serialiseJson(obj);  
+  assertEquals(exp, actual);
 };
 
-var testComplexJSONSerialise = function () {      
+var testDateParsingUsesEpochMillis = function () {      
   if (typeof (JSON) === 'undefined' || window.navigator.userAgent.indexOf('MSIE') >= 0) return;
-  var complexObject = { 'stringval':'stringvalue','dateval': new Date() };
-
-  var jsonstr1 = JSON.stringify(complexObject);
-  var jsonstr2 = pn.json.serialiseJson(complexObject);  
-  assertEquals(jsonstr1, jsonstr2);
+  var obj = { stringval:'stringvalue', dateval: new Date() };
+  
+  var actual = pn.json.serialiseJson(obj);  
+  
+  obj.dateval = obj.dateval.getTime();
+  var exp = JSON.stringify(obj);
+  assertEquals(exp, actual);
 };
     </script>    
   </body>

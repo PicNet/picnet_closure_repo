@@ -43,7 +43,7 @@ pn.demo.app1.UserSpec.prototype.getEditConfig = function(entity, cache) {
 
 /**
  * @private
- * @param {!Object} entity The entity being saved.
+ * @param {Object} entity The entity being saved.
  */
 pn.demo.app1.UserSpec.prototype.save_ = function(entity) {
   var users = pn.app.ctx.users;

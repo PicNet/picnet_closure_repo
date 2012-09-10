@@ -31,12 +31,12 @@ var setUp = function() {
 
 var createObj = function(id) {
   id = id + (++counter);
-  return { 'ID': id, 'Name': 'Name Value', 'Num': 1,
-    'Date': new goog.date.DateTime(2000, 0, 1), 'ObjRef': {}, 
-    'ObjEquality': {
-      'Val': 1,
-      clone: function() { return {'Val' : this['Val']}; },
-      equals: function(other) { return this['Val'] == other['Val']; }
+  return { id: id, Name: 'Name Value', Num: 1,
+    Date: new goog.date.DateTime(2000, 0, 1), ObjRef: {}, 
+    ObjEquality: {
+      Val: 1,
+      clone: function() { return { Val : this.Val}; },
+      equals: function(other) { return this.Val == other.Val; }
     },
   };
 };
@@ -53,7 +53,7 @@ var tearDown = function() {
 
 var test_collection_change_event_on_basic_changes_on_all_indexes_of_arr = function () {        
   var idxTest = function(idx) {    
-    arr[idx]['Name'] = 'New Name';    
+    arr[idx].Name = 'New Name';    
     checkForChanges_();  
     assertEquals(1, changes.length);
     var change = changes[0];

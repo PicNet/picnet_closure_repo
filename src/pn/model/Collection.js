@@ -45,7 +45,6 @@ pn.model.Collection.prototype.getChanges = function() {
   for (var i = 0, len = this.src_.length; i < len; i++) {
     var now = this.src_[i];
     if (!goog.isDef(now)) continue;
-
     var key = now.id.toString();
     var lastmodel = map[key];
     var mchanges = lastmodel ? lastmodel.getChanges() : null;

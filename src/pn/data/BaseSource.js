@@ -51,5 +51,8 @@ pn.data.BaseSource.parseEntities = function(type, data) {
 pn.data.BaseSource.parseEntity = function(type, data) {
   goog.asserts.assert(goog.isFunction(type), 'type is not a ctor');
   if (!goog.isObject(data)) return data;
-  return new type(data);
+  // pn.data.Type is really just a reference to an Entity constructory so ok
+  // to do this cast here.
+  var ctor = /** @type {function(new:pn.data.Entity, !Object)} */ (type);
+  return new ctor(data);
 };

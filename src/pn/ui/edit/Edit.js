@@ -148,13 +148,11 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       pn.ui.edit.EditUtils.showElement(parentComp, fctx.controlId, false);
       return;
     }
-    var renderer = fctx.spec.renderer;
-    if (!templateParent &&
-            (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
-                renderer.showLabel !== false)) {
-      parentComp = fb.getFieldLabel(fctx);
-      goog.dom.appendChild(fieldset, parentComp);
+
+    if (!templateParent) {
+      goog.dom.appendChild(fieldset, parentComp = fb.getFieldContainer(fctx));
     }
+
     var input = fb.createAndAttach(fctx, parentComp, this.entity);
     // TODO: This code should not be here, perhaps in FildCtx?
     // If this is a private '_' field, like an attachment control and we
@@ -163,8 +161,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
       this.entity[fctx.id] = input.getValue();
     }
-    this.registerDisposable(input);
-    this.registerDisposable(parentComp);
     this.controls_[fctx.id] = input;
   }, this);
   this.autoFocus_();

@@ -14,11 +14,17 @@ goog.require('pn.ui.grid.Grid');
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a label for.
  * @return {!Element} The label element wrapped in a div.
  */
-pn.ui.edit.FieldBuilder.getFieldLabel = function(fctx) {
+pn.ui.edit.FieldBuilder.getFieldContainer = function(fctx) {
   var className = (fctx.spec.className || 'field');
   var id = fctx.controlId;
-  return goog.dom.createDom('div', {'id': id, 'class': className},
-      goog.dom.createDom('label', { 'for': id }, fctx.spec.name || id));
+  var container = goog.dom.createDom('div', {'id': id, 'class': className});
+  var renderer = fctx.spec.renderer;
+  if (!(renderer instanceof pn.ui.edit.ComplexRenderer) ||
+      renderer.showLabel !== false) {
+    var lbl = goog.dom.createDom('label', { 'for': id }, fctx.spec.name || id);
+    goog.dom.appendChild(container, lbl);
+  }
+  return container;
 };
 
 

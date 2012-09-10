@@ -1,3 +1,7 @@
+REM set BASE=../../../../projects/picnet_closure_repo/src/
+set BASE=../../../../rr/resources/scripts/lib/picnet_closure_repo/src/
+
+U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^
   --shouldGenerateJsdoc ^
   --shouldProvideRequireSoyNamespaces ^
@@ -5,7 +9,7 @@ java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^
   src\pn\ui\soy\pn.soy && ^
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\depswriter.py ^
-  --root_with_prefix="src\ ../../../../projects/picnet_closure_repo/src/" ^
+  --root_with_prefix="src\ %BASE%" ^
   --root_with_prefix="U:\shared\lib\closure-templates ../../../../../../../shared/closure-templates/" ^
   --output_file=src\deps.js && ^
 c:\Python27\python.exe ^
@@ -18,6 +22,7 @@ c:\Python27\python.exe ^
   --compiler_jar=U:\shared\lib\picnetcompiler.jar ^
   --compiler_flags="--externs=src\pn\rx.externs.js" ^
   --compiler_flags="--externs=src\pn\slick.grid.externs.js" ^
+  --compiler_flags="--externs=U:\shared\lib\closure-compiler-src\contrib\externs\jquery-1.6.js" ^
   --compiler_flags="--debug=true" ^
   --compiler_flags="--process_closure_primitives=true" ^
   --compiler_flags="--warning_level=VERBOSE" ^

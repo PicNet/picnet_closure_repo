@@ -2,7 +2,7 @@
 goog.provide('pn.ui.DateRangePicker');
 
 goog.require('goog.array');
-goog.require('goog.date.DateTime');
+goog.require('goog.date.Date');
 goog.require('goog.dom');
 goog.require('goog.dom.DomHelper');
 goog.require('goog.events.Event');
@@ -283,7 +283,7 @@ pn.ui.DateRangePicker.prototype.setShowFromAndToLabels =
 
 
 /**
- * @return {goog.date.DateTime} The selected date range start.
+ * @return {goog.date.Date} The selected date range start.
  */
 pn.ui.DateRangePicker.prototype.getDateRangeFrom = function() {
   return this.datePickerFrom_.getDate();
@@ -291,7 +291,7 @@ pn.ui.DateRangePicker.prototype.getDateRangeFrom = function() {
 
 
 /**
- * @return {goog.date.DateTime} The selected date range end.
+ * @return {goog.date.Date} The selected date range end.
  */
 pn.ui.DateRangePicker.prototype.getDateRangeTo = function() {
   return this.datePickerTo_.getDate();
@@ -300,8 +300,8 @@ pn.ui.DateRangePicker.prototype.getDateRangeTo = function() {
 
 /**
  * Sets the selected date range.
- * @param {goog.date.DateTime|Date} from The date range from date to select.
- * @param {goog.date.DateTime|Date} to The date range to date to select.
+ * @param {goog.date.Date|Date} from The date range from date to select.
+ * @param {goog.date.Date|Date} to The date range to date to select.
  */
 pn.ui.DateRangePicker.prototype.setDateRange = function(from, to) {
   this.datePickerFrom_.setDate(from);
@@ -402,9 +402,9 @@ pn.ui.DateRangePicker.prototype.onDateChanged_ = function(event) {
 
 /**
  * @private
- * @param {goog.date.DateTime} from The from date (start of the range). Can
+ * @param {goog.date.Date} from The from date (start of the range). Can
  *    be null.
- * @param {goog.date.DateTime} to The to date (end of the range). Can be null.
+ * @param {goog.date.Date} to The to date (end of the range). Can be null.
  */
 pn.ui.DateRangePicker.prototype.setLabelText_ = function(from, to) {
   var tos, froms;
@@ -425,9 +425,9 @@ pn.ui.DateRangePicker.prototype.setLabelText_ = function(from, to) {
 
 /**
  * @private
- * @param {goog.date.DateTime} from The from date (start of the range). Can
+ * @param {goog.date.Date} from The from date (start of the range). Can
  *    be null.
- * @param {goog.date.DateTime} to The to date (end of the range). Can be null.
+ * @param {goog.date.Date} to The to date (end of the range). Can be null.
  */
 pn.ui.DateRangePicker.prototype.highlightDateRange_ = function(from, to) {
   this.highlightDateRangeImpl_(from, to, this.datePickerFrom_);
@@ -437,9 +437,9 @@ pn.ui.DateRangePicker.prototype.highlightDateRange_ = function(from, to) {
 
 /**
  * @private
- * @param {goog.date.DateTime} from The from date (start of the range). Can
+ * @param {goog.date.Date} from The from date (start of the range). Can
  *    be null.
- * @param {goog.date.DateTime} to The to date (end of the range). Can be null.
+ * @param {goog.date.Date} to The to date (end of the range). Can be null.
  * @param {goog.ui.DatePicker} picker the DatePicker to highlight dates in.
  */
 pn.ui.DateRangePicker.prototype.highlightDateRangeImpl_ = function(from, to,

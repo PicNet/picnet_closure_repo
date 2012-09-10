@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.data.EntityUtils');
 
+goog.require('pn.data.Type');
 
 /**
  * @param {Object} entity The entity to check for newness.
@@ -136,7 +137,7 @@ pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.getTypeProperty = function(type, property) {
-  return type.getFieldSchema(property).entityType;
+  return /** @type {pn.data.Type} */ type.getFieldSchema(property).entityType;
 };
 
 
@@ -153,7 +154,7 @@ pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
 
   if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
 
-  return type.getFieldSchema(property).entityType;
+  return /** @type {pn.data.Type} */ type.getFieldSchema(property).entityType;
 };
 
 
@@ -208,9 +209,9 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
   var namep = type.type + 'Name';
 
   var ordert = goog.isDef(template[orderp]) ?
-      type.getFieldSchema(orderp).entityType : null;
+      type.getFieldSchema(orderp).type : null;
   var namet = goog.isDef(template[namep]) ?
-      type.getFieldSchema(namep).entityType : null;
+      type.getFieldSchema(namep).type : null;
 
   if (ordert === 'number') {
     goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });
