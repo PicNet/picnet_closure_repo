@@ -8,20 +8,19 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!pn.ui.edit.FieldCtx} fctx The field context object.
  * @param {!Object} entity The entity being edited.
  */
-pn.ui.edit.ComplexRenderer = function(fctx, entity) {
-  goog.asserts.assert(fctx);
+pn.ui.edit.ComplexRenderer = function(entity) {
   goog.asserts.assert(entity);
 
   goog.ui.Component.call(this);
 
   /**
-   * @protected
-   * @type {!pn.ui.edit.FieldCtx}
+   * The field context.  This is set in UiSpec createField method.
+   *
+   * @type {pn.ui.edit.FieldCtx}
    */
-  this.fctx = fctx;
+  this.fctx = null;
 
   /**
    * @protected

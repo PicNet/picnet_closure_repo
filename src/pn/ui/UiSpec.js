@@ -126,6 +126,12 @@ pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
 pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
   var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, this);
   var fctx = new pn.ui.edit.FieldCtx(spec, cache);
+
+  // HACK: This is not nice, but complex renderers do really need the fctx.
+  if (spec.renderer instanceof pn.ui.edit.ComplexRenderer) {
+    spec.renderer.fctx = fctx;
+  }
+
   this.registerDisposable(fctx);
 
   return fctx;
