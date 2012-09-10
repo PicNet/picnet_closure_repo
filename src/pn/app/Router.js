@@ -15,8 +15,9 @@ goog.require('pn.log');
  * @extends {goog.events.EventTarget}
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
- * @param {boolean=} opt_invisible True to use hidden history states instead
- *    of the user-visible location hash.
+ * @param {(boolean|string)=} opt_invisible True to use hidden history 
+ *    states instead of the user-visible location hash.  This can also be a
+ *    string of the hidden iframe url.
  */
 pn.app.Router = function(opt_defaultRoute, opt_invisible) {
   goog.events.EventTarget.call(this);
@@ -53,8 +54,8 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    * @private
    * @type {!goog.History}
    */
-  this.history_ = new goog.History(opt_invisible,
-      opt_invisible ? (goog.isString(opt_invisible) 
+  this.history_ = new goog.History(!!opt_invisible,
+      !!opt_invisible ? (goog.isString(opt_invisible) 
           ? opt_invisible : 'blank.htm') : '');
   this.registerDisposable(this.history_);
 };

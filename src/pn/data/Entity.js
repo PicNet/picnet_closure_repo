@@ -27,25 +27,18 @@ pn.data.Entity = function(type, id) {
 
 
 
-/** 
- * pn.data.Type is not really an object, its a reference to the constructor of
- *    the specific entity type and can be called with 'new type(raw)'.
- *
- * @constructor 
- * @this {pn.data.Entity}
- * @param {!Object} raw The raw data object.
- */
-pn.data.Type = function(raw) {};
+/** @typedef {function (new:pn.data.Entity, !Object)} */
+pn.data.Type = {};
 
 /**
  * @expose
  * @type {string}
  */
-pn.data.Type.prototype.type = '';
+pn.data.Type.type = '';
 
 /**
  * @expose
  * @param {string} name The name of the field.
  * @return {pn.data.FieldSchema} The schema for the given field.
  */
-pn.data.Type.prototype.getFieldSchema = goog.abstractMethod;
+pn.data.Type.getFieldSchema = goog.abstractMethod;
