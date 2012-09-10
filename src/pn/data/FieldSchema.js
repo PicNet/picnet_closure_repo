@@ -32,7 +32,7 @@ pn.data.FieldSchema = function(name, type, entityType, allowNull, length) {
   this.type = type;
 
   /**
-   * The entity type of this field if this field is a relationship or the 
+   * The entity type of this field if this field is a relationship or the
    *    enumeration object.
    * @type {(pn.data.Type|Object.<number>)?}
    */

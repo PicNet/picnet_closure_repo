@@ -5,6 +5,7 @@ goog.provide('pn.data.Type');
 goog.require('pn.data.FieldSchema');
 
 
+
 /**
  * @constructor
  * @param {string} type The entity type.
@@ -26,15 +27,16 @@ pn.data.Entity = function(type, id) {
 };
 
 
-
 /** @typedef {function (new:pn.data.Entity, !Object)} */
 pn.data.Type = {};
+
 
 /**
  * @expose
  * @type {string}
  */
 pn.data.Type.type = '';
+
 
 /**
  * @expose

@@ -1,5 +1,4 @@
 - Demos are all broken
-- Tests are all broken
 
 - Use goog.expose to remove the need for the toSlick methods.
 - Sould ServerSource really offer a .ajax method for 
