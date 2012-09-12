@@ -45,8 +45,9 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.entitySpec = spec.entitySpec;
 
   /** @type {pn.data.FieldSchema} */
-  this.schema = goog.string.startsWith(this.id, '_') ?
-      null : this.entitySpec.type.getFieldSchema(this.id);
+  this.schema = goog.string.startsWith(this.id, '_') ||
+      this.id.indexOf('.') >= 0 ?
+          null : this.entitySpec.type.getFieldSchema(this.id);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);
 

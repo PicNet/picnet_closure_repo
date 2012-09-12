@@ -179,7 +179,8 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
  * @return {pn.ui.edit.FieldSpec.Renderer} The inferred renderer for this field.
  */
 pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
-  var schema = this.entitySpec.type.getFieldSchema(this.id);
+  var schema = this.id.indexOf('.') >= 0 ? null :
+      this.entitySpec.type.getFieldSchema(this.id);
   var schemaType = schema ? schema.type : '';
   if (schemaType === 'string' && schema.length >
       pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
