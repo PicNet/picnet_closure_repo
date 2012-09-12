@@ -1,6 +1,8 @@
 ﻿;
 goog.provide('pn.data.TypeRegister');
 
+goog.require('goog.asserts');
+
 
 /**
  * @private
