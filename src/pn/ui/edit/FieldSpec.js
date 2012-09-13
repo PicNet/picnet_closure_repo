@@ -218,6 +218,7 @@ pn.ui.edit.FieldSpec.Renderer;
 
 /**
  * @typedef
- *    {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.FieldCtx):string}
+ *    {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.FieldCtx,
+ *        !(Element|goog.ui.Component|Text)):string}
  */
 pn.ui.edit.FieldSpec.Validator;

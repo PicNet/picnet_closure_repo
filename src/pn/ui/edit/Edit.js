@@ -153,15 +153,16 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       goog.dom.appendChild(fieldset, parentComp = fb.getFieldContainer(fctx));
     }
 
-    var input = fb.createAndAttach(fctx, parentComp, this.entity);
+    var inp = fb.createAndAttach(fctx, parentComp, this.entity);
+    if (!inp) throw 'Field [' + fctx.id + '] renderer did not return a control';
     // TODO: This code should not be here, perhaps in FildCtx?
     // If this is a private '_' field, like an attachment control and we
     // are using a complex renderer, lets set the initial value on the
     // current entity so we can use this later for dirty comparison.
-    if (goog.string.startsWith(fctx.id, '_') && input.getValue) {
-      this.entity[fctx.id] = input.getValue();
+    if (goog.string.startsWith(fctx.id, '_') && inp.getValue) {
+      this.entity[fctx.id] = inp.getValue();
     }
-    this.controls_[fctx.id] = input;
+    this.controls_[fctx.id] = inp;
   }, this);
   this.autoFocus_();
 };

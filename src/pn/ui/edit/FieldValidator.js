@@ -25,9 +25,9 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
   if (fctx.spec.validator instanceof pn.ui.edit.ValidateInfo) {
     return arraytise(fctx.spec.validator.validateField(fctx, control), errors);
   }
-  var f =
-      /** @type {function(pn.ui.edit.FieldCtx):string} */ (fctx.spec.validator);
-  return arraytise(f(fctx), errors);
+  var f = /** @type {function(pn.ui.edit.FieldCtx,
+      !(Element|goog.ui.Component|Text)):string} */ (fctx.spec.validator);
+  return arraytise(f(fctx, control), errors);
 };
 
 
