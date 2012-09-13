@@ -73,15 +73,32 @@ pn.ui.UiSpec.prototype.getSearchConfig = goog.abstractMethod;
 
 
 /**
- * Gets a grid config with the specified width.  The grid config specifies
- *    details such as columns, commands and internal slick grid details.  This
- *    configuration object is used by any pn.ui.grid.Grid entity to display
- *    a grid of entities of this type.
+ * Gets the grid config.  The grid config specifies details such as columns,
+ *    commands and internal slick grid details.  This configuration object is
+ *    used by any pn.ui.grid.Grid entity to display a grid of entities of
+ *    this type.
  *
  * @param {!pn.data.BaseDalCache} cache The current cache context.
  * @return {!pn.ui.grid.Config} The grid configuration.
  */
 pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
+
+
+/**
+ * Gets the additional types required when displaying this edit control.
+ *
+ * @param {!pn.data.Entity} entity The entity being editted.
+ * @return {!Array.<pn.data.Type>} The additional types to load.
+ */
+pn.ui.UiSpec.prototype.getEditAdditionalTypes = function(entity) { return []; };
+
+
+/**
+ * Gets the additional types required when displaying this grid.
+ *
+ * @return {!Array.<pn.data.Type>} The additional types to load.
+ */
+pn.ui.UiSpec.prototype.getGridAdditionalTypes = function() { return []; };
 
 ////////////////////////////////////////////////////////////////////////////////
 // PUBLIC HELPERS

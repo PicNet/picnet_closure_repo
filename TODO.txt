@@ -4,7 +4,3 @@
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 - Make the authentication model pluggable (Forms/Windows)
-- RelatedTypesCalc creates a spec so that Application can create the spec again
-  with the correct cache, this spaghettiness is not right.  Consider adding
-  getAdditionalTypes method somewhere else (Static contect perhaps?) and not
-  requiring and instance of the spec to create the spec.
