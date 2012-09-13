@@ -228,8 +228,8 @@ pn.ui.filter.SearchEngine.prototype.normaliseTerm_ =
  * @return {!Array.<string>} The tokenised expression.
  */
 pn.ui.filter.SearchEngine.prototype.getTokensFromExpression_ = function(exp) {
-  exp = exp.replace('>= ', '>=').replace('> ', '>').replace('<= ', '<=').
-      replace('< ', '<').replace('!= ', '!=').replace('= ', '=');
+  exp = exp.replace(/>= /g, '>=').replace(/> /g, '>').replace(/<= /g, '<=').
+      replace(/< /g, '<').replace(/!= /g, '!=').replace(/= /g, '=');
   var regex = /([^"^\s]+)\s*|"([^"]+)"\s*/g;
   var matches = [];
   var match = null;
