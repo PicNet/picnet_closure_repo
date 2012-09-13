@@ -12,7 +12,7 @@ goog.provide('pn.ui.edit.FieldRenderers');
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!goog.ui.Component} The date control.
  */
 pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
@@ -37,7 +37,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The date control.
  */
 pn.ui.edit.FieldRenderers.timeRenderer = function(fctx, parent, entity) {
@@ -67,7 +67,7 @@ pn.ui.edit.FieldRenderers.timeRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The cents input control.
  */
 pn.ui.edit.FieldRenderers.centsRenderer = function(fctx, parent, entity) {
@@ -85,7 +85,7 @@ pn.ui.edit.FieldRenderers.centsRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The int input control.
  */
 pn.ui.edit.FieldRenderers.intRenderer = function(fctx, parent, entity) {
@@ -106,7 +106,7 @@ pn.ui.edit.FieldRenderers.intRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
@@ -120,7 +120,7 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
@@ -139,7 +139,7 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The input control.
  */
 pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
@@ -155,7 +155,7 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
@@ -172,7 +172,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The password control.
  */
 pn.ui.edit.FieldRenderers.passwordRenderer = function(fctx, parent, entity) {
@@ -188,7 +188,7 @@ pn.ui.edit.FieldRenderers.passwordRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
@@ -205,7 +205,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The select control.
  */
 pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
@@ -226,7 +226,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
@@ -246,7 +246,7 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @param {function(!Object,!Array.<!Object>):!Array.<!Object>=} opt_filter The
  *    filter to apply to the list entity.  This function takes the current
  *    entity and the list of unfiltered entities, this function needs to then
@@ -322,7 +322,7 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent to attach to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element|!goog.ui.Component} The created dom element.
  */
 pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =

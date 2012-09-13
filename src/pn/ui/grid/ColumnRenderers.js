@@ -9,7 +9,7 @@ goog.require('pn.date');
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(cctx, entity) {
@@ -19,7 +19,7 @@ pn.ui.grid.ColumnRenderers.yesNoBoolRenderer = function(cctx, entity) {
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateRenderer = function(cctx, entity) {
@@ -30,7 +30,7 @@ pn.ui.grid.ColumnRenderers.dateRenderer = function(cctx, entity) {
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(cctx, entity) {
@@ -44,7 +44,7 @@ pn.ui.grid.ColumnRenderers.dateTimeRenderer = function(cctx, entity) {
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!goog.i18n.DateTimeFormat} formatter The formatter to use to format
  *    this time/date value;.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
@@ -59,7 +59,7 @@ pn.ui.grid.ColumnRenderers.dateOrTimeFormatRenderer_ =
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
@@ -70,7 +70,7 @@ pn.ui.grid.ColumnRenderers.centsRenderer = function(cctx, entity) {
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.enumRenderer = function(cctx, entity) {
@@ -81,7 +81,7 @@ pn.ui.grid.ColumnRenderers.enumRenderer = function(cctx, entity) {
 
 /**
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(cctx, entity) {
@@ -107,7 +107,7 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(cctx, entity) {
  * @param {!pn.ui.grid.ColumnCtx} cctx The context for the current column.
  * @param {!string} parentField The child field used to match this
  *    entities children.
- * @param {!Object} entity The entity being displayed.
+ * @param {!pn.data.Entity} entity The entity being displayed.
  * @return {string} The html value to display in this cell.
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =

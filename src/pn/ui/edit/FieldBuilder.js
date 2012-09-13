@@ -53,7 +53,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent control to attach this control to.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {Element|goog.ui.Component|Text} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {

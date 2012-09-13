@@ -94,12 +94,12 @@ pn.ui.grid.pipe.FilteringHandler.prototype.saveFilterStates_ = function() {
 
 /**
  * @private
- * @param {!Object} item The row item to pass to the currentFilter_.
+ * @param {!pn.data.Entity} entity The row item to pass to the currentFilter_.
  * @return {boolean} Whether the specified item satisfies the currentFilter.
  */
-pn.ui.grid.pipe.FilteringHandler.prototype.filterImpl_ = function(item) {
-  if (this.quickFind_ && !this.quickFind_.matches(item)) { return false; }
-  return !this.currentFilter_ || this.currentFilter_(item);
+pn.ui.grid.pipe.FilteringHandler.prototype.filterImpl_ = function(entity) {
+  if (this.quickFind_ && !this.quickFind_.matches(entity)) { return false; }
+  return !this.currentFilter_ || this.currentFilter_(entity);
 };
 
 

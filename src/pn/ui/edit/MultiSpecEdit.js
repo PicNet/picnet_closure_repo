@@ -28,7 +28,7 @@ goog.require('pn.ui.grid.Grid');
  * @extends {pn.ui.edit.CommandsComponent}
  * @implements {pn.ui.IDirtyAware}
  *
- * @param {!Object} entity The entity to edit, null for new entity.
+ * @param {!pn.data.Entity} entity The entity to edit, null for new entity.
  * @param {!pn.data.BaseDalCache} cache The entities cache to use for
  *    related entities.
  * @param {!Object.<!pn.ui.UiSpec>} specs The edit specifications.
@@ -37,7 +37,7 @@ goog.require('pn.ui.grid.Grid');
  */
 pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   goog.asserts.assert(cache);
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(specs);
   goog.asserts.assert(mainSpecId);
 

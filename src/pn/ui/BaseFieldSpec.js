@@ -87,15 +87,6 @@ pn.ui.BaseFieldSpec = function(id, entitySpec) {
    * @type {string}
    */
   this.displayPath = '';
-
-  /**
-   * Any additional entity types that need to be added to the context cache
-   *    when showing this field.  This is only required if this entity type
-   *    cannot be inferred by the dataProperty or displayPath.
-   *
-   * @type {!Array.<pn.data.Type>}
-   */
-  this.additionalCacheTypes = [];
 };
 goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
 

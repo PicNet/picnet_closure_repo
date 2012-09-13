@@ -210,7 +210,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
 
 /**
  * @typedef {!pn.ui.edit.ComplexRenderer|
- *     function(!pn.ui.edit.FieldCtx,!Element,!Object):
+ *     function(!pn.ui.edit.FieldCtx,!Element,!pn.data.Entity):
  *       !(Element|goog.ui.Component|Text)}
  */
 pn.ui.edit.FieldSpec.Renderer;

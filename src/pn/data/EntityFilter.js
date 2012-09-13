@@ -61,7 +61,8 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
 
 
 /**
- * @param {!Object} entity The entity to filter with the specified filters.
+ * @param {!pn.data.Entity} entity The entity to filter with the specified
+ *    filters.
  * @param {!Object.<string>} filters The filters to use to filter the list by.
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
@@ -87,7 +88,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  * @param {Array.<string>|string} filterValue The filter value to apply to
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
- * @param {Object} entity The entity to test for match.
+ * @param {pn.data.Entity} entity The entity to test for match.
  * @param {string} fieldId The filter/field id.
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.

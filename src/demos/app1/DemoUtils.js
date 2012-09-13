@@ -7,7 +7,7 @@ goog.require('goog.date.DateTime');
 pn.demo.app1.DemoUtils.counter = 0;
 
 /** 
- * @return {!Object} The created row item.
+ * @return {!pn.data.Entity} The created row item.
  */
 pn.demo.app1.DemoUtils.createUser = function() {
   var year = 1940 + Math.floor(Math.random() * 70);

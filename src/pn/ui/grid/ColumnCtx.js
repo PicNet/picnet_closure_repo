@@ -55,11 +55,11 @@ pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
 
 
 /**
- * @param {!Object} entity The entity being shown.
+ * @param {!pn.data.Entity} entity The entity being shown.
  * @return {*} The compareable value of this column, suitable for sorting, etc.
  */
 pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
 
   if (this.spec.sortValueRenderer) {
     return this.spec.sortValueRenderer(this, entity);
@@ -76,11 +76,11 @@ pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
 
 
 /**
- * @param {Object} entity The entity's whose value we need.
+ * @param {!pn.data.Entity} entity The entity's whose value we need.
  * @return {*} The value of  this field.
  */
 pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
 
   return entity[this.spec.dataProperty];
 };

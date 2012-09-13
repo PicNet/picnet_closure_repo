@@ -60,13 +60,13 @@ pn.ui.edit.FieldCtx.ID_COUNTER_ = 0;
 
 
 /**
- * @param {!Object} entity Then entity is required to check wether this is a
- *    new entity or existing one as some fields are only editable if or if not
- *    a new entity.
+ * @param {!pn.data.Entity} entity Then entity is required to check wether this
+ *    is a new entity or existing one as some fields are only editable if
+ *    or if not a new entity.
  * @return {boolean} Wether this field is editable.
  */
 pn.ui.edit.FieldCtx.prototype.isEditable = function(entity) {
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
 
   return !this.spec.readonly && !this.spec.tableType &&
       (this.spec.showOnAdd || !pn.data.EntityUtils.isNew(entity));
@@ -117,11 +117,11 @@ pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
 
 
 /**
- * @param {Object} entity The entity's whose value we need.
+ * @param {!pn.data.Entity} entity The entity's whose value we need.
  * @return {*} The value of  this field.
  */
 pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
 
   var prop = this.spec.dataProperty;
   var v = entity[prop];
@@ -143,10 +143,11 @@ pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
 
 
 /**
- * @param {!Object} entity The entity's whose display value we need.
+ * @param {!pn.data.Entity} entity The entity's whose display value we need.
  * @return {*} The display value of this field.
  */
 pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
+  goog.asserts.assert(entity instanceof pn.data.Entity);
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
@@ -157,13 +158,13 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
 
 
 /**
- * @param {!Object} entity The entity being checked for dirty.
+ * @param {!pn.data.Entity} entity The entity being checked for dirty.
  * @param {!(Element|goog.ui.Component)} control The control for this field.
  * @return {boolean} Wether this field is currently dirty (i.e. The control is
  *    different than the entity value).
  */
 pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(control);
 
   if (!this.isShown(control)) return false;

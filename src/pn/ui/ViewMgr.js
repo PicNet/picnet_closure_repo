@@ -56,7 +56,7 @@ pn.ui.ViewMgr.prototype.showComponent = function(component) {
 /**
  * @param {!pn.ui.UiSpec} spec The specs of the object being
  *    edited.
- * @param {!Object} entity The entity to display/edit.
+ * @param {!pn.data.Entity} entity The entity to display/edit.
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
  */

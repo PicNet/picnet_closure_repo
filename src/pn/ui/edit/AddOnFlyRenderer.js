@@ -11,7 +11,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
  * @param {!pn.ui.edit.FieldCtx} fctx The field context object.
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.
  */
@@ -95,12 +95,12 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
 
 
 /**
- * @return {!Object} An object representing the entity to use as a template.
- *    This means that if any presets are required they can be set in a subclass
- *    or in an interceptor.
+ * @return {!pn.data.Entity} An object representing the entity to use as a
+ *    template. This means that if any presets are required they can be set
+ *    in a subclass or in an interceptor.
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity = function() {
-  return {'ID': 0};
+  return new this.spec_.type({});
 };
 
 

@@ -30,13 +30,13 @@ goog.require('pn.ui.soy');
  * @implements {pn.ui.IDirtyAware}
  *
  * @param {!pn.ui.UiSpec} spec The specifications for this edit.
- * @param {!Object} entity The entity object to edit, {} for new entity.
+ * @param {!pn.data.Entity} entity The entity object to edit.
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
  */
 pn.ui.edit.Edit = function(spec, entity, cache) {
   goog.asserts.assert(spec);
-  goog.asserts.assert(entity);
+  goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(cache);
 
   pn.ui.edit.CommandsComponent.call(this, spec, entity, cache);
@@ -80,7 +80,7 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 /** @override. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
   this.log_.fine('resetDirty: ' + this.spec.id);
-  this.entity = this.getCurrentFormData();
+  this.entity = new this.spec.type(this.getCurrentFormData());
 };
 
 

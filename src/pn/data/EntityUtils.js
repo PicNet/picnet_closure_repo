@@ -5,7 +5,7 @@ goog.require('pn.data.Type');
 
 
 /**
- * @param {Object} entity The entity to check for newness.
+ * @param {pn.data.Entity} entity The entity to check for newness.
  * @return {boolean} Wether the specified entity is new.
  */
 pn.data.EntityUtils.isNew = function(entity) {
@@ -111,22 +111,6 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
   } else {
     return [entities[property]];
   }
-};
-
-
-/**
- * @param {!pn.data.BaseDalCache} cache The cache to search for the entity.
- * @param {pn.data.Type} type The type of entity to find.
- * @param {*} val The value (default to ID) to match.
- * @param {string=} opt_prop The property to match 'ID' if not specified.
- * @return {Object} The matched entity (or null).
- */
-pn.data.EntityUtils.getEntityFromCache = function(cache, type, val, opt_prop) {
-  var entities = cache.get(type.type);
-  var prop = opt_prop || 'ID';
-  return /** @type {Object} */ (goog.array.find(entities, function(e) {
-    return e[prop] === val;
-  }));
 };
 
 

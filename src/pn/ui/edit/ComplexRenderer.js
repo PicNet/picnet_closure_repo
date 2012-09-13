@@ -8,7 +8,7 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  */
 pn.ui.edit.ComplexRenderer = function(entity) {
   goog.asserts.assert(entity);
@@ -24,7 +24,7 @@ pn.ui.edit.ComplexRenderer = function(entity) {
 
   /**
    * @protected
-   * @type {!Object}
+   * @type {!pn.data.Entity}
    */
   this.entity = entity;
 

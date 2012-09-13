@@ -83,10 +83,9 @@ pn.ui.grid.pipe.TotalsHandler.prototype.updateTotals_ = function() {
     var cctx = goog.array.find(this.totalColumns_,
         function(cctx1) { return cctx1.id === field; });
     var val;
-    var mockEntity = {};
-    mockEntity[field] = total[field];
+    var entity = new cctx.entitySpec.type(total);
     var renderer = cctx.getColumnRenderer();
-    if (renderer) { val = renderer(cctx, mockEntity); }
+    if (renderer) { val = renderer(cctx, entity); }
     else { val = parseInt(total[field], 10); }
     html.push('Total ' + cctx.spec.name + ': ' + val || '0');
   }

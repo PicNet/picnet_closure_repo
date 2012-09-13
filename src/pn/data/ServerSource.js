@@ -148,7 +148,7 @@ pn.data.ServerSource.prototype.orderEntities = function(type, ids, opt_cb) {
 /**
  * @private
  * @param {pn.data.Type} type The type of the entity that was saved.
- * @param {string|Object} saved The error message to 'alert' or the
+ * @param {string|pn.data.Entity} saved The error message to 'alert' or the
  *    saved entity.
  */
 pn.data.ServerSource.prototype.saveEntityCallback_ = function(type, saved) {

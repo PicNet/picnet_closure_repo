@@ -10,7 +10,7 @@ goog.require('goog.events.EventHandler');
  * @extends {goog.Disposable}
  * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
  *    currently being shown.
- * @param {!Object} entity The entity that was just decorated.
+ * @param {!pn.data.Entity} entity The entity that was just decorated.
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
  * @param {!Object.<Element|goog.ui.Component>} controls The controls map
  *    for this UI.
@@ -28,7 +28,7 @@ pn.ui.edit.Interceptor =
 
   /**
    * @protected
-   * @type {!Object} The entity being edited.
+   * @type {!pn.data.Entity} The entity being edited.
    */
   this.entity = entity;
 

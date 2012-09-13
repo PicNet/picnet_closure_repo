@@ -55,7 +55,7 @@ goog.inherits(pn.ui.UiSpec, goog.Disposable);
  * Gets the specifications for the pn.ui.edit.Edit component including all
  *  fields, commands and display details.
  *
- * @param {!Object} entity The entity being edited.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @param {!pn.data.BaseDalCache} cache The current cache context.
  * @return {!pn.ui.edit.Config} The edit page config.
  */

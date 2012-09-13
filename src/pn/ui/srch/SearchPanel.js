@@ -320,7 +320,8 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     input = this.entityParentListSearchField(fctx, parent);
   } else {
     var srchFctx = this.getSearchAppropriateFieldSpec_(fctx);
-    input = FieldBuilder.createAndAttach(srchFctx, parent, {});
+    var entity = new fctx.entitySpec.type({});
+    input = FieldBuilder.createAndAttach(srchFctx, parent, entity);
     if (input['type'] === 'text') {
       input['title'] = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     }
@@ -354,7 +355,9 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
  */
 pn.ui.srch.SearchPanel.prototype.entityParentListSearchField =
     function(fctx, parent) {
-  var sel = pn.ui.edit.FieldRenderers.entityParentListField(fctx, parent, {});
+  var entity = new fctx.entitySpec.type({});
+  var sel = pn.ui.edit.FieldRenderers.entityParentListField(
+      fctx, parent, entity);
   sel.setAttribute('multiple', 'multiple');
   sel.setAttribute('rows', 2);
   return sel;
