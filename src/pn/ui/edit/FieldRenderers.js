@@ -24,7 +24,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
     dt = val;
   } else if (val instanceof Date) {
     dt = pn.date.fromDate(/** @type {Date} */ (val));
-  }    
+  }
   var idp = new pn.ui.InputDatePicker(
       pn.date.dateFormat, pn.date.dateParser, 'DD/MMM/YYYY');
   idp.decorate(parent);
