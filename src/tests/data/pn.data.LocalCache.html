@@ -44,6 +44,14 @@ var testGetEntityReturnsEntityInCache = function() {
   assertTrue(entity.equals(cache.getEntity('EntityType', entity.id)));
 };
 
+var testGetEntityDoesNotUpdateLocalStorate = function() {
+  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var json = window.localStorage[key];
+  testGetEntityReturnsEntityInCache();
+  var json2 = window.localStorage[key];
+  assertTrue(json2.length === json.length);
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // LocalCache.createEntity
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +81,14 @@ var testCreateEntityCanThenBeRetreived = function() {
   assertTrue(entity.equals(cache.getEntity('EntityType', entity.id)));
 };
 
+var testCreateEntityUpdatesLocalStorage = function() {
+  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var json = window.localStorage[key];
+  testCreateEntityCanThenBeRetreived();
+  var json2 = window.localStorage[key];
+  assertTrue(json2.length > json.length);
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // LocalCache.updateEntity
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +113,14 @@ var testUpdateEntityCanThenBeRetreived = function() {
   assertEquals('newprop', updated.newprop);
 };
 
+var testUpdateEntityUpdatesLocalStorage = function() {
+  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var json = window.localStorage[key];
+  testUpdateEntityCanThenBeRetreived();
+  var json2 = window.localStorage[key];
+  assertTrue(json2.length > json.length);
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // LocalCache.deleteEntity
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,13 +138,22 @@ var testDeleteEntityFailsIfIDDoesNotExist = function() {
   } catch (ex) {};
 };
 
-var testDeleteEntityCanThenBeRetreived = function() {
+var testDeleteEntityCannotThenBeRetreived = function() {
   cache.deleteEntity('EntityType', entity.id);
   try {
     cache.getEntity('EntityType', entity.id);
     assertFails('Expected entity to have been deleted');
   } catch (ex) {}
 };
+
+var testDeleteEntityUpdatesLocalStorage = function() {
+  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var json = window.localStorage[key];
+  testDeleteEntityCannotThenBeRetreived();
+  var json2 = window.localStorage[key];
+  assertTrue(json2.length < json.length);
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // LocalCache.undeleteEntity
@@ -136,6 +169,14 @@ var testUndeleteEntityAllowsEntityToBeQueried = function() {
   cache.undeleteEntity(new pn.data.Entity('EntityType', 100)); 
   var entity = cache.getEntity('EntityType', 100);
   assertTrue(entity instanceof pn.data.Entity);
+};
+
+var testUndeleteEntityUpdatesLocalStorage = function() {
+  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var json = window.localStorage[key];
+  testUndeleteEntityAllowsEntityToBeQueried();
+  var json2 = window.localStorage[key];
+  assertTrue(json2.length > json.length);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
