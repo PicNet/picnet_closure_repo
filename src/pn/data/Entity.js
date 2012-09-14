@@ -1,17 +1,17 @@
-﻿;
+﻿
 goog.provide('pn.data.Entity');
-goog.provide('pn.data.Type');
+goog.provide('pn.data.Entity.EntityType');
 
 goog.require('pn.data.FieldSchema');
 
-
-
 /**
  * @constructor
- * @param {string} type The entity type.
+ * @param {string} type The entity type name.
  * @param {number} id The entity id.
  */
 pn.data.Entity = function(type, id) {
+  goog.asserts.assert(goog.isString(type));
+  goog.asserts.assert(goog.isNumber(id));
 
   /**
    * @expose
@@ -26,21 +26,30 @@ pn.data.Entity = function(type, id) {
   this.id = id;
 };
 
-
-/** @typedef {function (new:pn.data.Entity, !Object)} */
-pn.data.Type = {};
-
-
 /**
- * @expose
- * @type {string}
+ * @param {!pn.data.Entity} other The other entity for the equality comparison.
+ * @return {boolean} Wether the specified other entity is equal to this entity.
  */
-pn.data.Type.type = '';
+pn.data.Entity.prototype.equals = function(other) {
+  if (!(other instanceof pn.data.Entity)) return false;
+  var keys1 = goog.object.getKeys(this);
+  var keys2 = goog.object.getKeys(other);
+  if (!goog.array.equals(keys1, keys2)) return false;
+  return goog.array.findIndex(keys1, function(key) {
+    return this[key] !== other[key];
+  }) >= 0;
+};
 
+////////////////////////////////////////////////////////////////////////////////
+// ABSTRACT MEMBERS
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @expose
  * @param {string} name The name of the field.
  * @return {pn.data.FieldSchema} The schema for the given field.
  */
-pn.data.Type.getFieldSchema = goog.abstractMethod;
+pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
+
+/** @typedef {function(new:pn.data.Entity, Object=):undefined} */
+pn.data.Entity.EntityType;

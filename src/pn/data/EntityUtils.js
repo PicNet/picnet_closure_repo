@@ -1,8 +1,7 @@
 ﻿;
 goog.provide('pn.data.EntityUtils');
 
-goog.require('pn.data.Type');
-
+goog.require('pn.data.TypeRegister');
 
 /**
  * @param {pn.data.Entity} entity The entity to check for newness.
@@ -16,9 +15,9 @@ pn.data.EntityUtils.isNew = function(entity) {
 /**
  * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
- * @param {pn.data.Type} type The type of the current target enity(s).
- * @param {(Object|Array.<!Object>)} target The current entity or entity
- *    array.
+ * @param {string} type The type of the current target enity(s).
+ * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity 
+ *    or entity array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
  *    lets assume that 'target' is of type 'Parent' and the path is
@@ -47,9 +46,9 @@ pn.data.EntityUtils.getEntityDisplayValue =
 /**
  * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
- * @param {pn.data.Type} type The type of the current target enity(s).
- * @param {(Object|Array.<!Object>)} target The current entity or entity
- *    array.
+ * @param {string} type The type of the current target enity(s).
+ * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity 
+ *    or entity array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
  *    lets assume that 'target' is of type 'Parent' and the path is
@@ -62,7 +61,7 @@ pn.data.EntityUtils.getTargetEntity =
     function(cache, path, type, target, opt_parentField) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(target);
 
   // Lets always work with arrays just to simplify
@@ -76,12 +75,12 @@ pn.data.EntityUtils.getTargetEntity =
   if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     type = pn.data.EntityUtils.getTypeProperty(type, step);
-    var entities = cache.get(type.type);
+    var entities = cache.get(type);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
         function(e) { return goog.array.contains(ids, e.id); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
     type = pn.data.EntityUtils.getTypeProperty(type, step);
-    next = cache.get(type.type);
+    next = cache.get(type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
       next = goog.array.filter(next, function(e) {
@@ -115,31 +114,36 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
 
 
 /**
- * @param {pn.data.Type} type The entity type to enfer the property type from.
+ * @param {string} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
  *    possible.
- * @return {pn.data.Type} The type name inferred from the property
+ * @return {string} The type name inferred from the property
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.getTypeProperty = function(type, property) {
-  return /** @type {pn.data.Type} */ type.getFieldSchema(property).entityType;
+  goog.asserts.assert(goog.isString(type), '"type" not specified');
+  goog.asserts.assert(goog.isString(property), '"property" not specified');
+
+  return /** @type {string} */ (
+      pn.data.TypeRegister.getFieldSchema(type, property).entityType);
 };
 
 
 /**
- * @param {pn.data.Type} type The entity type to enfer the property type from.
+ * @param {string} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
  *    possible.
- * @return {?pn.data.Type} The type name inferred from the property
+ * @return {?string} The type name inferred from the property
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
-  goog.asserts.assert(goog.isFunction(type), '"type" not specified');
-  goog.asserts.assert(property, '"property" not specified');
+  goog.asserts.assert(goog.isString(type), '"type" not specified');
+  goog.asserts.assert(goog.isString(property), '"property" not specified');
 
   if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
 
-  return /** @type {pn.data.Type} */ type.getFieldSchema(property).entityType;
+  return /** @type {string} */ (
+      pn.data.TypeRegister.getFieldSchema(type, property).entityType);
 };
 
 
@@ -181,22 +185,22 @@ pn.data.EntityUtils.isChildrenProperty = function(property) {
 
 
 /**
- * @param {pn.data.Type} type The type of entities we are ordering.
+ * @param {string} type The type of entities we are ordering.
  * @param {!Array.<!Object>} list The entities to order.
  */
 pn.data.EntityUtils.orderEntities = function(type, list) {
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(list);
   if (!list.length) return;
 
   var template = list[0];
-  var orderp = type.type + 'Order';
-  var namep = type.type + 'Name';
+  var orderp = type + 'Order';
+  var namep = type + 'Name';
 
   var ordert = goog.isDef(template[orderp]) ?
-      type.getFieldSchema(orderp).type : null;
+      pn.data.TypeRegister.getFieldSchema(type, orderp).type : null;
   var namet = goog.isDef(template[namep]) ?
-      type.getFieldSchema(namep).type : null;
+      pn.data.TypeRegister.getFieldSchema(type, namep).type : null;
 
   if (ordert === 'number') {
     goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });

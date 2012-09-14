@@ -11,7 +11,7 @@ pn.app.AppEvents = {
   ENTITY_CANCEL: 'entity-cancel',
 
   // DATA LOADER
-  LOAD_ENTITY_LISTS: 'load-entity-lists',
+  QUERY: 'load-entity-lists',
   LOADED_LIST: 'loaded-list',
   CACHED_LOADED_LIST: 'cached-loaded-list',
   LOADED_ENTITY: 'loaded-entity',

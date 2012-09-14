@@ -10,7 +10,7 @@ goog.require('pn.ui.grid.pipe.GridHandler');
 /**
  * @constructor
  * @extends {pn.ui.grid.pipe.GridHandler}
- * @param {pn.data.Type} entityType The entity being displayed on the current
+ * @param {string} entityType The entity being displayed on the current
  *    grid.
  */
 pn.ui.grid.pipe.CommandsHandler = function(entityType) {
@@ -18,7 +18,7 @@ pn.ui.grid.pipe.CommandsHandler = function(entityType) {
 
   /**
    * @private
-   * @type {pn.data.Type}
+   * @type {string}
    */
   this.entityType_ = entityType;
 };

@@ -34,7 +34,7 @@ pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
   this.rowOrdering_.init();
 
   this.listen(this.rowOrdering_, pn.app.AppEvents.LIST_ORDERED, function(e) {
-    var entityType = this.cctxs[0].spec.entitySpec.type;
+    var entityType = this.cctxs[0].spec.entitySpec;
     pn.app.ctx.pub(e.type, entityType, e.ids);
   });
 

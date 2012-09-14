@@ -7,6 +7,7 @@ set CLOSURE_COMPILER=U:\shared\lib\compiler.jar
   %CLOSURE_LIBRARY%closure\bin\build\closurebuilder.py ^
   --namespace="pn.ui.filter.TableFilter" ^
   --namespace="pn.ui.filter.jQueryPlugin" ^
+  --namespace="pn.data.Facade" ^
   --root=%CLOSURE_LIBRARY% ^
 	--root=%CLOSURE_TEMPLATES% ^
   --root=src\ ^

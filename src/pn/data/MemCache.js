@@ -11,9 +11,11 @@ goog.require('pn.log');
  * @constructor
  * @extends {goog.Disposable}
  * @param {number} maxAgeMinutes The maximum age of entities in the MemCache
- *    before they are considered stale and invalidated.
+ *    before they are considered stale and invalidated. 0 is indefinate.
  */
 pn.data.MemCache = function(maxAgeMinutes) {
+  goog.asserts.assert(goog.isNumber(maxAgeMinutes) && maxAgeMinutes >= 0);
+
   goog.Disposable.call(this);
 
   /**
@@ -35,8 +37,16 @@ pn.data.MemCache = function(maxAgeMinutes) {
    */
   this.log_ = pn.log.getLogger('pn.data.MemCache');
 
-  // Check every 10 seconds for invalid entities
-  setInterval(goog.bind(this.invalidateCache_, this), 10000);
+  /**
+   * @private
+   * @type {number}
+   */
+  this.timerid_ = 0;
+
+  if (this.maxAgeMinutes_ > 0) {
+    // Check every 10 seconds for invalid entities
+    this.timerid_ = setInterval(goog.bind(this.invalidateCache_, this), 10000);
+  }
 };
 goog.inherits(pn.data.MemCache, goog.Disposable);
 
@@ -49,7 +59,6 @@ pn.data.MemCache.prototype.getCachedList = function(type) {
   goog.asserts.assert(goog.isString(type));
   return this.cache_[type];
 };
-
 
 /**
  * @param {string} type The type of entity list to load.
@@ -98,7 +107,7 @@ pn.data.MemCache.prototype.getLists = function(types) {
 
 /** @private */
 pn.data.MemCache.prototype.invalidateCache_ = function() {
-  if (this.maxAgeMinutes_ < 0) return;
+  goog.asserts.assert(this.maxAgeMinutes_ > 0);
 
   var now = goog.now();
   var max = now - (this.maxAgeMinutes_ * 60 * 1000);
@@ -109,4 +118,12 @@ pn.data.MemCache.prototype.invalidateCache_ = function() {
       delete this.cache_[type];
     }
   }
+};
+
+
+/** @override */
+pn.data.MemCache.prototype.disposeInternal = function() {
+  pn.data.MemCache.superClass_.disposeInternal.call(this);
+  if (this.timer_ !== 0) clearInterval(this.timer_);
+  delete this.cache_;
 };

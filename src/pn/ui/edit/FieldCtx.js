@@ -47,7 +47,8 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   /** @type {pn.data.FieldSchema} */
   this.schema = goog.string.startsWith(this.id, '_') ||
       this.id.indexOf('.') >= 0 ?
-          null : this.entitySpec.type.getFieldSchema(this.id);
+          null : pn.data.TypeRegister.getFieldSchema(
+              this.entitySpec.type, this.id);
 };
 goog.inherits(pn.ui.edit.FieldCtx, goog.Disposable);
 
@@ -232,7 +233,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {
     var type = pn.data.EntityUtils.getTypeProperty(
         this.entitySpec.type, this.spec.dataProperty);
-    var list = this.cache.get(type.type);
+    var list = this.cache.get(type);
     val = goog.array.find(list, function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;

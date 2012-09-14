@@ -148,19 +148,19 @@ pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
 
   // Need to append 'Name' to the last step to get the last entity name
   var type = this.getLastRelationshipType_(this.entitySpec.type, steps);
-  steps.push(type.type + 'Name');
+  steps.push(type + 'Name');
   this.displayPath = steps.join('.');
 };
 
 
 /**
  * @private
- * @param {pn.data.Type} type The starting entity type for the path.
+ * @param {string} type The starting entity type for the path.
  * @param {!Array.<string>} steps The path to the target entity property.
- * @return {pn.data.Type} The final entity type in this entity path.
+ * @return {string} The final entity type in this entity path.
  */
 pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(steps.length);
   steps = goog.array.clone(steps);
 

@@ -1,0 +1,188 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn.data.LocalCache');
+goog.require('pn.data.Entity');
+goog.require('goog.object');
+
+var entity,
+    cache;
+
+var setUp = function() {
+  cache = new pn.data.LocalCache(); // Reset cache
+  cache.cache_['EntityType'] = [];
+  entity = new pn.data.Entity('EntityType', 0);
+  cache.createEntity(entity);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.getEntity
+////////////////////////////////////////////////////////////////////////////////
+var testGetEntityThrowsErrorIfTypeNotInCache = function() {
+  try { 
+    cache.getEntity('UnknownType', 1); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testGetEntityThrowsErrorIfIDNotInCache = function() {  
+  try { 
+    cache.getEntity('EntityType', 11); 
+    assertFails('Expected failure with invalid ID');
+  } catch (ex) {};
+};
+
+var testGetEntityReturnsEntityInCache = function() {
+  assertTrue(entity.equals(cache.getEntity('EntityType', entity.id)));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.createEntity
+////////////////////////////////////////////////////////////////////////////////
+
+var testCreateEntityFailsIfEntityTypeDoesNotExistInCache = function() {
+  try { 
+    cache.createEntity(new pn.data.Entity('UnknownType', 0)); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testCreateEntityFailsIfEntityIDIsNotZero = function() {
+  try { 
+    cache.createEntity(new pn.data.Entity('EntityType', 1)); 
+    assertFails('Expected failure with invalid ID');
+  } catch (ex) {};
+
+  try { 
+    cache.createEntity(new pn.data.Entity('EntityType', -1)); 
+    assertFails('Expected failure with invalid ID');
+  } catch (ex) {};
+};
+
+var testCreateEntityCanThenBeRetreived = function() {
+  var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)); 
+  assertTrue(entity.id < 0);
+  assertTrue(entity.equals(cache.getEntity('EntityType', entity.id)));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.updateEntity
+////////////////////////////////////////////////////////////////////////////////
+var testUpdateEntityFailsIfTypeDoesNotExist = function() {
+  try { 
+    cache.updateEntity(new pn.data.Entity('UnknownType', 100)); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testUpdateEntityFailsIfIDDoesNotExist = function() {
+  try { 
+    cache.updateEntity(new pn.data.Entity('EntityType', 100)); 
+    assertFails('Expected failure with invalid ID');
+  } catch (ex) {};
+};
+
+var testUpdateEntityCanThenBeRetreived = function() {
+  entity.newprop = 'newprop';
+  cache.updateEntity(entity); 
+  var updated = cache.getEntity('EntityType', entity.id);
+  assertEquals('newprop', updated.newprop);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.deleteEntity
+////////////////////////////////////////////////////////////////////////////////
+var testDeleteEntityFailsIfTypeDoesNotExist = function() {
+  try { 
+    cache.deleteEntity('UnknownType', 100); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testDeleteEntityFailsIfIDDoesNotExist = function() {
+  try { 
+    cache.deleteEntity('EntityType', 100); 
+    assertFails('Expected failure with invalid ID');
+  } catch (ex) {};
+};
+
+var testDeleteEntityCanThenBeRetreived = function() {
+  cache.deleteEntity('EntityType', entity.id);
+  try {
+    cache.getEntity('EntityType', entity.id);
+    assertFails('Expected entity to have been deleted');
+  } catch (ex) {}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.undeleteEntity
+////////////////////////////////////////////////////////////////////////////////
+var testUndeleteEntityFailsIfTypeDoesNotExist = function() {
+  try { 
+    cache.undeleteEntity(new pn.data.Entity('UnknownType', 100)); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testUndeleteEntityAllowsEntityToBeQueried = function() {
+  cache.undeleteEntity(new pn.data.Entity('EntityType', 100)); 
+  var entity = cache.getEntity('EntityType', 100);
+  assertTrue(entity instanceof pn.data.Entity);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.contains
+////////////////////////////////////////////////////////////////////////////////
+var testContainsReturnsFalseForInvalidType = function() {
+  assertFalse(cache.contains('UnknownType'));
+};
+
+var testContainsReturnsTrueForValidType = function() {
+  assertTrue(cache.contains('EntityType'));
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// LocalCache.query
+////////////////////////////////////////////////////////////////////////////////
+var testUpdateEntityFailsIfTypeDoesNotExist = function() {
+  try { 
+    cache.query(['UnknownType']); 
+    assertFails('Expected failure with UnknownType');
+  } catch (ex) {};
+};
+
+var testQueryWithSingleType = function() {
+  var lists = cache.query(['EntityType']);
+  assertArrayEquals(['EntityType'], goog.object.getKeys(lists));
+  var entityList = lists['EntityType'];
+  assertEquals(1, entityList.length);
+  assertTrue(entity.equals(entityList[0]));
+};
+
+var testQueryWithMultipleTypes = function() {
+  cache.cache_['EntityType2'] = [];
+  var entity2 = new pn.data.Entity('EntityType2', 0);
+  cache.createEntity(entity2);
+
+  var lists = cache.query(['EntityType', 'EntityType2']);
+  assertArrayEquals(['EntityType', 'EntityType2'], goog.object.getKeys(lists));
+  
+  var entityList = lists['EntityType'];
+  assertEquals(1, entityList.length);
+  assertTrue(entity.equals(entityList[0]));
+
+  entityList = lists['EntityType2'];
+  assertEquals(1, entityList.length);
+  assertTrue(entity2.equals(entityList[0]));
+};
+        </script>
+    </body>
+</html>

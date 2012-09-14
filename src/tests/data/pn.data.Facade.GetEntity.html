@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn.data.Facade');
+goog.require('pn.data.Entity');
+
+var entity,
+    facade,
+    events,
+    xhrs;
+
+var setUp = function() {
+  xhrs = [];
+  events = [];
+  facade = new pn.data.Facade('../PicNet2.WebFacade/Facade/');
+  facade.cache_ = new pn.data.LocalCache(); // Reset cache
+  facade.cache_.cache_['EntityType'] = [];
+  facade.server_.manager_.send = function(uri) { xhrs.push(uri); };
+  facade.server_.dispatchEvent = function(e) { events.push(e); };
+  entity = new pn.data.Entity('EntityType', 0);
+  facade.createEntity(entity);
+};
+
+var testGetEntityThrowsErrorIfTypeNotInCache = function() {
+  try { 
+    facade.getEntity('UnknownType', 1); 
+    assertFails('Expected failure with UnknownType');
+  }
+  catch (ex) {};
+};
+
+var testGetEntityThrowsErrorIfIDNotInCache = function() {  
+  try { 
+    facade.getEntity('EntityType', 11); 
+    assertFails('Expected failure with invalid ID');
+  }
+  catch (ex) {};
+};
+
+var testGetEntityReturnsEntityInCache = function() {
+  assertTrue(entity.equals(facade.getEntity('EntityType', entity.id)));
+};
+
+        </script>
+    </body>
+</html>

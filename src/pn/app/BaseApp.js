@@ -5,9 +5,7 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
-goog.require('pn.data.BufferedServerSource');
-goog.require('pn.data.MemCache');
-goog.require('pn.data.Type');
+goog.require('pn.data.Facade');
 goog.require('pn.log');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
@@ -83,8 +81,8 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
-  /** @type {!pn.data.BufferedServerSource} */
-  this.data = new pn.data.BufferedServerSource(this.cfg.memCacheExpireMins);
+  /** @type {!pn.data.Facade} */
+  this.data = new pn.data.Facade(this.cfg.appPath);
   this.registerDisposable(this.data);
 
   /** @type {!pn.ui.LoadingPnl} */
@@ -170,7 +168,7 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 pn.app.BaseApp.prototype.init_ = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
-  var sset = pn.data.ServerSource.EventType;
+  var sset = pn.data.Facade.EventType;
   goog.events.listen(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
   goog.events.listen(
@@ -209,14 +207,17 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.ENTITY_VALIDATION_ERROR] = bind(this.msg.showErrors, this.msg);
 
   // Data
-  evs[ae.LOAD_ENTITY_LISTS] = bind(this.data.getEntityLists, this.data);
-  evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
-  evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
-  evs[ae.ENTITY_SAVE] = bind(this.data.saveEntity, this.data);
-  evs[ae.ENTITY_CLONE] = bind(function(type, entity) {
-    if (!this.acceptDirty_()) return;
-    this.data.cloneEntity(type, entity);
-  }, this);
+  evs[ae.QUERY] = bind(this.data.query, this.data);
+  // TODO: Implement
+  // evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
+  // TODO: Implement
+  // evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
+  evs[ae.ENTITY_SAVE] = bind(this.data.updateEntity, this.data);
+  // TODO: Implement
+  // evs[ae.ENTITY_CLONE] = bind(function(type, entity) {
+  //   if (!this.acceptDirty_()) return;
+  //   this.data.cloneEntity(type, entity);
+  // }, this);
   evs[ae.ENTITY_DELETE] = bind(this.data.deleteEntity, this.data);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 
@@ -243,7 +244,7 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
 
-  var sset = pn.data.ServerSource.EventType;
+  var sset = pn.data.Facade.EventType;
   goog.events.listen(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
   goog.events.listen(

@@ -104,11 +104,11 @@ pn.ui.edit.AddOnFlyDialog.prototype.validate_ = function(edit) {
  * @private
  * @param {!pn.ui.edit.Edit} edit The Edit compoenent that needs to be
  *    queried for entity to add.
- * @param {pn.data.Type} type The entity type being added.
+ * @param {string} type The entity type being added.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
   goog.asserts.assert(edit);
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
 
   var entity = edit.getCurrentFormData();
   var cb = goog.bind(this.entityAdded_, this, type);
@@ -118,11 +118,11 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
 
 /**
  * @private
- * @param {pn.data.Type} type The entity type being added.
+ * @param {string} type The entity type being added.
  * @param {(string|Object)} saved The server error or the entity that was added.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
-  goog.asserts.assert(goog.isFunction(type));
+  goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(saved);
 
   if (goog.isString(saved)) {
@@ -132,7 +132,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
 
   this.dialog_.setVisible(false);
 
-  this.cache_.get(type.type).splice(0, 0, saved);
+  this.cache_.get(type).splice(0, 0, saved);
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   var event = new goog.events.Event(eventType, this);
   event.entityId = saved.id;

@@ -214,7 +214,8 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
   var lst = [];
 
-  goog.object.forEach(fctx.schema.entityType, function(val, name) {
+  var enumo = /** @type {Object.<number>} */ fctx.schema.entityType;
+  goog.object.forEach(enumo, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
   var selected = fctx.getEntityValue(entity);
@@ -233,7 +234,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
  */
 pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   var order = pn.data.EntityUtils.isNew(entity) ?
-      fctx.cache.get(fctx.entitySpec.type.type).length :
+      fctx.cache.get(fctx.entitySpec.type).length :
       fctx.getEntityValue(entity);
   var inp = goog.dom.createDom('input', {
     'type': 'hidden',
@@ -249,23 +250,24 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
- * @param {function(!Object,!Array.<!Object>):!Array.<!Object>=} opt_filter The
- *    filter to apply to the list entity.  This function takes the current
- *    entity and the list of unfiltered entities, this function needs to then
- *    return the filtered (and optionally resorted) entity list to display
- *    in the default select control.
+ * @param {function(!pn.data.Entity,!Array.<!pn.data.Entity>):
+ *    !Array.<!pn.data.Entity>=} opt_filter The filter to apply to the list 
+ *    entity.  This function takes the current entity and the list of 
+ *    unfiltered entities, this function needs to then return the filtered 
+ *    (and optionally resorted) entity list to display in the default 
+ *    select control.
  * @return {!Element} The parent select list.
  */
 pn.ui.edit.FieldRenderers.entityParentListField =
     function(fctx, parent, entity, opt_filter) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
-  var entityType = cascading ?
+  var entityType = /** @type {string} */ (cascading ?
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(
-          fctx.spec.entitySpec.type, fctx.spec.dataProperty);
-  var list = fctx.cache.get(entityType.type);
-  if (!list) throw new Error('Expected access to "' + entityType.type +
+          fctx.spec.entitySpec.type, fctx.spec.dataProperty));
+  var list = fctx.cache.get(entityType);
+  if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   pn.data.EntityUtils.orderEntities(entityType, list);
   if (opt_filter) list = opt_filter(entity, list);
@@ -335,7 +337,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache.get(fctx.spec.tableType.type);
+  var list = fctx.cache.get(fctx.spec.tableType);
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));

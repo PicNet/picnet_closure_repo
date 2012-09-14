@@ -93,7 +93,7 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
    *    if the id is: ChildrenEntities then the tableType will become
    *    'Children'.
    *
-   * @type {pn.data.Type|undefined}
+   * @type {string|undefined}
    */
   this.tableType = undefined;
 
@@ -154,12 +154,12 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
           this.entitySpec.type, firstStep);
     }
     if (!goog.isDef(this.tableSpec) && !this.renderer) {
-      this.tableSpec = this.tableType.type;
+      this.tableSpec = this.tableType;
     }
   }
 
   if (this.tableType && !this.tableParentField) {
-    this.tableParentField = this.entitySpec.type + 'ID';
+    this.tableParentField = this.entitySpec + 'ID';
   }
   if (this.renderer instanceof pn.ui.edit.ComplexRenderer && this.validator) {
     throw new Error('Complex renderers cannot have validators, ' +
@@ -180,7 +180,7 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
  */
 pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
   var schema = this.id.indexOf('.') >= 0 ? null :
-      this.entitySpec.type.getFieldSchema(this.id);
+      pn.data.TypeRegister.getFieldSchema(this.entitySpec.type, this.id);
   var schemaType = schema ? schema.type : '';
   if (schemaType === 'string' && schema.length >
       pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {

@@ -80,7 +80,8 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 /** @override. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
   this.log_.fine('resetDirty: ' + this.spec.id);
-  this.entity = new this.spec.type(this.getCurrentFormData());
+  var ctor = pn.data.TypeRegister.fromName(this.spec.type);
+  this.entity = new ctor(this.getCurrentFormData());
 };
 
 

@@ -25,7 +25,7 @@ goog.require('pn.ui.srch.Config');
  * @extends {goog.Disposable}
  * @param {string} id The unique identifier for this display spec.  There can
  *    not be more than one UiSpec in the system defined with this ID.
- * @param {pn.data.Type=} opt_type The optional type representing this
+ * @param {string=} opt_type The optional type representing this
  *    display spec. If this is omitted it is inferred from the id.
  * @param {string=} opt_name The optional display name of this entity type. If
  *    If this is omitted it is inferred from the type.
@@ -38,11 +38,11 @@ pn.ui.UiSpec = function(id, opt_type, opt_name) {
   /** @type {string} */
   this.id = id;
 
-  /** @type {pn.data.Type} */
-  this.type = opt_type || pn.data.TypeRegister.fromName(this.id);
+  /** @type {string} */
+  this.type = opt_type || this.id;
 
   /** @type {string} */
-  this.name = opt_name || this.type.type;
+  this.name = opt_name || this.type;
 };
 goog.inherits(pn.ui.UiSpec, goog.Disposable);
 
@@ -88,7 +88,7 @@ pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
  * Gets the additional types required when displaying this edit control.
  *
  * @param {!pn.data.Entity} entity The entity being editted.
- * @return {!Array.<pn.data.Type>} The additional types to load.
+ * @return {!Array.<string>} The additional types to load.
  */
 pn.ui.UiSpec.prototype.getEditAdditionalTypes = function(entity) { return []; };
 
@@ -96,7 +96,7 @@ pn.ui.UiSpec.prototype.getEditAdditionalTypes = function(entity) { return []; };
 /**
  * Gets the additional types required when displaying this grid.
  *
- * @return {!Array.<pn.data.Type>} The additional types to load.
+ * @return {!Array.<string>} The additional types to load.
  */
 pn.ui.UiSpec.prototype.getGridAdditionalTypes = function() { return []; };
 
