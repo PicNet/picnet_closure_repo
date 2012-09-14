@@ -1,0 +1,87 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+goog.require('goog.testing.AsyncTestCase');        
+        </script>
+        <script>
+
+goog.require('pn.data.Server');
+goog.require('pn.data.Entity');
+
+var server,
+    events;
+
+var setUp = function() {
+  events = [];
+  server = new pn.data.Server('http://localhost/PicNet2.WebFacade/Facade/');
+  server.dispatchEvent = function(e) { events.push(e); };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.createEntity
+////////////////////////////////////////////////////////////////////////////////
+var testCreateEntityWithInvalidTypeFails = function() {
+  doFailure_(server.createEntity, new pn.data.Entity('UnknownType', 0));
+};
+
+var testCreateEntityWithPositiveOrZeroIDFails = function() {
+  doFailure_(server.createEntity, new pn.data.Entity('EntityType', 0));
+  doFailure_(server.createEntity, new pn.data.Entity('EntityType', 1));
+};
+
+var testCreateEntityWithValidEntityTypeCanThenBeQueried = function() {
+  var entity = new pn.data.Entity('EntityType', -1);
+  doSuccess_(server.createEntity, entity, entity);
+};
+
+function doFailure_(method, arg1) {
+  tc.waitForAsync();
+  var success = function() { 
+    tc.continueTesting();
+    assertFail('Should not have succeeded.'); 
+  };
+  var error = function(err) {
+    tc.continueTesting();
+    assertTrue(goog.isString(err));
+  };
+  method.call(server, arg1, success, error);
+};
+
+function doSuccess_(method, arg1, expreturns) {
+  tc.waitForAsync();
+  var success = function(returned) { 
+    tc.continueTesting();
+    assertEquals(expreturns, returned);
+  };
+  var error = function(err) {
+    tc.continueTesting();
+    assertFail('Should have succeeded.'); 
+  };
+  method.call(server, arg1, success, error);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.updateEntity  
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.deleteEntity
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.getUpdates
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.query
+////////////////////////////////////////////////////////////////////////////////
+
+var tc = new goog.testing.AsyncTestCase();
+        </script>
+    </body>
+</html>

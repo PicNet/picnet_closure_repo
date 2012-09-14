@@ -135,14 +135,13 @@ pn.data.Server.prototype.ajax_ = function(action, data, success, failure) {
   var uri = this.controller_ + action,
       start = goog.now(),
       rid = uri + (this.requestCount_++),
-      path = this.controller_ + uri,
       qd = goog.uri.utils.buildQueryDataFromMap(data),
       callback = goog.bind(function(e) {
         goog.asserts.assert(e.target instanceof goog.net.XhrIo);
         this.reply_(e.target, start, success, failure);
       }, this);
 
-  this.manager_.send(rid, path, 'POST', qd, null, null, callback);
+  this.manager_.send(rid, uri, 'POST', qd, null, null, callback);
 };
 
 /**
