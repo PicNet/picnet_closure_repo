@@ -7,7 +7,7 @@ goog.require('pn.data.Query');
 goog.require('pn.storage');
 goog.require('goog.array');
 goog.require('pn.json');
-
+goog.require('pn.data.LinqParser');
 
 
 /**
