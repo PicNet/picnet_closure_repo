@@ -119,7 +119,7 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
     this.cache.deleteEntity(entity.type, tmpid);
     throw new Error(error);
   }, this);
-  this.server.createEntity(entity, this.cache.lastUpdate,
+  this.server.createEntity(entity, this.getLastUpdate(),
       goog.bind(this.parseServerResponse_, this, onsuccess), 
       onfail);
 
@@ -149,7 +149,7 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
     throw new Error(error);
   }, this);
 
-  this.server.updateEntity(entity, this.cache.lastUpdate,
+  this.server.updateEntity(entity, this.getLastUpdate(),
       goog.bind(this.parseServerResponse_, this, onsuccess),      
       onfail);
 };
@@ -169,7 +169,7 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
     throw new Error(error);
   }, this);
 
-  this.server.deleteEntity(entity, this.cache.lastUpdate,
+  this.server.deleteEntity(entity, this.getLastUpdate(),
       goog.bind(this.parseServerResponse_, this), 
       onfail);
 };
@@ -193,6 +193,16 @@ pn.data.BaseFacade.prototype.query = function(queries, callback) {
 // PRIVATE HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @protected
+ * This is protected so that LazyFacade can override this with a custom
+ *    implementation.
+ * @return {number} The last server time that the cache was updated.
+ */
+pn.data.BaseFacade.prototype.getLastUpdate = function() {
+  return this.cache.lastUpdate;
+};
+
 /** @private */
 pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
   goog.object.forEach(pn.data.Server.EventType, function(et) {
@@ -207,7 +217,7 @@ pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
 
 /** @private */
 pn.data.BaseFacade.prototype.sync_ = function() {  
-  this.server.getUpdates(this.cache.lastUpdate, 
+  this.server.getUpdates(this.getLastUpdate(), 
       goog.bind(this.parseServerResponse_, this),
       goog.bind(this.handleError_, this));
 };
@@ -230,7 +240,7 @@ pn.data.BaseFacade.prototype.parseServerResponse_ =
   goog.asserts.assert(response instanceof pn.data.Server.Response);
   
   this.applyUpdates_(response.updates);
-  this.cache.lastUpdate = response.serverTime;
+  this.cache.lastUpate = response.lastUpdate;
 };
 
 /**

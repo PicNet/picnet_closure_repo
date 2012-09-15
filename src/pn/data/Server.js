@@ -201,7 +201,7 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
 
 /**
  * @typedef {{
- *    ServerTime:number,
+ *    lastUpdate:number,
  *    Updates:!Array.<pn.data.Server.RawUpdate>,
  *    ResponseEntityType:string,
  *    ResponseEntity:Object
@@ -218,7 +218,7 @@ pn.data.Server.Response = function(raw) {
   goog.asserts.assert(goog.isObject(raw));
 
   /** @type {number} */
-  this.serverTime = raw['ServerTime'];
+  this.lastUpdate = raw['lastUpdate'];
 
   /** @type {!Array.<pn.data.Server.Update>} */
   this.updates = goog.array.map(raw['Updates'], 
@@ -228,7 +228,7 @@ pn.data.Server.Response = function(raw) {
   this.responseData = pn.data.TypeRegister.parseEntity(
       raw['ResponseEntityType'], raw['ResponseEntity']);
 
-  goog.asserts.assert(goog.isNumber(this.serverTime) && this.serverTime > 0);
+  goog.asserts.assert(goog.isNumber(this.lastUpdate) && this.lastUpdate > 0);
   goog.asserts.assert(goog.isArray(this.updates));
   goog.asserts.assert(!goog.isDef(this.responseData) || 
       this.responseData instanceof pn.data.Entity);
