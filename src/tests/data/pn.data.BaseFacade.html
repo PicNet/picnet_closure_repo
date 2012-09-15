@@ -27,8 +27,9 @@ var setUp = function() {
   facade.server = (server = new pn.testing.MockServer());
   
   pn.data.TypeRegister.parseEntity = function(type, raw) {
-    var entity = new pn.data.Entity(type, raw.id);
+    var entity = new pn.data.Entity(type, raw.ID);
     goog.object.extend(entity, raw);
+    delete entity.ID;
     return entity;
   };
 };
@@ -57,10 +58,10 @@ var testGetEntityThrowsErrorIfIDNotInCache = function() {
 
 var testGetEntityReturnsEntityInCache = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  facade.createEntity(entity);
-  assertTrue(entity.equals(facade.getEntity('EntityType', entity.id)));
+  var created = facade.createEntity(entity);
+  assertTrue(entity.equals(facade.getEntity('EntityType', created.id)));
   
-  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
+  assertArrayEquals([{method:'createEntity', entity:created}], server.calls); 
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   var created = facade.createEntity(entity);
   
-  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
+  assertArrayEquals([{method:'createEntity', entity:created}], server.calls); 
   assertTrue(created.id > 0);  
   assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);
 };
@@ -155,14 +156,145 @@ var testUpdateEntityWithErrorUndoesLocalChange = function() {
 // BaseFacade.deleteEntity
 ////////////////////////////////////////////////////////////////////////////////
 
+var testDeleteEntityDeletesInCacheFirst = function() {  
+  server.deleteEntity = function() {}; // Dissable the server call
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+
+  facade.deleteEntity(entity2);
+  
+  assertArrayEquals([], facade.cache.query(['EntityType'])['EntityType']);
+  assertArrayEquals([], server.calls); 
+};
+
+var testDeleteEntityDeletesCacheThenServer = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  facade.deleteEntity(entity2);
+  
+  assertArrayEquals([], facade.cache.query(['EntityType'])['EntityType']);
+  assertArrayEquals([{method:'deleteEntity', entity:entity2}], server.calls); 
+};
+
+var testDeleteEntityWithErrorUndoesLocalChange = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  
+  server.nextFail = true;  
+  try { facade.deleteEntity(entity2); assertFail('1'); } 
+  catch(ex) {};
+  
+  assertArrayEquals([{method:'deleteEntity', entity:entity2}], server.calls);   
+  var list = facade.cache.query(['EntityType'])['EntityType']; 
+  assertArrayEquals([entity2], list);
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // BaseFacade.query
 ////////////////////////////////////////////////////////////////////////////////
+
+var testQueryDoesNotTouchServer = function() {
+  var list = [];
+  facade.query(['EntityType'], function(list2) { list = list2; });
+    
+  assertArrayEquals([], server.calls);   
+  assertArrayEquals([], list['EntityType']);
+};
+
+var testQueryDoesNotTouchServerWithFailure = function() {
+  server.nextFail = true;  
+  testQueryDoesNotTouchServer();
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // BaseFacade.ajax
 ////////////////////////////////////////////////////////////////////////////////
 
+var testAjaxGoesStraightToTheServer = function() {
+  var exp = { name:'name' };
+  server.nextAjaxResponseData = exp;
+  var args = {arg:1};
+  var actual;
+  facade.ajax('Controller', 'Action', args, function(resp) {
+    actual = resp;
+  });
+  assertEquals(args, server.lastAjaxArgData);
+  assertEquals(exp, actual);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Response Objects
+////////////////////////////////////////////////////////////////////////////////
+var testAjaxResponse = function() {
+  prepareServerReponse();
+  testAjaxGoesStraightToTheServer();
+  validateResponseDetails();
+};
+
+var testCreateEntityResponse = function() {
+  prepareServerReponse();
+  var entity = new pn.data.Entity('EntityType', 0);
+  var created = facade.createEntity(entity);
+  validateResponseDetails([created]);
+};
+
+var testUpdateEntityResponse = function() {
+  prepareServerReponse();
+  
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  facade.updateEntity(entity2);
+
+  validateResponseDetails([entity2]);
+};
+
+var testDeleteEntityResponse = function() {
+  prepareServerReponse();
+  
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  facade.deleteEntity(entity2);
+
+  validateResponseDetails();
+};
+
+var prepareServerReponse = function() {
+  var updates = [
+    { Type:'create', ID:100, EntityType: 'EntityType', Entity: { ID:100 } },
+    { Type:'create', ID:101, EntityType: 'EntityType', Entity: { ID:101 } },
+    { Type:'update', ID:100, EntityType: 'EntityType', Entity: { ID:100, NewProp:'NewProp' } },
+    { Type:'delete', ID:101, EntityType: 'EntityType' }
+  ];
+  server.nextServerResponseUpdates = updates;  
+};
+
+var validateResponseDetails = function(opt_additional) {
+  var list = facade.cache.query(['EntityType'])['EntityType'];  
+  var entity = new pn.data.Entity('EntityType', 100);
+  entity.NewProp = 'NewProp';
+  var exp = opt_additional ? opt_additional : [];
+  exp.push(entity);
+  assertArrayEquals(exp, list);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.sync_
+////////////////////////////////////////////////////////////////////////////////
 
         </script>
     </body>

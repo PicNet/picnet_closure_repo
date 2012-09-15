@@ -53,6 +53,34 @@ pn.data.Server = function(controller) {
 goog.inherits(pn.data.Server, goog.events.EventTarget);
 
 /**
+ * @param {string} controller The controller name for the ajax request.
+ * @param {string} action The controller action name for the request.
+ * @param {!Object} data The data for the server ajax request.  Ensure that
+ *    this is using safe compiled object keys (strings).
+ * @param {number} lastUpdate The last 'server' time the cache was updated.
+ * @param {!function(!pn.data.Server.Response):undefined} success The 
+ *    success callback.
+ * @param {!function(string):undefined} failure The failure callback.
+ */
+pn.data.Server.prototype.ajax = 
+    function(controller, action, data, lastUpdate, success, failure) {
+  goog.asserts.assert(goog.isString(controller));
+  goog.asserts.assert(goog.isString(action));
+  goog.asserts.assert(goog.isObject(data));
+  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
+  goog.asserts.assert(goog.isFunction(success));
+  goog.asserts.assert(goog.isFunction(failure));  
+
+  var ajaxData = {
+    'controller': controller,
+    'action': action,
+    'dataJson': pn.json.serialiseJson(data),
+    'lastUpdate': lastUpdate
+  };
+  this.ajax_('Ajax', ajaxData, success, failure);
+};
+
+/**
  * @param {!pn.data.Entity} entity The entity to create
  * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The 
@@ -200,12 +228,24 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
   this.dispatchEvent(new goog.events.Event(pn.data.Server.EventType.LOADED));
 };
 
+
+/**
+ * @typedef {{
+ *    Type:string,
+ *    ID:number,
+ *    EntityType:string,
+ *    Entity:Object
+ *  }}
+ */
+pn.data.Server.RawUpdate;
+
 /**
  * @typedef {{
  *    lastUpdate:number,
  *    Updates:!Array.<pn.data.Server.RawUpdate>,
  *    ResponseEntityType:string,
- *    ResponseEntity:Object
+ *    ResponseEntity:Object,
+ *    AjaxResponse: Object
  *  }}
  */
 pn.data.Server.RawResponse;
@@ -226,24 +266,21 @@ pn.data.Server.Response = function(raw) {
       function(u) { return new pn.data.Server.Update(u); }, this);
 
   /** @type {pn.data.Entity} */
-  this.responseData = pn.data.TypeRegister.parseEntity(
-      raw['ResponseEntityType'], raw['ResponseEntity']);
+  this.responseEntity = raw['ResponseEntityType'] ? 
+      pn.data.TypeRegister.parseEntity(raw['ResponseEntityType'], 
+          raw['ResponseEntity']) :
+      null;
+
+  /** @type {Object} */
+  this.ajaxData = raw['AjaxResponse'];
 
   goog.asserts.assert(goog.isNumber(this.lastUpdate) && this.lastUpdate > 0);
   goog.asserts.assert(goog.isArray(this.updates));
-  goog.asserts.assert(!goog.isDef(this.responseData) || 
-      this.responseData instanceof pn.data.Entity);
+  goog.asserts.assert(!goog.isDefAndNotNull(this.responseEntity) || 
+      this.responseEntity instanceof pn.data.Entity);
+  goog.asserts.assert(!goog.isDef(this.ajaxData) || 
+      goog.isObject(this.ajaxData));
 };
-
-/**
- * @typedef {{
- *    Type:string,
- *    ID:number,
- *    EntityType:string,
- *    Entity:Object
- *  }}
- */
-pn.data.Server.RawUpdate;
 
 /**
  * @constructor
@@ -259,11 +296,16 @@ pn.data.Server.Update = function(raw) {
   /** @type {number} */
   this.id = raw['ID'];
 
+  /** @type {string} */
+  this.entityType = raw['EntityType'];
+
   /** @type {pn.data.Entity} */
-  this.entity = pn.data.TypeRegister.parseEntity(
-    raw['EntityType'], raw['Entity']);  
+  this.entity = raw['Entity'] ? 
+      pn.data.TypeRegister.parseEntity(raw['EntityType'], raw['Entity']) :
+      null;  
 
   goog.asserts.assert(goog.isNumber(this.id));
+  goog.asserts.assert(goog.isString(this.entityType));  
   goog.asserts.assert(this.type === 'create' || 
       this.type === 'update' || this.type === 'delete');   
   goog.asserts.assert(this.type !== 'delete' || this.entity === null);

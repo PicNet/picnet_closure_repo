@@ -67,13 +67,20 @@ goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
  * Makes an arbitrary ajax call to the server.  The results are then
  *    inspected for entities and appropriate caches updated.
  *
- * @param {string} uri The server endpoint.
+ * @param {string} controller The server controller endpoint.
+ * @param {string} action The server controller action endpoint.
  * @param {!Object} data The request data.
- * @param {function(?):undefined} success The success callback.
+ * @param {function(?):undefined} callback The success callback.
  */
-pn.data.BaseFacade.prototype.ajax = function(uri, data, success) {
-  this.server.ajax(uri, data, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this, success), 
+pn.data.BaseFacade.prototype.ajax = 
+    function(controller, action, data, callback) {
+  goog.asserts.assert(goog.isString(controller));
+  goog.asserts.assert(goog.isString(action));
+  goog.asserts.assert(goog.isObject(data));
+  goog.asserts.assert(goog.isFunction(callback));
+
+  this.server.ajax(controller, action, data, this.getLastUpdate(),
+      goog.bind(this.parseServerResponse_, this, callback), 
       goog.bind(this.handleError_, this));
 };
 
@@ -107,10 +114,10 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id <= 0);
 
-  entity = this.cache.createEntity(entity);
+  entity = this.cache.createEntity(entity).clone();
   var tmpid = entity.id;
 
-  var onsuccess = goog.bind(function(entity2) {    
+  var onsuccess = goog.bind(function(entity2) {        
     entity.id = entity2.id;
     goog.asserts.assert(entity.equals(entity2));    
 
@@ -226,23 +233,27 @@ pn.data.BaseFacade.prototype.sync_ = function() {
 
 /** 
  * @private 
- * @param {!(function(pn.data.Entity=):undefined|pn.data.Server.Response)} 
- *    callbackOrResponse The success callback or the response object.
+ * @param {!(function((pn.data.Entity|Object)=):undefined|
+ *    pn.data.Server.Response)} callbackOrResponse The success callback or 
+ *    the response object.
  * @param {pn.data.Server.Response=} opt_response The optional response 
  *    object.  This is only allowed if the callbackOrResponse parameter 
  *    is a function - a callback.
  */
 pn.data.BaseFacade.prototype.parseServerResponse_ = 
-    function(callbackOrResponse, opt_response) {    
-  var callback = goog.isFunction(callbackOrResponse) ? 
-      callbackOrResponse : null;
-  var response = callbackOrResponse ? opt_response : callbackOrResponse;
-
+    function(callbackOrResponse, opt_response) {   
+  var callback = callbackOrResponse instanceof pn.data.Server.Response ? 
+      null : callbackOrResponse;
+  var response = callbackOrResponse instanceof pn.data.Server.Response ? 
+    callbackOrResponse : opt_response;
+  
   goog.asserts.assert(goog.isNull(callback) || goog.isFunction(callback));
   goog.asserts.assert(response instanceof pn.data.Server.Response);
   
   this.applyUpdates_(response.updates);
   this.cache.lastUpate = response.lastUpdate;
+  
+  if (callback) callback(response.responseEntity || response.ajaxData);
 };
 
 /**
@@ -263,7 +274,7 @@ pn.data.BaseFacade.prototype.handleError_ = function(error) {
 pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
   goog.asserts.assert(goog.isArray(updates));
 
-  goog.array.forEach(updates, this.applyUpdate_);
+  goog.array.forEach(updates, this.applyUpdate_, this);
 };
 
 /**
@@ -276,10 +287,12 @@ pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
   
   switch(update.type) {
     case 'delete':
-      this.cache.deleteEntity(update.type, update.id);
+      this.cache.deleteEntity(update.entityType, update.id);
       break;
     case 'create':
-      this.cache.createEntity(/** @type {!pn.data.Entity} */ (update.entity));
+      // undeleteEntity is basically an unverified push back into the entity list
+      // so it bypasses all the createEntity checks, like ID should be 0.
+      this.cache.undeleteEntity(/** @type {!pn.data.Entity} */ (update.entity));
       break;
     case 'update':
       this.cache.updateEntity(/** @type {!pn.data.Entity} */ (update.entity));
