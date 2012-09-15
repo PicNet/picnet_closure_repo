@@ -16,6 +16,9 @@ goog.require('pn.data.LinqParser');
  */
 pn.data.LocalCache = function() {
   goog.Disposable.call(this);
+  
+  /** @type {number} */
+  this.lastUpdate = 0;
 
   /**
    * @private
@@ -26,23 +29,13 @@ pn.data.LocalCache = function() {
 
   /**
    * @private
-   * @type {number}
-   */
-  this.lastUpdate_ = 0;
-
-  /**
-   * @private
    * @type {!Object.<string, !Array.<pn.data.Entity>>}
    */
-  this.cache_ = {};
+  this.cache_ = {};  
 
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
-
-/** @return {number} The last update time (in server millis). */
-pn.data.LocalCache.prototype.getLastUpdate = 
-    function() { return this.lastUpdate_; };
 
 /**
  * Gets an entity from the local cache.  If this entity does not exist in the 
@@ -141,7 +134,7 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
 
 /**
  * Wether this cache has the specified type primed.
- * @param {!(pn.data.Query|string)} query The query key to check.
+ * @param {!(pn.data.Query|string)} query The query type to check.
  * @return {boolean} Wether the specified type list exists in this cache.
  */
 pn.data.LocalCache.prototype.contains = function(query) {
@@ -157,73 +150,71 @@ pn.data.LocalCache.prototype.contains = function(query) {
 pn.data.LocalCache.prototype.query = function(queries) {
   return goog.array.reduce(queries, goog.bind(function(results, q) {
     goog.asserts.assert(q instanceof pn.data.Query || goog.isString(q));
-    goog.asserts.assert(goog.isString(q) || !q.Text, 
-        'Query.Text is not currently supported.');
     
     var type = goog.isString(q) ? q : q.Type;
+    var filter = goog.isString(q) ? null : pn.data.LinqParser.parse(q.Linq);
     goog.asserts.assert(type in this.cache_, 'The type: ' + type + 
         ' does not exist in the local cache');
 
     var list = this.cache_[type];    
-    results[type] = list;
+    results[type] = filter ? filter(list) : list;
     return results;
   }, this), {});
 };
 
 /**
- * @param {string} key The key to save the results to.
+ * @param {string} type The type to save the results to.
  * @param {!Array.<pn.data.Entity>} list The list of entities to save against
- *    the specified key.
+ *    the specified type.
  */
-pn.data.LocalCache.prototype.saveQuery = function(key, list) {
-  goog.asserts.assert(goog.isString(key));    
-  goog.asserts.assert(!(key in this.cache_));    
-  goog.asserts.assert(key.indexOf(':') < 0, 'Only supporting full type cache');
+pn.data.LocalCache.prototype.saveQuery = function(type, list) {
+  goog.asserts.assert(goog.isString(type));    
+  goog.asserts.assert(!(type in this.cache_));    
 
-  this.cache_[key] = list;
-  this.flush_(key);
+  this.cache_[type] = list;
+  this.flush_(type);
 };
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
   var cachedtime = pn.storage.get(this.STORE_PREFIX_ + 'version');
-  this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
+  this.lastUpdate = cachedtime ? parseInt(cachedtime, 10) : 0;
 
-  var parse = function(key) {
-    return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + key));
+  var parse = function(type) {
+    return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
   };
 
-  var keys = parse('KEYS');
-  if (!keys) {
-    if (this.lastUpdate_ > 0) {
+  var types = parse('KEYS');  
+  if (!types) {
+    if (this.lastUpdate > 0) {
       throw 'Last update time is set but the cache is empty.';
     }
     this.cache_ = {};  
     return;
   }
+  goog.asserts.assert(goog.isArray(types));
 
   this.cache_ = {};
-  goog.array.forEach(keys, function(key) {
-    if (key.indexOf(':') >= 0) throw 'Only supporting full type cache';
-    var data = parse(key);
-    var type = key.split(':')[0];
+  goog.array.forEach(types, function(type) {
+    goog.asserts.assert(goog.isString(types));
+    var data = parse(type);
+    
+    goog.asserts.assert(goog.isArray(data));
+
     var list = pn.data.TypeRegister.parseEntities(type, data);
-    this.cache_[key] = list;
+    this.cache_[type] = list;
   }, this);
 };
 
 /**
  * @private
- * @param {string} key The key to flush to disk.
+ * @param {string} type The type (cache key) to flush to disk.
  */
-pn.data.LocalCache.prototype.flush_ = function(key) {
-  goog.asserts.assert(goog.isString(key));
-  goog.asserts.assert(key in this.cache_, key + ' not in cache');
+pn.data.LocalCache.prototype.flush_ = function(type) {
+  goog.asserts.assert(goog.isString(type));
+  goog.asserts.assert(type in this.cache_, type + ' not in cache');
 
-  if (key.indexOf(':') >= 0) throw 'Only supporting full type cache';
-
-  var type = key.split(':')[0];
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list);
-  pn.storage.set(this.STORE_PREFIX_ + key, json);
+  pn.storage.set(this.STORE_PREFIX_ + type, json);
 };

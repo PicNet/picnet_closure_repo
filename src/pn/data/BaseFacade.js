@@ -48,12 +48,20 @@ pn.data.BaseFacade = function(controller) {
   this.eh_ = new goog.events.EventHandler();
   this.registerDisposable(this.eh_);
 
-  goog.object.forEach(pn.data.Server.EventType, function(et) {
-    this.eh_.listen(this.server, et, this.dispatchEvent);
-  }, this);
-  
+  /** 
+   * @private
+   * @type {number}
+   */
+  this.timerid_ = 0;
+
+  this.proxyServerEvents_();
+  this.startUpdateInterval_();
 };
 goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
+
+////////////////////////////////////////////////////////////////////////////////
+// PUBLIC INTERFACE
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Makes an arbitrary ajax call to the server.  The results are then
@@ -111,7 +119,9 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
     this.cache.deleteEntity(entity.type, tmpid);
     throw new Error(error);
   }, this);
-  this.server.createEntity(entity, onsuccess, onfail);
+  this.server.createEntity(entity, this.cache.lastUpdate,
+      goog.bind(this.parseServerResponse_, this, onsuccess), 
+      onfail);
 
   return entity;
 };
@@ -139,7 +149,9 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
     throw new Error(error);
   }, this);
 
-  this.server.updateEntity(entity, onsuccess, onfail);
+  this.server.updateEntity(entity, this.cache.lastUpdate,
+      goog.bind(this.parseServerResponse_, this, onsuccess),      
+      onfail);
 };
 
 /**
@@ -156,21 +168,118 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
     this.cache.undeleteEntity(current); // Revert client cache
     throw new Error(error);
   }, this);
-  this.server.deleteEntity(entity, function() {}, onfail);
+
+  this.server.deleteEntity(entity, this.cache.lastUpdate,
+      goog.bind(this.parseServerResponse_, this), 
+      onfail);
 };
 
 /**
  * @param {!Array.<(pn.data.Query|string)>} queries The queries to execute
- * @param {function(!Object.<!Array.<pn.data.Entity>>):undefined} The query 
- *    results callback.  The reason this is a callback rather than a
+ * @param {function(!Object.<!Array.<pn.data.Entity>>):undefined} callback The 
+ *    query results callback.  The reason this is a callback rather than a
  *    returned value is that this can be overriden. See LazyFacade for
  *    an example of this.
  */
 pn.data.BaseFacade.prototype.query = function(queries, callback) {
   goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
-  goog.asserts.assert(goog.isFunction(cb));
+  goog.asserts.assert(goog.isFunction(callback));
 
   callback(this.cache.query(queries));
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// PRIVATE HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
+/** @private */
+pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
+  goog.object.forEach(pn.data.Server.EventType, function(et) {
+    this.eh_.listen(this.server, et, this.dispatchEvent);
+  }, this);  
+};
+
+/** @private */
+pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
+  this.timerid_ = setInterval(goog.bind(this.sync_, this), 20000);
+};
+
+/** @private */
+pn.data.BaseFacade.prototype.sync_ = function() {  
+  this.server.getUpdates(this.cache.lastUpdate, 
+      goog.bind(this.parseServerResponse_, this),
+      goog.bind(this.handleError_, this));
+};
+
+/** 
+ * @private 
+ * @param {!(function(pn.data.Entity=):undefined|pn.data.Server.Response)} 
+ *    callbackOrResponse The success callback or the response object.
+ * @param {pn.data.Server.Response=} opt_response The optional response 
+ *    object.  This is only allowed if the callbackOrResponse parameter 
+ *    is a function - a callback.
+ */
+pn.data.BaseFacade.prototype.parseServerResponse_ = 
+    function(callbackOrResponse, opt_response) {    
+  var callback = goog.isFunction(callbackOrResponse) ? 
+      callbackOrResponse : null;
+  var response = callbackOrResponse ? opt_response : callbackOrResponse;
+
+  goog.asserts.assert(goog.isNull(callback) || goog.isFunction(callback));
+  goog.asserts.assert(response instanceof pn.data.Server.Response);
+  
+  this.applyUpdates_(response.updates);
+  this.cache.lastUpdate = response.serverTime;
+};
+
+/**
+ * @private
+ * @param {string} error The error from the server.
+ */
+pn.data.BaseFacade.prototype.handleError_ = function(error) {
+  goog.asserts.assert(goog.isString(error));
+
+  throw new Error(error);
+};
+
+/**
+ * @private
+ * @param {!Array.<pn.data.Server.Update>} updates The updates since last 
+ *    update time.
+ */
+pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
+  goog.asserts.assert(goog.isArray(updates));
+
+  goog.array.forEach(updates, this.applyUpdate_);
+};
+
+/**
+ * @private
+ * @param {!pn.data.Server.Update} update The update to update the cache 
+ *    with.
+ */
+pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
+  goog.asserts.assert(update instanceof pn.data.Server.Update);
+  
+  switch(update.type) {
+    case 'delete':
+      this.cache.deleteEntity(update.type, update.id);
+      break;
+    case 'create':
+      this.cache.createEntity(/** @type {!pn.data.Entity} */ (update.entity));
+      break;
+    case 'update':
+      this.cache.updateEntity(/** @type {!pn.data.Entity} */ (update.entity));
+      break;
+    default: throw new Error('Update: ' + update + ' is not supported');
+  };
+};
+
+/** @override */
+pn.data.BaseFacade.prototype.disposeInternal = function() {
+  pn.data.BaseFacade.superClass_.disposeInternal.call(this);
+  if (this.timer_ !== 0) clearInterval(this.timer_);
 };
 
 /** @enum {string} */
@@ -178,3 +287,4 @@ pn.data.BaseFacade.EventType = {
   LOADING: 'server-loading',
   LOADED: 'server-loaded'
 };
+

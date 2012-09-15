@@ -9,7 +9,7 @@ goog.require('pn.ui.grid.ColumnSpec');
 
 
 
-/**
+/** 
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related

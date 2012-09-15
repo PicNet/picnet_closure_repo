@@ -7,7 +7,7 @@ goog.require('goog.asserts');
 /**
  * @param {string} expression The text representation of
  *    a Linq expression.
- * @return {function(!Array}):!Array} The parsed Linq expression in
+ * @return {function(!Array):!Array} The parsed Linq expression in
  *    the form of a function that filters an array.
  */
 pn.data.LinqParser.parse = function(expression) {

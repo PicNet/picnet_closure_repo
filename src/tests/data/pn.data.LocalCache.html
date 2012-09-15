@@ -12,6 +12,7 @@ goog.require('goog.testing.jsunit');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
+goog.require('pn.data.Query');
 
 var entity,
     cache;
@@ -111,6 +112,15 @@ var testUpdateEntityCanThenBeRetreived = function() {
   cache.updateEntity(entity); 
   var updated = cache.getEntity('EntityType', entity.id);
   assertEquals('newprop', updated.newprop);
+};
+
+var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
+  var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)).clone(); 
+  var tmpid = entity.id;
+  entity.id = 100;
+  cache.updateEntity(entity, tmpid); 
+  var updated = cache.getEntity('EntityType', entity.id);
+  assertEquals(100, updated.id);
 };
 
 var testUpdateEntityUpdatesLocalStorage = function() {
@@ -223,6 +233,26 @@ var testQueryWithMultipleTypes = function() {
   entityList = lists['EntityType2'];
   assertEquals(1, entityList.length);
   assertTrue(entity2.equals(entityList[0]));
+};
+
+var testQueryWithWithLinqExpressions = function() {    
+  var create = function(id) {
+    var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)).clone();
+
+    var tmpid = entity.id;
+    entity.id = id;
+    cache.updateEntity(entity, tmpid); 
+    return entity;
+  };
+  
+  create(1);create(10);
+  var exp = [create(11), create(100)];
+
+  var lists = cache.query([new pn.data.Query('EntityType', 'Where(e => e.id > 10)')]);  
+  var entityList = lists['EntityType'];
+
+  assertArrayEquals(['EntityType'], goog.object.getKeys(lists));
+  assertArrayEquals(exp, entityList);
 };
         </script>
     </body>
