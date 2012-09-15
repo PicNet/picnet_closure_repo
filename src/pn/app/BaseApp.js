@@ -5,7 +5,7 @@ goog.require('goog.pubsub.PubSub');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
-goog.require('pn.data.Facade');
+goog.require('pn.data.BaseFacade');
 goog.require('pn.log');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
@@ -81,8 +81,8 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
-  /** @type {!pn.data.Facade} */
-  this.data = new pn.data.Facade(this.cfg.appPath);
+  /** @type {!pn.data.BaseFacade} */
+  this.data = new pn.data.BaseFacade(this.cfg.appPath);
   this.registerDisposable(this.data);
 
   /** @type {!pn.ui.LoadingPnl} */
@@ -168,7 +168,7 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 pn.app.BaseApp.prototype.init_ = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
-  var sset = pn.data.Facade.EventType;
+  var sset = pn.data.BaseFacade.EventType;
   goog.events.listen(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
   goog.events.listen(
@@ -244,7 +244,7 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
 
-  var sset = pn.data.Facade.EventType;
+  var sset = pn.data.BaseFacade.EventType;
   goog.events.listen(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
   goog.events.listen(

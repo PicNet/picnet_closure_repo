@@ -1,5 +1,5 @@
-REM set BASE=../../../../projects/picnet_closure_repo/src/
-set BASE=../../../../rr/resources/scripts/lib/picnet_closure_repo/src/
+set BASE=../../../../projects/picnet_closure_repo/src/
+REM set BASE=../../../../rr/resources/scripts/lib/picnet_closure_repo/src/
 
 U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^
@@ -15,7 +15,6 @@ c:\Python27\python.exe ^
 c:\Python27\python.exe ^
   U:\shared\lib\closure-library\closure\bin\build\closurebuilder.py ^
   --namespace="pn.closure.repo.demoscripts" ^
-  --namespace="pn.data.Facade" ^
   --root=U:\shared\lib\closure-library\ ^
   --root=U:\shared\lib\closure-templates\ ^
   --root=src\ ^

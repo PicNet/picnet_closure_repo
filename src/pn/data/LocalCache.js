@@ -141,13 +141,14 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
 
 /**
  * Wether this cache has the specified type primed.
- * @param {!string} type The type of the entity to delete.
+ * @param {!(pn.data.Query|string)} query The query key to check.
  * @return {boolean} Wether the specified type list exists in this cache.
  */
-pn.data.LocalCache.prototype.contains = function(type) {
-  goog.asserts.assert(goog.isString(type));
+pn.data.LocalCache.prototype.contains = function(query) {
+  goog.asserts.assert(query instanceof pn.data.Query || goog.isString(query));
+  var type = goog.isString(query) ? query : query.Type;
   return type in this.cache_;
-}
+};
 
 /**
  * @param {!Array.<(pn.data.Query|string)>} queries The queries to execute.
@@ -167,6 +168,20 @@ pn.data.LocalCache.prototype.query = function(queries) {
     results[type] = list;
     return results;
   }, this), {});
+};
+
+/**
+ * @param {string} key The key to save the results to.
+ * @param {!Array.<pn.data.Entity>} list The list of entities to save against
+ *    the specified key.
+ */
+pn.data.LocalCache.prototype.saveQuery = function(key, list) {
+  goog.asserts.assert(goog.isString(key));    
+  goog.asserts.assert(!(key in this.cache_));    
+  goog.asserts.assert(key.indexOf(':') < 0, 'Only supporting full type cache');
+
+  this.cache_[key] = list;
+  this.flush_(key);
 };
 
 /** @private */

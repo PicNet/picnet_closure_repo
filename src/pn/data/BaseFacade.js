@@ -1,5 +1,5 @@
 ﻿
-goog.provide('pn.data.Facade');
+goog.provide('pn.data.BaseFacade');
 
 goog.require('pn.data.Query');
 goog.require('pn.data.Entity');
@@ -15,7 +15,7 @@ goog.require('goog.events.EventHandler');
  * @extends {goog.events.EventTarget}
  * @param {string} controller The path to the controller
  */
-pn.data.Facade = function(controller) {
+pn.data.BaseFacade = function(controller) {
   goog.asserts.assert(goog.isString(controller));
 
   goog.events.EventTarget.call(this);
@@ -27,11 +27,19 @@ pn.data.Facade = function(controller) {
   this.controller_ = controller;
 
   /**
-   * @private
+   * @protected
    * @type {pn.data.LocalCache}
    */
-  this.cache_ = new pn.data.LocalCache();
-  this.registerDisposable(this.cache_);
+  this.cache = new pn.data.LocalCache();
+  this.registerDisposable(this.cache);
+
+  
+  /**
+   * @protected
+   * @type {pn.data.Server}
+   */
+  this.server = new pn.data.Server(controller);
+  this.registerDisposable(this.cache);
 
   /**
    * @private
@@ -40,19 +48,12 @@ pn.data.Facade = function(controller) {
   this.eh_ = new goog.events.EventHandler();
   this.registerDisposable(this.eh_);
 
-  /**
-   * @private
-   * @type {pn.data.Server}
-   */
-  this.server_ = new pn.data.Server(controller);
-  this.registerDisposable(this.cache_);
-
   goog.object.forEach(pn.data.Server.EventType, function(et) {
-    this.eh_.listen(this.server_, et, this.dispatchEvent);
+    this.eh_.listen(this.server, et, this.dispatchEvent);
   }, this);
   
 };
-goog.inherits(pn.data.Facade, goog.events.EventTarget);
+goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
 
 /**
  * Makes an arbitrary ajax call to the server.  The results are then
@@ -62,7 +63,7 @@ goog.inherits(pn.data.Facade, goog.events.EventTarget);
  * @param {!Object} data The request data.
  * @param {function(?):undefined} success The success callback.
  */
-pn.data.Facade.prototype.ajax = function(uri, data, success) {
+pn.data.BaseFacade.prototype.ajax = function(uri, data, success) {
   throw 'Not Implemented';
 };
 
@@ -75,11 +76,11 @@ pn.data.Facade.prototype.ajax = function(uri, data, success) {
  * @param {number} id The ID of the entity to retreive.
  * @return {!pn.data.Entity} The entity with the specified id.
  */
-pn.data.Facade.prototype.getEntity = function(type, id) {
+pn.data.BaseFacade.prototype.getEntity = function(type, id) {
   goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(goog.isNumber(id));
 
-  return this.cache_.getEntity(type, id);
+  return this.cache.getEntity(type, id);
 };
 
 /**
@@ -92,25 +93,25 @@ pn.data.Facade.prototype.getEntity = function(type, id) {
  * @return {!pn.data.Entity} The created entity with an assigned temporary ID
  *    which will change once the server is updated.
  */
-pn.data.Facade.prototype.createEntity = function(entity) {
+pn.data.BaseFacade.prototype.createEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id <= 0);
 
-  entity = this.cache_.createEntity(entity);
+  entity = this.cache.createEntity(entity);
   var tmpid = entity.id;
 
   var onsuccess = goog.bind(function(entity2) {    
     entity.id = entity2.id;
     goog.asserts.assert(entity.equals(entity2));    
 
-    this.cache_.updateEntity(entity, tmpid);
+    this.cache.updateEntity(entity, tmpid);
   }, this);
 
   var onfail = goog.bind(function(error) {    
-    this.cache_.deleteEntity(entity.type, tmpid);
+    this.cache.deleteEntity(entity.type, tmpid);
     throw new Error(error);
   }, this);
-  this.server_.createEntity(entity, onsuccess, onfail);
+  this.server.createEntity(entity, onsuccess, onfail);
 
   return entity;
 };
@@ -121,56 +122,59 @@ pn.data.Facade.prototype.createEntity = function(entity) {
  *
  * @param {!pn.data.Entity} entity The entity to update
  */
-pn.data.Facade.prototype.updateEntity = function(entity) {
+pn.data.BaseFacade.prototype.updateEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id > 0);
 
-  var current = this.cache_.getEntity(entity.type, entity.id);
+  var current = this.cache.getEntity(entity.type, entity.id);
 
-  this.cache_.updateEntity(entity);
+  this.cache.updateEntity(entity);
 
   var onsuccess = function(entity2) {    
     goog.asserts.assert(entity.equals(entity2));
   };
 
   var onfail = goog.bind(function(error) {        
-    this.cache_.updateEntity(current); // Revert client cache
+    this.cache.updateEntity(current); // Revert client cache
     throw new Error(error);
   }, this);
 
-  this.server_.updateEntity(entity, onsuccess, onfail);
+  this.server.updateEntity(entity, onsuccess, onfail);
 };
 
 /**
  * @param {!pn.data.Entity} entity The entity to delete
  */
-pn.data.Facade.prototype.deleteEntity = function(entity) {
+pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id > 0);
 
-  var current = this.cache_.getEntity(entity.type, entity.id);
+  var current = this.cache.getEntity(entity.type, entity.id);
 
-  this.cache_.deleteEntity(entity.type, entity.id);  
+  this.cache.deleteEntity(entity.type, entity.id);  
   var onfail = goog.bind(function(error) {    
-    this.cache_.undeleteEntity(current); // Revert client cache
+    this.cache.undeleteEntity(current); // Revert client cache
     throw new Error(error);
   }, this);
-  this.server_.deleteEntity(entity, function() {}, onfail);
+  this.server.deleteEntity(entity, function() {}, onfail);
 };
 
 /**
  * @param {!Array.<(pn.data.Query|string)>} queries The queries to execute
- * @return {!Object.<!Array.<pn.data.Entity>>} The query results.
+ * @param {function(!Object.<!Array.<pn.data.Entity>>):undefined} The query 
+ *    results callback.  The reason this is a callback rather than a
+ *    returned value is that this can be overriden. See LazyFacade for
+ *    an example of this.
  */
-pn.data.Facade.prototype.query = function(queries, cb) {
+pn.data.BaseFacade.prototype.query = function(queries, callback) {
   goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
   goog.asserts.assert(goog.isFunction(cb));
 
-  return this.cache_.query(queries);
+  callback(this.cache.query(queries));
 };
 
 /** @enum {string} */
-pn.data.Facade.EventType = {
+pn.data.BaseFacade.EventType = {
   LOADING: 'server-loading',
   LOADED: 'server-loaded'
 };
