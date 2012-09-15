@@ -72,7 +72,9 @@ goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
  * @param {function(?):undefined} success The success callback.
  */
 pn.data.BaseFacade.prototype.ajax = function(uri, data, success) {
-  throw 'Not Implemented';
+  this.server.ajax(uri, data, this.getLastUpdate(),
+      goog.bind(this.parseServerResponse_, this, success), 
+      goog.bind(this.handleError_, this));
 };
 
 /**
@@ -144,7 +146,7 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
     goog.asserts.assert(entity.equals(entity2));
   };
 
-  var onfail = goog.bind(function(error) {        
+  var onfail = goog.bind(function(error) {   
     this.cache.updateEntity(current); // Revert client cache
     throw new Error(error);
   }, this);

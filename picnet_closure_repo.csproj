@@ -104,6 +104,7 @@
     <Content Include="src\pn\rx.js" />
     <Content Include="src\pn\slick.grid.externs.js" />
     <Content Include="src\pn\storage.js" />
+    <Content Include="src\pn\testing\MockServer.js" />
     <Content Include="src\pn\ui\BaseFieldSpec.js" />
     <Content Include="src\pn\ui\ComboBox.js" />
     <Content Include="src\pn\ui\css\common.css" />
@@ -185,7 +186,7 @@
     <Content Include="src\pn\ui\YesNoDialog.js" />
     <Content Include="src\tests\all_tests.html" />
     <Content Include="src\tests\data\pn.data.LinqParser.html" />
-    <Content Include="src\tests\data\pn.data.Facade.GetEntity.html" />
+    <Content Include="src\tests\data\pn.data.BaseFacade.html" />
     <Content Include="src\tests\data\pn.data.LocalCache.html" />
     <Content Include="src\tests\data\pn.data.MemCache.html" />
     <Content Include="src\tests\data\pn.data.Server.html" />

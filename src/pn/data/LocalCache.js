@@ -95,9 +95,16 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
       (goog.isNumber(opt_tmpid) && opt_tmpid < 0));
 
   var id = opt_tmpid || entity.id;
-  var live = this.getEntity(entity.type, id);
-  goog.object.extend(live, entity);  
-  // live.update(); // TODO: fire live entity changed
+  var list = this.cache_[entity.type];
+  var found = false;
+  for (var i = 0, len = list.length; i < len; i++) {
+    var e = list[i];
+    if (e.id === id) { list[i] = entity; found = true; break; }
+  }
+  if (!found) throw new Error('Could not find entity: ' + 
+      entity.type + '.' + entity.id + ' in the cache.');
+
+  // entity.update(); // TODO: fire live entity changed
 
   this.flush_(entity.type);
 };

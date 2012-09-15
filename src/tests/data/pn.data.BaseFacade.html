@@ -1,0 +1,169 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn.data.BaseFacade');
+goog.require('pn.data.Entity');
+goog.require('pn.testing.MockServer');
+
+var facade,
+    server,
+    events,
+    xhrs;
+
+var setUp = function() {
+  xhrs = [];
+  events = [];
+  goog.global.setInterval = function() {};
+  facade = new pn.data.BaseFacade('controller_uri');  
+  facade.cache.cache_['EntityType'] = [];
+  facade.server = (server = new pn.testing.MockServer());
+  
+  pn.data.TypeRegister.parseEntity = function(type, raw) {
+    var entity = new pn.data.Entity(type, raw.id);
+    goog.object.extend(entity, raw);
+    return entity;
+  };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.getEntity
+////////////////////////////////////////////////////////////////////////////////
+
+var testGetEntityThrowsErrorIfTypeNotInCache = function() {
+  try { 
+    facade.getEntity('UnknownType', 1); 
+    assertFails('Expected failure with UnknownType');
+  }
+  catch (ex) {};
+  assertArrayEquals([], server.calls); 
+};
+
+var testGetEntityThrowsErrorIfIDNotInCache = function() {  
+  try { 
+    facade.getEntity('EntityType', 11); 
+    assertFails('Expected failure with invalid ID');
+  }
+  catch (ex) {};
+  assertArrayEquals([], server.calls); 
+};
+
+var testGetEntityReturnsEntityInCache = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  facade.createEntity(entity);
+  assertTrue(entity.equals(facade.getEntity('EntityType', entity.id)));
+  
+  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.createEntity
+////////////////////////////////////////////////////////////////////////////////
+
+var testCreateEntityCreatesInCacheFirstWithNegativeID = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  server.createEntity = function() {}; // Dissable the server call
+  var created = facade.createEntity(entity);
+  
+  assertTrue(created.id < 0);
+  assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);
+  assertArrayEquals([], server.calls); 
+};
+
+var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  var created = facade.createEntity(entity);
+  
+  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
+  assertTrue(created.id > 0);  
+  assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);
+};
+
+var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  server.nextFail = true;
+  
+  try { facade.createEntity(entity); assertFail('1'); } 
+  catch(ex) {};
+  
+  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
+  
+  var list = facade.cache.query(['EntityType'])['EntityType']; 
+  assertArrayEquals([], list);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.updateEntity
+////////////////////////////////////////////////////////////////////////////////
+
+var testUpdateEntityUpdatesInCacheFirst = function() {  
+  server.updateEntity = function() {}; // Dissable the server call
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  facade.updateEntity(entity2);
+  
+  assertEquals(1, entity2.id);
+  assertArrayEquals([entity2], facade.cache.query(['EntityType'])['EntityType']);
+  assertArrayEquals([], server.calls); 
+};
+
+var testUpdateEntityUpdatesCacheThenServer = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  facade.updateEntity(entity2);
+  
+  assertTrue(entity2.id > 0);
+  assertArrayEquals([{method:'updateEntity', entity:entity2}], server.calls); 
+};
+
+var testUpdateEntityWithErrorUndoesLocalChange = function() {
+  var entity = new pn.data.Entity('EntityType', 0);
+  var entity2 = facade.cache.createEntity(entity).clone();
+  var tmpid = entity2.id;
+  entity2.id = 1;
+  facade.cache.updateEntity(entity2, tmpid);
+  
+  var before = entity2.clone();
+  var after = entity2.clone();
+  
+  after.newpropery = 'newproperty';
+  server.nextFail = true;  
+
+  try { facade.updateEntity(after); assertFail('1'); } 
+  catch(ex) {};
+  
+  assertArrayEquals([{method:'updateEntity', entity:after}], server.calls); 
+  
+  var list = facade.cache.query(['EntityType'])['EntityType']; 
+  assertArrayEquals([before], list);
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.deleteEntity
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.query
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// BaseFacade.ajax
+////////////////////////////////////////////////////////////////////////////////
+
+
+        </script>
+    </body>
+</html>

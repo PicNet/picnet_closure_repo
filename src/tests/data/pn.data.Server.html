@@ -49,7 +49,7 @@ function doFailure_(method, arg1) {
     tc.continueTesting();
     assertTrue(goog.isString(err));
   };
-  method.call(server, arg1, success, error);
+  method.call(server, arg1, 0, success, error);
 };
 
 function doSuccess_(method, arg1, expreturns) {
@@ -62,7 +62,7 @@ function doSuccess_(method, arg1, expreturns) {
     tc.continueTesting();
     assertFail('Should have succeeded.'); 
   };
-  method.call(server, arg1, success, error);
+  method.call(server, arg1, 0, success, error);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ function doSuccess_(method, arg1, expreturns) {
 // Server.query
 ////////////////////////////////////////////////////////////////////////////////
 
-var tc = new goog.testing.AsyncTestCase();
+var tc = goog.testing.AsyncTestCase.createAndInstall();
         </script>
     </body>
 </html>

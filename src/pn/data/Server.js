@@ -12,6 +12,7 @@ goog.require('pn.data.DataDownloader');
 goog.require('pn.data.IDataSource');
 goog.require('pn.json');
 goog.require('pn.log');
+goog.require('pn.data.TypeRegister');
 
 /**
  * @constructor
