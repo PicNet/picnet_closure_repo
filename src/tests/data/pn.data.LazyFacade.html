@@ -1,0 +1,85 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn.data.LazyFacade');
+goog.require('pn.data.Entity');
+goog.require('pn.testing.MockServer');
+
+var facade,
+    server,
+    events,
+    updated,
+    updated,
+    xhrs;
+
+var setUp = function() {
+  xhrs = [];
+  events = [];
+  goog.global.setInterval = function() {};
+  facade = new pn.data.LazyFacade('controller_uri');  
+  facade.cache.cache_['EntityType'] = [];
+  facade.server = (server = new pn.testing.MockServer());
+  
+  var entity = new pn.data.Entity('EntityType', 0);
+  updated = facade.cache.createEntity(entity).clone();
+  var tmpid = updated.id;
+  updated.id = 1;
+  facade.cache.updateEntity(updated, tmpid);
+
+  pn.data.TypeRegister.parseEntity = function(type, raw) {
+    var entity2 = new pn.data.Entity(type, raw.ID);
+    goog.object.extend(entity2, raw);
+    delete entity2.ID;
+    return entity2;
+  };
+};
+
+var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
+  facade.ajax('controller', 'action', {}, function() {});
+  facade.getEntity('EntityType', 1);
+  facade.createEntity(new pn.data.Entity('EntityType', 0));
+  facade.updateEntity(updated);
+  facade.deleteEntity(updated);
+  facade.query(['EntityType2'], function() {});
+
+  var calls = server.calls;
+  assertEquals(5, calls.length); // GetEntity does not call the server
+  var assertCall = function(idx, method) {
+    var call = calls[idx];
+    var args = goog.array.clone(call.args);
+    assertEquals(method, call.method);
+    var lastUpdate = args[args.length - 3];
+    assertTrue(lastUpdate > new Date(2050, 1, 1).getTime());
+  };
+  assertCall(0, 'ajax');
+  assertCall(1, 'createEntity');
+  assertCall(2, 'updateEntity');
+  assertCall(3, 'deleteEntity');
+  assertCall(4, 'query');
+};
+
+var testNewQueryGoesToServer = function() {
+  facade.query(['EntityType2'], function() {});
+  var calls = server.calls;
+  assertEquals(1, calls.length);
+  assertEquals('query', calls[0].method);
+};
+
+var testRepeatedQueryDoesNotGoToServer = function() {
+  testNewQueryGoesToServer();
+  server.calls = [];
+  facade.query(['EntityType2'], function() {});  
+  assertArrayEquals([], server.calls);
+};
+
+        </script>
+    </body>
+</html>

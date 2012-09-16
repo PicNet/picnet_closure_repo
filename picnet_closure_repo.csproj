@@ -185,6 +185,7 @@
     <Content Include="src\pn\ui\ViewMgr.js" />
     <Content Include="src\pn\ui\YesNoDialog.js" />
     <Content Include="src\tests\all_tests.html" />
+    <Content Include="src\tests\data\pn.data.LazyFacade.html" />
     <Content Include="src\tests\data\pn.data.LinqParser.html" />
     <Content Include="src\tests\data\pn.data.BaseFacade.html" />
     <Content Include="src\tests\data\pn.data.LocalCache.html" />

@@ -37,7 +37,7 @@ goog.inherits(pn.testing.MockServer, pn.data.Server);
 /** @override */
 pn.testing.MockServer.prototype.ajax = 
     function(controller, action, data, lastUpdate, success, failure) {
-  this.calls.push({ method:'ajax', data:data });
+  this.calls.push({ method:'ajax', args: arguments });
   
   this.lastAjaxArgData = data;
   if (this.nextFail) { this.doFail_(failure); return; }
@@ -47,7 +47,7 @@ pn.testing.MockServer.prototype.ajax =
 /** @override */
 pn.testing.MockServer.prototype.createEntity = 
     function(entity, lastUpdate, success, failure) {
-  this.calls.push({ method:'createEntity', entity:entity });
+  this.calls.push({ method:'createEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
   entity.id = this.nextId++;
@@ -57,7 +57,7 @@ pn.testing.MockServer.prototype.createEntity =
 /** @override */
 pn.testing.MockServer.prototype.updateEntity = 
     function(entity, lastUpdate, success, failure) {
-  this.calls.push({ method:'updateEntity', entity:entity });
+  this.calls.push({ method:'updateEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
   this.doSuccess_(entity, success);
@@ -66,7 +66,7 @@ pn.testing.MockServer.prototype.updateEntity =
 /** @override */
 pn.testing.MockServer.prototype.deleteEntity = 
     function(entity, lastUpdate, success, failure) {
-  this.calls.push({ method:'deleteEntity', entity:entity });
+  this.calls.push({ method:'deleteEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
   this.doSuccess_(entity, success);
@@ -75,10 +75,25 @@ pn.testing.MockServer.prototype.deleteEntity =
 /** @override */
 pn.testing.MockServer.prototype.getUpdates = 
     function(lastUpdate, success, failure) {
-  this.calls.push({ method:'getUpdates', entity:entity });
+  this.calls.push({ method:'getUpdates', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
-  this.doSuccess_(null, success);
+  this.doAjaxSuccess_({}, success);
+};
+
+/** @override */
+pn.testing.MockServer.prototype.query = 
+    function(queries, lastUpdate, success, failure) {
+  this.calls.push({ method:'query', args: arguments });
+
+  if (this.nextFail) { this.doFail_(failure); return; }
+
+  var results = {};
+  goog.array.forEach(queries, function(q) {
+    var type = goog.isString(q) ? q : q.Type;
+    results[type] = [];
+  });
+  this.doAjaxSuccess_(results, success);
 };
 
 /** 

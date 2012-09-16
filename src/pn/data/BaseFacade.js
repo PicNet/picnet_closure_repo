@@ -253,7 +253,8 @@ pn.data.BaseFacade.prototype.parseServerResponse_ =
   this.applyUpdates_(response.updates);
   this.cache.lastUpate = response.lastUpdate;
   
-  if (callback) callback(response.responseEntity || response.ajaxData);
+  if (callback) callback.call(this, 
+      response.responseEntity || response.ajaxData);
 };
 
 /**

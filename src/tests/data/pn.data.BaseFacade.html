@@ -43,8 +43,8 @@ var testGetEntityThrowsErrorIfTypeNotInCache = function() {
     facade.getEntity('UnknownType', 1); 
     assertFails('Expected failure with UnknownType');
   }
-  catch (ex) {};
-  assertArrayEquals([], server.calls); 
+  catch (ex) {};  
+  validateServerCalls([]);
 };
 
 var testGetEntityThrowsErrorIfIDNotInCache = function() {  
@@ -52,8 +52,8 @@ var testGetEntityThrowsErrorIfIDNotInCache = function() {
     facade.getEntity('EntityType', 11); 
     assertFails('Expected failure with invalid ID');
   }
-  catch (ex) {};
-  assertArrayEquals([], server.calls); 
+  catch (ex) {};  
+  validateServerCalls([]);
 };
 
 var testGetEntityReturnsEntityInCache = function() {
@@ -61,7 +61,7 @@ var testGetEntityReturnsEntityInCache = function() {
   var created = facade.createEntity(entity);
   assertTrue(entity.equals(facade.getEntity('EntityType', created.id)));
   
-  assertArrayEquals([{method:'createEntity', entity:created}], server.calls); 
+  validateServerCalls([{method:'createEntity', entity:created}]); 
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,15 +74,15 @@ var testCreateEntityCreatesInCacheFirstWithNegativeID = function() {
   var created = facade.createEntity(entity);
   
   assertTrue(created.id < 0);
-  assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);
-  assertArrayEquals([], server.calls); 
+  assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);  
+  validateServerCalls([]); 
 };
 
 var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   var created = facade.createEntity(entity);
   
-  assertArrayEquals([{method:'createEntity', entity:created}], server.calls); 
+  validateServerCalls([{method:'createEntity', entity:created}]); 
   assertTrue(created.id > 0);  
   assertArrayEquals([created], facade.cache.query(['EntityType'])['EntityType']);
 };
@@ -93,9 +93,8 @@ var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
   
   try { facade.createEntity(entity); assertFail('1'); } 
   catch(ex) {};
-  
-  assertArrayEquals([{method:'createEntity', entity:entity}], server.calls); 
-  
+    
+  validateServerCalls([{method:'createEntity', entity: entity}]);   
   var list = facade.cache.query(['EntityType'])['EntityType']; 
   assertArrayEquals([], list);
 };
@@ -114,8 +113,8 @@ var testUpdateEntityUpdatesInCacheFirst = function() {
   facade.updateEntity(entity2);
   
   assertEquals(1, entity2.id);
-  assertArrayEquals([entity2], facade.cache.query(['EntityType'])['EntityType']);
-  assertArrayEquals([], server.calls); 
+  assertArrayEquals([entity2], facade.cache.query(['EntityType'])['EntityType']);  
+  validateServerCalls([]); 
 };
 
 var testUpdateEntityUpdatesCacheThenServer = function() {
@@ -126,8 +125,8 @@ var testUpdateEntityUpdatesCacheThenServer = function() {
   facade.cache.updateEntity(entity2, tmpid);
   facade.updateEntity(entity2);
   
-  assertTrue(entity2.id > 0);
-  assertArrayEquals([{method:'updateEntity', entity:entity2}], server.calls); 
+  assertTrue(entity2.id > 0);  
+  validateServerCalls([{method:'updateEntity', entity:entity2}]); 
 };
 
 var testUpdateEntityWithErrorUndoesLocalChange = function() {
@@ -145,8 +144,8 @@ var testUpdateEntityWithErrorUndoesLocalChange = function() {
 
   try { facade.updateEntity(after); assertFail('1'); } 
   catch(ex) {};
-  
-  assertArrayEquals([{method:'updateEntity', entity:after}], server.calls); 
+    
+  validateServerCalls([{method:'updateEntity', entity:after}]); 
   
   var list = facade.cache.query(['EntityType'])['EntityType']; 
   assertArrayEquals([before], list);
@@ -166,8 +165,8 @@ var testDeleteEntityDeletesInCacheFirst = function() {
 
   facade.deleteEntity(entity2);
   
-  assertArrayEquals([], facade.cache.query(['EntityType'])['EntityType']);
-  assertArrayEquals([], server.calls); 
+  assertArrayEquals([], facade.cache.query(['EntityType'])['EntityType']);  
+  validateServerCalls([]); 
 };
 
 var testDeleteEntityDeletesCacheThenServer = function() {
@@ -179,7 +178,7 @@ var testDeleteEntityDeletesCacheThenServer = function() {
   facade.deleteEntity(entity2);
   
   assertArrayEquals([], facade.cache.query(['EntityType'])['EntityType']);
-  assertArrayEquals([{method:'deleteEntity', entity:entity2}], server.calls); 
+  validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
 };
 
 var testDeleteEntityWithErrorUndoesLocalChange = function() {
@@ -192,8 +191,8 @@ var testDeleteEntityWithErrorUndoesLocalChange = function() {
   server.nextFail = true;  
   try { facade.deleteEntity(entity2); assertFail('1'); } 
   catch(ex) {};
-  
-  assertArrayEquals([{method:'deleteEntity', entity:entity2}], server.calls);   
+    
+  validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
   var list = facade.cache.query(['EntityType'])['EntityType']; 
   assertArrayEquals([entity2], list);
 };
@@ -205,8 +204,8 @@ var testDeleteEntityWithErrorUndoesLocalChange = function() {
 var testQueryDoesNotTouchServer = function() {
   var list = [];
   facade.query(['EntityType'], function(list2) { list = list2; });
-    
-  assertArrayEquals([], server.calls);   
+      
+  validateServerCalls([]);  
   assertArrayEquals([], list['EntityType']);
 };
 
@@ -273,6 +272,28 @@ var testDeleteEntityResponse = function() {
   validateResponseDetails();
 };
 
+var testSyncResponseDetails = function() {
+  prepareServerReponse();
+
+  facade.sync_();
+
+  validateResponseDetails();
+};
+
+
+var validateServerCalls = function(exp) {
+  assertEquals(exp.length, server.calls.length);
+  goog.array.forEach(exp, function(e, i) {
+    assertEquals(e.method, server.calls[i].method);
+    if (e.entity) {
+      var actual = goog.array.find(server.calls[i].args, function(a) {
+        return a instanceof pn.data.Entity;
+      });
+      assertTrue(e.entity.equals(actual));
+    }
+  });
+};
+
 var prepareServerReponse = function() {
   var updates = [
     { Type:'create', ID:100, EntityType: 'EntityType', Entity: { ID:100 } },
@@ -291,10 +312,6 @@ var validateResponseDetails = function(opt_additional) {
   exp.push(entity);
   assertArrayEquals(exp, list);
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// BaseFacade.sync_
-////////////////////////////////////////////////////////////////////////////////
 
         </script>
     </body>

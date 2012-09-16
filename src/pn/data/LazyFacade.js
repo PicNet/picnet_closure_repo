@@ -4,9 +4,13 @@ goog.require('pn.data.BaseFacade');
 
 /**
  * @constructor
- * @extends {pn.data.Facade}
+ * @extends {pn.data.BaseFacade}
+ * @param {string} controller The controller uri for the server.
  */
-pn.data.LazyFacade = function() {};
+pn.data.LazyFacade = function(controller) {
+  pn.data.BaseFacade.call(this, controller);
+};
+goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
 
 /** 
  * This implementation of getLastUpdate avoids the facade ever getting 
@@ -14,8 +18,8 @@ pn.data.LazyFacade = function() {};
  *
  * @override 
  */
-pn.data.BaseFacade.prototype.getLastUpdate = function() {
-  var val = pn.data.BaseFacade.superClass_.getLastUpdate.call(this);
+pn.data.LazyFacade.prototype.getLastUpdate = function() {
+  var val = pn.data.LazyFacade.superClass_.getLastUpdate.call(this);
   return val || Number.MAX_VALUE;
 };
 
@@ -31,12 +35,17 @@ pn.data.LazyFacade.prototype.query = function(queries, callback) {
       function(q) { return this.cache.contains(q); }, this);
   var unloaded = goog.array.filter(queries, 
       function(q) { return !this.cache.contains(q); }, this);
+  
   var cached = this.cache.query(available);
-
-  this.server.query(unloaded, goog.bind(function(results) {
-    goog.object.forEach(results, 
-        function(list, key) { this.cache.saveQuery(key, list); }, this);
-    goog.object.extend(cached, results);
+  if (unloaded.length === 0) {
     callback(cached);
-  }, this));
+  } else {
+    this.server.query(unloaded, this.getLastUpdate(),
+        goog.bind(this.parseServerResponse_, this, function(results) {                
+          goog.object.forEach(results, 
+              function(list, key) { this.cache.saveQuery(key, list); }, this);
+          goog.object.extend(cached, results);
+          callback(cached);
+        }), goog.bind(this.handleError_, this));
+  }
 };

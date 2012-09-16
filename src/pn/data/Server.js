@@ -151,6 +151,28 @@ pn.data.Server.prototype.getUpdates =
 };
 
 /**
+ * @param {!Array.<pn.data.Query|string>} queries The queries to run on the
+ *    server.
+ * @param {number} lastUpdate The last 'server' time the cache was updated.
+ * @param {!function(!pn.data.Server.Response):undefined} success The 
+ *    success callback.
+ * @param {!function(string):undefined} failure The failure callback.
+ */
+pn.data.Server.prototype.query = 
+    function(queries, lastUpdate, success, failure) {
+  goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
+  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
+  goog.asserts.assert(goog.isFunction(success));
+  goog.asserts.assert(goog.isFunction(failure));
+
+  var json = { 
+    'queries': pn.json.serialiseJson(queries),
+    'lastUpdate': lastUpdate 
+  };
+  this.ajax_('Query', json, success, failure);
+};
+
+/**
  * @private
  * @param {!pn.data.Entity} entity The entity to convert to a json data object.
  * @param {number} lastUpdate The last 'server' time the cache was updated.
