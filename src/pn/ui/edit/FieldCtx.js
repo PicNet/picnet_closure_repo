@@ -83,8 +83,8 @@ pn.ui.edit.FieldCtx.prototype.isRequired = function() {
 
 
 /**
- * @param {!(Element|goog.ui.Component)} component The compoenent that this
- *    field is rendererd on.
+ * @param {!(Element|Text|goog.ui.Component)} component The compoenent that
+ *    this field is rendererd on.
  * @param {Object=} opt_target The optional 'entity' target to inject values
  *    into if required.
  * @return {*} The current control value of this field.
@@ -96,7 +96,7 @@ pn.ui.edit.FieldCtx.prototype.getControlValue =
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The control that this
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
  *    field is rendererd on.
  * @return {boolean} visible Wether the specified field element is currently
  *    visible.
@@ -108,7 +108,7 @@ pn.ui.edit.FieldCtx.prototype.isShown = function(control) {
 
 /**
  * @protected
- * @param {!(Element|goog.ui.Component)} control The control that this
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
  *    field is rendererd on.
  * @param {boolean} visible Wether to show or hide the element.
  */
@@ -160,7 +160,8 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
 
 /**
  * @param {!pn.data.Entity} entity The entity being checked for dirty.
- * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @param {!(Element|Text|goog.ui.Component)} control The control for this
+ *    field.
  * @return {boolean} Wether this field is currently dirty (i.e. The control is
  *    different than the entity value).
  */
@@ -192,7 +193,8 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @param {!(Element|Text|goog.ui.Component)} control The control for this
+ *    field.
  * @return {!Array.<string>} An error list of all validation errors (empty if
  *    no errors found).
  */
@@ -209,7 +211,8 @@ pn.ui.edit.FieldCtx.prototype.validate = function(control) {
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @param {!(Element|Text|goog.ui.Component)} control The control for this
+ *    field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
 pn.ui.edit.FieldCtx.prototype.getValidationErrors = function(control) {

@@ -105,7 +105,7 @@ pn.ui.srch.SearchPanel = function(filters, fctxs) {
 
   /**
    * @private
-   * @type {!Object.<string, !Array.<!(Element|goog.ui.Component)>>}
+   * @type {!Object.<string, !Array.<!(Element|Text|goog.ui.Component)>>}
    */
   this.filtersControls_ = {};
 

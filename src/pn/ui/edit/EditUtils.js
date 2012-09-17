@@ -5,7 +5,7 @@ goog.require('goog.dom');
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The control that this
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
  *    field is rendererd on.
  * @param {string} id The id of the field being shown.
  * @return {boolean} visible Wether the specified field element is currently
@@ -20,7 +20,7 @@ pn.ui.edit.EditUtils.isShown = function(control, id) {
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The control that this
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
  *    field is rendererd on.
  * @param {string} id The id of the field being queried.
  * @param {boolean} visible Wether to show or hide the element.
@@ -35,8 +35,8 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
 
 
 /**
- * @param {!(Element|goog.ui.Component)} control The element to get the parent
- *    container element for.
+ * @param {!(Element|Text|goog.ui.Component)} control The element to get the
+ *    parent container element for.
  * @param {string} id The id of the field whose parent we need.  This id can
  *    either be the FieldCtx.id or the controlId.
  * @return {!Element} The parent container of the speicified field id.

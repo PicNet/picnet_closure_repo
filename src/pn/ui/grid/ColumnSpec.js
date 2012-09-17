@@ -116,7 +116,7 @@ pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
   var schemaType;
   if (this.id.indexOf('.') > 0) {
     schemaType = 'parent';
-  } else {  
+  } else {
     var schema = pn.data.TypeRegister.getFieldSchema(
         this.entitySpec.type, this.id);
     schemaType = schema ? schema.type : '';

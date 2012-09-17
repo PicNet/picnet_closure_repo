@@ -1,8 +1,9 @@
-﻿
+﻿;
 goog.provide('pn.data.LinqParser');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
+
 
 /**
  * @param {string} expression The text representation of
@@ -12,13 +13,13 @@ goog.require('goog.asserts');
  */
 pn.data.LinqParser.parse = function(expression) {
   goog.asserts.assert(goog.isString(expression));
-  if (!pn.data.LinqParser.isValidExpression_) 
-      throw 'Expression is not valid: ' + expression;
+  if (!pn.data.LinqParser.isValidExpression_)
+    throw 'Expression is not valid: ' + expression;
 
   var filters;
-  try { 
-    filters = goog.array.map(pn.data.LinqParser.compileLinq_(expression), 
-        function(js) { return eval(js); }); 
+  try {
+    filters = goog.array.map(pn.data.LinqParser.compileLinq_(expression),
+        function(js) { return eval(js); });
   } catch (ex) { throw 'Expression is not valid: ' + expression; }
 
   return function(arr) {
@@ -30,6 +31,7 @@ pn.data.LinqParser.parse = function(expression) {
   };
 };
 
+
 /**
  * @private
  * @param {string} expression The expression to check for validity.
@@ -37,8 +39,8 @@ pn.data.LinqParser.parse = function(expression) {
  */
 pn.data.LinqParser.compileLinq_ = function(expression) {
   goog.asserts.assert(goog.isString(expression));
-  if (!pn.data.LinqParser.isValidExpression_(expression)) 
-      throw 'Expression is not valid: ' + expression;
+  if (!pn.data.LinqParser.isValidExpression_(expression))
+    throw 'Expression is not valid: ' + expression;
 
   var re1 = /\(([^)]+)\)/g,
       re2 = /([\w]+)\s*=>\s*(.*)/g,
@@ -51,13 +53,15 @@ pn.data.LinqParser.compileLinq_ = function(expression) {
     js = match.
         replace(/==/g, '===').
         replace(/!=/g, '!==');
-        while (match2 = re2.exec(js)) {
-          var exp = '[function (' + match2[1] + ') { return ' + match2[2] +'; }][0]';
-          expressions.push(exp);
-        };
+    while (match2 = re2.exec(js)) {
+      var exp = '[function (' + match2[1] +
+          ') { return ' + match2[2] + '; }][0]';
+      expressions.push(exp);
+    }
   }
   return expressions;
 };
+
 
 /**
  * @private
@@ -72,8 +76,8 @@ pn.data.LinqParser.isValidExpression_ = function(expression) {
       op,
       supported = 0;
   while (op = re.exec(expression)) {
-    op = op[1];  
-    if (goog.array.indexOf(SUPPORTED_OPERATORS, op) < 0) return false;    
+    op = op[1];
+    if (goog.array.indexOf(SUPPORTED_OPERATORS, op) < 0) return false;
     supported++;
   }
   return supported > 0;

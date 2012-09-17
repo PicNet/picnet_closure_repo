@@ -30,7 +30,7 @@ var testDefaultRouteIsSetOnCreation = function () {
 var testInvalidDefaultRouteThrowsError = function() {
   try { 
     router = new pn.app.Router({'default':getAction('default')}, 'non-existing', 'all_tests.html');  
-    assertFail('Should have failed as "non-existing" is not in the routes map');
+    fail('Should have failed as "non-existing" is not in the routes map');
   } catch (ex) {}  
 };
 
@@ -58,7 +58,7 @@ var testSwitchingToAnInvalidRoute = function() {
     
   try { 
     router.navigate('invalid-route');
-    assertFail('Should have failed as "non-existing" is not in the routes map');
+    fail('Should have failed as "non-existing" is not in the routes map');
   } catch (ex) {}  
 };
 

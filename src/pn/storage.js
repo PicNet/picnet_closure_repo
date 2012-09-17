@@ -30,4 +30,12 @@ pn.storage.set = function(id, value) {
 };
 
 
-
+/**
+ * Clear the current site local storage.
+ */
+pn.storage.clear = function() {
+  goog.asserts.assert(goog.isDef(window['localStorage']));
+  for (var key in window['localStorage']) {
+    delete window['localStorage'][key];
+  }
+};

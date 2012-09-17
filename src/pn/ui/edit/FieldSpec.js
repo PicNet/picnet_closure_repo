@@ -211,7 +211,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
 /**
  * @typedef {!pn.ui.edit.ComplexRenderer|
  *     function(!pn.ui.edit.FieldCtx,!Element,!pn.data.Entity):
- *       !(Element|goog.ui.Component|Text)}
+ *       !(Element|Text|goog.ui.Component)}
  */
 pn.ui.edit.FieldSpec.Renderer;
 
@@ -219,6 +219,6 @@ pn.ui.edit.FieldSpec.Renderer;
 /**
  * @typedef
  *    {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.FieldCtx,
- *        !(Element|goog.ui.Component|Text)):string}
+ *        !(Element|Text|goog.ui.Component)):string}
  */
 pn.ui.edit.FieldSpec.Validator;

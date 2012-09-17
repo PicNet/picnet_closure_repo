@@ -12,7 +12,7 @@ goog.require('goog.events.EventHandler');
  *    currently being shown.
  * @param {!pn.data.Entity} entity The entity that was just decorated.
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
- * @param {!Object.<Element|goog.ui.Component>} controls The controls map
+ * @param {!Object.<Element|Text|goog.ui.Component>} controls The controls map
  *    for this UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
@@ -40,7 +40,7 @@ pn.ui.edit.Interceptor =
 
   /**
    * @private
-   * @type {!Object.<!(Element|goog.ui.Component)>} The controls map
+   * @type {!Object.<!(Element|Text|goog.ui.Component)>} The controls map
    *  for this UI.  The first item is the control for the field.  The second is
    *  the parent.
    */
@@ -74,7 +74,7 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
 
 /**
  * @param {string} id The id of the control we need.
- * @return {!(Element|goog.ui.Component)} The control for the specified id.
+ * @return {!(Element|Text|goog.ui.Component)} The control for the specified id.
  */
 pn.ui.edit.Interceptor.prototype.getControl = function(id) {
   goog.asserts.assert(this.controls_[id]);

@@ -4,7 +4,8 @@ goog.provide('pn.ui.edit.FieldValidator');
 
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field context to validate.
- * @param {!(Element|goog.ui.Component)} control The control for this field.
+ * @param {!(Element|Text|goog.ui.Component)} control The control for this
+ *    field.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
 pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
@@ -26,7 +27,7 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
     return arraytise(fctx.spec.validator.validateField(fctx, control), errors);
   }
   var f = /** @type {function(pn.ui.edit.FieldCtx,
-      !(Element|goog.ui.Component|Text)):string} */ (fctx.spec.validator);
+      !(Element|Text|goog.ui.Component)):string} */ (fctx.spec.validator);
   return arraytise(f(fctx, control), errors);
 };
 

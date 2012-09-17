@@ -64,7 +64,7 @@ pn.app.AppConfig = function(opt_opts) {
   this.loadPnlId = 'loading-panel';
 
   /** @type {!Object} */
-  this.serverRoutes = {    
+  this.serverRoutes = {
     /** @type {string} */
     getEntityLists: 'GetData/GetEntityLists',
 

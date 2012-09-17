@@ -48,7 +48,7 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
   facade.createEntity(new pn.data.Entity('EntityType', 0));
   facade.updateEntity(updated);
   facade.deleteEntity(updated);
-  facade.query(['EntityType2'], function() {});
+  facade.query([new pn.data.Query('EntityType2')], function() {});
 
   var calls = server.calls;
   assertEquals(5, calls.length); // GetEntity does not call the server
@@ -67,7 +67,7 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
 };
 
 var testNewQueryGoesToServer = function() {
-  facade.query(['EntityType2'], function() {});
+  facade.query([new pn.data.Query('EntityType2')], function() {});
   var calls = server.calls;
   assertEquals(1, calls.length);
   assertEquals('query', calls[0].method);
@@ -76,10 +76,9 @@ var testNewQueryGoesToServer = function() {
 var testRepeatedQueryDoesNotGoToServer = function() {
   testNewQueryGoesToServer();
   server.calls = [];
-  facade.query(['EntityType2'], function() {});  
+  facade.query([new pn.data.Query('EntityType2')], function() {});  
   assertArrayEquals([], server.calls);
 };
-
         </script>
     </body>
 </html>

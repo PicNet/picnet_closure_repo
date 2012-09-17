@@ -13,11 +13,13 @@ goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
 goog.require('pn.data.Query');
+goog.require('pn.storage');
 
 var entity,
     cache;
 
 var setUp = function() {
+  pn.storage.clear();
   cache = new pn.data.LocalCache(); // Reset cache
   cache.cache_['EntityType'] = [];
   entity = new pn.data.Entity('EntityType', 0);
@@ -47,9 +49,9 @@ var testGetEntityReturnsEntityInCache = function() {
 
 var testGetEntityDoesNotUpdateLocalStorate = function() {
   var key = cache.STORE_PREFIX_ + 'EntityType';
-  var json = window.localStorage[key];
+  var json = pn.storage.get(key);
   testGetEntityReturnsEntityInCache();
-  var json2 = window.localStorage[key];
+  var json2 = pn.storage.get(key);
   assertTrue(json2.length === json.length);
 };
 
@@ -84,9 +86,9 @@ var testCreateEntityCanThenBeRetreived = function() {
 
 var testCreateEntityUpdatesLocalStorage = function() {
   var key = cache.STORE_PREFIX_ + 'EntityType';
-  var json = window.localStorage[key];
+  var json = pn.storage.get(key);
   testCreateEntityCanThenBeRetreived();
-  var json2 = window.localStorage[key];
+  var json2 = pn.storage.get(key);
   assertTrue(json2.length > json.length);
 };
 
@@ -125,9 +127,9 @@ var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
 
 var testUpdateEntityUpdatesLocalStorage = function() {
   var key = cache.STORE_PREFIX_ + 'EntityType';
-  var json = window.localStorage[key];
+  var json = pn.storage.get(key);
   testUpdateEntityCanThenBeRetreived();
-  var json2 = window.localStorage[key];
+  var json2 = pn.storage.get(key);
   assertTrue(json2.length > json.length);
 };
 
@@ -158,9 +160,9 @@ var testDeleteEntityCannotThenBeRetreived = function() {
 
 var testDeleteEntityUpdatesLocalStorage = function() {
   var key = cache.STORE_PREFIX_ + 'EntityType';
-  var json = window.localStorage[key];
+  var json = pn.storage.get(key);
   testDeleteEntityCannotThenBeRetreived();
-  var json2 = window.localStorage[key];
+  var json2 = pn.storage.get(key);
   assertTrue(json2.length < json.length);
 };
 
@@ -183,9 +185,9 @@ var testUndeleteEntityAllowsEntityToBeQueried = function() {
 
 var testUndeleteEntityUpdatesLocalStorage = function() {
   var key = cache.STORE_PREFIX_ + 'EntityType';
-  var json = window.localStorage[key];
+  var json = pn.storage.get(key);
   testUndeleteEntityAllowsEntityToBeQueried();
-  var json2 = window.localStorage[key];
+  var json2 = pn.storage.get(key);
   assertTrue(json2.length > json.length);
 };
 
@@ -193,11 +195,11 @@ var testUndeleteEntityUpdatesLocalStorage = function() {
 // LocalCache.contains
 ////////////////////////////////////////////////////////////////////////////////
 var testContainsReturnsFalseForInvalidType = function() {
-  assertFalse(cache.contains('UnknownType'));
+  assertFalse(cache.contains(new pn.data.Query('UnknownType')));
 };
 
 var testContainsReturnsTrueForValidType = function() {
-  assertTrue(cache.contains('EntityType'));
+  assertTrue(cache.contains(new pn.data.Query('EntityType')));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,15 +207,16 @@ var testContainsReturnsTrueForValidType = function() {
 ////////////////////////////////////////////////////////////////////////////////
 var testUpdateEntityFailsIfTypeDoesNotExist = function() {
   try { 
-    cache.query(['UnknownType']); 
+    cache.query([new pn.data.Query('UnknownType')]); 
     assertFails('Expected failure with UnknownType');
   } catch (ex) {};
 };
 
 var testQueryWithSingleType = function() {
-  var lists = cache.query(['EntityType']);
-  assertArrayEquals(['EntityType'], goog.object.getKeys(lists));
-  var entityList = lists['EntityType'];
+  var query = new pn.data.Query('EntityType');
+  var lists = cache.query([query]);
+  assertArrayEquals([query.toString()], goog.object.getKeys(lists));
+  var entityList = lists[query.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity.equals(entityList[0]));
 };
@@ -223,37 +226,91 @@ var testQueryWithMultipleTypes = function() {
   var entity2 = new pn.data.Entity('EntityType2', 0);
   cache.createEntity(entity2);
 
-  var lists = cache.query(['EntityType', 'EntityType2']);
-  assertArrayEquals(['EntityType', 'EntityType2'], goog.object.getKeys(lists));
+  var q1 = new pn.data.Query('EntityType'), 
+      q2 = new pn.data.Query('EntityType2');
+  var lists = cache.query([q1, q2]);
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(lists));
   
-  var entityList = lists['EntityType'];
+  var entityList = lists[q1.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity.equals(entityList[0]));
 
-  entityList = lists['EntityType2'];
+  entityList = lists[q2.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity2.equals(entityList[0]));
 };
 
 var testQueryWithWithLinqExpressions = function() {    
-  var create = function(id) {
-    var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)).clone();
+  createEntity('EntityType', 1);
+  createEntity('EntityType', 10);
+  var exp = [
+    createEntity('EntityType', 11), 
+    createEntity('EntityType', 100)
+  ];
 
-    var tmpid = entity.id;
-    entity.id = id;
-    cache.updateEntity(entity, tmpid); 
-    return entity;
-  };
-  
-  create(1);create(10);
-  var exp = [create(11), create(100)];
+  var query = new pn.data.Query('EntityType', 'Where(e => e.id > 10)');
+  var lists = cache.query([query]);  
+  var entityList = lists[query.toString()];
 
-  var lists = cache.query([new pn.data.Query('EntityType', 'Where(e => e.id > 10)')]);  
-  var entityList = lists['EntityType'];
-
-  assertArrayEquals(['EntityType'], goog.object.getKeys(lists));
+  assertArrayEquals([query.toString()], goog.object.getKeys(lists));
   assertArrayEquals(exp, entityList);
 };
+
+var testQueryWith2QueriesOfSameTypeAreLoadedCorrectly = function() {
+  var e1 = createEntity('EntityType', 10);
+  var e2 = createEntity('EntityType', 11);
+  createEntity('EntityType', 12);
+
+  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+
+  var results = cache.query([ q1, q2 ]);
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(results));    
+  assertArrayEquals([e1], results[q1.toString()]);
+  assertArrayEquals([e2], results[q2.toString()]);
+};
+
+var testSavingMultipleQueriesForSameTypeAreStoredInSingleCacheEntry = function() {
+  var e1 = createEntity('EntityType', 10);
+  var e2 = createEntity('EntityType', 11);
+
+  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+
+  cache.saveQuery(q1, 1, [e1]);
+  cache.saveQuery(q2, 1, [e2]);
+
+  var results = cache.query([ q1, q2 ]);
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(results));    
+  assertArrayEquals([e1], results[q1.toString()]);
+  assertArrayEquals([e2], results[q2.toString()]);
+  assertArrayEquals(['EntityType'], goog.object.getKeys(cache.cache_));
+};
+
+var testSavingMultipleQueriesForSameTypeArePersistedIndependently = function() {
+  var e1 = createEntity('EntityType', 10);
+  var e2 = createEntity('EntityType', 11);
+
+  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+
+  cache.saveQuery(q1, 1, [e1]);
+  cache.saveQuery(q2, 1, [e2]);
+  
+  assertArrayEquals(['EntityType'], goog.object.getKeys(cache.cache_));
+  assertArrayEquals([q1.toString(), q2.toString()], 
+      goog.object.getKeys(cache.cachedQueries_));
+};
+
+var createEntity = function(type, id) {
+  var entity = cache.createEntity(new pn.data.Entity(type, 0)).clone();
+
+  var tmpid = entity.id;
+  entity.id = id;
+  cache.updateEntity(entity, tmpid); 
+  return entity;
+};
+
         </script>
     </body>
 </html>

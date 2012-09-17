@@ -21,7 +21,8 @@ goog.require('pn.ui.edit.cmd.SaveCommand');
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
  * @param {function(new:pn.ui.edit.Interceptor,!pn.ui.edit.CommandsComponent,
- *    !pn.data.Entity,!pn.data.BaseDalCache,!Object.<Element|goog.ui.Component>,
+ *    !pn.data.Entity,!pn.data.BaseDalCache,
+ *    !Object.<Element|Text|goog.ui.Component>,
  *    !Object.<goog.ui.Button>)=} opt_interceptor The optional interceptor
  *    constructor pointer used to receive and intercept lifecycle events.
  */
@@ -42,7 +43,7 @@ pn.ui.edit.Config =
 
   /** @type {null|function(new:pn.ui.edit.Interceptor,
    *    !pn.ui.edit.CommandsComponent,!pn.data.Entity,!pn.data.BaseDalCache,
-   *    !Object.<Element|goog.ui.Component>,!Object.<goog.ui.Button>)} */
+   *    !Object.<Element|Text|goog.ui.Component>,!Object.<goog.ui.Button>)} */
   this.interceptor = opt_interceptor || null;
 
   /** @type {boolean} */

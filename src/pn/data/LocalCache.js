@@ -2,12 +2,13 @@
 goog.provide('pn.data.LocalCache');
 
 goog.require('goog.Disposable');
-goog.require('pn.data.BaseDalCache');
-goog.require('pn.data.Query');
-goog.require('pn.storage');
 goog.require('goog.array');
-goog.require('pn.json');
+goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.LinqParser');
+goog.require('pn.data.Query');
+goog.require('pn.json');
+goog.require('pn.storage');
+
 
 
 /**
@@ -16,7 +17,7 @@ goog.require('pn.data.LinqParser');
  */
 pn.data.LocalCache = function() {
   goog.Disposable.call(this);
-  
+
   /** @type {number} */
   this.lastUpdate = 0;
 
@@ -31,17 +32,24 @@ pn.data.LocalCache = function() {
    * @private
    * @type {!Object.<string, !Array.<pn.data.Entity>>}
    */
-  this.cache_ = {};  
+  this.cache_ = {};
+
+  /**
+   * @private
+   * @type {!Object.<number>}
+   */
+  this.cachedQueries_ = {};
 
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
 
+
 /**
- * Gets an entity from the local cache.  If this entity does not exist in the 
- *    client cache then an error is thrown.  
+ * Gets an entity from the local cache.  If this entity does not exist in the
+ *    client cache then an error is thrown.
  *
- * @param {string} type The type of entity to query
+ * @param {string} type The type of entity to query.
  * @param {number} id The ID of the entity to retreive.
  * @return {!pn.data.Entity} The entity with the specified id.
  */
@@ -52,18 +60,19 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
 
   var en = goog.array.find(this.cache_[type], function(entity) {
     return entity.id === id;
-  }, this); 
-  if (!en) throw 'Entity ' + type + '.' + id + 
-      ' was not found in the client cache.';
+  }, this);
+  if (!en) throw 'Entity ' + type + '.' + id +
+        ' was not found in the client cache.';
   return en;
 };
 
+
 /**
- * TODO: When creating a new entity it is now detached form this cache.  This 
+ * TODO: When creating a new entity it is now detached form this cache.  This
  * method should return the created entity so it is 'live'.
  *
  * Creates a local entity with a temporary ID.
- * @param {!pn.data.Entity} entity The entity to create.  Since this is an 
+ * @param {!pn.data.Entity} entity The entity to create.  Since this is an
  *    instance of a new data.Entity its ID should be 0 until a temp ID is
  *    assigned here.
  * @return {!pn.data.Entity} The same entity is returned but its ID property
@@ -71,7 +80,7 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.createEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(entity.type in this.cache_, 
+  goog.asserts.assert(entity.type in this.cache_,
       entity.type + ' not in cache');
   goog.asserts.assert(entity.id === 0);
 
@@ -83,6 +92,7 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
   return entity;
 };
 
+
 /**
  * Updates a local entity with an optional temporary ID.
  * @param {!pn.data.Entity} entity The entity to update.
@@ -91,7 +101,7 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
  */
 pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(!goog.isDef(opt_tmpid) || 
+  goog.asserts.assert(!goog.isDef(opt_tmpid) ||
       (goog.isNumber(opt_tmpid) && opt_tmpid < 0));
 
   var id = opt_tmpid || entity.id;
@@ -101,7 +111,7 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
     var e = list[i];
     if (e.id === id) { list[i] = entity; found = true; break; }
   }
-  if (!found) throw new Error('Could not find entity: ' + 
+  if (!found) throw new Error('Could not find entity: ' +
       entity.type + '.' + entity.id + ' in the cache.');
 
   // entity.update(); // TODO: fire live entity changed
@@ -109,12 +119,13 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
   this.flush_(entity.type);
 };
 
+
 /**
  * Deletes a local entity .
  * @param {!string} type The type of the entity to delete.
  * @param {number} id The ID of the entity to delete.
  */
-pn.data.LocalCache.prototype.deleteEntity = function(type, id) {  
+pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
   goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(type in this.cache_, type + ' not in cache');
   goog.asserts.assert(goog.isNumber(id) && id !== 0);
@@ -122,13 +133,14 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
   // var live = this.getEntity(type, id);
   // live.delete(); // TODO: fire live entity deleted
 
-  this.cache_[type] = goog.array.filter(this.cache_[type], 
+  this.cache_[type] = goog.array.filter(this.cache_[type],
       function(e) { return e.id !== id; });
   this.flush_(type);
 };
 
+
 /**
- * If there is an issue deleting an entity on the server then call this to 
+ * If there is an issue deleting an entity on the server then call this to
  *    revert the delete operation.  This basically recreates the entity.
  * @param {!pn.data.Entity} entity The entity to undelete.
  */
@@ -139,64 +151,96 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   this.flush_(entity.type);
 };
 
+
 /**
  * Wether this cache has the specified type primed.
- * @param {!(pn.data.Query|string)} query The query type to check.
+ * @param {!pn.data.Query} query The query type to check.
  * @return {boolean} Wether the specified type list exists in this cache.
  */
 pn.data.LocalCache.prototype.contains = function(query) {
-  goog.asserts.assert(query instanceof pn.data.Query || goog.isString(query));
-  var type = goog.isString(query) ? query : query.Type;
-  return type in this.cache_;
+  goog.asserts.assert(query instanceof pn.data.Query);
+  return query.Type in this.cache_;
 };
 
+
 /**
- * @param {!Array.<(pn.data.Query|string)>} queries The queries to execute.
+ * @param {!Array.<pn.data.Query>} queries The queries to execute.
  * @return {!Object.<!Array.<pn.data.Entity>>} The query results.
  */
 pn.data.LocalCache.prototype.query = function(queries) {
   return goog.array.reduce(queries, goog.bind(function(results, q) {
-    goog.asserts.assert(q instanceof pn.data.Query || goog.isString(q));
-    
-    var type = goog.isString(q) ? q : q.Type;
-    var filter = goog.isString(q) ? null : pn.data.LinqParser.parse(q.Linq);
-    goog.asserts.assert(type in this.cache_, 'The type: ' + type + 
+    goog.asserts.assert(q instanceof pn.data.Query);
+
+    goog.asserts.assert(q.Type in this.cache_, 'The type: ' + q.Type +
         ' does not exist in the local cache');
 
-    var list = this.cache_[type];    
-    results[type] = filter ? filter(list) : list;
+    var list = this.cache_[q.Type];
+    if (q.Linq) {
+      var filter = pn.data.LinqParser.parse(q.Linq);
+      list = filter(list);
+    }
+    results[q.toString()] = list;
     return results;
   }, this), {});
 };
 
+
+/** @return {!Object.<!number>} The cached queries. */
+pn.data.LocalCache.prototype.getCachedQueries = function() {
+  return this.cachedQueries_;
+};
+
+
 /**
- * @param {string} type The type to save the results to.
+ * @param {pn.data.Query} query The query to save.
+ * @param {number} lastUpdate The server time that this query was ran at.
  * @param {!Array.<pn.data.Entity>} list The list of entities to save against
  *    the specified type.
  */
-pn.data.LocalCache.prototype.saveQuery = function(type, list) {
-  goog.asserts.assert(goog.isString(type));    
-  goog.asserts.assert(!(type in this.cache_));    
+pn.data.LocalCache.prototype.saveQuery = function(query, lastUpdate, list) {
+  goog.asserts.assert(query instanceof pn.data.Query);
+  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate > 0);
+  goog.asserts.assert(goog.isArray(list));
 
+  var type = query.Type;
+  var current = this.cache_[type];
+  if (current) {
+    // TODO: Instead of just 'Union'ing the lists we should actually update
+    // any entity that needs updates.
+    var existing = goog.array.filter(current, function(e) {
+      return goog.array.findIndex(list, function(newe) {
+        return newe.id === e.id;
+      }) < 0;
+    });
+    list = goog.array.concat(list, existing);
+  }
   this.cache_[type] = list;
+
+  this.cachedQueries_[query.toString()] = lastUpdate;
   this.flush_(type);
+  this.flushCachedQueries_();
 };
+
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
   var cachedtime = pn.storage.get(this.STORE_PREFIX_ + 'version');
   this.lastUpdate = cachedtime ? parseInt(cachedtime, 10) : 0;
 
+  var persisted = pn.storage.get(this.STORE_PREFIX_ + 'queries');
+  this.cachedQueries_ = persisted ?
+      /** @type {!Object.<number>} */ (pn.json.parseJson(persisted)) :
+      {};
   var parse = function(type) {
     return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
   };
 
-  var types = parse('KEYS');  
+  var types = parse('KEYS');
   if (!types) {
     if (this.lastUpdate > 0) {
       throw 'Last update time is set but the cache is empty.';
     }
-    this.cache_ = {};  
+    this.cache_ = {};
     return;
   }
   goog.asserts.assert(goog.isArray(types));
@@ -204,14 +248,16 @@ pn.data.LocalCache.prototype.init_ = function() {
   this.cache_ = {};
   goog.array.forEach(types, function(type) {
     goog.asserts.assert(goog.isString(types));
+
     var data = parse(type);
-    
+
     goog.asserts.assert(goog.isArray(data));
 
     var list = pn.data.TypeRegister.parseEntities(type, data);
     this.cache_[type] = list;
   }, this);
 };
+
 
 /**
  * @private
@@ -224,4 +270,11 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list);
   pn.storage.set(this.STORE_PREFIX_ + type, json);
+};
+
+
+/** @private */
+pn.data.LocalCache.prototype.flushCachedQueries_ = function() {
+  var json = pn.json.serialiseJson(this.cachedQueries_);
+  pn.storage.set(this.STORE_PREFIX_ + 'queries', json);
 };

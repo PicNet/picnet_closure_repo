@@ -1,5 +1,6 @@
 - Demos are all broken
 
+- Replace Element|Text|goog.ui.Control everywhere with a typedef
 - Remove jquery externs dependency in QuickFind.js
 - Use goog.expose to remove the need for the toSlick methods.
 - Sould ServerSource really offer a .ajax method for 

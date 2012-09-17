@@ -25,7 +25,7 @@ pn.data.TypeRegister.register = function(name, ctor) {
 
 /**
  * @param {string} name The type name of the entity.
- * @return {pn.data.Entity.EntityType} The registered ctor for the the 
+ * @return {pn.data.Entity.EntityType} The registered ctor for the the
  *    specified entity type.
  */
 pn.data.TypeRegister.fromName = function(name) {
@@ -36,7 +36,6 @@ pn.data.TypeRegister.fromName = function(name) {
 
   return ctor;
 };
-
 
 
 /**
@@ -61,7 +60,7 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
 pn.data.TypeRegister.parseEntity = function(type, data) {
   goog.asserts.assert(goog.isString(type));
   goog.asserts.assert(goog.isObject(data));
-  
+
   var ctor = pn.data.TypeRegister.fromName(type);
   return new ctor(data);
 };
@@ -76,6 +75,6 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
 pn.data.TypeRegister.getFieldSchema = function(type, property) {
   goog.asserts.assert(goog.isString(type), '"type" not specified');
   goog.asserts.assert(goog.isString(property), '"property" not specified');
-  
+
   return pn.data.TypeRegister.fromName(type).prototype.getFieldSchema(property);
 };

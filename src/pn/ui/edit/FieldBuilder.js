@@ -29,7 +29,7 @@ pn.ui.edit.FieldBuilder.getFieldContainer = function(fctx) {
 
 
 /**
- * @param {Element|goog.ui.Component} inp The input field.
+ * @param {Element|Text|goog.ui.Component} inp The input field.
  * @param {Object=} opt_target The optional 'entity' target to inject values
  *    into if required.
  * @return {string} The value in the specified field.
@@ -54,7 +54,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent control to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
- * @return {Element|goog.ui.Component|Text} The created dom element.
+ * @return {Element|Text|goog.ui.Component} The created dom element.
  */
 pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
   var renderer = fctx.spec.renderer;

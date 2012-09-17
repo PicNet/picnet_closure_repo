@@ -202,7 +202,7 @@ Rx.Observable.prototype.onNext = function(a) {};
 
 
 /**
- * @param {*} a
+ * @param {*=} a
  */
 Rx.Observable.prototype.onCompleted = function(a) {};
 

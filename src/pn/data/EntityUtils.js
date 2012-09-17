@@ -3,6 +3,7 @@ goog.provide('pn.data.EntityUtils');
 
 goog.require('pn.data.TypeRegister');
 
+
 /**
  * @param {pn.data.Entity} entity The entity to check for newness.
  * @return {boolean} Wether the specified entity is new.
@@ -16,7 +17,7 @@ pn.data.EntityUtils.isNew = function(entity) {
  * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string} path The path to the target entity.
  * @param {string} type The type of the current target enity(s).
- * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity 
+ * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity
  *    or entity array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
@@ -47,7 +48,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
  * @param {!pn.data.BaseDalCache} cache The data cache to use to get entities.
  * @param {string|Array.<string>} path The path to the target entity.
  * @param {string} type The type of the current target enity(s).
- * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity 
+ * @param {!(pn.data.Entity|Array.<!pn.data.Entity>)} target The current entity
  *    or entity array.
  * @param {string=} opt_parentField The property to use to point back to the
  *    'target' when encountering the first 'Entities' property.  For instance
@@ -222,8 +223,8 @@ pn.data.EntityUtils.getEnumName = function(enumeration, val) {
   goog.asserts.assert(goog.isNumber(val));
 
   for (var name in enumeration) {
-    var eval = enumeration[name];
-    if (eval === val) return name;
+    var evald = enumeration[name];
+    if (evald === val) return name;
   }
   throw new Error('Could not find the value: ' + val +
       ' in the specified enumeration');

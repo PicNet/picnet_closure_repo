@@ -251,10 +251,10 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
  * @param {!Element} parent The parent to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
  * @param {function(!pn.data.Entity,!Array.<!pn.data.Entity>):
- *    !Array.<!pn.data.Entity>=} opt_filter The filter to apply to the list 
- *    entity.  This function takes the current entity and the list of 
- *    unfiltered entities, this function needs to then return the filtered 
- *    (and optionally resorted) entity list to display in the default 
+ *    !Array.<!pn.data.Entity>=} opt_filter The filter to apply to the list
+ *    entity.  This function takes the current entity and the list of
+ *    unfiltered entities, this function needs to then return the filtered
+ *    (and optionally resorted) entity list to display in the default
  *    select control.
  * @return {!Element} The parent select list.
  */

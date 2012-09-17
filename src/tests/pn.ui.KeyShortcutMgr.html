@@ -92,7 +92,7 @@ var test_multiple_regtisters_to_one_id_not_allowed = function() {
   
   try { 
     register('id1', 'ctrl+a'); 
-    assertFail('Should fail.');
+    fail('Should fail.');
   }
   catch(ex) {}
 };

@@ -20,6 +20,9 @@ var setUp = function() {
   events = [];
   server = new pn.data.Server('http://localhost/PicNet2.WebFacade/Facade/');
   server.dispatchEvent = function(e) { events.push(e); };
+  pn.data.TypeRegister.register('Entity1', function(raw) {
+    return new pn.data.Entity('Entity1', raw['ID']);
+  });
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,20 +33,20 @@ var testCreateEntityWithInvalidTypeFails = function() {
 };
 
 var testCreateEntityWithPositiveOrZeroIDFails = function() {
-  doFailure_(server.createEntity, new pn.data.Entity('EntityType', 0));
-  doFailure_(server.createEntity, new pn.data.Entity('EntityType', 1));
+  doFailure_(server.createEntity, new pn.data.Entity('Entity1', 0));
+  doFailure_(server.createEntity, new pn.data.Entity('Entity1', 1));
 };
 
 var testCreateEntityWithValidEntityTypeCanThenBeQueried = function() {
-  var entity = new pn.data.Entity('EntityType', -1);
-  doSuccess_(server.createEntity, entity, entity);
+  var entity = new pn.data.Entity('Entity1', -1);
+  doSuccess_(server.createEntity, entity, entity, true);
 };
 
 function doFailure_(method, arg1) {
   tc.waitForAsync();
   var success = function() { 
     tc.continueTesting();
-    assertFail('Should not have succeeded.'); 
+    fail('Should not have succeeded.'); 
   };
   var error = function(err) {
     tc.continueTesting();
@@ -52,15 +55,17 @@ function doFailure_(method, arg1) {
   method.call(server, arg1, 0, success, error);
 };
 
-function doSuccess_(method, arg1, expreturns) {
+function doSuccess_(method, arg1, expreturns, opt_ignoreId) {
   tc.waitForAsync();
-  var success = function(returned) { 
+  var success = function(returned) {     
+    var actual = returned.responseEntity;
+    if (opt_ignoreId) { expreturns.id = actual.id; }
     tc.continueTesting();
-    assertEquals(expreturns, returned);
+    assertTrue(expreturns.equals(actual));
   };
   var error = function(err) {
     tc.continueTesting();
-    assertFail('Should have succeeded.'); 
+    fail('Should have succeeded, Error: ' + err); 
   };
   method.call(server, arg1, 0, success, error);
 };
@@ -74,7 +79,11 @@ function doSuccess_(method, arg1, expreturns) {
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-// Server.getUpdates
+// Server.getQueryUpdates
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Server.getAllUpdates
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////

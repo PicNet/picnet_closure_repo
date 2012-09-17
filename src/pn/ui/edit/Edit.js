@@ -58,7 +58,7 @@ pn.ui.edit.Edit = function(spec, entity, cache) {
 
   /**
    * @private
-   * @type {!Object.<!(Element|goog.ui.Component)>}
+   * @type {!Object.<!(Element|Text|goog.ui.Component)>}
    */
   this.controls_ = {};
 };
@@ -93,7 +93,7 @@ pn.ui.edit.Edit.prototype.getFieldContexs = function() {
 
 /**
  * @param {string} id The id of the field whose control we want.
- * @return {!(Element|goog.ui.Component)} The component for the specified
+ * @return {!(Element|Text|goog.ui.Component)} The component for the specified
  *    field id.
  */
 pn.ui.edit.Edit.prototype.getControl = function(id) {
