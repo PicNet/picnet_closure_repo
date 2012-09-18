@@ -335,7 +335,7 @@ pn.data.Server.Response = function(raw) {
       null;
 
   /** @type {Object|string} */
-  this.ajaxData = raw['AjaxResponse'] ? 
+  this.ajaxData = raw['AjaxResponse'] ?
       pn.json.parseJson(raw['AjaxResponse']) : null;
 
   /** @type {string} */

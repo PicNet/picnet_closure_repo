@@ -228,7 +228,7 @@ pn.data.LocalCache.prototype.init_ = function() {
   var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
-    this.cachedQueries_ = goog.array.reduce(arr, function(acc, qstr) { 
+    this.cachedQueries_ = goog.array.reduce(arr, function(acc, qstr) {
       var query = pn.data.Query.fromString(qstr);
       acc[qstr] = query;
       return acc;

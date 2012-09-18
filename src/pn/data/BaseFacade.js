@@ -247,9 +247,10 @@ pn.data.BaseFacade.prototype.sync = function() {
       goog.bind(this.handleError, this));
 };
 
+
 /**
  * @protected
- * @param {!(function((pn.data.Entity|Object)=):undefined|
+ * @param {!(function((pn.data.Entity|Object|string)=):undefined|
  *    pn.data.Server.Response)} callbackOrResponse The success callback or
  *    the response object.
  * @param {pn.data.Server.Response=} opt_response The optional response
@@ -296,6 +297,7 @@ pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
   this.timerid_ = setInterval(goog.bind(this.sync, this), 20000);
   this.sync();
 };
+
 
 /**
  * @private
