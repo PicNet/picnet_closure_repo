@@ -17,12 +17,14 @@ pn.data.Query = function(type, opt_linq) {
 
   /**
    * @type {string}
+   * @const
    * @expose
    */
   this.Type = type;
 
   /**
    * @type {string}
+   * @const
    * @expose
    */
   this.Linq = opt_linq || '';

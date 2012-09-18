@@ -24,6 +24,8 @@ var setUp = function() {
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};
+  pn.data.LazyFacade.prototype.sync = function() {};
+
   facade = new pn.data.LazyFacade('controller_uri');  
   facade.cache.cache_['EntityType'] = [];
   facade.server = (server = new pn.testing.MockServer());

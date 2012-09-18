@@ -90,7 +90,7 @@ pn.testing.MockServer.prototype.getQueryUpdates =
   var results = {};
   goog.array.forEach(queries, function(q) {
     results[q.toString()] = {'List' : [], 'LastUpdate': 1};
-  });  
+  });
   this.doAjaxSuccess_(results, success);
 };
 
@@ -108,15 +108,14 @@ pn.testing.MockServer.prototype.getAllUpdates =
 /** @override */
 pn.testing.MockServer.prototype.query =
     function(queries, queriesToUpdate, lastUpdate, success, failure) {
-  this.calls.push({ method: 'query', args: arguments });  
+  this.calls.push({ method: 'query', args: arguments });
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
   goog.array.forEach(queries, function(q) {
-    results[q.toString()] = {'List' : [], 'LastUpdate': 1};
+    results[q.toString()] = [];
   });
-  // TODO: Need a new response type for queries
-  this.doAjaxSuccess_(results, success);
+  this.doQuerySuccess_(results, success);
 };
 
 
@@ -166,6 +165,24 @@ pn.testing.MockServer.prototype.doAjaxSuccess_ = function(resData, callback) {
     Updates: this.nextServerResponseUpdates,
     AjaxResponse: resData
   });
+  this.lastServerResponse = response;
+  callback(response);
+};
+
+
+/**
+ * @private
+ * @param {!Object.<!Array<pn.data.Entity>>} results The query results with
+ *    the query.toString() as the key to the query.
+ * @param {function(pn.data.Server.Response):undefined} callback The success
+ *    callback.
+ */
+pn.testing.MockServer.prototype.doQuerySuccess_ = function(results, callback) {
+  var response = new pn.data.Server.Response({
+    lastUpdate: 1,
+    Updates: this.nextServerResponseUpdates
+  });
+  response.queryResults = results;
   this.lastServerResponse = response;
   callback(response);
 };
