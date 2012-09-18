@@ -36,7 +36,7 @@ pn.data.LocalCache = function() {
 
   /**
    * @private
-   * @type {!Array.<!pn.data.Query>}
+   * @type {!Object.<!pn.data.Query>}
    */
   this.cachedQueries_ = [];
 
@@ -179,7 +179,7 @@ pn.data.LocalCache.prototype.query = function(queries) {
       var filter = pn.data.LinqParser.parse(q.Linq);
       list = filter(list);
     }
-    results[q.toString()] = list;
+    results[q.Type] = list;
     return results;
   }, this), {});
 };
@@ -187,7 +187,7 @@ pn.data.LocalCache.prototype.query = function(queries) {
 
 /** @return {!Array.<!pn.data.Query>} The cached queries. */
 pn.data.LocalCache.prototype.getCachedQueries = function() {
-  return this.cachedQueries_;
+  return goog.object.getValues(this.cachedQueries_);
 };
 
 
@@ -213,8 +213,8 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
     list = goog.array.concat(list, existing);
   }
   this.cache_[type] = list;
-
-  this.cachedQueries_.push(query);
+  var qid = query.toString();
+  this.cachedQueries_[qid] = query;
   this.flush_(type);
   this.flushCachedQueries_();
 };
@@ -228,10 +228,12 @@ pn.data.LocalCache.prototype.init_ = function() {
   var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
-    this.cachedQueries_ = goog.array.map(arr, function(qstr) {
-      return pn.data.Query.fromString(qstr);
-    });
-  } else { this.cachedQueries_ = []; }
+    this.cachedQueries_ = goog.array.reduce(arr, function(acc, qstr) { 
+      var query = pn.data.Query.fromString(qstr);
+      acc[qstr] = query;
+      return acc;
+    }, {});
+  } else { this.cachedQueries_ = {}; }
 
   var parse = function(type) {
     return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
@@ -277,6 +279,6 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
 /** @private */
 pn.data.LocalCache.prototype.flushCachedQueries_ = function() {
-  var json = pn.json.serialiseJson(this.cachedQueries_);
+  var json = pn.json.serialiseJson(goog.object.getKeys(this.cachedQueries_));
   pn.storage.set(this.STORE_PREFIX_ + 'queries', json);
 };

@@ -144,7 +144,7 @@ pn.data.Server.prototype.getQueryUpdates =
 
   var json = {
     'lastUpdate': lastUpdate,
-    'queries': queries
+    'queriesJson': pn.json.serialiseJson(queries)
   };
   var uri = this.getFacadeControllerAction_('GetQueryUpdates');
   this.ajax_(uri, json, success, failure);
@@ -334,8 +334,9 @@ pn.data.Server.Response = function(raw) {
           /** @type {!Object} */ (pn.json.parseJson(raw['ResponseEntity']))) :
       null;
 
-  /** @type {Object} */
-  this.ajaxData = raw['AjaxResponse'] || null;
+  /** @type {Object|string} */
+  this.ajaxData = raw['AjaxResponse'] ? 
+      pn.json.parseJson(raw['AjaxResponse']) : null;
 
   /** @type {string} */
   this.error = raw['Error'] || '';

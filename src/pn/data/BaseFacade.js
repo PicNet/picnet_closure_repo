@@ -247,7 +247,6 @@ pn.data.BaseFacade.prototype.sync = function() {
       goog.bind(this.handleError, this));
 };
 
-
 /**
  * @protected
  * @param {!(function((pn.data.Entity|Object)=):undefined|
@@ -295,8 +294,8 @@ pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
 /** @private */
 pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
   this.timerid_ = setInterval(goog.bind(this.sync, this), 20000);
+  this.sync();
 };
-
 
 /**
  * @private

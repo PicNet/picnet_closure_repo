@@ -68,9 +68,9 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
             goog.asserts.assert(goog.isArray(list));
 
             var query = pn.data.Query.fromString(key);
-            this.cache.saveQuery(query, list);
+            cached[query.Type] = list;
+            this.cache.saveQuery(query, list);            
           }, this);
-          goog.object.extend(cached, results);
           callback(cached);
         }), goog.bind(this.handleError, this));
   }
