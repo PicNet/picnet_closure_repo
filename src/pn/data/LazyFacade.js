@@ -36,6 +36,8 @@ pn.data.LazyFacade.prototype.getLastUpdate = function() {
 /** @override */
 pn.data.LazyFacade.prototype.sync = function() {
   var queries = this.cache.getCachedQueries();
+  if (queries.length === 0) return;
+
   this.server.getQueryUpdates(queries, this.getLastUpdate(),
       goog.bind(this.parseServerResponse, this),
       goog.bind(this.handleError, this));

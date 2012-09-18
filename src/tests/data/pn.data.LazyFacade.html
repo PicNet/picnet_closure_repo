@@ -43,7 +43,7 @@ var setUp = function() {
 };
 
 var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
-  facade.ajax('controller', 'action', {}, function() {});
+  facade.ajax('controller/action', {}, function() {});
   facade.getEntity('EntityType', 1);
   facade.createEntity(new pn.data.Entity('EntityType', 0));
   facade.updateEntity(updated);

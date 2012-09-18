@@ -40,7 +40,7 @@ goog.inherits(pn.testing.MockServer, pn.data.Server);
 
 /** @override */
 pn.testing.MockServer.prototype.ajax =
-    function(controller, action, data, success, failure) {
+    function(uri, data, success, failure) {
   this.calls.push({ method: 'ajax', args: arguments });
 
   this.lastAjaxArgData = data;
@@ -90,7 +90,7 @@ pn.testing.MockServer.prototype.getQueryUpdates =
   var results = {};
   goog.array.forEach(queries, function(q) {
     results[q.toString()] = {'List' : [], 'LastUpdate': 1};
-  });
+  });  
   this.doAjaxSuccess_(results, success);
 };
 
@@ -107,15 +107,15 @@ pn.testing.MockServer.prototype.getAllUpdates =
 
 /** @override */
 pn.testing.MockServer.prototype.query =
-    function(queries, lastUpdate, success, failure) {
-  this.calls.push({ method: 'query', args: arguments });
-
+    function(queries, queriesToUpdate, lastUpdate, success, failure) {
+  this.calls.push({ method: 'query', args: arguments });  
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
   goog.array.forEach(queries, function(q) {
     results[q.toString()] = {'List' : [], 'LastUpdate': 1};
   });
+  // TODO: Need a new response type for queries
   this.doAjaxSuccess_(results, success);
 };
 
