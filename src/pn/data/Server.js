@@ -356,6 +356,7 @@ pn.data.Server.Response = function(raw) {
       this.responseEntity instanceof pn.data.Entity);
   goog.asserts.assert(this.ajaxData === null || goog.isObject(this.ajaxData));
   goog.asserts.assert(
+      goog.isString(this.error) ||
       goog.isDefAndNotNull(this.ajaxData) ||
       goog.isDefAndNotNull(this.responseEntity) ||
       goog.isDefAndNotNull(this.updates), 'Response is not a FacadeResponse.');

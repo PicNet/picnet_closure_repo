@@ -69,8 +69,8 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
           goog.object.forEach(results, function(list, key) {
             goog.asserts.assert(goog.isArray(list));
 
+            cached[key] = list;
             var query = pn.data.Query.fromString(key);
-            cached[query.Type] = list;
             this.cache.saveQuery(query, list);
           }, this);
           callback(cached);

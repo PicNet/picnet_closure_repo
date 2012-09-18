@@ -215,8 +215,8 @@ var testUpdateEntityFailsIfTypeDoesNotExist = function() {
 var testQueryWithSingleType = function() {
   var query = new pn.data.Query('EntityType');
   var lists = cache.query([query]);
-  assertArrayEquals([query.Type], goog.object.getKeys(lists));
-  var entityList = lists[query.Type];
+  assertArrayEquals([query.toString()], goog.object.getKeys(lists));
+  var entityList = lists[query.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity.equals(entityList[0]));
 };
@@ -229,13 +229,13 @@ var testQueryWithMultipleTypes = function() {
   var q1 = new pn.data.Query('EntityType'), 
       q2 = new pn.data.Query('EntityType2');
   var lists = cache.query([q1, q2]);
-  assertArrayEquals([q1.Type, q2.Type], goog.object.getKeys(lists));
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(lists));
   
-  var entityList = lists[q1.Type];
+  var entityList = lists[q1.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity.equals(entityList[0]));
 
-  entityList = lists[q2.Type];
+  entityList = lists[q2.toString()];
   assertEquals(1, entityList.length);
   assertTrue(entity2.equals(entityList[0]));
 };
@@ -250,9 +250,9 @@ var testQueryWithWithLinqExpressions = function() {
 
   var query = new pn.data.Query('EntityType', 'Where(e => e.id > 10)');
   var lists = cache.query([query]);  
-  var entityList = lists[query.Type];
+  var entityList = lists[query.toString()];
 
-  assertArrayEquals([query.Type], goog.object.getKeys(lists));
+  assertArrayEquals([query.toString()], goog.object.getKeys(lists));
   assertArrayEquals(exp, entityList);
 };
 
@@ -265,9 +265,9 @@ var testQueryWith2QueriesOfSameTypeAreLoadedCorrectly = function() {
   var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
 
   var results = cache.query([ q1, q2 ]);
-  assertArrayEquals([q1.Type, q2.Type], goog.object.getKeys(results));    
-  assertArrayEquals([e1], results[q1.Type]);
-  assertArrayEquals([e2], results[q2.Type]);
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(results));    
+  assertArrayEquals([e1], results[q1.toString()]);
+  assertArrayEquals([e2], results[q2.toString()]);
 };
 
 var testSavingMultipleQueriesForSameTypeAreStoredInSingleCacheEntry = function() {
@@ -281,9 +281,9 @@ var testSavingMultipleQueriesForSameTypeAreStoredInSingleCacheEntry = function()
   cache.saveQuery(q2, [e2]);
 
   var results = cache.query([ q1, q2 ]);
-  assertArrayEquals([q1.Type, q2.Type], goog.object.getKeys(results));    
-  assertArrayEquals([e1], results[q1.Type]);
-  assertArrayEquals([e2], results[q2.Type]);
+  assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(results));    
+  assertArrayEquals([e1], results[q1.toString()]);
+  assertArrayEquals([e2], results[q2.toString()]);
   assertArrayEquals(['EntityType'], goog.object.getKeys(cache.cache_));
 };
 
@@ -298,7 +298,7 @@ var testSavingMultipleQueriesForSameTypeArePersistedIndependently = function() {
   cache.saveQuery(q2, [e2]);
   
   assertArrayEquals(['EntityType'], goog.object.getKeys(cache.cache_));
-  assertArrayEquals([q1.Type, q2.Type], 
+  assertArrayEquals([q1.toString(), q2.toString()], 
       goog.object.getKeys(cache.cachedQueries_));
 };
 

@@ -15,7 +15,13 @@ pn.data.BaseDalCache = function(cache) {
    * @private
    * @type {!Object.<!Array.<pn.data.Entity>>}
    */
-  this.cache_ = cache;
+  this.cache_ = {};
+  // This handles LocalCache style query results that have Type:Linq
+  //  map keys.
+  for (var key in cache) {
+    goog.asserts.assert(!(key in this.cache_));
+    this.cache_[key.split(':')[0]] = cache[key];
+  }
 };
 
 

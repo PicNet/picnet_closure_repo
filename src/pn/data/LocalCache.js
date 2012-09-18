@@ -179,7 +179,7 @@ pn.data.LocalCache.prototype.query = function(queries) {
       var filter = pn.data.LinqParser.parse(q.Linq);
       list = filter(list);
     }
-    results[q.Type] = list;
+    results[q.toString()] = list;
     return results;
   }, this), {});
 };

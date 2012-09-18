@@ -78,7 +78,7 @@ var testCreateEntityCreatesInCacheFirstWithNegativeID = function() {
   
   assertTrue(created.id < 0);
   var query = new pn.data.Query('EntityType');
-  assertArrayEquals([created], facade.cache.query([query])[query.Type]);  
+  assertArrayEquals([created], facade.cache.query([query])[query.toString()]);  
   validateServerCalls([]); 
 };
 
@@ -89,7 +89,7 @@ var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
   validateServerCalls([{method:'createEntity', entity:created}]); 
   assertTrue(created.id > 0);  
   var query = new pn.data.Query('EntityType');
-  assertArrayEquals([created], facade.cache.query([query])[query.Type]);
+  assertArrayEquals([created], facade.cache.query([query])[query.toString()]);
 };
 
 var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
@@ -101,7 +101,7 @@ var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
     
   validateServerCalls([{method:'createEntity', entity: entity}]);   
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.Type]; 
+  var list = facade.cache.query([query])[query.toString()]; 
   assertArrayEquals([], list);
 };
 
@@ -120,7 +120,7 @@ var testUpdateEntityUpdatesInCacheFirst = function() {
   
   assertEquals(1, entity2.id);
   var query = new pn.data.Query('EntityType');
-  assertArrayEquals([entity2], facade.cache.query([query])[query.Type]);  
+  assertArrayEquals([entity2], facade.cache.query([query])[query.toString()]);  
   validateServerCalls([]); 
 };
 
@@ -155,7 +155,7 @@ var testUpdateEntityWithErrorUndoesLocalChange = function() {
   validateServerCalls([{method:'updateEntity', entity:after}]); 
   
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.Type]; 
+  var list = facade.cache.query([query])[query.toString()]; 
   assertArrayEquals([before], list);
 };
 
@@ -174,7 +174,7 @@ var testDeleteEntityDeletesInCacheFirst = function() {
   facade.deleteEntity(entity2);
   
   var query = new pn.data.Query('EntityType');
-  assertArrayEquals([], facade.cache.query([query])[query.Type]);  
+  assertArrayEquals([], facade.cache.query([query])[query.toString()]);  
   validateServerCalls([]); 
 };
 
@@ -187,7 +187,7 @@ var testDeleteEntityDeletesCacheThenServer = function() {
   facade.deleteEntity(entity2);
   
   var query = new pn.data.Query('EntityType');
-  assertArrayEquals([], facade.cache.query([query])[query.Type]);
+  assertArrayEquals([], facade.cache.query([query])[query.toString()]);
   validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
 };
 
@@ -204,7 +204,7 @@ var testDeleteEntityWithErrorUndoesLocalChange = function() {
     
   validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.Type]; 
+  var list = facade.cache.query([query])[query.toString()]; 
   assertArrayEquals([entity2], list);
 };
 
@@ -218,7 +218,7 @@ var testQueryDoesNotTouchServer = function() {
   facade.query([query], function(list2) { list = list2; });
       
   validateServerCalls([]);  
-  assertArrayEquals([], list[query.Type]);
+  assertArrayEquals([], list[query.toString()]);
 };
 
 var testQueryDoesNotTouchServerWithFailure = function() {
@@ -318,7 +318,7 @@ var prepareServerReponse = function() {
 
 var validateResponseDetails = function(opt_additional) {
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.Type];  
+  var list = facade.cache.query([query])[query.toString()];  
   var entity = new pn.data.Entity('EntityType', 100);
   entity.NewProp = 'NewProp';
   var exp = opt_additional ? opt_additional : [];
