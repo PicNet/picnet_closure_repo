@@ -56,88 +56,75 @@ goog.inherits(pn.data.Server, goog.events.EventTarget);
 
 
 /**
- * @param {string} controller The controller name for the ajax request.
- * @param {string} action The controller action name for the request.
+ * @param {string} uri The server endpoint for this request.
  * @param {!Object} data The data for the server ajax request.  Ensure that
  *    this is using safe compiled object keys (strings).
- * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {!function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.ajax =
-    function(controller, action, data, lastUpdate, success, failure) {
-  goog.asserts.assert(goog.isString(controller));
-  goog.asserts.assert(goog.isString(action));
+    function(uri, data, success, failure) {
+  goog.asserts.assert(goog.isString(uri));
   goog.asserts.assert(goog.isObject(data));
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  var ajaxData = {
-    'controller': controller,
-    'action': action,
-    'dataJson': pn.json.serialiseJson(data),
-    'lastUpdate': lastUpdate
-  };
-  this.ajax_('Ajax', ajaxData, success, failure);
+  this.ajax_(pn.app.ctx.cfg.appPath + uri, data, success, failure);
 };
 
 
 /**
  * @param {!pn.data.Entity} entity The entity to create.
- * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {!function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.createEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  var json = this.getEntityJson_(entity, lastUpdate);
-  this.ajax_('CreateEntity', json, success, failure);
+  var json = this.getEntityJson_(entity);
+  var uri = this.getFacadeControllerAction_('CreateEntity');
+  this.ajax_(uri, json, success, failure);
 };
 
 
 /**
  * @param {!pn.data.Entity} entity The entity to update.
- * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {!function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.updateEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  var json = this.getEntityJson_(entity, lastUpdate);
-  this.ajax_('UpdateEntity', json, success, failure);
+  var json = this.getEntityJson_(entity);
+  var uri = this.getFacadeControllerAction_('UpdateEntity');
+  this.ajax_(uri, json, success, failure);
 };
 
 
 /**
  * @param {!pn.data.Entity} entity The entity to delete.
- * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {!function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.deleteEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  var json = this.getEntityJson_(entity, lastUpdate);
-  this.ajax_('DeleteEntity', json, success, failure);
+  var json = this.getEntityJson_(entity);
+  var uri = this.getFacadeControllerAction_('DeleteEntity');
+  this.ajax_(uri, json, success, failure);
 };
 
 
@@ -159,7 +146,8 @@ pn.data.Server.prototype.getQueryUpdates =
     'lastUpdate': lastUpdate,
     'queries': queries
   };
-  this.ajax_('GetQueryUpdates', json, success, failure);
+  var uri = this.getFacadeControllerAction_('GetQueryUpdates');
+  this.ajax_(uri, json, success, failure);
 };
 
 
@@ -176,44 +164,61 @@ pn.data.Server.prototype.getAllUpdates =
   goog.asserts.assert(goog.isFunction(failure));
 
   var json = { 'lastUpdate': lastUpdate };
-  this.ajax_('GetAllUpdates', json, success, failure);
+  var uri = this.getFacadeControllerAction_('GetAllUpdates');
+  this.ajax_(uri, json, success, failure);
 };
 
 
 /**
- * @param {!Array.<pn.data.Query|string>} queries The queries to run on the
+ * @param {!Array.<pn.data.Query>} queries The queries to run on the
  *    server.
+ * @param {!Array.<pn.data.Query>} queriesToUpdate The queries already in the
+ *    cache requiring an update.
  * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {!function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.query =
-    function(queries, lastUpdate, success, failure) {
+    function(queries, queriesToUpdate, lastUpdate, success, failure) {
   goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
   goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
   var json = {
-    'queries': pn.json.serialiseJson(queries),
+    'queriesJson': pn.json.serialiseJson(queries),
+    'queriesToUpdateJson': pn.json.serialiseJson(queriesToUpdate),
     'lastUpdate': lastUpdate
   };
-  this.ajax_('Query', json, success, failure);
+  var uri = this.getFacadeControllerAction_('Query');
+  this.ajax_(uri, json, success, failure);
+};
+
+
+/**
+ * @private
+ * @param {string} action The server action to perform (on the default
+ *    controller).
+ * @return {string} The full uri to the specified server action.
+ */
+pn.data.Server.prototype.getFacadeControllerAction_ = function(action) {
+  goog.asserts.assert(goog.isString(this.controller_));
+  goog.asserts.assert(goog.isString(action));
+
+  return this.controller_ + action;
 };
 
 
 /**
  * @private
  * @param {!pn.data.Entity} entity The entity to convert to a json data object.
- * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @return {{type:string, entityJson:string}}
  */
-pn.data.Server.prototype.getEntityJson_ = function(entity, lastUpdate) {
+pn.data.Server.prototype.getEntityJson_ = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
 
   return {
-    'lastUpdate': lastUpdate,
     'type': entity.type,
     'entityJson': pn.json.serialiseJson(entity)
   };
@@ -222,22 +227,23 @@ pn.data.Server.prototype.getEntityJson_ = function(entity, lastUpdate) {
 
 /**
  * @private
- * @param {string} action The name of the action on the server endpoint.
+ * @param {string} uri The uri of the server endpoint.
  * @param {!Object} data The data to send to the endpoint.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {function(string):undefined} failure The failure callback.
  */
-pn.data.Server.prototype.ajax_ = function(action, data, success, failure) {
-  goog.asserts.assert(goog.isString(action));
+pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
+  goog.asserts.assert(goog.isString(uri));
   goog.asserts.assert(goog.isObject(data));
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  this.dispatchEvent(new goog.events.Event(pn.data.Server.EventType.LOADING));
+  // var event = new goog.events.Event(pn.data.Server.EventType.LOADING, this);
+  // TODO: This is throwing an error
+  // this.dispatchEvent(event);
 
-  var uri = this.controller_ + action,
-      start = goog.now(),
+  var start = goog.now(),
       rid = uri + (this.requestCount_++),
       qd = goog.uri.utils.buildQueryDataFromMap(data),
       callback = goog.bind(function(e) {
@@ -267,20 +273,21 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
     failure('An unexpected error has occurred.');
   } else {
     var resp = xhr.getResponseText();
-    if (goog.string.startsWith(resp, 'ERROR:')) {
-      failure(resp.split(':')[1]);
+    var raw = /** @type {pn.data.Server.RawResponse} */ (
+        pn.json.parseJson(resp));
+    var response = new pn.data.Server.Response(raw);
+    if (response.error) {
+      failure(response.error);
     } else {
-      var raw = /** @type {pn.data.Server.RawResponse} */ (
-          pn.json.parseJson(resp));
-      var response = new pn.data.Server.Response(raw);
       success(response);
     }
   }
 
   this.log_.info('ajax uri: ' + xhr.getLastUri() + ' completed. Took: ' +
       (goog.now() - start) + 'ms.');
-
-  this.dispatchEvent(new goog.events.Event(pn.data.Server.EventType.LOADED));
+  // TODO: Fix this is throwing: Object [object Object] has no method
+  // 'getParentEventTarget'
+  // this.dispatchEvent(new goog.events.Event(pn.data.Server.EventType.LOADED));
 };
 
 
@@ -301,7 +308,8 @@ pn.data.Server.RawUpdate;
  *    Updates:!Array.<pn.data.Server.RawUpdate>,
  *    ResponseEntityType:string,
  *    ResponseEntity:Object,
- *    AjaxResponse: Object
+ *    AjaxResponse: Object,
+ *    Error: string
  *  }}
  */
 pn.data.Server.RawResponse;
@@ -316,9 +324,9 @@ pn.data.Server.RawResponse;
 pn.data.Server.Response = function(raw) {
   goog.asserts.assert(goog.isObject(raw));
 
-  /** @type {!Array.<pn.data.Server.Update>} */
-  this.updates = goog.array.map(raw['Updates'],
-      function(u) { return new pn.data.Server.Update(u); }, this);
+  /** @type {Array.<pn.data.Server.Update>} */
+  this.updates = raw['Updates'] ? goog.array.map(raw['Updates'],
+      function(u) { return new pn.data.Server.Update(u); }, this) : null;
 
   /** @type {pn.data.Entity} */
   this.responseEntity = raw['ResponseEntityType'] ?
@@ -327,13 +335,29 @@ pn.data.Server.Response = function(raw) {
       null;
 
   /** @type {Object} */
-  this.ajaxData = raw['AjaxResponse'];
+  this.ajaxData = raw['AjaxResponse'] || null;
 
-  goog.asserts.assert(goog.isArray(this.updates));
-  goog.asserts.assert(!goog.isDefAndNotNull(this.responseEntity) ||
+  /** @type {string} */
+  this.error = raw['Error'] || '';
+
+  /** @type {Object.<!Array.<pn.data.Entity>>} */
+  this.queryResults = raw['QueryResults'] ?
+      goog.array.reduce(raw['QueryResults'], function(acc, qr) {
+        var query = pn.data.Query.fromString(qr['QueryId']);
+        var results = pn.data.TypeRegister.parseEntities(query.Type,
+            /** @type {!Array} */ (pn.json.parseJson(qr['ResultsJson'])));
+        acc[query.toString()] = results;
+        return acc;
+      }, {}) : null;
+
+  goog.asserts.assert(this.updates === null || goog.isArray(this.updates));
+  goog.asserts.assert(this.responseEntity === null ||
       this.responseEntity instanceof pn.data.Entity);
-  goog.asserts.assert(!goog.isDef(this.ajaxData) ||
-      goog.isObject(this.ajaxData));
+  goog.asserts.assert(this.ajaxData === null || goog.isObject(this.ajaxData));
+  goog.asserts.assert(
+      goog.isDefAndNotNull(this.ajaxData) ||
+      goog.isDefAndNotNull(this.responseEntity) ||
+      goog.isDefAndNotNull(this.updates), 'Response is not a FacadeResponse.');
 };
 
 

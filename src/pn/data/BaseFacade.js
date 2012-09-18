@@ -70,21 +70,18 @@ goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
  * Makes an arbitrary ajax call to the server.  The results are then
  *    inspected for entities and appropriate caches updated.
  *
- * @param {string} controller The server controller endpoint.
- * @param {string} action The server controller action endpoint.
+ * @param {string} uri The relative uri of the server endpoint.
  * @param {!Object} data The request data.
  * @param {function(?):undefined} callback The success callback.
  */
-pn.data.BaseFacade.prototype.ajax =
-    function(controller, action, data, callback) {
-  goog.asserts.assert(goog.isString(controller));
-  goog.asserts.assert(goog.isString(action));
+pn.data.BaseFacade.prototype.ajax = function(uri, data, callback) {
+  goog.asserts.assert(goog.isString(uri));
   goog.asserts.assert(goog.isObject(data));
   goog.asserts.assert(goog.isFunction(callback));
 
-  this.server.ajax(controller, action, data, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this, callback),
-      goog.bind(this.handleError_, this));
+  this.server.ajax(uri, data,
+      goog.bind(this.parseServerResponse, this, callback),
+      goog.bind(this.handleError, this));
 };
 
 
@@ -133,8 +130,8 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
     this.cache.deleteEntity(entity.type, tmpid);
     throw new Error(error);
   }, this);
-  this.server.createEntity(entity, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this, onsuccess),
+  this.server.createEntity(entity,
+      goog.bind(this.parseServerResponse, this, onsuccess),
       onfail);
 
   return entity;
@@ -164,8 +161,8 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
     throw new Error(error);
   }, this);
 
-  this.server.updateEntity(entity, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this, onsuccess),
+  this.server.updateEntity(entity,
+      goog.bind(this.parseServerResponse, this, onsuccess),
       onfail);
 };
 
@@ -185,8 +182,8 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
     throw new Error(error);
   }, this);
 
-  this.server.deleteEntity(entity, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this),
+  this.server.deleteEntity(entity,
+      goog.bind(this.parseServerResponse, this),
       onfail);
 };
 
@@ -246,8 +243,44 @@ pn.data.BaseFacade.prototype.getLastUpdate = function() {
 /** @protected */
 pn.data.BaseFacade.prototype.sync = function() {
   this.server.getAllUpdates(this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this),
-      goog.bind(this.handleError_, this));
+      goog.bind(this.parseServerResponse, this),
+      goog.bind(this.handleError, this));
+};
+
+
+/**
+ * @protected
+ * @param {!(function((pn.data.Entity|Object)=):undefined|
+ *    pn.data.Server.Response)} callbackOrResponse The success callback or
+ *    the response object.
+ * @param {pn.data.Server.Response=} opt_response The optional response
+ *    object.  This is only allowed if the callbackOrResponse parameter
+ *    is a function - a callback.
+ */
+pn.data.BaseFacade.prototype.parseServerResponse =
+    function(callbackOrResponse, opt_response) {
+  var callback = callbackOrResponse instanceof pn.data.Server.Response ?
+      null : callbackOrResponse;
+  var response = callbackOrResponse instanceof pn.data.Server.Response ?
+      callbackOrResponse : opt_response;
+
+  goog.asserts.assert(goog.isNull(callback) || goog.isFunction(callback));
+  goog.asserts.assert(response instanceof pn.data.Server.Response);
+
+  if (response.updates) this.applyUpdates_(response.updates);
+  if (callback) callback.call(this,
+      response.responseEntity || response.ajaxData || response.queryResults);
+};
+
+
+/**
+ * @protected
+ * @param {string} error The error from the server.
+ */
+pn.data.BaseFacade.prototype.handleError = function(error) {
+  goog.asserts.assert(goog.isString(error));
+
+  throw new Error(error);
 };
 
 
@@ -262,43 +295,6 @@ pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
 /** @private */
 pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
   this.timerid_ = setInterval(goog.bind(this.sync, this), 20000);
-};
-
-
-/**
- * @private
- * @param {!(function((pn.data.Entity|Object)=):undefined|
- *    pn.data.Server.Response)} callbackOrResponse The success callback or
- *    the response object.
- * @param {pn.data.Server.Response=} opt_response The optional response
- *    object.  This is only allowed if the callbackOrResponse parameter
- *    is a function - a callback.
- */
-pn.data.BaseFacade.prototype.parseServerResponse_ =
-    function(callbackOrResponse, opt_response) {
-  var callback = callbackOrResponse instanceof pn.data.Server.Response ?
-      null : callbackOrResponse;
-  var response = callbackOrResponse instanceof pn.data.Server.Response ?
-      callbackOrResponse : opt_response;
-
-  goog.asserts.assert(goog.isNull(callback) || goog.isFunction(callback));
-  goog.asserts.assert(response instanceof pn.data.Server.Response);
-
-  this.applyUpdates_(response.updates);
-
-  if (callback) callback.call(this,
-      response.responseEntity || response.ajaxData);
-};
-
-
-/**
- * @private
- * @param {string} error The error from the server.
- */
-pn.data.BaseFacade.prototype.handleError_ = function(error) {
-  goog.asserts.assert(goog.isString(error));
-
-  throw new Error(error);
 };
 
 

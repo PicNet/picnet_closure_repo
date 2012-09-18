@@ -56,8 +56,10 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
     var call = calls[idx];
     var args = goog.array.clone(call.args);
     assertEquals(method, call.method);
-    var lastUpdate = args[args.length - 3];
-    assertTrue(lastUpdate > new Date(2050, 1, 1).getTime());
+    if (method.indexOf('uery') >= 0) {
+      var lastUpdate = args[args.length - 3];
+      assertTrue(lastUpdate > new Date(2050, 1, 1).getTime());
+    }
   };
   assertCall(0, 'ajax');
   assertCall(1, 'createEntity');

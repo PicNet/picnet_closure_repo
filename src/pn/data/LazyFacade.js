@@ -11,6 +11,12 @@ goog.require('pn.data.BaseFacade');
  */
 pn.data.LazyFacade = function(controller) {
   pn.data.BaseFacade.call(this, controller);
+
+  /**
+   * @private
+   * @type {number}
+   */
+  this.defaultTime_ = new Date(3000, 1, 1).getTime();
 };
 goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
 
@@ -23,7 +29,7 @@ goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
  */
 pn.data.LazyFacade.prototype.getLastUpdate = function() {
   var val = pn.data.LazyFacade.superClass_.getLastUpdate.call(this);
-  return val || Number.MAX_VALUE;
+  return val || this.defaultTime_;
 };
 
 
@@ -31,8 +37,8 @@ pn.data.LazyFacade.prototype.getLastUpdate = function() {
 pn.data.LazyFacade.prototype.sync = function() {
   var queries = this.cache.getCachedQueries();
   this.server.getQueryUpdates(queries, this.getLastUpdate(),
-      goog.bind(this.parseServerResponse_, this),
-      goog.bind(this.handleError_, this));
+      goog.bind(this.parseServerResponse, this),
+      goog.bind(this.handleError, this));
 };
 
 
@@ -47,28 +53,25 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
   goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
   goog.asserts.assert(goog.isFunction(callback));
 
-  var available = goog.array.filter(queries,
+  var loaded = goog.array.filter(queries,
       function(q) { return this.cache.contains(q); }, this);
   var unloaded = goog.array.filter(queries,
       function(q) { return !this.cache.contains(q); }, this);
 
-  var cached = this.cache.query(available);
+  var cached = this.cache.query(loaded);
   if (unloaded.length === 0) {
     callback(cached);
   } else {
-    this.server.query(unloaded, this.getLastUpdate(),
-        goog.bind(this.parseServerResponse_, this, function(results) {
-          goog.object.forEach(results, function(data, key) {
-            var list = data['List'];
-            var lastUpdate = data['LastUpdate'];
+    this.server.query(unloaded, loaded, this.getLastUpdate(),
+        goog.bind(this.parseServerResponse, this, function(results) {
+          goog.object.forEach(results, function(list, key) {
             goog.asserts.assert(goog.isArray(list));
-            goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate > 0);
 
             var query = pn.data.Query.fromString(key);
-            this.cache.saveQuery(query, lastUpdate, list);
+            this.cache.saveQuery(query, list);
           }, this);
           goog.object.extend(cached, results);
           callback(cached);
-        }), goog.bind(this.handleError_, this));
+        }), goog.bind(this.handleError, this));
   }
 };

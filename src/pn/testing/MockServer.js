@@ -40,7 +40,7 @@ goog.inherits(pn.testing.MockServer, pn.data.Server);
 
 /** @override */
 pn.testing.MockServer.prototype.ajax =
-    function(controller, action, data, lastUpdate, success, failure) {
+    function(controller, action, data, success, failure) {
   this.calls.push({ method: 'ajax', args: arguments });
 
   this.lastAjaxArgData = data;
@@ -51,7 +51,7 @@ pn.testing.MockServer.prototype.ajax =
 
 /** @override */
 pn.testing.MockServer.prototype.createEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   this.calls.push({ method: 'createEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
@@ -62,7 +62,7 @@ pn.testing.MockServer.prototype.createEntity =
 
 /** @override */
 pn.testing.MockServer.prototype.updateEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   this.calls.push({ method: 'updateEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
@@ -72,7 +72,7 @@ pn.testing.MockServer.prototype.updateEntity =
 
 /** @override */
 pn.testing.MockServer.prototype.deleteEntity =
-    function(entity, lastUpdate, success, failure) {
+    function(entity, success, failure) {
   this.calls.push({ method: 'deleteEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }

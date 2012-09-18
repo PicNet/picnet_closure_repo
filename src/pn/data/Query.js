@@ -31,8 +31,10 @@ pn.data.Query = function(type, opt_linq) {
 
 /** @override */
 pn.data.Query.prototype.toString = function() {
-  var o = { 'Type': this.Type, 'Linq': this.Linq };
-  return pn.json.serialiseJson(o);
+  goog.asserts.assert(goog.isString(this.Type));
+  goog.asserts.assert(goog.isString(this.Linq));
+
+  return this.Type + ':' + this.Linq;
 };
 
 
@@ -43,6 +45,6 @@ pn.data.Query.prototype.toString = function() {
 pn.data.Query.fromString = function(str) {
   goog.asserts.assert(goog.isString(str));
 
-  var o = pn.json.parseJson(str);
-  return new pn.data.Query(o['Type'], o['Linq']);
+  var tokens = str.split(':');
+  return new pn.data.Query(tokens[0], tokens[1]);
 };

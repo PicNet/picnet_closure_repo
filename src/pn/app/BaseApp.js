@@ -6,6 +6,7 @@ goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BaseFacade');
+goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
@@ -82,7 +83,7 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.msg);
 
   /** @type {!pn.data.BaseFacade} */
-  this.data = new pn.data.BaseFacade(this.cfg.appPath);
+  this.data = new pn.data.LazyFacade(this.cfg.facadeControllerPath);
   this.registerDisposable(this.data);
 
   /** @type {!pn.ui.LoadingPnl} */

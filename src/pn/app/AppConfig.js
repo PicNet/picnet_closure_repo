@@ -32,6 +32,13 @@ pn.app.AppConfig = function(opt_opts) {
   this.appPath = '/';
 
   /**
+   * This application default facade controller path.  All Facade requests will
+   *    go this this controller.
+   * @type {string}
+   */
+  this.facadeControllerPath = '';
+
+  /**
    * If true all client data is kept upto date live with the server. That is,
    *    when any data change is done on the server that change is reflected
    *    live on the client.

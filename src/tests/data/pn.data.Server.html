@@ -29,20 +29,20 @@ var setUp = function() {
 // Server.createEntity
 ////////////////////////////////////////////////////////////////////////////////
 var testCreateEntityWithInvalidTypeFails = function() {
-  doFailure_(server.createEntity, new pn.data.Entity('UnknownType', 0));
+  doFailure_(server.createEntity, [new pn.data.Entity('UnknownType', 0)]);
 };
 
 var testCreateEntityWithPositiveOrZeroIDFails = function() {
-  doFailure_(server.createEntity, new pn.data.Entity('Entity1', 0));
-  doFailure_(server.createEntity, new pn.data.Entity('Entity1', 1));
+  doFailure_(server.createEntity, [new pn.data.Entity('Entity1', 0)]);
+  doFailure_(server.createEntity, [new pn.data.Entity('Entity1', 1)]);
 };
 
 var testCreateEntityWithValidEntityTypeCanThenBeQueried = function() {
   var entity = new pn.data.Entity('Entity1', -1);
-  doSuccess_(server.createEntity, entity, entity, true);
+  doSuccess_(server.createEntity, [entity], entity, true);
 };
 
-function doFailure_(method, arg1) {
+function doFailure_(method, args) {
   tc.waitForAsync();
   var success = function() { 
     tc.continueTesting();
@@ -51,11 +51,12 @@ function doFailure_(method, arg1) {
   var error = function(err) {
     tc.continueTesting();
     assertTrue(goog.isString(err));
-  };
-  method.call(server, arg1, 0, success, error);
+  };  
+  var callargs = goog.array.concat(args, [success, error]);
+  method.apply(server, callargs);
 };
 
-function doSuccess_(method, arg1, expreturns, opt_ignoreId) {
+function doSuccess_(method, args, expreturns, opt_ignoreId) {
   tc.waitForAsync();
   var success = function(returned) {     
     var actual = returned.responseEntity;
@@ -67,7 +68,8 @@ function doSuccess_(method, arg1, expreturns, opt_ignoreId) {
     tc.continueTesting();
     fail('Should have succeeded, Error: ' + err); 
   };
-  method.call(server, arg1, 0, success, error);
+  var callargs = goog.array.concat(args, [success, error]);
+  method.apply(server, callargs);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

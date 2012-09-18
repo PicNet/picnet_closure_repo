@@ -36,9 +36,9 @@ pn.data.LocalCache = function() {
 
   /**
    * @private
-   * @type {!Object.<number>}
+   * @type {!Array.<!pn.data.Query>}
    */
-  this.cachedQueries_ = {};
+  this.cachedQueries_ = [];
 
   this.init_();
 };
@@ -185,7 +185,7 @@ pn.data.LocalCache.prototype.query = function(queries) {
 };
 
 
-/** @return {!Object.<!number>} The cached queries. */
+/** @return {!Array.<!pn.data.Query>} The cached queries. */
 pn.data.LocalCache.prototype.getCachedQueries = function() {
   return this.cachedQueries_;
 };
@@ -193,13 +193,11 @@ pn.data.LocalCache.prototype.getCachedQueries = function() {
 
 /**
  * @param {pn.data.Query} query The query to save.
- * @param {number} lastUpdate The server time that this query was ran at.
  * @param {!Array.<pn.data.Entity>} list The list of entities to save against
  *    the specified type.
  */
-pn.data.LocalCache.prototype.saveQuery = function(query, lastUpdate, list) {
+pn.data.LocalCache.prototype.saveQuery = function(query, list) {
   goog.asserts.assert(query instanceof pn.data.Query);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate > 0);
   goog.asserts.assert(goog.isArray(list));
 
   var type = query.Type;
@@ -216,7 +214,7 @@ pn.data.LocalCache.prototype.saveQuery = function(query, lastUpdate, list) {
   }
   this.cache_[type] = list;
 
-  this.cachedQueries_[query.toString()] = lastUpdate;
+  this.cachedQueries_.push(query);
   this.flush_(type);
   this.flushCachedQueries_();
 };
@@ -227,10 +225,14 @@ pn.data.LocalCache.prototype.init_ = function() {
   var cachedtime = pn.storage.get(this.STORE_PREFIX_ + 'version');
   this.lastUpdate = cachedtime ? parseInt(cachedtime, 10) : 0;
 
-  var persisted = pn.storage.get(this.STORE_PREFIX_ + 'queries');
-  this.cachedQueries_ = persisted ?
-      /** @type {!Object.<number>} */ (pn.json.parseJson(persisted)) :
-      {};
+  var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
+  if (queriesJson) {
+    var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
+    this.cachedQueries_ = goog.array.map(arr, function(qstr) {
+      return pn.data.Query.fromString(qstr);
+    });
+  } else { this.cachedQueries_ = []; }
+
   var parse = function(type) {
     return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
   };
