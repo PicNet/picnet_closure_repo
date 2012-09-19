@@ -29,8 +29,9 @@ pn.json.parseJson = function(json) {
 pn.json.serialiseJson = function(o) {
   if (!goog.isDefAndNotNull(o)) return '';
   return goog.json.serialize(o, function(id, val) {
-    if (val instanceof goog.date.DateTime || val instanceof Date) {
-      return val.getTime();
+    if (val instanceof goog.date.Date ||
+        val instanceof goog.date.DateTime || val instanceof Date) {
+      return '\\/Date(' + val.getTime() + ')\\/';
     }
     return val;
   });

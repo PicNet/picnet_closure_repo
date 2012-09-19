@@ -26,9 +26,24 @@ var testDateParsingUsesEpochMillis = function () {
   
   var actual = pn.json.serialiseJson(obj);  
   
-  obj.dateval = obj.dateval.getTime();
+  obj.dateval = '\\/Date(' + obj.dateval.getTime() + ')\\/';
   var exp = JSON.stringify(obj);
   assertEquals(exp, actual);
+};
+
+var testServerDatesAreCorrectlyParse = function() {
+  var serverDateJson = '{"StringProp":"Value 1","DateProp":"\\/Date(1325336400000)\\/"}';
+  var parsed = pn.json.parseJson(serverDateJson);
+  
+  assertTrue(new goog.date.DateTime(2012, 0, 1).equals(parsed.DateProp));
+};
+
+var testDateAreSerialisedThenParsedCorrectly = function() {
+  var date = new goog.date.DateTime(2012, 1, 1, 1, 1, 1);
+  var exp = { date: date };
+  var json = pn.json.serialiseJson(exp);
+  var parsed = pn.json.parseJson(json);
+  assertTrue(date.equals(parsed.date));
 };
     </script>    
   </body>

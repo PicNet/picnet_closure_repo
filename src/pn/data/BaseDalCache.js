@@ -19,8 +19,9 @@ pn.data.BaseDalCache = function(cache) {
   // This handles LocalCache style query results that have Type:Linq
   //  map keys.
   for (var key in cache) {
-    goog.asserts.assert(!(key in this.cache_));
-    this.cache_[key.split(':')[0]] = cache[key];
+    var type = key.split(':')[0];
+    goog.asserts.assert(!(type in this.cache_));
+    this.cache_[type] = cache[key];
   }
 };
 

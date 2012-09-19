@@ -389,7 +389,8 @@ pn.data.Server.Update = function(raw) {
 
   /** @type {pn.data.Entity} */
   this.entity = raw['Entity'] ?
-      pn.data.TypeRegister.parseEntity(raw['EntityType'], raw['Entity']) :
+      pn.data.TypeRegister.parseEntity(raw['EntityType'],
+          /** @type {!Object} */ (pn.json.parseJson(raw['Entity']))) :
       null;
 
   goog.asserts.assert(goog.isNumber(this.id));

@@ -159,7 +159,7 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
  */
 pn.data.LocalCache.prototype.contains = function(query) {
   goog.asserts.assert(query instanceof pn.data.Query);
-  return query.Type in this.cache_;
+  return (query.Type in this.cache_);
 };
 
 
@@ -234,32 +234,28 @@ pn.data.LocalCache.prototype.init_ = function() {
       return acc;
     }, {});
   } else { this.cachedQueries_ = {}; }
-
-  var parse = function(type) {
+  var parse = goog.bind(function(type) {
     return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
-  };
+  }, this);
 
-  var types = parse('KEYS');
-  if (!types) {
+  if (!queriesJson) {
     if (this.lastUpdate > 0) {
       throw 'Last update time is set but the cache is empty.';
     }
     this.cache_ = {};
     return;
   }
-  goog.asserts.assert(goog.isArray(types));
 
   this.cache_ = {};
-  goog.array.forEach(types, function(type) {
-    goog.asserts.assert(goog.isString(types));
+  for (var qid in this.cachedQueries_) {
+    var query = pn.data.Query.fromString(qid);
 
-    var data = parse(type);
+    var rawList = parse(query.Type);
+    goog.asserts.assert(goog.isArray(rawList));
 
-    goog.asserts.assert(goog.isArray(data));
-
-    var list = pn.data.TypeRegister.parseEntities(type, data);
-    this.cache_[type] = list;
-  }, this);
+    var list = pn.data.TypeRegister.parseEntities(query.Type, rawList);
+    this.cache_[query.Type] = list;
+  }
 };
 
 
