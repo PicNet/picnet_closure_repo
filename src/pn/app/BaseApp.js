@@ -6,6 +6,7 @@ goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BaseFacade');
+goog.require('pn.data.DataDownloader');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
 goog.require('pn.ui.KeyShortcutMgr');
@@ -13,7 +14,6 @@ goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
-
 goog.provide('pn.app.BaseApp');
 
 
@@ -209,10 +209,8 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
 
   // Data
   evs[ae.QUERY] = bind(this.data.query, this.data);
-  // TODO: Implement
-  // evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
-  // TODO: Implement
-  // evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
+  evs[ae.LIST_EXPORT] = bind(this.listExport_, this);
+  evs[ae.LIST_ORDERED] = bind(this.orderEntities_, this);
   evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
     var ctor = pn.data.TypeRegister.fromName(type);
     var entity = new ctor(raw);
@@ -225,11 +223,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
       }, this));
     }
   }, this);
-  // TODO: Implement
-  // evs[ae.ENTITY_CLONE] = bind(function(type, entity) {
-  //   if (!this.acceptDirty_()) return;
-  //   this.data.cloneEntity(type, entity);
-  // }, this);
+  evs[ae.ENTITY_CLONE] = bind(this.cloneEntity_, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
     var ctor = pn.data.TypeRegister.fromName(type);
     this.data.deleteEntity(new ctor(raw));
@@ -237,6 +231,57 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 
   return evs;
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of the entity being exported.
+ *    This is not used in this fuction but must be there as this is a generic
+ *    fireing of event that contains type as the first parameter. See
+ *    ExportCommand for details.
+ * @param {string} format The export format.
+ * @param {Array.<Array.<string>>} data The data to export.
+ */
+pn.app.BaseApp.prototype.listExport_ = function(type, format, data) {
+  var ed = {'exportType': format, 'exportData': pn.json.serialiseJson(data)};
+  var uri = this.cfg.appPath + 'ExportData/ExportData';
+  pn.data.DataDownloader.send(uri, ed);
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of the entity to order.
+ * @param {!Array.<number>} ids The list of IDs in correct order.
+ * @param {function():undefined=} opt_cb The optional callback.
+ */
+pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
+  goog.asserts.assert(goog.isString(type));
+  goog.asserts.assert(goog.isArray(ids));
+
+  var data = { type: type, ids: ids };
+  var cb = opt_cb || function() {};
+  this.data.ajax('History/GetAuditHistory', data, cb);
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of the entity to save.
+ * @param {pn.data.Entity} entity The entity to clone.
+ */
+pn.app.BaseApp.prototype.cloneEntity_ = function(type, entity) {
+  goog.asserts.assert(goog.isString(type));
+  goog.asserts.assert(entity instanceof pn.data.Entity);
+
+  if (!this.acceptDirty_()) return;
+
+  var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
+  this.data.ajax('CloneEntity/CloneEntity', data, function(cloned) {
+    cloned = pn.data.TypeRegister.parseEntity(type, cloned);
+    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
+  });
 };
 
 

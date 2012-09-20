@@ -71,30 +71,6 @@ pn.app.AppConfig = function(opt_opts) {
   this.loadPnlId = 'loading-panel';
 
   /** @type {!Object} */
-  this.serverRoutes = {
-    /** @type {string} */
-    getEntityLists: 'GetData/GetEntityLists',
-
-    /** @type {string} */
-    getEntity: 'GetData/GetEntity',
-
-    /** @type {string} */
-    saveEntity: 'SaveEntity/SaveEntity',
-
-    /** @type {string} */
-    orderGrid: 'GridOrdering/OrderGrid',
-
-    /** @type {string} */
-    cloneEntity: 'CloneEntity/CloneEntity',
-
-    /** @type {string} */
-    deleteEntity: 'DeleteEntity/DeleteEntity',
-
-    /** @type {string} */
-    exportData: 'ExportData/ExportData'
-  };
-
-  /** @type {!Object} */
   this.defaultFieldRenderers = {
 
     /** @type {pn.ui.edit.FieldSpec.Renderer} */
