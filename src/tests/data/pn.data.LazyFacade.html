@@ -25,12 +25,14 @@ var setUp = function() {
   events = [];
   goog.global.setInterval = function() {};
   pn.data.LazyFacade.prototype.sync = function() {};
+  pn.data.LocalCache.prototype.init_ = function() {};
 
   facade = new pn.data.LazyFacade('controller_uri');  
   facade.cache.cache_['EntityType'] = [];
   facade.server = (server = new pn.testing.MockServer());
   
   var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
   updated = facade.cache.createEntity(entity).clone();
   var tmpid = updated.id;
   updated.id = 1;
@@ -47,7 +49,9 @@ var setUp = function() {
 var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
   facade.ajax('controller/action', {}, function() {});
   facade.getEntity('EntityType', 1);
-  facade.createEntity(new pn.data.Entity('EntityType', 0));
+  var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
+  facade.createEntity(entity, function() {});
   facade.updateEntity(updated);
   facade.deleteEntity(updated);
   facade.query([new pn.data.Query('EntityType2')], function() {});

@@ -59,12 +59,14 @@ var testGetEntityThrowsErrorIfIDNotInCache = function() {
   validateServerCalls([]);
 };
 
-var testGetEntityReturnsEntityInCache = function() {
+var testGetEntityDoesNotReturnUntilServerIsReached = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var created = facade.createEntity(entity);  
-  assertTrue(created.equals(facade.getEntity('EntityType', created.id)));
-  
-  validateServerCalls([{method:'createEntity', entity:created}]); 
+  entity.id = -1;
+  facade.createEntity(entity, function(created) {
+    assertTrue(created.id > 0);
+    assertTrue(created.equals(facade.getEntity('EntityType', created.id)));  
+    validateServerCalls([{method:'createEntity', entity:created}]); 
+  });    
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,30 +75,33 @@ var testGetEntityReturnsEntityInCache = function() {
 
 var testCreateEntityCreatesInCacheFirstWithNegativeID = function() {
   var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
   server.createEntity = function() {}; // Dissable the server call
-  var created = facade.createEntity(entity);
-  
-  assertTrue(created.id < 0);
-  var query = new pn.data.Query('EntityType');
-  assertArrayEquals([created], facade.cache.query([query])[query.toString()]);  
-  validateServerCalls([]); 
+  facade.createEntity(entity, function(created) {
+    assertTrue(created.id < 0);
+    var query = new pn.data.Query('EntityType');
+    assertArrayEquals([created], facade.cache.query([query])[query.toString()]);  
+    validateServerCalls([]); 
+  });   
 };
 
 var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var created = facade.createEntity(entity);
-  
-  validateServerCalls([{method:'createEntity', entity:created}]); 
-  assertTrue(created.id > 0);  
-  var query = new pn.data.Query('EntityType');
-  assertArrayEquals([created], facade.cache.query([query])[query.toString()]);
+  entity.id = -1;
+  facade.createEntity(entity, function(created) {
+    validateServerCalls([{method:'createEntity', entity:created}]); 
+    assertTrue(created.id > 0);  
+    var query = new pn.data.Query('EntityType');
+    assertArrayEquals([created], facade.cache.query([query])[query.toString()]);
+  });    
 };
 
 var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
   var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
   server.nextFail = true;
   
-  try { facade.createEntity(entity); fail('1'); } 
+  try { facade.createEntity(entity, function() {}); fail('1'); } 
   catch(ex) {};
     
   validateServerCalls([{method:'createEntity', entity: entity}]);   
@@ -112,51 +117,57 @@ var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
 var testUpdateEntityUpdatesInCacheFirst = function() {  
   server.updateEntity = function() {}; // Dissable the server call
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
-  facade.updateEntity(entity2);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
+    facade.updateEntity(entity2);
   
-  assertEquals(1, entity2.id);
-  var query = new pn.data.Query('EntityType');
-  assertArrayEquals([entity2], facade.cache.query([query])[query.toString()]);  
-  validateServerCalls([]); 
+    assertEquals(1, entity2.id);
+    var query = new pn.data.Query('EntityType');
+    assertArrayEquals([entity2], facade.cache.query([query])[query.toString()]);  
+    validateServerCalls([]); 
+  }).clone();  
 };
 
 var testUpdateEntityUpdatesCacheThenServer = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
-  facade.updateEntity(entity2);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
+    facade.updateEntity(entity2);
   
-  assertTrue(entity2.id > 0);  
-  validateServerCalls([{method:'updateEntity', entity:entity2}]); 
+    assertTrue(entity2.id > 0);  
+    validateServerCalls([{method:'updateEntity', entity:entity2}]); 
+  });  
 };
 
 var testUpdateEntityWithErrorUndoesLocalChange = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
   
-  var before = entity2.clone();
-  var after = entity2.clone();
+    var before = entity2.clone();
+    var after = entity2.clone();
   
-  after.newpropery = 'newproperty';
-  server.nextFail = true;  
+    after.newpropery = 'newproperty';
+    server.nextFail = true;  
 
-  try { facade.updateEntity(after); fail('1'); } 
-  catch(ex) {};
+    try { facade.updateEntity(after); fail('1'); } 
+    catch(ex) {};
     
-  validateServerCalls([{method:'updateEntity', entity:after}]); 
+    validateServerCalls([{method:'updateEntity', entity:after}]); 
   
-  var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.toString()]; 
-  assertArrayEquals([before], list);
+    var query = new pn.data.Query('EntityType');
+    var list = facade.cache.query([query])[query.toString()]; 
+    assertArrayEquals([before], list);
+  });  
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,46 +177,52 @@ var testUpdateEntityWithErrorUndoesLocalChange = function() {
 var testDeleteEntityDeletesInCacheFirst = function() {  
   server.deleteEntity = function() {}; // Dissable the server call
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
 
-  facade.deleteEntity(entity2);
+    facade.deleteEntity(entity2);
   
-  var query = new pn.data.Query('EntityType');
-  assertArrayEquals([], facade.cache.query([query])[query.toString()]);  
-  validateServerCalls([]); 
+    var query = new pn.data.Query('EntityType');
+    assertArrayEquals([], facade.cache.query([query])[query.toString()]);  
+    validateServerCalls([]); 
+  });  
 };
 
 var testDeleteEntityDeletesCacheThenServer = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
-  facade.deleteEntity(entity2);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
+    facade.deleteEntity(entity2);
   
-  var query = new pn.data.Query('EntityType');
-  assertArrayEquals([], facade.cache.query([query])[query.toString()]);
-  validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
+    var query = new pn.data.Query('EntityType');
+    assertArrayEquals([], facade.cache.query([query])[query.toString()]);
+    validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
+  });
 };
 
 var testDeleteEntityWithErrorUndoesLocalChange = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
   
-  server.nextFail = true;  
-  try { facade.deleteEntity(entity2); fail('1'); } 
-  catch(ex) {};
+    server.nextFail = true;  
+    try { facade.deleteEntity(entity2); fail('1'); } 
+    catch(ex) {};
     
-  validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
-  var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.toString()]; 
-  assertArrayEquals([entity2], list);
+    validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
+    var query = new pn.data.Query('EntityType');
+    var list = facade.cache.query([query])[query.toString()]; 
+    assertArrayEquals([entity2], list);
+  });  
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -254,34 +271,40 @@ var testAjaxResponse = function() {
 var testCreateEntityResponse = function() {
   prepareServerReponse();
   var entity = new pn.data.Entity('EntityType', 0);
-  var created = facade.createEntity(entity);
-  validateResponseDetails([created]);
+  entity.id = -1;
+  facade.createEntity(entity, function(created) {
+    validateResponseDetails([created]);
+  });  
 };
 
 var testUpdateEntityResponse = function() {
   prepareServerReponse();
   
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
-  facade.updateEntity(entity2);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
+    facade.updateEntity(entity2);
 
-  validateResponseDetails([entity2]);
+    validateResponseDetails([entity2]);
+  });  
 };
 
 var testDeleteEntityResponse = function() {
   prepareServerReponse();
   
   var entity = new pn.data.Entity('EntityType', 0);
-  var entity2 = facade.cache.createEntity(entity).clone();
-  var tmpid = entity2.id;
-  entity2.id = 1;
-  facade.cache.updateEntity(entity2, tmpid);
-  facade.deleteEntity(entity2);
+  entity.id = -1;
+  facade.cache.createEntity(entity, function(entity2) {
+    var tmpid = entity2.id;
+    entity2.id = 1;
+    facade.cache.updateEntity(entity2, tmpid);
+    facade.deleteEntity(entity2);
 
-  validateResponseDetails();
+    validateResponseDetails();
+  });  
 };
 
 var testSyncResponseDetails = function() {

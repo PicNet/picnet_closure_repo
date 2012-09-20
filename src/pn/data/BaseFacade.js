@@ -109,12 +109,13 @@ pn.data.BaseFacade.prototype.getEntity = function(type, id) {
  *    server ID.  Otherwise the client creation is rolled back.
  *
  * @param {!pn.data.Entity} entity The entity to create.
- * @return {!pn.data.Entity} The created entity with an assigned temporary ID
- *    which will change once the server is updated.
+ * @param {function(!pn.data.Entity):undefined} callback The success callback
+ *    that takes the created entity with the new ID value.
  */
-pn.data.BaseFacade.prototype.createEntity = function(entity) {
+pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id <= 0);
+  goog.asserts.assert(goog.isFunction(callback));
 
   entity = this.cache.createEntity(entity).clone();
   var tmpid = entity.id;
@@ -130,17 +131,17 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
     goog.asserts.assert(entity.equals(entity2));
 
     this.cache.updateEntity(entity, tmpid);
+    callback(entity);
   }, this);
 
   var onfail = goog.bind(function(error) {
     this.cache.deleteEntity(entity.type, tmpid);
     throw new Error(error);
   }, this);
+
   this.server.createEntity(entity,
       goog.bind(this.parseServerResponse, this, onsuccess),
       onfail);
-
-  return entity;
 };
 
 

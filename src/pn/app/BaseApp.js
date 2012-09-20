@@ -216,10 +216,14 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
     var ctor = pn.data.TypeRegister.fromName(type);
     var entity = new ctor(raw);
-    entity.id > 0 ?
-        this.data.updateEntity(entity) :
-        this.data.createEntity(entity);
-    this.pub(ae.ENTITY_SAVED, entity);
+    if (entity.id > 0) {
+      this.data.updateEntity(entity);
+      this.pub(ae.ENTITY_SAVED, entity);
+    } else {
+      this.data.createEntity(entity, goog.bind(function(created) {
+        this.pub(ae.ENTITY_SAVED, created);
+      }, this));
+    }
   }, this);
   // TODO: Implement
   // evs[ae.ENTITY_CLONE] = bind(function(type, entity) {

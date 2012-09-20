@@ -23,6 +23,7 @@ var setUp = function() {
   cache = new pn.data.LocalCache(); // Reset cache
   cache.cache_['EntityType'] = [];
   entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
   cache.createEntity(entity);
 };
 
@@ -61,25 +62,30 @@ var testGetEntityDoesNotUpdateLocalStorate = function() {
 
 var testCreateEntityFailsIfEntityTypeDoesNotExistInCache = function() {
   try { 
-    cache.createEntity(new pn.data.Entity('UnknownType', 0)); 
+    var entity = new pn.data.Entity('UnknownType', 0);
+    entity.id = -1;
+    cache.createEntity(entity); 
     assertFails('Expected failure with UnknownType');
   } catch (ex) {};
 };
 
-var testCreateEntityFailsIfEntityIDIsNotZero = function() {
+var testCreateEntityFailsIfEntityIDIsGteZero = function() {
   try { 
     cache.createEntity(new pn.data.Entity('EntityType', 1)); 
     assertFails('Expected failure with invalid ID');
   } catch (ex) {};
 
   try { 
-    cache.createEntity(new pn.data.Entity('EntityType', -1)); 
+    cache.createEntity(new pn.data.Entity('EntityType', 0)); 
     assertFails('Expected failure with invalid ID');
   } catch (ex) {};
 };
 
 var testCreateEntityCanThenBeRetreived = function() {
-  var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)); 
+  var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
+  cache.createEntity(entity); 
+
   assertTrue(entity.id < 0);
   assertTrue(entity.equals(cache.getEntity('EntityType', entity.id)));
 };
@@ -117,7 +123,9 @@ var testUpdateEntityCanThenBeRetreived = function() {
 };
 
 var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
-  var entity = cache.createEntity(new pn.data.Entity('EntityType', 0)).clone(); 
+  var entity = new pn.data.Entity('EntityType', 0);
+  entity.id = -1;
+  entity = cache.createEntity(entity).clone(); 
   var tmpid = entity.id;
   entity.id = 100;
   cache.updateEntity(entity, tmpid); 
@@ -224,6 +232,7 @@ var testQueryWithSingleType = function() {
 var testQueryWithMultipleTypes = function() {
   cache.cache_['EntityType2'] = [];
   var entity2 = new pn.data.Entity('EntityType2', 0);
+  entity2.id = -1;
   cache.createEntity(entity2);
 
   var q1 = new pn.data.Query('EntityType'), 
@@ -303,7 +312,9 @@ var testSavingMultipleQueriesForSameTypeArePersistedIndependently = function() {
 };
 
 var createEntity = function(type, id) {
-  var entity = cache.createEntity(new pn.data.Entity(type, 0)).clone();
+  var entity = new pn.data.Entity(type, 0);
+  entity.id = -1;
+  entity = cache.createEntity(entity).clone();
 
   var tmpid = entity.id;
   entity.id = id;

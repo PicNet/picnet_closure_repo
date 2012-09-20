@@ -239,6 +239,25 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
+  try { this.ajaxImpl_(uri, data, success, failure); }
+  catch (ex) { failure(ex.message); }
+};
+
+
+/**
+ * @private
+ * @param {string} uri The uri of the server endpoint.
+ * @param {!Object} data The data to send to the endpoint.
+ * @param {!function(!pn.data.Server.Response):undefined} success The
+ *    success callback.
+ * @param {function(string):undefined} failure The failure callback.
+ */
+pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure) {
+  goog.asserts.assert(goog.isString(uri));
+  goog.asserts.assert(goog.isObject(data));
+  goog.asserts.assert(goog.isFunction(success));
+  goog.asserts.assert(goog.isFunction(failure));
+
   // var event = new goog.events.Event(pn.data.Server.EventType.LOADING, this);
   // TODO: This is throwing an error
   // this.dispatchEvent(event);
@@ -264,6 +283,25 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
  * @param {function(string):undefined} failure The failure callback.
  */
 pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
+  goog.asserts.assert(xhr instanceof goog.net.XhrIo);
+  goog.asserts.assert(goog.isNumber(start) && start > 0);
+  goog.asserts.assert(goog.isFunction(success));
+  goog.asserts.assert(goog.isFunction(failure));
+
+  try { this.replyImpl_(xhr, start, success, failure); }
+  catch (ex) { failure(ex.message); }
+};
+
+
+/**
+ * @private
+ * @param {!goog.net.XhrIo} xhr The xhr request details.
+ * @param {number} start The time the request began.
+ * @param {!function(!pn.data.Server.Response):undefined} success The
+ *    success callback.
+ * @param {function(string):undefined} failure The failure callback.
+ */
+pn.data.Server.prototype.replyImpl_ = function(xhr, start, success, failure) {
   goog.asserts.assert(xhr instanceof goog.net.XhrIo);
   goog.asserts.assert(goog.isNumber(start) && start > 0);
   goog.asserts.assert(goog.isFunction(success));

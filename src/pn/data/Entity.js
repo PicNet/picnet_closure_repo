@@ -54,7 +54,10 @@ pn.data.Entity.prototype.equals = function(other) {
  * @return {!pn.data.Entity} A cloned copy of this entity.
  */
 pn.data.Entity.prototype.clone = function() {
-  var cloned = new this.constructor({id: this.id});
+  var cloned = this.constructor === pn.data.Entity ?
+      new pn.data.Entity(this.type, this.id) :
+      new this.constructor({id: this.id});
+
   goog.object.extend(cloned, this);
   return cloned;
 };
