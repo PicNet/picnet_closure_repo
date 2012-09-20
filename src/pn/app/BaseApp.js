@@ -213,13 +213,19 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   // evs[ae.LIST_EXPORT] = bind(this.data.listExport, this.data);
   // TODO: Implement
   // evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
-  evs[ae.ENTITY_SAVE] = bind(this.data.updateEntity, this.data);
+  evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
+    var ctor = pn.data.TypeRegister.fromName(type);
+    this.data.updateEntity(new ctor(raw));
+  }, this);
   // TODO: Implement
   // evs[ae.ENTITY_CLONE] = bind(function(type, entity) {
   //   if (!this.acceptDirty_()) return;
   //   this.data.cloneEntity(type, entity);
   // }, this);
-  evs[ae.ENTITY_DELETE] = bind(this.data.deleteEntity, this.data);
+  evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
+    var ctor = pn.data.TypeRegister.fromName(type);
+    this.data.deleteEntity(new ctor(raw));
+  }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 
   return evs;

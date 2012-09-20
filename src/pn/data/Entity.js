@@ -38,8 +38,18 @@ pn.data.Entity.prototype.equals = function(other) {
   var keys1 = goog.object.getKeys(this);
   var keys2 = goog.object.getKeys(other);
   if (!goog.array.equals(keys1, keys2)) return false;
-  return goog.array.findIndex(keys1,
-      function(key) { return this[key] !== other[key]; }, this) < 0;
+  return goog.array.findIndex(keys1, function(key) {
+    if (key === 'DateLastUpdated') return false;
+
+    var v1 = this[key];
+    var v2 = other[key];
+    var eq;
+    if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
+      eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
+    } else { eq = v1 === v2; }
+
+    return !eq;
+  }, this) < 0;
 };
 
 

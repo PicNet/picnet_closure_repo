@@ -268,7 +268,7 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
   goog.asserts.assert(type in this.cache_, type + ' not in cache');
 
   var list = this.cache_[type];
-  var json = pn.json.serialiseJson(list);
+  var json = pn.json.serialiseJson(list, true);
   pn.storage.set(this.STORE_PREFIX_ + type, json);
 };
 

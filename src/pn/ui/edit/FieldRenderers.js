@@ -218,7 +218,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   goog.object.forEach(enumo, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
-  var selected = fctx.getEntityValue(entity);
+  var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       txt, lst, selected, -1);
   goog.dom.appendChild(parent, select);
@@ -266,6 +266,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(
           fctx.spec.entitySpec.type, fctx.spec.dataProperty));
+
   var list = fctx.cache.get(entityType);
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
@@ -282,8 +283,9 @@ pn.ui.edit.FieldRenderers.entityParentListField =
           fctx.cache, namePath, fctx.spec.entitySpec.type, e)
     };
   });
+  var current = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
-      selTxt, list, fctx.getEntityValue(entity));
+      selTxt, list, current);
   goog.dom.appendChild(parent, select);
   return select;
 };
@@ -295,12 +297,19 @@ pn.ui.edit.FieldRenderers.entityParentListField =
  *    list.
  * @param {!Array.<{ID:number, Name: string}>} list The list of entities
  *    (requires an ID and Name field).
- * @param {*} selValue The selected value in the 'ID' field.
+ * @param {number} selValue The selected value in the 'ID' field.
  * @param {number=} opt_noneId The ID to give to the 'Select...' entry.
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
     function(selectTxt, list, selValue, opt_noneId) {
+  goog.asserts.assert(!selectTxt || goog.isString(selectTxt));
+  goog.asserts.assert(goog.isArray(list));
+  goog.asserts.assert(!goog.isDef(selValue) || goog.isNumber(selValue),
+      'Not supported: ' + selValue);
+  goog.asserts.assert(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),
+      'Not supported: ' + opt_noneId);
+
   var select = goog.dom.createDom('select');
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
@@ -319,6 +328,8 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
       goog.dom.appendChild(select, option);
     }
   });
+
+  select.getValue = function() { return parseInt(select.value, 10); };
   return select;
 };
 

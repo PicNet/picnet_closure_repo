@@ -152,9 +152,8 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
 
   this.cache.updateEntity(entity);
 
-  var onsuccess = function(entity2) {
-    goog.asserts.assert(entity.equals(entity2));
-  };
+  var onsuccess =
+      function(entity2) { goog.asserts.assert(entity.equals(entity2)); };
 
   var onfail = goog.bind(function(error) {
     this.cache.updateEntity(current); // Revert client cache
@@ -268,6 +267,7 @@ pn.data.BaseFacade.prototype.parseServerResponse =
   goog.asserts.assert(response instanceof pn.data.Server.Response);
 
   if (response.updates) this.applyUpdates_(response.updates);
+
   if (callback) callback.call(this,
       response.responseEntity || response.ajaxData || response.queryResults);
 };

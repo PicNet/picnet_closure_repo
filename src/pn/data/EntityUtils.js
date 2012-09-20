@@ -125,8 +125,8 @@ pn.data.EntityUtils.getTypeProperty = function(type, property) {
   goog.asserts.assert(goog.isString(type), '"type" not specified');
   goog.asserts.assert(goog.isString(property), '"property" not specified');
 
-  return /** @type {string} */ (
-      pn.data.TypeRegister.getFieldSchema(type, property).entityType);
+  var fs = pn.data.TypeRegister.getFieldSchema(type, property);
+  return /** @type {string} */ (fs.entityType);
 };
 
 

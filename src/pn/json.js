@@ -25,13 +25,18 @@ pn.json.parseJson = function(json) {
 /**
  * @param {Object} o The object to serialise to JSON.
  * @return {string} The string (json) representation of the specified object.
+ * @param {boolean=} opt_useDotNetDates If this is true then dates are
+ *    serialized as standard .Net /Date(...)/ format. Otherwise the epoch
+ *    millis are used.
  */
-pn.json.serialiseJson = function(o) {
+pn.json.serialiseJson = function(o, opt_useDotNetDates) {
   if (!goog.isDefAndNotNull(o)) return '';
   return goog.json.serialize(o, function(id, val) {
     if (val instanceof goog.date.Date ||
         val instanceof goog.date.DateTime || val instanceof Date) {
-      return '\\/Date(' + val.getTime() + ')\\/';
+      return opt_useDotNetDates ?
+          '\\/Date(' + val.getTime() + ')\\/' :
+          val.getTime();
     }
     return val;
   });

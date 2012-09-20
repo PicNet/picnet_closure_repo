@@ -17,7 +17,7 @@ pn.data.FieldSchema = function(name, type, entityType, allowNull, length) {
   goog.asserts.assert(name);
   goog.asserts.assert(type);
   goog.asserts.assert(
-      !entityType || goog.isFunction(entityType) || goog.isObject(entityType));
+      !entityType || goog.isString(entityType) || goog.isObject(entityType));
 
   /**
    * The name of this field

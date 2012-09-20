@@ -38,7 +38,7 @@ function loadScript(e) {
     return false;
   }  
   loadScriptUri(uri);
-  console.log('Successfully loaded the script at: ' + uri);
+  console.info('Successfully loaded the script at: ' + uri);
   return false;
 };
 
@@ -52,7 +52,7 @@ function loadScriptUri(uri) {
 
 function go() {     
   var name = $('#object_to_extern').val();
-  console.log('go: ' + name);
+  console.info('go: ' + name);
   localStorage['object_to_extern'] = name;
   if (!name) {
     alert('Please enter an object to extern. Example: "jQuery"');
