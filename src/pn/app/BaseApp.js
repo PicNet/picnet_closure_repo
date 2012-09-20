@@ -215,7 +215,11 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   // evs[ae.LIST_ORDERED] = bind(this.data.orderEntities, this.data);
   evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
     var ctor = pn.data.TypeRegister.fromName(type);
-    this.data.updateEntity(new ctor(raw));
+    var entity = new ctor(raw);
+    entity.id > 0 ?
+        this.data.updateEntity(entity) :
+        this.data.createEntity(entity);
+    this.pub(ae.ENTITY_SAVED, entity);
   }, this);
   // TODO: Implement
   // evs[ae.ENTITY_CLONE] = bind(function(type, entity) {

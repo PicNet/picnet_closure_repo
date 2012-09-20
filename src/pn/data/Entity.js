@@ -35,11 +35,9 @@ pn.data.Entity = function(type, id) {
  */
 pn.data.Entity.prototype.equals = function(other) {
   if (!(other instanceof pn.data.Entity)) return false;
-  var keys1 = goog.object.getKeys(this);
-  var keys2 = goog.object.getKeys(other);
-  if (!goog.array.equals(keys1, keys2)) return false;
-  return goog.array.findIndex(keys1, function(key) {
-    if (key === 'DateLastUpdated') return false;
+
+  return goog.array.findIndex(goog.object.getKeys(this), function(key) {
+    if (key.indexOf('_') >= 0) return false;
 
     var v1 = this[key];
     var v2 = other[key];
@@ -47,7 +45,6 @@ pn.data.Entity.prototype.equals = function(other) {
     if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
       eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
     } else { eq = v1 === v2; }
-
     return !eq;
   }, this) < 0;
 };
@@ -57,7 +54,7 @@ pn.data.Entity.prototype.equals = function(other) {
  * @return {!pn.data.Entity} A cloned copy of this entity.
  */
 pn.data.Entity.prototype.clone = function() {
-  var cloned = new this.constructor(this.type, this.id);
+  var cloned = new this.constructor({id: this.id});
   goog.object.extend(cloned, this);
   return cloned;
 };

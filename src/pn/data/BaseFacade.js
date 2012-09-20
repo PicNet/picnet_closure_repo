@@ -121,6 +121,12 @@ pn.data.BaseFacade.prototype.createEntity = function(entity) {
 
   var onsuccess = goog.bind(function(entity2) {
     entity.id = entity2.id;
+    if (entity2.DateCreated) {
+      entity.DateCreated = entity2.DateCreated;
+    }
+    if (entity2.DateLastUpdated) {
+      entity.DateLastUpdated = entity2.DateLastUpdated;
+    }
     goog.asserts.assert(entity.equals(entity2));
 
     this.cache.updateEntity(entity, tmpid);

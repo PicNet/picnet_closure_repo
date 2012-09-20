@@ -82,10 +82,8 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.type in this.cache_,
       entity.type + ' not in cache');
-  goog.asserts.assert(entity.id === 0);
+  goog.asserts.assert(entity.id < 0);
 
-  var tmpid = - new Date().getTime();
-  entity.id = tmpid;
   this.cache_[entity.type].push(entity);
   this.flush_(entity.type);
 
