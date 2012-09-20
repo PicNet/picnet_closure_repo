@@ -12,8 +12,8 @@ goog.require('pn.data.FieldSchema');
  * @param {number} id The entity id.
  */
 pn.data.Entity = function(type, id) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(goog.isNumber(id));
+  goog.asserts.assert(goog.isString(type), 'Type [' + type + '] is invalid');
+  goog.asserts.assert(goog.isNumber(id), 'ID [' + id + '] is invalid');
 
   /**
    * @expose
@@ -45,6 +45,7 @@ pn.data.Entity.prototype.equals = function(other) {
     if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
       eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
     } else { eq = v1 === v2; }
+    // if (!eq) console.log('not equal: ', key, v1, v2);
     return !eq;
   }, this) < 0;
 };

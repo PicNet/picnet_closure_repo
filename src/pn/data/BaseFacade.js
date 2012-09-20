@@ -159,8 +159,12 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
 
   this.cache.updateEntity(entity);
 
-  var onsuccess =
-      function(entity2) { goog.asserts.assert(entity.equals(entity2)); };
+  var onsuccess = function(entity2) {
+    if (entity2.DateLastUpdated) {
+      entity.DateLastUpdated = entity2.DateLastUpdated;
+    }
+    goog.asserts.assert(entity.equals(entity2));
+  };
 
   var onfail = goog.bind(function(error) {
     this.cache.updateEntity(current); // Revert client cache

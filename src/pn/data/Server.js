@@ -240,7 +240,11 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
   goog.asserts.assert(goog.isFunction(failure));
 
   try { this.ajaxImpl_(uri, data, success, failure); }
-  catch (ex) { failure(ex.message); }
+  catch (ex) {
+    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    this.log_.warning(error.stack || error.message);
+    failure(ex.message);
+  }
 };
 
 
@@ -289,7 +293,11 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
   goog.asserts.assert(goog.isFunction(failure));
 
   try { this.replyImpl_(xhr, start, success, failure); }
-  catch (ex) { failure(ex.message); }
+  catch (ex) {
+    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    this.log_.warning(error.stack || error.message);
+    failure(ex.message);
+  }
 };
 
 
