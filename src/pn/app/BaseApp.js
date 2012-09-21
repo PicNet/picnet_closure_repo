@@ -169,7 +169,7 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 pn.app.BaseApp.prototype.init_ = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
-  var sset = pn.data.BaseFacade.EventType;
+  var sset = pn.data.Server.EventType;
   goog.events.listen(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
   goog.events.listen(
@@ -304,9 +304,9 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   var navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
 
-  var sset = pn.data.BaseFacade.EventType;
-  goog.events.listen(
+  var sset = pn.data.Server.EventType;
+  goog.events.unlisten(
       this.data, sset.LOADING, this.loading.increment, false, this.loading);
-  goog.events.listen(
+  goog.events.unlisten(
       this.data, sset.LOADED, this.loading.decrement, false, this.loading);
 };

@@ -298,7 +298,7 @@ pn.data.BaseFacade.prototype.handleError = function(error) {
 /** @private */
 pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
   goog.object.forEach(pn.data.Server.EventType, function(et) {
-    this.eh_.listen(this.server, et, this.dispatchEvent);
+    this.eh_.listen(this.server, et, this.dispatchEvent, false, this);
   }, this);
 };
 
@@ -306,7 +306,7 @@ pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
 /** @private */
 pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
   this.timerid_ = setInterval(goog.bind(this.sync, this), 20000);
-  this.sync();
+  goog.Timer.callOnce(this.sync, 1, this);
 };
 
 
@@ -352,11 +352,3 @@ pn.data.BaseFacade.prototype.disposeInternal = function() {
   pn.data.BaseFacade.superClass_.disposeInternal.call(this);
   if (this.timer_ !== 0) clearInterval(this.timer_);
 };
-
-
-/** @enum {string} */
-pn.data.BaseFacade.EventType = {
-  LOADING: 'server-loading',
-  LOADED: 'server-loaded'
-};
-

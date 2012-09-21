@@ -147,7 +147,7 @@ pn.data.Server.prototype.getQueryUpdates =
     'queriesJson': pn.json.serialiseJson(queries)
   };
   var uri = this.getFacadeControllerAction_('GetQueryUpdates');
-  this.ajax_(uri, json, success, failure);
+  this.ajax_(uri, json, success, failure, true);
 };
 
 
@@ -165,7 +165,7 @@ pn.data.Server.prototype.getAllUpdates =
 
   var json = { 'lastUpdate': lastUpdate };
   var uri = this.getFacadeControllerAction_('GetAllUpdates');
-  this.ajax_(uri, json, success, failure);
+  this.ajax_(uri, json, success, failure, true);
 };
 
 
@@ -232,14 +232,17 @@ pn.data.Server.prototype.getEntityJson_ = function(entity) {
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {function(string):undefined} failure The failure callback.
+ * @param {boolean=} opt_bg Wether this is a background request (should not
+ *    show loading panel), default is false.
  */
-pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
+pn.data.Server.prototype.ajax_ = function(uri, data, success, failure, opt_bg) {
   goog.asserts.assert(goog.isString(uri));
   goog.asserts.assert(goog.isObject(data));
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
 
-  try { this.ajaxImpl_(uri, data, success, failure); }
+  var bg = goog.isDef(opt_bg) ? opt_bg : false;
+  try { this.ajaxImpl_(uri, data, success, failure, bg); }
   catch (ex) {
     var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
@@ -255,25 +258,31 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure) {
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {function(string):undefined} failure The failure callback.
+ * @param {boolean} bg Wether this is a background request (should not
+ *    show loading panel).
  */
-pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure) {
+pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
   goog.asserts.assert(goog.isString(uri));
   goog.asserts.assert(goog.isObject(data));
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
+  goog.asserts.assert(goog.isBoolean(bg));
 
-  // var event = new goog.events.Event(pn.data.Server.EventType.LOADING, this);
-  // TODO: This is throwing an error
-  // this.dispatchEvent(event);
+  var eventType = bg ?
+      pn.data.Server.EventType.LOADING_BG :
+      pn.data.Server.EventType.LOADING;
+
+  this.dispatchEvent(new goog.events.Event(eventType));
 
   var start = goog.now(),
       rid = uri + (this.requestCount_++),
       qd = goog.uri.utils.buildQueryDataFromMap(data),
       callback = goog.bind(function(e) {
         goog.asserts.assert(e.target instanceof goog.net.XhrIo);
-        this.reply_(e.target, start, success, failure);
+        this.reply_(e.target, start, success, failure, bg);
       }, this);
 
+  this.log_.info('Making request: ' + uri);
   this.manager_.send(rid, uri, 'POST', qd, null, null, callback);
 };
 
@@ -285,14 +294,17 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure) {
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {function(string):undefined} failure The failure callback.
+ * @param {boolean} bg Wether this is a background request (should not
+ *    show loading panel).
  */
-pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
+pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
   goog.asserts.assert(xhr instanceof goog.net.XhrIo);
   goog.asserts.assert(goog.isNumber(start) && start > 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
+  goog.asserts.assert(goog.isBoolean(bg));
 
-  try { this.replyImpl_(xhr, start, success, failure); }
+  try { this.replyImpl_(xhr, start, success, failure, bg); }
   catch (ex) {
     var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
@@ -308,12 +320,16 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure) {
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
  * @param {function(string):undefined} failure The failure callback.
+ * @param {boolean} bg Wether this is a background request (should not
+ *    show loading panel).
  */
-pn.data.Server.prototype.replyImpl_ = function(xhr, start, success, failure) {
+pn.data.Server.prototype.replyImpl_ =
+    function(xhr, start, success, failure, bg) {
   goog.asserts.assert(xhr instanceof goog.net.XhrIo);
   goog.asserts.assert(goog.isNumber(start) && start > 0);
   goog.asserts.assert(goog.isFunction(success));
   goog.asserts.assert(goog.isFunction(failure));
+  goog.asserts.assert(goog.isBoolean(bg));
 
   if (!xhr.isSuccess()) {
     failure('An unexpected error has occurred.');
@@ -329,11 +345,12 @@ pn.data.Server.prototype.replyImpl_ = function(xhr, start, success, failure) {
     }
   }
 
-  this.log_.info('ajax uri: ' + xhr.getLastUri() + ' completed. Took: ' +
-      (goog.now() - start) + 'ms.');
-  // TODO: Fix this is throwing: Object [object Object] has no method
-  // 'getParentEventTarget'
-  // this.dispatchEvent(new goog.events.Event(pn.data.Server.EventType.LOADED));
+  var took = goog.now() - start;
+  this.log_.info('Request: ' + xhr.getLastUri() + ' Took: ' + took + 'ms.');
+  var eventType = bg ?
+      pn.data.Server.EventType.LOADED_BG :
+      pn.data.Server.EventType.LOADED;
+  this.dispatchEvent(new goog.events.Event(eventType));
 };
 
 
@@ -452,5 +469,7 @@ pn.data.Server.Update = function(raw) {
 /** @enum {string} */
 pn.data.Server.EventType = {
   LOADING: 'server-loading',
-  LOADED: 'server-loaded'
+  LOADED: 'server-loaded',
+  LOADING_BG: 'server-loading-bg',
+  LOADED_BG: 'server-loaded-bg'
 };
