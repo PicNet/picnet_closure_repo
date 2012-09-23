@@ -291,7 +291,7 @@ pn.data.BaseFacade.prototype.parseServerResponse =
  */
 pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
   goog.asserts.assert(goog.isString(error));
-  
+
   if (opt_ex) {
     throw opt_ex;
   } else pn.app.ctx.msg.showError(error);

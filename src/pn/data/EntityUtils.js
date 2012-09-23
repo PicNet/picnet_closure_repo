@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.data.EntityUtils');
 
+goog.require('pn');
 goog.require('pn.data.TypeRegister');
 
 

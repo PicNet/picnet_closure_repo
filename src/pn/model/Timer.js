@@ -1,6 +1,7 @@
 
 goog.provide('pn.model.Timer');
 goog.provide('pn.model.TimerInstance');
+goog.require('pn');
 
 
 

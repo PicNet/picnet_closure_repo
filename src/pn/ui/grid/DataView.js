@@ -3,6 +3,7 @@ goog.provide('pn.ui.grid.DataView');
 
 goog.require('goog.disposable.IDisposable');
 goog.require('goog.events.EventHandler');
+goog.require('pn');
 goog.require('pn.model.Collection');
 
 
@@ -51,7 +52,7 @@ goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
   goog.asserts.assert(goog.isArray(items));
 
-  this.origSetItems_(items).pnclone(idprop);
+  this.origSetItems_(items.pnclone(), idprop);
 
   if (this.model_) {
     this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);

@@ -3,7 +3,7 @@ goog.provide('pn.data.EntityFilter');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
-
+goog.require('pn');
 goog.require('pn.convert');
 goog.require('pn.ui.filter.SearchEngine');
 
@@ -215,5 +215,5 @@ pn.data.EntityFilter.prototype.dbg_ = function(args) {
     else return arg;
   };
 
-  this.log_.finest(arguments.pnmap(format).join(''));
+  this.log_.finest(pn.toarr(arguments).pnmap(format).join(''));
 };

@@ -423,7 +423,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 
         switch (state.type) {
           case 'select-one':
-            filter.options.pnforEach(function(o, idx) {
+            pntoarr(filter.options).pnforEach(function(o, idx) {
               if (o.value === state.value) {
                 o.setAttribute('selected', 'selected');
                 filter.selectedIndex = idx;

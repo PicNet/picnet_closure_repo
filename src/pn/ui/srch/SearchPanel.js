@@ -8,6 +8,7 @@ goog.require('goog.net.cookies');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('pn');
 goog.require('pn.ui.edit.FieldBuilder');
 goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.filter.GenericListFilterOptions');
@@ -187,8 +188,9 @@ pn.ui.srch.SearchPanel.prototype.populateFieldSelect_ = function() {
     options.push(goog.dom.createDom('option', {'value': fid}, name));
   }
 
-  options.pnsortObjectsByKey('innerHTML');
-  options.pnforEach(function(o) {
+  options.
+      pnsortObjectsByKey('innerHTML').
+      pnforEach(function(o) {
     goog.dom.appendChild(this.select_, o);
   }, this);
 };

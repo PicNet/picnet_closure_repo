@@ -6,6 +6,7 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
+goog.require('pn');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.grid.Grid');
 
@@ -40,7 +41,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
   if (inp.getValue) { return inp.getValue(opt_target); }
   else if (inp.options) {
     var arr = [];
-    inp.options.pnforEach(function(o) {
+    pntoarr(inp.options).pnforEach(function(o) {
       if (o.selected) { arr.push(o.value); }
     });
     return inp.multiple && arr.length > 1 ? arr : arr[0];

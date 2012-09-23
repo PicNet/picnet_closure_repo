@@ -1,9 +1,10 @@
-﻿
+﻿;
 goog.provide('pn');
 
 goog.require('goog.array');
-goog.require('goog.object');
 goog.require('goog.functions');
+goog.require('goog.object');
+
 
 /**
  * @private
@@ -11,15 +12,36 @@ goog.require('goog.functions');
  * @return {!Array} The array of the given arguments with this prepended to
  *    the beggining of the array.
  */
-Object.prototype.aargs_ = function(args) {
-  var arr = Array.prototype.slice.call(args);
-  arr.splice(0, 0, this);
+pn.aargs_ = function(thisarr, args) {
+  var arr = pn.toarr(args);
+  arr.splice(0, 0, thisarr);
   return arr;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Array prototype enhancements
 ////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * @param {Arguments} args The arguments object to turn into an array.
+ * @return {!Array} The array object from the given arguments object.
+ */
+pn.toarr = function(args) {
+  return Array.prototype.slice.call(args);
+};
+
+
+/**
+ * @see goog.array.clone
+ * @this {Array.<T>} arr  Array or array-like object to clone.
+ * @return {!Array.<T>} Clone of the input array.
+ * @template T
+ */
+Array.prototype.pnclone = function() {
+  return goog.array.clone(this);
+};
+
 
 /**
  * @see goog.array.concat
@@ -28,9 +50,10 @@ Object.prototype.aargs_ = function(args) {
  *     added, while primitives and objects will be added as is.
  * @return {!Array} The new resultant array.
  */
-Array.prototype.pnconcat = function() {
-  return goog.array.concat.apply(null, this.aargs_(arguments));
+Array.prototype.pnconcat = function(var_args) {
+  return goog.array.concat.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.map
@@ -45,9 +68,10 @@ Array.prototype.pnconcat = function() {
  * @return {!Array} a new array with the results from f.
  * @template T,S
  */
-Array.prototype.pnmap = function() {
-  return goog.array.map.apply(null, this.aargs_(arguments));
+Array.prototype.pnmap = function(f, opt_obj) {
+  return goog.array.map.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.forEach
@@ -63,9 +87,10 @@ Array.prototype.pnmap = function() {
  *     within f.
  * @template T,S
  */
-Array.prototype.pnforEach = function() {
-  goog.array.forEach.apply(null, this.aargs_(arguments));
+Array.prototype.pnforEach = function(f, opt_obj) {
+  goog.array.forEach.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.filter
@@ -82,9 +107,10 @@ Array.prototype.pnforEach = function() {
  *     present.
  * @template T,S
  */
-Array.prototype.pnfilter = function() {
-  return goog.array.filter.apply(null, this.aargs_(arguments));
+Array.prototype.pnfilter = function(f, opt_obj) {
+  return goog.array.filter.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.reduce
@@ -102,9 +128,10 @@ Array.prototype.pnfilter = function() {
  * @return {R} Result of evaluating f repeatedly across the values of the array.
  * @template T,S,R
  */
-Array.prototype.pnreduce = function() {
-  return goog.array.reduce.apply(null, this.aargs_(arguments));
+Array.prototype.pnreduce = function(f, val, opt_obj) {
+  return goog.array.reduce.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.every
@@ -118,9 +145,10 @@ Array.prototype.pnreduce = function() {
  * @return {boolean} false if any element fails the test.
  * @template T,S
  */
-Array.prototype.pnall = function() {
-  return goog.array.every.apply(null, this.aargs_(arguments));
+Array.prototype.pnall = function(f, opt_obj) {
+  return goog.array.every.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.findIndex
@@ -131,13 +159,14 @@ Array.prototype.pnall = function() {
  *     takes 3 arguments (the element, the index and the array) and should
  *     return a boolean.
  * @param {S=} opt_obj An optional "this" context for the function.
- * @return {number} The index of the first array element that passes the test,
- *     or -1 if no element is found.
+ * @return {boolean} Wether any element in the array matches the specified
+ *    filter.
  * @template T,S
  */
-Array.prototype.pnany = function() {
-  return goog.array.findIndex.apply(null, this.aargs_(arguments)) >= 0;
+Array.prototype.pnany = function(f, opt_obj) {
+  return goog.array.findIndex.apply(null, pn.aargs_(this, arguments)) >= 0;
 };
+
 
 /**
  * @see goog.array.filter
@@ -150,39 +179,17 @@ Array.prototype.pnany = function() {
  *     result array. If it is false the element is not included.
  * @param {S=} opt_obj The object to be used as the value of 'this'
  *     within f.
- * @return {!Array} a new array in which only elements that passed the test are
- *     present.
+ * @return {!T} The only matching element or an error is thrown.
  * @template T,S
  */
-Array.prototype.pnsingle = function() {  
+Array.prototype.pnsingle = function(f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length !== 1) 
-    throw 'Expected single match got: ' + filtered.length;
+  if (arr.length !== 1)
+    throw 'Expected single match got: ' + arr.length;
   return arr[0];
 };
 
-/**
- * @see goog.array.filter
- * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
- *     like object over which to iterate.
- * @param {?function(this:S, T, number, ?):boolean} f The function to call for
- *     every element. This function
- *     takes 3 arguments (the element, the index and the array) and must
- *     return a Boolean. If the return value is true the element is added to the
- *     result array. If it is false the element is not included.
- * @param {S=} opt_obj The object to be used as the value of 'this'
- *     within f.
- * @return {!Array} a new array in which only elements that passed the test are
- *     present.
- * @template T,S
- */
-Array.prototype.pnfirst = function() {
-  var arr = this;
-  if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length < 1) throw 'Expected at least one element';  
-  return arr[0];
-};
 
 /**
  * @see goog.array.filter
@@ -195,20 +202,42 @@ Array.prototype.pnfirst = function() {
  *     result array. If it is false the element is not included.
  * @param {S=} opt_obj The object to be used as the value of 'this'
  *     within f.
- * @return {!Array} a new array in which only elements that passed the test are
- *     present.
+ * @return {T} The first matching element or an Error if no matching elements.
  * @template T,S
  */
-Array.prototype.pnlast = function() {
+Array.prototype.pnfirst = function(f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length < 1) throw 'Expected at least one element';  
+  if (arr.length < 1) throw 'Expected at least one element';
+  return arr[0];
+};
+
+
+/**
+ * @see goog.array.filter
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {?function(this:S, T, number, ?):boolean} f The function to call for
+ *     every element. This function
+ *     takes 3 arguments (the element, the index and the array) and must
+ *     return a Boolean. If the return value is true the element is added to the
+ *     result array. If it is false the element is not included.
+ * @param {S=} opt_obj The object to be used as the value of 'this'
+ *     within f.
+ * @return {T} The last machine element or Error.
+ * @template T,S
+ */
+Array.prototype.pnlast = function(f, opt_obj) {
+  var arr = this;
+  if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
+  if (arr.length < 1) throw 'Expected at least one element';
   return arr[arr.length - 1];
 };
 
+
 /**
  * @see goog.array.equals
- * @this {goog.array.ArrayLike} arr1 The first array to compare.
+ * @this {Array} arr1 The first array to compare.
  * @param {goog.array.ArrayLike} arr2 The second array to compare.
  * @param {Function=} opt_equalsFn Optional comparison function.
  *     Should take 2 arguments to compare, and return true if the arguments
@@ -216,20 +245,22 @@ Array.prototype.pnlast = function() {
  *     compares the elements using the built-in '===' operator.
  * @return {boolean} Whether the two arrays are equal.
  */
-Array.prototype.pnequals = function() {
-  return goog.array.equals.apply(null, this.aargs_(arguments));
+Array.prototype.pnequals = function(arr2, opt_equalsFn) {
+  return goog.array.equals.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.contains
- * @this {goog.array.ArrayLike} arr The array to test for the presence of the
+ * @this {Array} arr The array to test for the presence of the
  *     element.
  * @param {*} obj The object for which to test.
  * @return {boolean} true if obj is present.
  */
-Array.prototype.pncontains = function() {
-  return goog.array.contains.apply(null, this.aargs_(arguments));
+Array.prototype.pncontains = function(obj) {
+  return goog.array.contains.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.find
@@ -243,9 +274,10 @@ Array.prototype.pncontains = function() {
  *     element is found.
  * @template T,S
  */
-Array.prototype.pnfind = function() {
-  return goog.array.find.apply(null, this.aargs_(arguments));
+Array.prototype.pnfind = function(f, opt_obj) {
+  return goog.array.find.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.findIndex
@@ -260,30 +292,81 @@ Array.prototype.pnfind = function() {
  *     or -1 if no element is found.
  * @template T,S
  */
-Array.prototype.pnfindIndex = function() {
-  return goog.array.findIndex.apply(null, this.aargs_(arguments));
+Array.prototype.pnfindIndex = function(f, opt_obj) {
+  return goog.array.findIndex.apply(null, pn.aargs_(this, arguments));
 };
+
+
+/**
+ * @see goog.array.findIndex
+ * @this {Array} arr The array to be searched.
+ * @param {*} obj The object for which we are searching.
+ * @param {number=} opt_fromIndex The index at which to start the search. If
+ *     omitted the search starts at index 0.
+ * @return {number} The index of the first matching array element.
+ */
+Array.prototype.pnindexOf = function(obj, opt_fromIndex) {
+  return goog.array.indexOf.apply(null, pn.aargs_(this, arguments));
+};
+
 
 /**
  * @see goog.array.reduce
- * @this {goog.array.ArrayLike} arr The array to test.
+ * @this {Array} arr The array to test.
  * @return {boolean} true if empty.
  */
 Array.prototype.pnisEmpty = function() {
-  return goog.array.isEmpty.apply(null, this.aargs_(arguments));
+  return goog.array.isEmpty.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.array.zip
- * @this {...!goog.array.ArrayLike} var_args Arrays to be combined.
+ * @this {Array}
+ * @param {...goog.array.ArrayLike} var_args Arrays to be combined.
  * @return {!Array.<!Array>} A new array of arrays created from provided arrays.
  */
-Array.prototype.pnzip = function() {
-  return goog.array.zip.apply(null, this.aargs_(arguments));
+Array.prototype.pnzip = function(var_args) {
+  return goog.array.zip.apply(null, pn.aargs_(this, arguments));
 };
 
+
 /**
-  * @this {goog.array.ArrayLike} arr The array to reverse.
+ * @see goog.array.sort
+ * @this {Array.<T>} arr The array to be sorted.
+ * @param {?function(T,T):number=} opt_compareFn Optional comparison
+ *     function by which the
+ *     array is to be ordered. Should take 2 arguments to compare, and return a
+ *     negative number, zero, or a positive number depending on whether the
+ *     first argument is less than, equal to, or greater than the second.
+ * @return {Array.<T>} A reference to self array.
+ * @template T
+ */
+Array.prototype.pnsort = function(opt_compareFn) {
+  goog.array.sort.apply(null, pn.aargs_(this, arguments));
+  return this;
+};
+
+
+/**
+ * @see goog.array.sortObjectsByKey
+ * @this {Array.<T>} arr An array of objects to sort.
+ * @param {string} key The object key to sort by.
+ * @param {Function=} opt_compareFn The function to use to compare key
+ *     values.
+ * @return {Array.<T>} A reference to self array.
+ * @template T
+ */
+Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
+  goog.array.sortObjectsByKey.apply(null, pn.aargs_(this, arguments));
+  return this;
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr The array to reverse.
+ * @return {!Array.<T>} The reversed array.
+ * @template T
  */
 Array.prototype.pnreverse = function() {
   var arr = this.slice();
@@ -294,6 +377,7 @@ Array.prototype.pnreverse = function() {
 ////////////////////////////////////////////////////////////////////////////////
 // Function prototype enhancements
 ////////////////////////////////////////////////////////////////////////////////
+
 
 /**
  * @see goog.bind
@@ -306,9 +390,10 @@ Array.prototype.pnreverse = function() {
  *     invoked as a method of.
  * @suppress {deprecated} See above.
  */
-Function.prototype.pnbind = function() {
-  return goog.bind.apply(null, this.aargs_(arguments));
+Function.prototype.pnbind = function(selfObj, var_args) {
+  return goog.bind.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.partial
@@ -318,20 +403,22 @@ Function.prototype.pnbind = function() {
  * @return {!Function} A partially-applied form of the function bind() was
  *     invoked as a method of.
  */
-Function.prototype.pnpartial = function() {
-  return goog.partial.apply(null, this.aargs_(arguments));
+Function.prototype.pnpartial = function(var_args) {
+  return goog.partial.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.functions.compose
  * @this {Function} The initial function to add to the composition.
- * @this {...Function} var_args A list of functions.
+ * @param {...Function} var_args A list of functions.
  * @return {!Function} The composition of all inputs.
  */
-Function.prototype.pncompose = function() {
-  var args = this.aargs_(arguments).pnreverse();
+Function.prototype.pncompose = function(var_args) {
+  var args = pn.aargs_(this, arguments).pnreverse();
   return goog.functions.compose.apply(null, args);
 };
+
 
 /**
  * @see goog.functions.and
@@ -339,9 +426,10 @@ Function.prototype.pncompose = function() {
  * @param {...Function} var_args A list of functions.
  * @return {!Function} A function that ANDs its component functions.
  */
-Function.prototype.pnand = function() {
-  return goog.functions.and.apply(null, this.aargs_(arguments));
+Function.prototype.pnand = function(var_args) {
+  return goog.functions.and.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.functions.not
@@ -349,9 +437,10 @@ Function.prototype.pnand = function() {
  * @param {!Function} f The original function.
  * @return {!Function} A function that delegates to f and returns opposite.
  */
-Function.prototype.pnnot = function() {
-  return goog.functions.not.apply(null, this.aargs_(arguments));
+Function.prototype.pnnot = function(f) {
+  return goog.functions.not.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @see goog.functions.or
@@ -359,9 +448,10 @@ Function.prototype.pnnot = function() {
  * @param {...Function} var_args A list of functions.
  * @return {!Function} A function that ORs its component functions.
  */
-Function.prototype.pnor = function() {
-  return goog.functions.or.apply(null, this.aargs_(arguments));
+Function.prototype.pnor = function(var_args) {
+  return goog.functions.or.apply(null, pn.aargs_(this, arguments));
 };
+
 
 /**
  * @this {Function} The function whose arguments we will flip

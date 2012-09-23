@@ -3,6 +3,7 @@ goog.provide('pn.data.LinqParser');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
+goog.require('pn');
 
 
 /**
