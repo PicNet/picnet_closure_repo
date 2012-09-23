@@ -33,7 +33,9 @@ pn.ui.edit.ValidateInfo = function() {
  * @return {pn.ui.edit.ValidateInfo} requested ValidateInfo.
  */
 pn.ui.edit.ValidateInfo.createRequiredValidator = function() {
-  return new pn.ui.edit.ValidateInfo();
+  var validator = new pn.ui.edit.ValidateInfo();
+  validator.required = true;
+  return validator;
 };
 
 
@@ -86,8 +88,10 @@ pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx, control) {
   var isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty);
   var renderer = fctx.spec.renderer;
   var isYesNoRenderer = renderer === fr.yesNoRenderer;
-  var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) && val === '0';
+  var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) &&
+      (val === '0' || val === 0);
   var isNullDate = renderer === fr.dateRenderer && val === 0;
+
   if (!goog.isDefAndNotNull(val) || val === '' ||
       isEmptyParentOrYesNo || isNullDate) {
     return this.required ? fctx.spec.name + ' is required.' : '';

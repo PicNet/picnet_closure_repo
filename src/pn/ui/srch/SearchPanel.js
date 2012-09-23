@@ -191,8 +191,8 @@ pn.ui.srch.SearchPanel.prototype.populateFieldSelect_ = function() {
   options.
       pnsortObjectsByKey('innerHTML').
       pnforEach(function(o) {
-    goog.dom.appendChild(this.select_, o);
-  }, this);
+        goog.dom.appendChild(this.select_, o);
+      }, this);
 };
 
 

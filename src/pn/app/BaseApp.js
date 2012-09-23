@@ -213,8 +213,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.LIST_EXPORT] = bind(this.listExport_, this);
   evs[ae.LIST_ORDERED] = bind(this.orderEntities_, this);
   evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
-    var ctor = pn.data.TypeRegister.fromName(type);
-    var entity = new ctor(raw);
+    var entity = this.getEntityFromFormData_(type, raw);
     if (entity.id > 0) {
       this.data.updateEntity(entity);
       this.pub(ae.ENTITY_SAVED, entity);
@@ -226,12 +225,30 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   }, this);
   evs[ae.ENTITY_CLONE] = bind(this.cloneEntity_, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
-    var ctor = pn.data.TypeRegister.fromName(type);
-    this.data.deleteEntity(new ctor(raw));
+    var entity = this.getEntityFromFormData_(type, raw);
+    this.data.deleteEntity(entity);
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 
   return evs;
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of the entity being saved/delete/clone.
+ * @param {!Object} raw The raw entity data to send to the server.
+ * @return {pn.data.Entity} The created entity with additional private fields.
+ */
+pn.app.BaseApp.prototype.getEntityFromFormData_ = function(type, raw) {
+  var ctor = pn.data.TypeRegister.fromName(type);
+  var entity = new ctor(raw);
+  for (var p in raw) {
+    if (goog.string.startsWith(p, '_')) {
+      entity[p] = raw[p];
+    }
+  }
+  return entity;
 };
 
 

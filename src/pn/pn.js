@@ -7,29 +7,32 @@ goog.require('goog.object');
 
 
 /**
- * @private
- * @param {Arguments} args The arguments object to prepend 'this' to.
- * @return {!Array} The array of the given arguments with this prepended to
- *    the beggining of the array.
- */
-pn.aargs_ = function(thisarr, args) {
-  var arr = pn.toarr(args);
-  arr.splice(0, 0, thisarr);
-  return arr;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Array prototype enhancements
-////////////////////////////////////////////////////////////////////////////////
-
-
-/**
  * @param {Arguments} args The arguments object to turn into an array.
  * @return {!Array} The array object from the given arguments object.
  */
 pn.toarr = function(args) {
   return Array.prototype.slice.call(args);
 };
+
+
+/**
+ * @private
+ * @param {!Object} thiso A referece to the callers 'this' to prepend to the
+ *    arguments object.
+ * @param {Arguments} args The arguments object to prepend 'this' to.
+ * @return {!Array} The array of the given arguments with this prepended to
+ *    the beggining of the array.
+ */
+pn.aargs_ = function(thiso, args) {
+  var arr = pn.toarr(args);
+  arr.splice(0, 0, thiso);
+  return arr;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Array prototype enhancements
+////////////////////////////////////////////////////////////////////////////////
 
 
 /**

@@ -45,7 +45,7 @@ pn.data.Entity.prototype.equals = function(other) {
     if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
       eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
     } else { eq = v1 === v2; }
-    // if (!eq) console.log('not equal: ', key, v1, v2);
+    // if (!eq) console.info('not equal: ', key, v1, v2);
     return !eq;
   }, this) < 0;
 };

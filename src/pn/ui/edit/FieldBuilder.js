@@ -41,7 +41,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
   if (inp.getValue) { return inp.getValue(opt_target); }
   else if (inp.options) {
     var arr = [];
-    pntoarr(inp.options).pnforEach(function(o) {
+    pn.toarr(inp.options).pnforEach(function(o) {
       if (o.selected) { arr.push(o.value); }
     });
     return inp.multiple && arr.length > 1 ? arr : arr[0];
