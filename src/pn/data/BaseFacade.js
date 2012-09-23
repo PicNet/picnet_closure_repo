@@ -287,11 +287,14 @@ pn.data.BaseFacade.prototype.parseServerResponse =
 /**
  * @protected
  * @param {string} error The error from the server.
+ * @param {Error=} opt_ex The optional exception from the server.
  */
-pn.data.BaseFacade.prototype.handleError = function(error) {
+pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
   goog.asserts.assert(goog.isString(error));
-
-  throw new Error(error);
+  
+  if (opt_ex) {
+    throw opt_ex;
+  } else pn.app.ctx.msg.showError(error);
 };
 
 
