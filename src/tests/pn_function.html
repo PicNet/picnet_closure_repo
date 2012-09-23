@@ -1,0 +1,66 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn');
+
+var setUp = function() {};
+
+var test_pnbind = function() {
+  var o = {prop: 10};
+  var f = function() {
+    return this.prop === 10;
+  };
+  assertFalse(f());
+  assertTrue( f.pnbind(o)());
+};
+
+var test_pnpartial = function() {
+  var add = function(a, b) { return a + b; };
+  var p = add.pnpartial(10);
+  assertEquals(15, p(5));
+};
+
+var test_pncompose = function() {
+  var add1 = function(a) { return a + 1; };
+  var mult2 = function(a) { return a * 2; };
+  var add1andmult2 = add1.pncompose(mult2);
+  assertEquals(202, add1andmult2(100));
+};
+
+var test_pnand = function() {
+  var f1 = function() { return true; };
+  var f2 = function() { return true; };
+  var f3 = function() { return true; };
+  var f4 = function() { return false; };
+  assertTrue( f1.pnand(f2)());
+  assertTrue( f1.pnand(f2, f3)());
+  assertFalse(f1.pnand(f2, f3, f4)());
+};
+
+var test_pnnot = function() {
+  assertFalse(function() { return true; }.pnnot()());
+  assertTrue( function() { return false; }.pnnot()());
+};
+
+var test_pnor = function() {
+  var f1 = function() { return true; };
+  var f2 = function() { return true; };
+  var f3 = function() { return true; };
+  var f4 = function() { return false; };
+  assertTrue( f1.pnor(f2)());
+  assertTrue(f1.pnor(f2, f3, f4)());
+};
+
+var test_pnflip = function() {
+  var modby = function(a, b) { return a % b; };
+  assertEquals(0, modby(10, 2));
+  assertEquals(2, modby.pnflip()(10, 2));
+};
+    </script>    
+  </body>
+</html>

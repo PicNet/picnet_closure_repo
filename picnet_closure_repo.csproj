@@ -185,6 +185,7 @@
     <Content Include="src\pn\ui\ViewMgr.js" />
     <Content Include="src\pn\ui\YesNoDialog.js" />
     <Content Include="src\tests\all_tests.html" />
+    <Content Include="src\tests\pn_function.html" />
     <Content Include="src\tests\data\pn.data.LazyFacade.html" />
     <Content Include="src\tests\data\pn.data.LinqParser.html" />
     <Content Include="src\tests\data\pn.data.BaseFacade.html" />
@@ -192,6 +193,7 @@
     <Content Include="src\tests\data\pn.data.MemCache.html" />
     <Content Include="src\tests\data\pn.data.Server.html" />
     <Content Include="src\tests\pn.app.Router.html" />
+    <Content Include="src\tests\pn_array.html" />
     <Content Include="src\tests\pn.json.html" />
     <Content Include="src\tests\pn.model.Collection.html" />
     <Content Include="src\tests\pn.model.Model.html" />
@@ -208,6 +210,9 @@
     <Content Include="src\tests\update_all_tests.bin.js" />
     <Content Include="tablefilter_readme.txt" />
     <Content Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\pn\pn.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
