@@ -237,7 +237,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     var type = pn.data.EntityUtils.getTypeProperty(
         this.entitySpec.type, this.spec.dataProperty);
     var list = this.cache.get(type);
-    val = goog.array.find(list, function(e) {
+    val = list.pnfind(function(e) {
       return e[type + 'Name'] === this.spec.defaultValue;
     }, this).id;
   } else if (this.schema.type === 'Enumeration') {

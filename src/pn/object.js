@@ -17,8 +17,8 @@ pn.object.uniqueExtend = function(target, var_args) {
   goog.asserts.assert(arguments.length > 1);
   var args = goog.array.clone(arguments);
   var keys = [];
-  goog.array.forEach(args, function(o) {
-    keys = goog.array.concat(keys, goog.object.getKeys(o));
+  args.pnforEach(function(o) {
+    keys = keys.pnconcat(goog.object.getKeys(o));
   });
   var exp = keys.length;
   goog.array.removeDuplicates(keys);

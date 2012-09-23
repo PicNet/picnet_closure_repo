@@ -26,7 +26,7 @@ goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
   var hasOrderColumn = !this.cfg.readonly &&
-      goog.array.findIndex(this.cctxs, function(cctx) {
+      this.cctxs.pnfindIndex(function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
       }) >= 0;
   // No sorting on orderable grids

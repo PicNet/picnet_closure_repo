@@ -129,7 +129,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
     'value': '0',
     'text': 'Select ' + this.spec_.name + '...'
   }));
-  goog.array.forEach(list, function(e) {
+  list.pnforEach(function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e.id,
       'text': e[this.spec_.type + 'Name'],

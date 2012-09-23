@@ -25,7 +25,7 @@ goog.inherits(pn.ui.grid.pipe.OrderingHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
   var orderCol = !this.cfg.readonly &&
-      goog.array.find(this.cctxs, function(cctx) {
+      this.cctxs.pnfind(function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec; });
   if (!orderCol) return; // Not an odering grid
 

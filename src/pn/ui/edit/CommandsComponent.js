@@ -65,7 +65,7 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    * @private
    * @type {!Array.<pn.ui.edit.cmd.Command>}
    */
-  this.commands_ = goog.array.filter(this.cfg.commands, function(c) {
+  this.commands_ = this.cfg.commands.pnfilter(function(c) {
     return !pn.data.EntityUtils.isNew(entity) || c.showOnNew;
   });
 
@@ -151,7 +151,7 @@ pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
  * @param {!Element} parent The parent element to attach the controls to.
  */
 pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
-  goog.array.forEach(this.commands_, function(c) {
+  this.commands_.pnforEach(function(c) {
     var className = c.name.toLowerCase();
     var tooltip = this.getCommandTooltip_(c);
     var button = goog.dom.createDom('button',
@@ -166,9 +166,9 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
 pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.enterDocument.call(this);
 
-  goog.array.forEach(this.commands_, this.doCommandEvent_, this);
+  this.commands_.pnforEach(this.doCommandEvent_, this);
 
-  goog.array.forEach(this.commands_, function(cmd) {
+  this.commands_.pnforEach(function(cmd) {
     if (!cmd.shortcut) return;
     pn.app.ctx.keys.register(
         cmd.name, cmd.shortcut, goog.bind(this.handleShortcut_, this));
@@ -184,7 +184,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
   if (!cmd.shortcut) return cmd.name;
   var shortcuts = goog.array.map(cmd.shortcut.split(','), function(sc) {
-    var components = goog.array.map(sc.split('+'), function(comp) {
+    var components = sc.split('+').pnmap(function(comp) {
       return comp.toUpperCase();
     });
     return components.join(' + ');
@@ -198,8 +198,8 @@ pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
  * @param {string} id The id of the shortcut command fired.
  */
 pn.ui.edit.CommandsComponent.prototype.handleShortcut_ = function(id) {
-  var command = /** @type {pn.ui.edit.cmd.Command} */ (goog.array.find(
-      this.commands_, function(c) { return c.name === id; }));
+  var command = /** @type {pn.ui.edit.cmd.Command} */ (
+      this.commands_.pnfind(function(c) { return c.name === id; }));
 
   if (!this.shouldFireCommandEvent(command)) { return; }
   this.fireCommandEvent(command, this.getCurrentFormData());
@@ -238,7 +238,7 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 
-  goog.array.forEach(this.commands_, function(cmd) {
+  this.commands_.pnforEach(function(cmd) {
     if (cmd.shortcut) pn.app.ctx.keys.unregister(cmd.name);
   }, this);
 };

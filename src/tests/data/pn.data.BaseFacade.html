@@ -318,10 +318,10 @@ var testSyncResponseDetails = function() {
 
 var validateServerCalls = function(exp) {
   assertEquals(exp.length, server.calls.length);
-  goog.array.forEach(exp, function(e, i) {
+  exp.pnforEach(function(e, i) {
     assertEquals(e.method, server.calls[i].method);
     if (e.entity) {
-      var actual = goog.array.find(server.calls[i].args, function(a) {
+      var actual = server.calls[i].args.pnfind(function(a) {
         return a instanceof pn.data.Entity;
       });
       assertTrue(e.entity.equals(actual));

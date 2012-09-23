@@ -40,7 +40,7 @@ pn.model.Timer.prototype.register = function(model) {
 /** @param {!pn.model.ModelBase} model The model to deregister. */
 pn.model.Timer.prototype.deregister = function(model) {
   goog.asserts.assert(model instanceof pn.model.ModelBase);
-  var idx = goog.array.indexOf(this.models_, model);
+  var idx = this.models_.pnindexOf(model);
   this.models_.splice(idx, 1);
   if (this.models_.length) return;
 
@@ -50,7 +50,7 @@ pn.model.Timer.prototype.deregister = function(model) {
 
 /** @private */
 pn.model.Timer.prototype.checkForChanges_ = function() {
-  goog.array.forEach(this.models_, function(model) {
+  this.models_.pnforEach(function(model) {
     var changes = model.getChanges();
     if (!changes.length) { return; }
     model.dispatchEvent(new pn.model.ChangeEvent(changes));

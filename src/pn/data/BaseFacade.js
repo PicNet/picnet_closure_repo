@@ -208,7 +208,7 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
 pn.data.BaseFacade.prototype.query = function(queries, callback) {
   goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
   goog.asserts.assert(goog.isFunction(callback));
-  var parsed = goog.array.map(queries, function(q) {
+  var parsed = queries.pnmap(function(q) {
     if (q instanceof pn.data.Query) return q;
     return new pn.data.Query(q);
   });
@@ -318,7 +318,7 @@ pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
 pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
   goog.asserts.assert(goog.isArray(updates));
 
-  goog.array.forEach(updates, this.applyUpdate_, this);
+  updates.pnforEach(this.applyUpdate_, this);
 };
 
 

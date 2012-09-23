@@ -276,7 +276,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
   var namePath = cascading ? entityType + 'Name' : steps.join('.');
-  list = goog.array.map(list, function(e) {
+  list = list.pnmap(function(e) {
     return {
       id: e.id,
       name: pn.data.EntityUtils.getEntityDisplayValue(
@@ -316,7 +316,7 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
         {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
         selectTxt));
   }
-  goog.array.forEach(list, function(e) {
+  list.pnforEach(function(e) {
     var opts = {'value': e.id};
     if (goog.isDef(selValue) && e.id === selValue) {
       opts['selected'] = 'selected'; }
@@ -378,7 +378,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
         function(manyToMany) {
           return manyToMany[parentIdField] === entity.id;
         });
-    var adminIDs = goog.array.map(manyToManys, function(mm) {
+    var adminIDs = manyToManys.pnmap(function(mm) {
       return mm[adminEntity + 'ID'];
     });
 
@@ -387,14 +387,14 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     entity[mappingEntity + 'Entities'] = adminIDs;
 
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
-    goog.array.forEach(fctx.cache.get(adminEntity), function(ae) {
+    fctx.cache.get(adminEntity).pnforEach(function(ae) {
       var text = opt_displayStrategy ?
           opt_displayStrategy(ae) :
           ae[adminEntity + 'Name'];
       var opt = goog.dom.createDom('option', {
         'text': text,
         'value': ae.id,
-        'selected': goog.array.findIndex(adminIDs, function(adminID) {
+        'selected': adminIDs.pnfindIndex(function(adminID) {
           return ae.id === adminID;
         }) >= 0
       });

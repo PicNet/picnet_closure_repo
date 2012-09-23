@@ -150,7 +150,7 @@ pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
   // TODO: The commands should be rendered by the CommandsHandler.  But to do
   // this we need to ensure that the GridHandler has access to the current
   // grid element (this.getElement());
-  goog.array.forEach(this.cfg_.commands, function(c) {
+  this.cfg_.commands.pnforEach(function(c) {
     if (this.cfg_.readonly && !c.visibleOnReadOnly) { return; }
 
     var hasData = this.list_.length > 0;

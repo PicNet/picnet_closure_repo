@@ -88,7 +88,7 @@ pn.testing.MockServer.prototype.getQueryUpdates =
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
-  goog.array.forEach(queries, function(q) {
+  queries.pnforEach(function(q) {
     results[q.toString()] = {'List' : [], 'LastUpdate': 1};
   });
   this.doAjaxSuccess_(results, success);
@@ -112,7 +112,7 @@ pn.testing.MockServer.prototype.query =
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
-  goog.array.forEach(queries, function(q) {
+  queries.pnforEach(function(q) {
     results[q.toString()] = [];
   });
   this.doQuerySuccess_(results, success);

@@ -14,7 +14,7 @@ pn.demo.app1.ShowEditPage = function(id) {
   var users = pn.app.ctx.users;
   var user = id <= 0 ? 
       new pn.data.Entity('User', id) : 
-      goog.array.find(users, function(u) { return u.id === id; });
+      users.pnfind(function(u) { return u.id === id; });
 
   var edit = new pn.ui.edit.Edit(spec, user, new pn.data.BaseDalCache({}));
   pn.app.ctx.view.showComponent(edit);

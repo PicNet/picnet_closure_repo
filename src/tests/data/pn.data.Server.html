@@ -52,7 +52,7 @@ function doFailure_(method, args) {
     tc.continueTesting();
     assertTrue(goog.isString(err));
   };  
-  var callargs = goog.array.concat(args, [success, error]);
+  var callargs = args.pnconcat([success, error]);
   method.apply(server, callargs);
 };
 
@@ -68,7 +68,7 @@ function doSuccess_(method, args, expreturns, opt_ignoreId) {
     tc.continueTesting();
     fail('Should have succeeded, Error: ' + err); 
   };
-  var callargs = goog.array.concat(args, [success, error]);
+  var callargs = args.pnconcat([success, error]);
   method.apply(server, callargs);
 };
 

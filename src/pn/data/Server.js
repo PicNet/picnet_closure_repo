@@ -406,7 +406,7 @@ pn.data.Server.Response = function(raw) {
 
   /** @type {Object.<!Array.<pn.data.Entity>>} */
   this.queryResults = raw['QueryResults'] ?
-      goog.array.reduce(raw['QueryResults'], function(acc, qr) {
+      raw['QueryResults'].pnreduce(function(acc, qr) {
         var query = pn.data.Query.fromString(qr['QueryId']);
         var results = pn.data.TypeRegister.parseEntities(query.Type,
             /** @type {!Array} */ (pn.json.parseJson(qr['ResultsJson'])));

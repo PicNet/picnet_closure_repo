@@ -36,7 +36,7 @@ pn.data.Entity = function(type, id) {
 pn.data.Entity.prototype.equals = function(other) {
   if (!(other instanceof pn.data.Entity)) return false;
 
-  return goog.array.findIndex(goog.object.getKeys(this), function(key) {
+  return goog.object.getKeys(this).pnfindIndex(function(key) {
     if (key.indexOf('_') >= 0) return false;
 
     var v1 = this[key];

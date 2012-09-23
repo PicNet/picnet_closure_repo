@@ -101,7 +101,7 @@ pn.ui.filter.GenericListFilter.filteridx_ = 0;
 /** @param {!Element} list The list to reset. */
 pn.ui.filter.GenericListFilter.prototype.resetList = function(list) {
   goog.dispose(this.list);
-  goog.array.forEach(this.listItems, goog.dispose);
+  this.listItems.pnforEach(goog.dispose);
 
   this.list = list;
   this.initialiseControlCaches();
@@ -135,7 +135,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     function() {
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
   this.eh_.listen(this.inputListener_, eventtype, this.refresh);
-  goog.array.forEach(this.filters, function(filter) {
+  this.filters.pnforEach(function(filter) {
     this.inputListener_.addInput(filter);
   }, this);
 
@@ -165,7 +165,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
 
 /** Clears all filter values */
 pn.ui.filter.GenericListFilter.prototype.clearAllFilters = function() {
-  goog.array.forEach(this.filters, this.clearFilterValue, this);
+  this.filters.pnforEach(this.clearFilterValue, this);
   if (this.options['additionalFilterTriggers']) {
     goog.array.forEach(this.options['additionalFilterTriggers'],
         this.clearFilterValue, this);
@@ -423,7 +423,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 
         switch (state.type) {
           case 'select-one':
-            goog.array.forEach(filter.options, function(o, idx) {
+            filter.options.pnforEach(function(o, idx) {
               if (o.value === state.value) {
                 o.setAttribute('selected', 'selected');
                 filter.selectedIndex = idx;
@@ -451,7 +451,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 /** @private */
 pn.ui.filter.GenericListFilter.prototype.clearElementFilteredStates_ =
     function() {
-  goog.array.forEach(this.listItems, function(r) {
+  this.listItems.pnforEach(function(r) {
     r.removeAttribute('filtermatch');
   });
 };

@@ -187,8 +187,8 @@ pn.ui.srch.SearchPanel.prototype.populateFieldSelect_ = function() {
     options.push(goog.dom.createDom('option', {'value': fid}, name));
   }
 
-  goog.array.sortObjectsByKey(options, 'innerHTML');
-  goog.array.forEach(options, function(o) {
+  options.pnsortObjectsByKey('innerHTML');
+  options.pnforEach(function(o) {
     goog.dom.appendChild(this.select_, o);
   }, this);
 };
@@ -267,7 +267,7 @@ pn.ui.srch.SearchPanel.prototype.doClear_ = function() {
   goog.object.forEach(this.filtersControls_, function(arr) {
     var change = goog.events.EventType.CHANGE;
     this.getHandler().unlisten(arr[0], change, this.doSearch_);
-    goog.array.forEach(arr, goog.dispose);
+    arr.pnforEach(goog.dispose);
   }, this);
   this.filtersControls_ = {};
   this.populateFieldSelect_();
@@ -421,7 +421,7 @@ pn.ui.srch.SearchPanel.prototype.disposeInternal = function() {
   goog.dispose(this.resizeHide_);
 
   goog.object.forEach(this.filtersControls_, function(arr) {
-    goog.array.forEach(arr, goog.dispose);
+    arr.pnforEach(goog.dispose);
   }, this);
 
   delete this.fctxs_;

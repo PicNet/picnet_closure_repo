@@ -30,7 +30,7 @@ pn.ui.grid.pipe.ColWidthsHandler.prototype.preRender = function() {
   if (!state) return;
 
   var widths = goog.json.unsafeParse(state);
-  goog.array.forEach(this.slick.getColumns(), function(col, idx) {
+  this.slick.getColumns().pnforEach(function(col, idx) {
     col.width = widths[idx];
   });
 };
@@ -45,6 +45,6 @@ pn.ui.grid.pipe.ColWidthsHandler.prototype.onCustomEvent = function(et) {
 /** @private */
 pn.ui.grid.pipe.ColWidthsHandler.prototype.saveGridWidths_ = function() {
   var columns = this.slick.getColumns();
-  var data = goog.array.map(columns, function(c) { return c['width']; });
+  var data = columns.pnmap(function(c) { return c['width']; });
   pn.storage.set(this.storeId_, pn.json.serialiseJson(data));
 };

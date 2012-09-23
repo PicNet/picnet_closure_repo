@@ -24,7 +24,7 @@ var data = [1, 2, 3],
     dataRequests,
     dataRequiredImpl = function(types, cb) {
       var loaded = {};
-      goog.array.forEach(types, function(t) { loaded[t] = []; });
+      types.pnforEach(function(t) { loaded[t] = []; });
       cb(loaded);
     },
     dataRequiredRef = function(types, cb) {
@@ -86,8 +86,8 @@ var test_getLists_returns_expected_object = function() {
   cache.updateList(type2, data2);    
 
   var result = cache.getLists([type, type2]);
-  assertTrue(goog.array.equals(data, result[type]));
-  assertTrue(goog.array.equals(data2, result[type2]));  
+  assertTrue(data.pnequals(result[type]));
+  assertTrue(data2.pnequals(result[type2]));  
 };
 
 var test_getLists_hits_the_data_loader_appropriatelly = function() {
@@ -99,8 +99,8 @@ var test_getLists_hits_the_data_loader_appropriatelly = function() {
   cache.updateList(type2, data2);  
   
   var result = cache.getLists([type, type2, type3]);
-  assertTrue(goog.array.equals(data, result[type]));
-  assertTrue(goog.array.equals(data2, result[type2]));
+  assertTrue(data.pnequals(result[type]));
+  assertTrue(data2.pnequals(result[type2]));
   assertUndefined(result[type3]);
 };
         </script>

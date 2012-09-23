@@ -29,7 +29,7 @@ goog.inherits(pn.ui.grid.pipe.CommandsHandler, pn.ui.grid.pipe.GridHandler);
 pn.ui.grid.pipe.CommandsHandler.prototype.postRender = function() {
   if (this.cfg.readonly) { return; }
 
-  goog.array.forEach(this.cfg.commands, this.registerCommand_, this);
+  this.cfg.commands.pnforEach(this.registerCommand_, this);
 };
 
 
@@ -86,7 +86,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
       break;
     case ae.LIST_EXPORT:
       var cols = this.cctxs;
-      var hdrs = goog.array.map(cols, function(c) { return c.spec.name; });
+      var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
       pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
       break;

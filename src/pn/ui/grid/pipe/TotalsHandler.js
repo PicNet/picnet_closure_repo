@@ -70,8 +70,8 @@ pn.ui.grid.pipe.TotalsHandler.prototype.updateTotals_ = function() {
   if (!this.totalColumns_ || !this.totalColumns_.length) return;
 
   var items = this.view.getItems();
-  var total = goog.array.reduce(items, function(acc, item) {
-    goog.array.forEach(this.totalColumns_, function(cctx1) {
+  var total = items.pnreduce(function(acc, item) {
+    this.totalColumns_.pnforEach(function(cctx1) {
       if (acc[cctx1.id] === undefined) acc[cctx1.id] = 0;
       var itemVal = item[cctx1.id];
       if (itemVal) acc[cctx1.id] += itemVal;

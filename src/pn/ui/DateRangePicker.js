@@ -444,8 +444,8 @@ pn.ui.DateRangePicker.prototype.highlightDateRange_ = function(from, to) {
  */
 pn.ui.DateRangePicker.prototype.highlightDateRangeImpl_ = function(from, to,
     picker) {
-  goog.array.forEach(picker.grid_, function(dates, y) {
-    goog.array.forEach(dates, function(date, x) {
+  picker.grid_.pnforEach(function(dates, y) {
+    dates.pnforEach(function(date, x) {
       var el = picker.elTable_[y + 1][x + 1];
       var enabled = !!(from || to) &&
           !!(!from || date > from) &&

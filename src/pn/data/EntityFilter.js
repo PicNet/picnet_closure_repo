@@ -148,7 +148,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 
 
   if (goog.isArray(entityValue)) {
-    return goog.array.findIndex(entityValue, function(entity) {
+    return entityValue.pnfindIndex(function(entity) {
       return this.singleEntityMatches_(filterValue, entity, matcher);
     }, this) >= 0;
   } else {
@@ -172,7 +172,7 @@ pn.data.EntityFilter.prototype.singleEntityMatches_ =
   this.dbg_('singleEntityMatches_: ', arguments);
 
   if (goog.isArray(filterVal)) {
-    return goog.array.findIndex(filterVal, function(fv) {
+    return filterVal.pnfindIndex(function(fv) {
       return this.singleFilterValueMatches_(fv, entityVal, true, predicate);
     }, this) >= 0;
   } else {
@@ -210,11 +210,10 @@ pn.data.EntityFilter.prototype.dbg_ = function(args) {
   if (!this.debug_) return;
   var format = function(arg) {
     if (!goog.isString(arg) && arg && arg.length) {
-      return '[' + goog.array.map(arg, format).join(',') + ']';
+      return '[' + arg.pnmap(format).join(',') + ']';
     } else if (goog.isObject(arg)) { return goog.debug.expose(arg); }
     else return arg;
   };
 
-  var strings = goog.array.map(arguments, format);
-  this.log_.finest(strings.join(''));
+  this.log_.finest(arguments.pnmap(format).join(''));
 };

@@ -47,7 +47,7 @@ pn.ui.edit.FieldValidator.arraytise_ = function(source, target) {
       if (!goog.isString(source[0])) {
         throw new Error('Errors should be strings');
       }
-      target = goog.array.concat(target, source);
+      target = target.pnconcat(source);
     }
     return target;
   }

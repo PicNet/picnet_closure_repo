@@ -48,7 +48,7 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
   goog.asserts.assert(goog.isObject(data));
 
   var action = goog.partial(pn.data.TypeRegister.parseEntity, type);
-  return goog.array.map(data, action);
+  return data.pnmap(action);
 };
 
 

@@ -50,7 +50,7 @@ pn.ui.filter.SearchEngine.prototype.doesTextMatchTokens =
     function(textToMatch, postFixTokens, exactMatch) {
   goog.asserts.assert(goog.isArray(textToMatch));
 
-  return !postFixTokens || goog.array.findIndex(textToMatch, function(txt) {
+  return !postFixTokens || textToMatch.pnfindIndex(function(txt) {
     return this.doesTextMatchTokensImpl_(txt, postFixTokens, exactMatch);
   }, this) >= 0;
 };

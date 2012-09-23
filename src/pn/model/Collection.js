@@ -28,7 +28,7 @@ pn.model.Collection = function(src) {
    * @type {!Object.<!Object>}
    */
   this.map_ = {};
-  goog.array.forEach(src, function(e) {
+  src.pnforEach(function(e) {
     this.map_[e.id] = new pn.model.Model(e, false);
   }, this);
 

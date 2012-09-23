@@ -58,11 +58,9 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
   goog.asserts.assert(type in this.cache_, type + ' not in cache');
   goog.asserts.assert(goog.isNumber(id) && id !== 0);
 
-  var en = goog.array.find(this.cache_[type], function(entity) {
+  var en = this.cache_[type].pnsingle(function(entity) {
     return entity.id === id;
   }, this);
-  if (!en) throw 'Entity ' + type + '.' + id +
-        ' was not found in the client cache.';
   return en;
 };
 
@@ -166,7 +164,7 @@ pn.data.LocalCache.prototype.contains = function(query) {
  * @return {!Object.<!Array.<pn.data.Entity>>} The query results.
  */
 pn.data.LocalCache.prototype.query = function(queries) {
-  return goog.array.reduce(queries, goog.bind(function(results, q) {
+  return queries.pnreduce(goog.bind(function(results, q) {
     goog.asserts.assert(q instanceof pn.data.Query);
 
     goog.asserts.assert(q.Type in this.cache_, 'The type: ' + q.Type +
@@ -203,12 +201,12 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
   if (current) {
     // TODO: Instead of just 'Union'ing the lists we should actually update
     // any entity that needs updates.
-    var existing = goog.array.filter(current, function(e) {
-      return goog.array.findIndex(list, function(newe) {
+    var existing = current.pnfilter(function(e) {
+      return list.pnfindIndex(function(newe) {
         return newe.id === e.id;
       }) < 0;
     });
-    list = goog.array.concat(list, existing);
+    list = list.pnconcat(existing);
   }
   this.cache_[type] = list;
   var qid = query.toString();
@@ -226,7 +224,7 @@ pn.data.LocalCache.prototype.init_ = function() {
   var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
-    this.cachedQueries_ = goog.array.reduce(arr, function(acc, qstr) {
+    this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
       var query = pn.data.Query.fromString(qstr);
       acc[qstr] = query;
       return acc;

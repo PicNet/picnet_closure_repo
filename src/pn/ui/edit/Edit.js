@@ -68,7 +68,7 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 /** @override. */
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
-  var dirty = goog.array.findIndex(this.getEditableFields_(), function(fctx) {
+  var dirty = this.getEditableFields_().pnfindIndex(function(fctx) {
     var ctl = this.getControl(fctx.id);
     return fctx.isDirty(this.entity, ctl);
   }, this) >= 0;
@@ -140,7 +140,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
   if (fieldset) { goog.dom.appendChild(parent, fieldset); }
 
-  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
+  this.cfg.fCtxs.pnforEach(function(fctx) {
     var templateParent = goog.dom.getElement(fctx.id);
     var parentComp = templateParent || fieldset;
 
@@ -173,12 +173,12 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 pn.ui.edit.Edit.prototype.autoFocus_ = function() {
   if (!this.cfg.autoFocus) return;
 
-  var toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
+  var toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
     var input = this.controls_[fctx.id];
     return input && input.focus && !fctx.spec.readonly && fctx.isRequired();
   }, this);
 
-  if (!toFocus) toFocus = goog.array.find(this.cfg.fCtxs, function(fctx) {
+  if (!toFocus) toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
     var input = this.controls_[fctx.id];
     return input && input.focus && !fctx.spec.readonly;
   }, this);
@@ -192,7 +192,7 @@ pn.ui.edit.Edit.prototype.autoFocus_ = function() {
 
 /** @override */
 pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.cfg.fCtxs, function(fctx) {
+  this.cfg.fCtxs.pnforEach(function(fctx) {
     var ctl = this.controls_[fctx.id];
     if (!ctl) return;
     var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.controlId);
@@ -224,14 +224,14 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 /** @override */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+  this.getEditableFields_().pnforEach(function(fctx) {
     var ctl = this.getControl(fctx.id);
     if (!fctx.isShown(ctl)) return;
-    errors = goog.array.concat(errors, fctx.validate(ctl));
+    errors = errors.pnconcat(fctx.validate(ctl));
   }, this);
   if (this.fireInterceptorEvents && this.interceptor_) {
     var errors2 = this.interceptor_.getCustomValidationErrors();
-    errors = goog.array.concat(errors, errors2);
+    errors = errors.pnconcat(errors2);
   }
   return errors;
 };
@@ -253,7 +253,7 @@ pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
  */
 pn.ui.edit.Edit.prototype.getFormData = function() {
   var current = {};
-  goog.array.forEach(this.getEditableFields_(), function(fctx) {
+  this.getEditableFields_().pnforEach(function(fctx) {
     var ctl = this.getControl(fctx.id);
     var val = fctx.getControlValue(ctl, current);
     if (val !== undefined) current[fctx.spec.dataProperty] = val;
@@ -286,7 +286,7 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 /** @override */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
-  goog.array.forEach(this.cfg.fCtxs, this.enterDocumentOnChildrenField_, this);
+  this.cfg.fCtxs.pnforEach(this.enterDocumentOnChildrenField_, this);
 
   if (!this.fireInterceptorEvents || !this.cfg.interceptor) return;
 

@@ -23,8 +23,8 @@ pn.data.LinqParser.parse = function(expression) {
   } catch (ex) { throw 'Expression is not valid: ' + expression; }
 
   return function(arr) {
-    return goog.array.filter(arr, function(x) {
-      return goog.array.findIndex(filters, function(exp) {
+    return arr.pnfilter(function(x) {
+      return filters.pnfindIndex(function(exp) {
         return !exp(x);
       }) < 0;
     });
@@ -77,7 +77,7 @@ pn.data.LinqParser.isValidExpression_ = function(expression) {
       supported = 0;
   while (op = re.exec(expression)) {
     op = op[1];
-    if (goog.array.indexOf(SUPPORTED_OPERATORS, op) < 0) return false;
+    if (SUPPORTED_OPERATORS.pnindexOf(op) < 0) return false;
     supported++;
   }
   return supported > 0;

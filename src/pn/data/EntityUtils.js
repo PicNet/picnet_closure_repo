@@ -78,14 +78,14 @@ pn.data.EntityUtils.getTargetEntity =
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     var entities = cache.get(type);
     next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
-        function(e) { return goog.array.contains(ids, e.id); }));
+        function(e) { return ids.pncontains(e.id); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = cache.get(type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
-      next = goog.array.filter(next, function(e) {
-        return goog.array.contains(ids, e[opt_parentField]);
+      next = next.pnfilter(function(e) {
+        return ids.pncontains(e[opt_parentField]);
       });
       opt_parentField = ''; // Only use once
     }
@@ -107,7 +107,7 @@ pn.data.EntityUtils.getTargetEntity =
  */
 pn.data.EntityUtils.getFromEntities = function(entities, property) {
   if (goog.isArray(entities)) {
-    return goog.array.map(entities, function(e) { return e[property]; });
+    return entities.pnmap(function(e) { return e[property]; });
   } else {
     return [entities[property]];
   }
@@ -204,9 +204,9 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
       pn.data.TypeRegister.getFieldSchema(type, namep).type : null;
 
   if (ordert === 'number') {
-    goog.array.sort(list, function(a, b) { return a[orderp] - b[orderp]; });
+    list.pnsort(function(a, b) { return a[orderp] - b[orderp]; });
   } else if (namet === 'string') {
-    goog.array.sort(list, function(a, b) {
+    list.pnsort(function(a, b) {
       return goog.string.caseInsensitiveCompare(a[namep], b[namep]);
     });
   }

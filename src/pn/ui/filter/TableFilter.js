@@ -135,7 +135,7 @@ pn.ui.filter.TableFilter.prototype.getColumnIndexOfFilter_ = function(f) {
   if (!td || td.length <= 0) { return -1; }
   var tr = goog.dom.getAncestorByTagNameAndClass(td, goog.dom.TagName.TR);
   var cells = (tr.getElementsByTagName('td'));
-  return goog.array.indexOf(cells, td);
+  return cells.pnindexOf(td);
 };
 
 
@@ -207,20 +207,20 @@ pn.ui.filter.TableFilter.prototype.getSelectFilter_ = function(colIdx) {
     'id': this.getListId() + '_filter_' + colIdx,
     'class': 'filter'
   }, goog.dom.createDom('option', {}, this.options['selectOptionLabel']));
-  var cells = goog.array.map(this.listItems, function(r) {
+  var cells = this.listItems.pnmap(function(r) {
     return r.cells[colIdx];
   });
   var values = [];
-  goog.array.forEach(cells, function(td) {
+  cells.pnforEach(function(td) {
     var txt = goog.string.trim(goog.dom.getTextContent(td));
-    if (!txt || txt === '&nbsp;' || goog.array.indexOf(values, txt) >= 0) {
+    if (!txt || txt === '&nbsp;' || values.pnindexOf(txt) >= 0) {
       return;
     }
     values.push(txt);
   });
   values.sort();
 
-  goog.array.forEach(values, function(txt) {
+  values.pnforEach(function(txt) {
     goog.dom.appendChild(select, goog.dom.createDom('option', {
       'value': txt.replace('"', '&quot;')
     }, txt));

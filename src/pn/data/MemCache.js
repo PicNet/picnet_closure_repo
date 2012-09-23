@@ -97,7 +97,7 @@ pn.data.MemCache.prototype.getLists = function(types) {
   goog.array.removeDuplicates(types);
   var cached = {};
 
-  goog.array.forEach(types, function(type) {
+  types.pnforEach(function(type) {
     goog.asserts.assert(goog.isString(type));
 
     if (goog.isDef(this.cache_[type])) { cached[type] = this.cache_[type]; }

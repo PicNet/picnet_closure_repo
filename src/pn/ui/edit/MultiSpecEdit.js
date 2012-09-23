@@ -48,7 +48,7 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
    * @type {!Object.<!pn.ui.UiSpec>}
    */
   this.specs = specs;
-  goog.array.forEach(this.specs, this.registerDisposable, this);
+  this.specs.pnforEach(this.registerDisposable, this);
 
   /**
    * @protected
@@ -92,21 +92,21 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 
 /** @override */
 pn.ui.edit.MultiSpecEdit.prototype.updateRequiredClasses = function() {
-  goog.array.forEach(this.edits, function(c) { c.updateRequiredClasses(); });
+  this.edits.pnforEach(function(c) { c.updateRequiredClasses(); });
 };
 
 
 /** @override */
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
-  goog.array.forEach(this.edits, function(edit) {
+  this.edits.pnforEach(function(edit) {
     if (edit.getFormErrors) {
-      errors = goog.array.concat(errors, edit.getFormErrors());
+      errors = errors.pnconcat(edit.getFormErrors());
     }
   });
-  goog.array.forEach(this.interceptors_, function(icptr) {
+  this.interceptors_.pnforEach(function(icptr) {
     var customErrors = icptr.getCustomValidationErrors();
-    errors = goog.array.concat(errors, customErrors);
+    errors = errors.pnconcat(customErrors);
   }, this);
   return errors;
 };
@@ -116,7 +116,7 @@ pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
 pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.entity);
-  goog.array.forEach(this.edits, function(edit) {
+  this.edits.pnforEach(function(edit) {
     if (edit.getFormData) { goog.object.extend(current, edit.getFormData()); }
   }, this);
   return current;
@@ -125,7 +125,7 @@ pn.ui.edit.MultiSpecEdit.prototype.getCurrentFormData = function() {
 
 /** @override */
 pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
-  return goog.array.findIndex(this.edits, function(edit) {
+  return this.edits.pnfindIndex(function(edit) {
     return edit.isDirty && edit.isDirty();
   }) >= 0;
 };
@@ -133,7 +133,7 @@ pn.ui.edit.MultiSpecEdit.prototype.isDirty = function() {
 
 /** @override */
 pn.ui.edit.MultiSpecEdit.prototype.resetDirty = function() {
-  goog.array.forEach(this.edits, function(edit) {
+  this.edits.pnforEach(function(edit) {
     if (edit.resetDirty) edit.resetDirty();
   });
 };
@@ -152,8 +152,8 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   var controls = {};
   var commands = this.getCommandButtons();
 
-  goog.array.forEach(this.edits, function(ed) {
-    goog.array.forEach(ed.getFieldContexs(), function(fctx) {
+  this.edits.pnforEach(function(ed) {
+    ed.getFieldContexs().pnforEach(function(fctx) {
       if (fctx.id in controls) return;
       controls[fctx.id] = ed.getControl(fctx.id);
     });

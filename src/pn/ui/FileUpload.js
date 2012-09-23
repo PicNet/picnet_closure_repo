@@ -143,7 +143,7 @@ pn.ui.FileUpload.prototype.doUpload_ = function() {
  */
 pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
   this.formFields_ = [];
-  goog.array.forEach(this.uploadform_.childNodes, function(c) {
+  this.uploadform_.childNodes.pnforEach(function(c) {
     if (c.getAttribute('type') === 'file') return;
     goog.dom.removeNode(c);
     goog.dispose(c);

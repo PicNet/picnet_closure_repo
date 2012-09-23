@@ -91,7 +91,7 @@ pn.ui.grid.Config.prototype.init_ = function() {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
       }) >= 0;
   if (hasOrderColumn) {
-    goog.array.forEach(this.cCtxs, function(cctx) {
+    this.cCtxs.pnforEach(function(cctx) {
       cctx.spec.sortable = false;
     });
   }
@@ -126,7 +126,7 @@ pn.ui.grid.Config.prototype.toSlick = function() {
 pn.ui.grid.Config.prototype.disposeInternal = function() {
   pn.ui.grid.Config.superClass_.disposeInternal.call(this);
 
-  goog.array.forEach(this.commands, goog.dispose);
+  this.commands.pnforEach(goog.dispose);
 
   delete this.commands;
 };

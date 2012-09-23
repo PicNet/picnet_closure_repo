@@ -51,7 +51,7 @@ goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
   goog.asserts.assert(goog.isArray(items));
 
-  this.origSetItems_(goog.array.clone(items), idprop);
+  this.origSetItems_(items).pnclone(idprop);
 
   if (this.model_) {
     this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
@@ -72,7 +72,7 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
 
   var changes = e.changes;
   this.beginUpdate();
-  goog.array.forEach(changes, function(details) {
+  changes.pnforEach(function(details) {
     if (details.inserted) {
       this.addItem(details.item);
     } else if (details.removed) {

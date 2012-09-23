@@ -40,7 +40,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
   if (inp.getValue) { return inp.getValue(opt_target); }
   else if (inp.options) {
     var arr = [];
-    goog.array.forEach(inp.options, function(o) {
+    inp.options.pnforEach(function(o) {
       if (o.selected) { arr.push(o.value); }
     });
     return inp.multiple && arr.length > 1 ? arr : arr[0];
@@ -75,11 +75,11 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
  * @return {goog.ui.ComboBox} The select box.
  */
 pn.ui.edit.FieldBuilder.createCombo = function(selectTxt, list, txtf) {
-  goog.array.sortObjectsByKey(list, txtf, goog.string.caseInsensitiveCompare);
+  list.pnsortObjectsByKey(txtf, goog.string.caseInsensitiveCompare);
   var cb = new goog.ui.ComboBox();
   cb.setUseDropdownArrow(true);
   if (selectTxt) { cb.setDefaultText(selectTxt); }
-  goog.array.forEach(list, function(e) {
+  list.pnforEach(function(e) {
     cb.addItem(new goog.ui.ComboBoxItem(e[txtf]));
   });
   return cb;

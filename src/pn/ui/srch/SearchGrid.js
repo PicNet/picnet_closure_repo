@@ -117,7 +117,7 @@ pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
 pn.ui.srch.SearchGrid.prototype.decorateSeachPanel_ = function(parent) {
   var filters = {};
   var showPrefix = this.cfg_.showTypePrefixes;
-  goog.array.forEach(this.cfg_.fCtxs, function(fctx) {
+  this.cfg_.fCtxs.pnforEach(function(fctx) {
     if (pn.data.EntityUtils.isChildrenProperty(fctx.spec.dataProperty)) {
       return;
     }

@@ -44,7 +44,7 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
  */
 pn.ui.grid.pipe.HandlerPipeline.prototype.setMembers =
     function(slick, view, cfg, cctxs) {
-  goog.array.forEach(this.handlers_, function(h) {
+  this.handlers_.pnforEach(function(h) {
     h.setMembers(slick, view, cfg, cctxs, this);
   }, this);
 };
@@ -52,7 +52,7 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.setMembers =
 
 /** Called before the grid and dataview have their display data */
 pn.ui.grid.pipe.HandlerPipeline.prototype.preRender = function() {
-  goog.array.forEach(this.handlers_, function(h) {
+  this.handlers_.pnforEach(function(h) {
     h.preRender();
   }, this);
 };
@@ -60,7 +60,7 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.preRender = function() {
 
 /** Called after the grid and dataview have their data */
 pn.ui.grid.pipe.HandlerPipeline.prototype.postRender = function() {
-  goog.array.forEach(this.handlers_, function(h) {
+  this.handlers_.pnforEach(function(h) {
     h.postRender();
   }, this);
 };
@@ -75,7 +75,7 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.fireCustomEvent =
     function(eventType, opt_data) {
   goog.asserts.assert(eventType);
 
-  goog.array.forEach(this.handlers_, function(h) {
+  this.handlers_.pnforEach(function(h) {
     h.onCustomEvent(eventType, opt_data);
   });
 };
