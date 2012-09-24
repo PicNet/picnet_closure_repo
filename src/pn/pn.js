@@ -201,8 +201,8 @@ Array.prototype.pnsingle = function(f, opt_obj) {
  * @see goog.array.filter
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {?function(this:S, T, number, ?):boolean} f The function to call for
- *     every element. This function
+ * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to call
+ *     for every element. This function
  *     takes 3 arguments (the element, the index and the array) and must
  *     return a Boolean. If the return value is true the element is added to the
  *     result array. If it is false the element is not included.
@@ -211,7 +211,29 @@ Array.prototype.pnsingle = function(f, opt_obj) {
  * @return {T} The first matching element or an Error if no matching elements.
  * @template T,S
  */
-Array.prototype.pnfirst = function(f, opt_obj) {
+Array.prototype.pnfirstOrNull = function(opt_f, opt_obj) {
+  var arr = this;
+  if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
+  if (arr.length < 1) return null;
+  return arr[0];
+};
+
+
+/**
+ * @see goog.array.filter
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to call
+ *     for every element. This function
+ *     takes 3 arguments (the element, the index and the array) and must
+ *     return a Boolean. If the return value is true the element is added to the
+ *     result array. If it is false the element is not included.
+ * @param {S=} opt_obj The object to be used as the value of 'this'
+ *     within f.
+ * @return {T} The first matching element or an Error if no matching elements.
+ * @template T,S
+ */
+Array.prototype.pnfirst = function(opt_f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
   if (arr.length < 1) throw 'Expected at least one element';
@@ -223,8 +245,8 @@ Array.prototype.pnfirst = function(f, opt_obj) {
  * @see goog.array.filter
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {?function(this:S, T, number, ?):boolean} f The function to call for
- *     every element. This function
+ * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to
+ *     call for every element. This function
  *     takes 3 arguments (the element, the index and the array) and must
  *     return a Boolean. If the return value is true the element is added to the
  *     result array. If it is false the element is not included.
@@ -233,7 +255,29 @@ Array.prototype.pnfirst = function(f, opt_obj) {
  * @return {T} The last machine element or Error.
  * @template T,S
  */
-Array.prototype.pnlast = function(f, opt_obj) {
+Array.prototype.pnlastOrNull = function(opt_f, opt_obj) {
+  var arr = this;
+  if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
+  if (arr.length < 1) return null;
+  return arr[arr.length - 1];
+};
+
+
+/**
+ * @see goog.array.filter
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to call
+ *     for element. This function
+ *     takes 3 arguments (the element, the index and the array) and must
+ *     return a Boolean. If the return value is true the element is added to the
+ *     result array. If it is false the element is not included.
+ * @param {S=} opt_obj The object to be used as the value of 'this'
+ *     within f.
+ * @return {T} The last machine element or Error.
+ * @template T,S
+ */
+Array.prototype.pnlast = function(opt_f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
   if (arr.length < 1) throw 'Expected at least one element';
