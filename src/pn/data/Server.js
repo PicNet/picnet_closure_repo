@@ -417,7 +417,10 @@ pn.data.Server.Response = function(raw) {
   goog.asserts.assert(this.updates === null || goog.isArray(this.updates));
   goog.asserts.assert(this.responseEntity === null ||
       this.responseEntity instanceof pn.data.Entity);
-  goog.asserts.assert(this.ajaxData === null || goog.isObject(this.ajaxData));
+  goog.asserts.assert(
+      this.ajaxData === null ||
+      goog.isObject(this.ajaxData) ||
+      goog.isString(this.ajaxData));
   goog.asserts.assert(
       goog.isString(this.error) ||
       goog.isDefAndNotNull(this.ajaxData) ||
