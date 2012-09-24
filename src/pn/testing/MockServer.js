@@ -14,9 +14,6 @@ goog.require('pn.data.Server.Update');
 pn.testing.MockServer = function() {
   pn.data.Server.call(this, 'controller_uri');
 
-  /** @type {number} */
-  this.nextId = 1;
-
   /** @type {boolean} */
   this.nextFail = false;
 
@@ -38,6 +35,13 @@ pn.testing.MockServer = function() {
 goog.inherits(pn.testing.MockServer, pn.data.Server);
 
 
+/**
+ * @private
+ * @type {number}
+ */
+pn.testing.MockServer.nextId_ = 1;
+
+
 /** @override */
 pn.testing.MockServer.prototype.ajax =
     function(uri, data, success, failure) {
@@ -55,7 +59,7 @@ pn.testing.MockServer.prototype.createEntity =
   this.calls.push({ method: 'createEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
-  entity.id = this.nextId++;
+  entity.id = pn.testing.MockServer.nextId_++;
   this.doSuccess_(entity, success);
 };
 

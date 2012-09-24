@@ -8,7 +8,7 @@
 goog.require('goog.testing.jsunit');        
         </script>
         <script>
-
+goog.require('pn');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
@@ -63,7 +63,7 @@ var testGetEntityDoesNotUpdateLocalStorate = function() {
 var testCreateEntityFailsIfEntityTypeDoesNotExistInCache = function() {
   try { 
     var entity = new pn.data.Entity('UnknownType', 0);
-    entity.id = -1;
+    entity.id = -2;
     cache.createEntity(entity); 
     assertFails('Expected failure with UnknownType');
   } catch (ex) {};
@@ -83,7 +83,7 @@ var testCreateEntityFailsIfEntityIDIsGteZero = function() {
 
 var testCreateEntityCanThenBeRetreived = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  entity.id = -1;
+  entity.id = -3;
   cache.createEntity(entity); 
 
   assertTrue(entity.id < 0);
@@ -124,7 +124,7 @@ var testUpdateEntityCanThenBeRetreived = function() {
 
 var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
   var entity = new pn.data.Entity('EntityType', 0);
-  entity.id = -1;
+  entity.id = -4;
   entity = cache.createEntity(entity).clone(); 
   var tmpid = entity.id;
   entity.id = 100;
@@ -232,7 +232,7 @@ var testQueryWithSingleType = function() {
 var testQueryWithMultipleTypes = function() {
   cache.cache_['EntityType2'] = [];
   var entity2 = new pn.data.Entity('EntityType2', 0);
-  entity2.id = -1;
+  entity2.id = -5;
   cache.createEntity(entity2);
 
   var q1 = new pn.data.Query('EntityType'), 
@@ -313,7 +313,7 @@ var testSavingMultipleQueriesForSameTypeArePersistedIndependently = function() {
 
 var createEntity = function(type, id) {
   var entity = new pn.data.Entity(type, 0);
-  entity.id = -1;
+  entity.id = -6;
   entity = cache.createEntity(entity).clone();
 
   var tmpid = entity.id;

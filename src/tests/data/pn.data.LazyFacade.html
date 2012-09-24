@@ -9,6 +9,7 @@ goog.require('goog.testing.jsunit');
         </script>
         <script>
 
+goog.require('pn');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.data.Entity');
 goog.require('pn.testing.MockServer');
@@ -35,7 +36,7 @@ var setUp = function() {
   entity.id = -1;
   updated = facade.cache.createEntity(entity).clone();
   var tmpid = updated.id;
-  updated.id = 1;
+  updated.id = 11;
   facade.cache.updateEntity(updated, tmpid);
 
   pn.data.TypeRegister.parseEntity = function(type, raw) {
@@ -47,12 +48,12 @@ var setUp = function() {
 };
 
 var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
-  facade.ajax('controller/action', {}, function() {});
-  facade.getEntity('EntityType', 1);
+  facade.ajax('controller/action', {}, function() {});  
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
   facade.createEntity(entity, function() {});
   facade.updateEntity(updated, function() {});
+  facade.getEntity('EntityType', updated.id);
   facade.deleteEntity(updated);
   facade.query([new pn.data.Query('EntityType2')], function() {});
 

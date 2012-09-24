@@ -157,7 +157,6 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id > 0);
   goog.asserts.assert(goog.isFunction(callback));
-
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.updateEntity(entity);
@@ -298,7 +297,10 @@ pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
 
   if (opt_ex) {
     throw opt_ex;
-  } else pn.app.ctx.msg.showError(error);
+  } else {
+    // console.trace();
+    pn.app.ctx.msg.showError(error);
+  }
 };
 
 

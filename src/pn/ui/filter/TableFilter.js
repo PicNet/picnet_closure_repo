@@ -4,6 +4,7 @@ goog.require('goog.dom');
 goog.require('goog.dom.classes');
 goog.require('goog.string');
 goog.require('goog.style');
+goog.require('pn');
 goog.require('pn.ui.filter.GenericListFilter');
 goog.require('pn.ui.filter.TableFilterOptions');
 
@@ -108,7 +109,7 @@ pn.ui.filter.TableFilter.prototype.initialiseControlCaches = function() {
   }
 
   this.listItems = /** @type {!Array.<!Element>} */(
-      goog.dom.getElementsByTagNameAndClass('tr', null, this.tbody_));
+      pn.toarr(goog.dom.getElementsByTagNameAndClass('tr', null, this.tbody_)));
 
   this.buildFiltersRow_();
 
@@ -134,7 +135,7 @@ pn.ui.filter.TableFilter.prototype.getColumnIndexOfFilter_ = function(f) {
   var td = goog.dom.getAncestorByTagNameAndClass(f, goog.dom.TagName.TD);
   if (!td || td.length <= 0) { return -1; }
   var tr = goog.dom.getAncestorByTagNameAndClass(td, goog.dom.TagName.TR);
-  var cells = (tr.getElementsByTagName('td'));
+  var cells = pn.toarr(tr.getElementsByTagName('td'));
   return cells.pnindexOf(td);
 };
 

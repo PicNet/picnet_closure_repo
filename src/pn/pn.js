@@ -190,8 +190,9 @@ Array.prototype.pnany = function(f, opt_obj) {
 Array.prototype.pnsingle = function(f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length !== 1)
+  if (arr.length !== 1) {
     throw 'Expected single match got: ' + arr.length;
+  }
   return arr[0];
 };
 
@@ -364,6 +365,21 @@ Array.prototype.pnsort = function(opt_compareFn) {
  */
 Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
   goog.array.sortObjectsByKey.apply(null, pn.aargs_(this, arguments));
+  return this;
+};
+
+
+/**
+ * @see goog.array.removeDuplicates
+ * @this {!Array.<T>} arr The array from which to remove duplicates.
+ * @param {Array=} opt_rv An optional array in which to return the results,
+ *     instead of performing the removal inplace.  If specified, the original
+ *     array will remain unchanged.
+ * @return {!Array.<T>} A reference to self array.
+ * @template T
+ */
+Array.prototype.removeDuplicates = function(opt_rv) {
+  goog.array.removeDuplicates.apply(null, pn.aargs_(this, arguments));
   return this;
 };
 

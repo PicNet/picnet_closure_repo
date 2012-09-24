@@ -9,6 +9,7 @@ goog.require('goog.testing.jsunit');
         </script>
         <script>
 
+goog.require('pn');
 goog.require('pn.data.BaseFacade');
 goog.require('pn.data.Entity');
 goog.require('pn.testing.MockServer');
@@ -321,7 +322,7 @@ var validateServerCalls = function(exp) {
   exp.pnforEach(function(e, i) {
     assertEquals(e.method, server.calls[i].method);
     if (e.entity) {
-      var actual = server.calls[i].args.pnfind(function(a) {
+      var actual = pn.toarr(server.calls[i].args).pnfind(function(a) {
         return a instanceof pn.data.Entity;
       });
       assertTrue(e.entity.equals(actual));
