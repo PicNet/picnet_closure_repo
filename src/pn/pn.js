@@ -7,7 +7,8 @@ goog.require('goog.object');
 
 
 /**
- * @param {Arguments} args The arguments object to turn into an array.
+ * @param {!goog.array.ArrayLike} args The arguments (or any
+ *    array like) object to turn into an array.
  * @return {!Array} The array object from the given arguments object.
  */
 pn.toarr = function(args) {
@@ -19,7 +20,8 @@ pn.toarr = function(args) {
  * @private
  * @param {!Object} thiso A referece to the callers 'this' to prepend to the
  *    arguments object.
- * @param {Arguments} args The arguments object to prepend 'this' to.
+ * @param {!goog.array.ArrayLike} args The arguments object to prepend 'this'
+ *    to.
  * @return {!Array} The array of the given arguments with this prepended to
  *    the beggining of the array.
  */

@@ -26,7 +26,7 @@ goog.inherits(pn.ui.grid.pipe.CommandsHandler, pn.ui.grid.pipe.GridHandler);
 
 
 /** @override */
-pn.ui.grid.pipe.CommandsHandler.prototype.postRender = function() {  
+pn.ui.grid.pipe.CommandsHandler.prototype.postRender = function() {
   this.cfg.commands.pnforEach(this.registerCommand_, this);
 };
 
