@@ -39,6 +39,23 @@ pn.data.TypeRegister.fromName = function(name) {
 
 
 /**
+ * @param {string} type The type of the entity being saved/delete/clone.
+ * @param {!Object} raw The raw entity data to send to the server.
+ * @return {!pn.data.Entity} The created entity with additional private fields.
+ */
+pn.data.TypeRegister.create = function(type, raw) {
+  var ctor = pn.data.TypeRegister.fromName(type);
+  var entity = new ctor(raw);
+  for (var p in raw) {
+    if (goog.string.startsWith(p, '_')) {
+      entity[p] = raw[p];
+    }
+  }
+  return entity;
+};
+
+
+/**
  * @param {string} type The type of the entities to attempt to parse.
  * @param {!Array} data The data to attempt to parse.
  * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.

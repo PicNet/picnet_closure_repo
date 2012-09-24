@@ -87,10 +87,9 @@ pn.ui.UiSpec.prototype.getGridConfig = goog.abstractMethod;
 /**
  * Gets the additional types required when displaying this edit control.
  *
- * @param {!pn.data.Entity} entity The entity being editted.
  * @return {!Array.<string>} The additional types to load.
  */
-pn.ui.UiSpec.prototype.getEditAdditionalTypes = function(entity) { return []; };
+pn.ui.UiSpec.prototype.getEditAdditionalTypes = function() { return []; };
 
 
 /**

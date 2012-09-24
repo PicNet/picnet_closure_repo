@@ -52,7 +52,7 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
   facade.createEntity(entity, function() {});
-  facade.updateEntity(updated);
+  facade.updateEntity(updated, function() {});
   facade.deleteEntity(updated);
   facade.query([new pn.data.Query('EntityType2')], function() {});
 

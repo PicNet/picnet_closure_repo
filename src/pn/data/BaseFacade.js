@@ -134,9 +134,9 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
     callback(entity);
   }, this);
 
-  var onfail = goog.bind(function(error) {
+  var onfail = goog.bind(function(error, opt_ex) {
     this.cache.deleteEntity(entity.type, tmpid);
-    throw new Error(error);
+    this.handleError(error, opt_ex);
   }, this);
 
   this.server.createEntity(entity,
@@ -150,10 +150,13 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
  *    then sent to the server.
  *
  * @param {!pn.data.Entity} entity The entity to update.
+ * @param {function(!pn.data.Entity):undefined} callback The success callback
+ *    that takes the updated entity.
  */
-pn.data.BaseFacade.prototype.updateEntity = function(entity) {
+pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
   goog.asserts.assert(entity instanceof pn.data.Entity);
   goog.asserts.assert(entity.id > 0);
+  goog.asserts.assert(goog.isFunction(callback));
 
   var current = this.cache.getEntity(entity.type, entity.id);
 
@@ -164,11 +167,12 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity) {
       entity.DateLastUpdated = entity2.DateLastUpdated;
     }
     goog.asserts.assert(entity.equals(entity2));
+    callback(entity2);
   };
 
-  var onfail = goog.bind(function(error) {
+  var onfail = goog.bind(function(error, opt_ex) {
     this.cache.updateEntity(current); // Revert client cache
-    throw new Error(error);
+    this.handleError(error, opt_ex);
   }, this);
 
   this.server.updateEntity(entity,
@@ -187,9 +191,9 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.deleteEntity(entity.type, entity.id);
-  var onfail = goog.bind(function(error) {
+  var onfail = goog.bind(function(error, opt_ex) {
     this.cache.undeleteEntity(current); // Revert client cache
-    throw new Error(error);
+    this.handleError(error, opt_ex);
   }, this);
 
   this.server.deleteEntity(entity,
