@@ -79,8 +79,8 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
 
 /** @override. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
-  this.entity = pn.data.TypeRegister.create(
-      this.spec.type, this.getCurrentFormData());
+  var data = this.getCurrentFormData();
+  this.entity = pn.data.TypeRegister.create(this.spec.type, data);
 };
 
 

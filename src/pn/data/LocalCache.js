@@ -243,15 +243,24 @@ pn.data.LocalCache.prototype.init_ = function() {
   }
 
   this.cache_ = {};
+  var queriesToRemove = [];
   for (var qid in this.cachedQueries_) {
     var query = pn.data.Query.fromString(qid);
 
     var rawList = parse(query.Type);
+    if (!goog.isDef(rawList)) {
+      queriesToRemove.push(qid);
+      continue;
+    }
+
     goog.asserts.assert(goog.isArray(rawList));
 
     var list = pn.data.TypeRegister.parseEntities(query.Type, rawList);
     this.cache_[query.Type] = list;
   }
+  queriesToRemove.pnforEach(function(qid) {
+    delete this.cachedQueries_[qid];
+  }, this);
 };
 
 
