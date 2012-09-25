@@ -391,6 +391,9 @@ pn.data.Server.Response = function(raw) {
   this.updates = raw['Updates'] ? goog.array.map(raw['Updates'],
       function(u) { return new pn.data.Server.Update(u); }, this) : null;
 
+  /** @type {number} */
+  this.lastUpdate = raw['LastUpdate'];
+
   /** @type {pn.data.Entity} */
   this.responseEntity = raw['ResponseEntityType'] ?
       pn.data.TypeRegister.parseEntity(raw['ResponseEntityType'],
@@ -415,7 +418,9 @@ pn.data.Server.Response = function(raw) {
       }, {}) : null;
 
   goog.asserts.assert(this.updates === null || goog.isArray(this.updates));
-  goog.asserts.assert(this.responseEntity === null ||
+  goog.asserts.assert(goog.isNumber(this.lastUpdate));
+  goog.asserts.assert(
+      this.responseEntity === null ||
       this.responseEntity instanceof pn.data.Entity);
   goog.asserts.assert(
       this.ajaxData === null ||

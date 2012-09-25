@@ -18,8 +18,11 @@ goog.require('pn.storage');
 pn.data.LocalCache = function() {
   goog.Disposable.call(this);
 
-  /** @type {number} */
-  this.lastUpdate = 0;
+  /**
+   * @private
+   * @type {number}
+   */
+  this.lastUpdate_ = 0;
 
   /**
    * @private
@@ -216,10 +219,23 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
 };
 
 
+/** @return {number} The last updated date in millis. */
+pn.data.LocalCache.prototype.getLastUpdate = function() {
+  return this.lastUpdate_;
+};
+
+
+/** @param {number} lastUpdate The last updated date in millis. */
+pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
+  this.lastUpdate_ = lastUpdate;
+  pn.storage.set(this.STORE_PREFIX_ + 'version', lastUpdate.toString());
+};
+
+
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
   var cachedtime = pn.storage.get(this.STORE_PREFIX_ + 'version');
-  this.lastUpdate = cachedtime ? parseInt(cachedtime, 10) : 0;
+  this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
 
   var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
   if (queriesJson) {
@@ -235,7 +251,7 @@ pn.data.LocalCache.prototype.init_ = function() {
   }, this);
 
   if (!queriesJson) {
-    if (this.lastUpdate > 0) {
+    if (this.lastUpdate_ > 0) {
       throw 'Last update time is set but the cache is empty.';
     }
     this.cache_ = {};

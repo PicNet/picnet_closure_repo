@@ -249,7 +249,7 @@ pn.data.BaseFacade.prototype.queryImpl = function(queries, callback) {
  * @return {number} The last server time that the cache was updated.
  */
 pn.data.BaseFacade.prototype.getLastUpdate = function() {
-  return this.cache.lastUpdate;
+  return this.cache.getLastUpdate();
 };
 
 
@@ -279,6 +279,8 @@ pn.data.BaseFacade.prototype.parseServerResponse =
 
   goog.asserts.assert(goog.isNull(callback) || goog.isFunction(callback));
   goog.asserts.assert(response instanceof pn.data.Server.Response);
+
+  if (response.lastUpdate > 0) this.cache.setLastUpdate(response.lastUpdate);
 
   if (response.updates) this.applyUpdates_(response.updates);
 
@@ -338,7 +340,6 @@ pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
  */
 pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
   goog.asserts.assert(update instanceof pn.data.Server.Update);
-
   switch (update.type) {
     case 'delete':
       this.cache.deleteEntity(update.entityType, update.id);
