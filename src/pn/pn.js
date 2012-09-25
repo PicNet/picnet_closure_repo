@@ -118,6 +118,28 @@ Array.prototype.pnfilter = function(f, opt_obj) {
 
 
 /**
+ * @see goog.array.filter
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {?function(this:S, T, number, ?):boolean} f The function to call for
+ *     every element. This function
+ *     takes 3 arguments (the element, the index and the array) and must
+ *     return a Boolean. If the return value is true the element is added to the
+ *     result array. If it is false the element is not included.
+ * @param {S=} opt_obj The object to be used as the value of 'this'
+ *     within f.
+ * @return {number} The length of the given array after applying the specified
+ *    filter (if any).
+ * @template T,S
+ */
+Array.prototype.pncount = function(f, opt_obj) {
+  return goog.isFunction(f) ?
+      goog.array.filter.apply(null, pn.aargs_(this, arguments)).length :
+      this.length;
+};
+
+
+/**
  * @see goog.array.reduce
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
