@@ -298,7 +298,7 @@ pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
   if (opt_ex) {
     throw opt_ex;
   } else {
-    // console.trace();
+    pn.log.trace();
     pn.app.ctx.msg.showError(error);
   }
 };

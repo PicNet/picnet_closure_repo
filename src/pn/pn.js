@@ -12,7 +12,7 @@ goog.require('goog.object');
  * @return {!Array} The array object from the given arguments object.
  */
 pn.toarr = function(args) {
-  return Array.prototype.slice.call(args);
+  return goog.array.clone(args);
 };
 
 
@@ -444,7 +444,7 @@ Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
  * @return {!Array.<T>} A reference to self array.
  * @template T
  */
-Array.prototype.removeDuplicates = function(opt_rv) {
+Array.prototype.pnremoveDuplicates = function(opt_rv) {
   goog.array.removeDuplicates.apply(null, pn.aargs_(this, arguments));
   return this;
 };

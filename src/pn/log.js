@@ -49,6 +49,15 @@ pn.log.initialise_ = function() {
 
 
 /**
+ * Displays the current stack trace if the browser supports it.
+ */
+pn.log.trace = function() {
+  if (!window['console'] || !window['console']['trace']) return;
+  window['console']['trace']();
+};
+
+
+/**
  * @param {string} name The name of the logger to create.
  * @param {boolean=} opt_exclusive Wether to turn off all other loggers.
  * @return {!goog.debug.Logger} The logger create with the specified name.
