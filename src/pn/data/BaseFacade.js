@@ -18,7 +18,7 @@ goog.require('pn.data.Server');
  * @param {string} controller The path to the controller.
  */
 pn.data.BaseFacade = function(controller) {
-  pn.ass(goog.isString(controller));
+  pn.assStr(controller);
 
   goog.events.EventTarget.call(this);
 
@@ -75,9 +75,9 @@ goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
  * @param {function(?):undefined} callback The success callback.
  */
 pn.data.BaseFacade.prototype.ajax = function(uri, data, callback) {
-  pn.ass(goog.isString(uri));
-  pn.ass(goog.isObject(data));
-  pn.ass(goog.isFunction(callback));
+  pn.assStr(uri);
+  pn.assObj(data);
+  pn.assFun(callback);
 
   this.server.ajax(uri, data,
       goog.bind(this.parseServerResponse, this, callback),
@@ -95,8 +95,8 @@ pn.data.BaseFacade.prototype.ajax = function(uri, data, callback) {
  * @return {!pn.data.Entity} The entity with the specified id.
  */
 pn.data.BaseFacade.prototype.getEntity = function(type, id) {
-  pn.ass(goog.isString(type));
-  pn.ass(goog.isNumber(id));
+  pn.assStr(type);
+  pn.assNum(id);
 
   return this.cache.getEntity(type, id);
 };
@@ -115,7 +115,7 @@ pn.data.BaseFacade.prototype.getEntity = function(type, id) {
 pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id <= 0);
-  pn.ass(goog.isFunction(callback));
+  pn.assFun(callback);
 
   entity = this.cache.createEntity(entity).clone();
   var tmpid = entity.id;
@@ -156,7 +156,7 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
 pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id > 0);
-  pn.ass(goog.isFunction(callback));
+  pn.assFun(callback);
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.updateEntity(entity);
@@ -210,7 +210,7 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
  */
 pn.data.BaseFacade.prototype.query = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
-  pn.ass(goog.isFunction(callback));
+  pn.assFun(callback);
   var parsed = queries.pnmap(function(q) {
     if (q instanceof pn.data.Query) return q;
     return new pn.data.Query(q);
@@ -232,7 +232,7 @@ pn.data.BaseFacade.prototype.query = function(queries, callback) {
  */
 pn.data.BaseFacade.prototype.queryImpl = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
-  pn.ass(goog.isFunction(callback));
+  pn.assFun(callback);
 
   callback(this.cache.query(queries));
 };
@@ -295,7 +295,7 @@ pn.data.BaseFacade.prototype.parseServerResponse =
  * @param {Error=} opt_ex The optional exception from the server.
  */
 pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
-  pn.ass(goog.isString(error));
+  pn.assStr(error);
 
   if (opt_ex) {
     throw opt_ex;
@@ -327,7 +327,7 @@ pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
  *    update time.
  */
 pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
-  pn.ass(goog.isArray(updates));
+  pn.assArr(updates);
 
   updates.pnforEach(this.applyUpdate_, this);
 };

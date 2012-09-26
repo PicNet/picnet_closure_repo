@@ -82,7 +82,7 @@ pn.ui.MessagePanel.prototype.showMessage = function(message) {
  */
 pn.ui.MessagePanel.prototype.showMessages = function(list) {
   pn.ass(list.length);
-  pn.ass(goog.isString(list[0]));
+  pn.assStr(list[0]);
 
   this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', 'info');
 };

@@ -98,7 +98,7 @@ goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
  *    explicitally set.
  */
 pn.ui.BaseFieldSpec.prototype.extend = function(props) {
-  pn.ass(goog.isObject(props));
+  pn.assObj(props);
 
   goog.object.extend(this, props);
 
@@ -160,7 +160,7 @@ pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
  * @return {string} The final entity type in this entity path.
  */
 pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
-  pn.ass(goog.isString(type));
+  pn.assStr(type);
   pn.ass(steps.length);
   steps = goog.array.clone(steps);
 

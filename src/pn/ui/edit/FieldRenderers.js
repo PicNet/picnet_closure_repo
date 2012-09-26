@@ -304,7 +304,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
 pn.ui.edit.FieldRenderers.createDropDownList_ =
     function(selectTxt, list, selValue, opt_noneId) {
   pn.ass(!selectTxt || goog.isString(selectTxt));
-  pn.ass(goog.isArray(list));
+  pn.assArr(list);
   pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
       'Not supported: ' + selValue);
   pn.ass(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),

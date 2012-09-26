@@ -10,7 +10,7 @@ goog.provide('pn.convert');
  * @return {string} The dollar / cents string.
  */
 pn.convert.centsToCurrency = function(cents) {
-  pn.ass(goog.isNumber(cents));
+  pn.assNum(cents);
   var actualDollars = Math.floor(cents / 100);
   var actualCents = Math.floor(cents % 100);
   return '$' + actualDollars + '.' + goog.string.padNumber(actualCents, 2);

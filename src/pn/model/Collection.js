@@ -13,7 +13,7 @@ goog.require('pn.model.TimerInstance');
  * @param {!Array.<!Object>} src The source array to create the model from.
  */
 pn.model.Collection = function(src) {
-  pn.ass(goog.isArray(src));
+  pn.assArr(src);
 
   pn.model.ModelBase.call(this);
 

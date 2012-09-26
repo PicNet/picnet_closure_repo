@@ -16,8 +16,8 @@ pn.data.TypeRegister.types_ = {};
  * @param {pn.data.Entity.EntityType} ctor The entity type ctor.
  */
 pn.data.TypeRegister.register = function(name, ctor) {
-  pn.ass(goog.isString(name));
-  pn.ass(goog.isFunction(ctor));
+  pn.assStr(name);
+  pn.assFun(ctor);
 
   pn.data.TypeRegister.types_[name] = ctor;
 };
@@ -29,7 +29,7 @@ pn.data.TypeRegister.register = function(name, ctor) {
  *    specified entity type.
  */
 pn.data.TypeRegister.fromName = function(name) {
-  pn.ass(goog.isString(name));
+  pn.assStr(name);
 
   var ctor = pn.data.TypeRegister.types_[name];
   pn.ass(ctor, 'Could not find entity factory of type: ' + name);
@@ -61,8 +61,8 @@ pn.data.TypeRegister.create = function(type, raw) {
  * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntities = function(type, data) {
-  pn.ass(goog.isString(type));
-  pn.ass(goog.isObject(data));
+  pn.assStr(type);
+  pn.assObj(data);
 
   var action = goog.partial(pn.data.TypeRegister.parseEntity, type);
   return data.pnmap(action);
@@ -75,8 +75,8 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
  * @return {pn.data.Entity} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntity = function(type, data) {
-  pn.ass(goog.isString(type));
-  pn.ass(goog.isObject(data));
+  pn.assStr(type);
+  pn.assObj(data);
 
   var ctor = pn.data.TypeRegister.fromName(type);
   return new ctor(data);

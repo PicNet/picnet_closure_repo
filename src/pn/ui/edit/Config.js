@@ -1,7 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.Config');
 
-goog.require('pn.ui.edit.cmd.CancelCommand');
+goog.require('pn.ui.edit.cmd.BackCommand');
 goog.require('pn.ui.edit.cmd.CloneCommand');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.edit.cmd.DeleteCommand');
@@ -73,6 +73,6 @@ pn.ui.edit.Config.prototype.getDefaultCommands_ = function() {
     new pn.ui.edit.cmd.SaveCommand(),
     new pn.ui.edit.cmd.CloneCommand(),
     new pn.ui.edit.cmd.DeleteCommand(),
-    new pn.ui.edit.cmd.CancelCommand()
+    new pn.ui.edit.cmd.BackCommand()
   ];
 };

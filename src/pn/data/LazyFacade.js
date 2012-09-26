@@ -53,7 +53,7 @@ pn.data.LazyFacade.prototype.sync = function() {
  */
 pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
-  pn.ass(goog.isFunction(callback));
+  pn.assFun(callback);
 
   var loaded = goog.array.filter(queries,
       function(q) { return this.cache.contains(q); }, this);
@@ -66,7 +66,7 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
     this.server.query(unloaded, loaded, this.getLastUpdate(),
         goog.bind(this.parseServerResponse, this, function(results) {
           goog.object.forEach(results, function(list, key) {
-            pn.ass(goog.isArray(list));
+            pn.assArr(list);
 
             cached[key] = list;
             var query = pn.data.Query.fromString(key);

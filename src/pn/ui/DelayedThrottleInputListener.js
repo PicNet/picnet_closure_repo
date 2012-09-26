@@ -16,7 +16,7 @@ goog.require('goog.events.EventType');
  * @extends {goog.events.EventTarget}
  */
 pn.ui.DelayedThrottleInputListener = function(delay) {
-  pn.ass(goog.isNumber(delay));
+  pn.assNum(delay);
 
   goog.events.EventTarget.call(this);
 

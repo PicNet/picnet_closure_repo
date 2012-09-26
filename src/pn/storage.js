@@ -22,7 +22,7 @@ pn.storage.get = function(id) {
  */
 pn.storage.set = function(id, value) {
   pn.ass(id && goog.isString(id));
-  pn.ass(goog.isString(value));
+  pn.assStr(value);
 
   var ls = window['localStorage'];
   if (ls) ls[id] = value;

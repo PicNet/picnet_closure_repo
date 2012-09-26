@@ -555,7 +555,7 @@ pn.ui.filter.GenericListFilter.prototype.checkMatchingElementCallback_ =
  */
 pn.ui.filter.GenericListFilter.prototype.doesTextContainText =
     function(text, textTokens, exact) {
-  pn.ass(goog.isArray(text));
+  pn.assArr(text);
 
   return this.search_.doesTextMatchTokens(text, textTokens, exact);
 };

@@ -57,7 +57,7 @@ pn.dom.getComputedPixelWidth = function(e) {
  */
 pn.dom.addHtml = function(parent, html) {
   pn.ass(parent);
-  pn.ass(goog.isString(html));
+  pn.assStr(html);
 
   var el = pn.dom.htmlToEl(html);
   goog.dom.appendChild(parent, el);
@@ -70,7 +70,7 @@ pn.dom.addHtml = function(parent, html) {
  * @return {!Element} The generated document fragment element.
  */
 pn.dom.htmlToEl = function(html) {
-  pn.ass(goog.isString(html));
+  pn.assStr(html);
 
   return /** @type {!Element} */ (goog.dom.htmlToDocumentFragment(html));
 };

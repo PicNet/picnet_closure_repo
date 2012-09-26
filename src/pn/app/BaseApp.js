@@ -258,8 +258,8 @@ pn.app.BaseApp.prototype.listExport_ = function(type, format, data) {
  * @param {function():undefined=} opt_cb The optional callback.
  */
 pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
-  pn.ass(goog.isString(type));
-  pn.ass(goog.isArray(ids));
+  pn.assStr(type);
+  pn.assArr(ids);
 
   var data = { 'type': type, 'ids': ids };
   var cb = opt_cb || function() {};
@@ -273,7 +273,7 @@ pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
  * @param {pn.data.Entity} entity The entity to clone.
  */
 pn.app.BaseApp.prototype.cloneEntity_ = function(type, entity) {
-  pn.ass(goog.isString(type));
+  pn.assStr(type);
   pn.ass(entity instanceof pn.data.Entity);
 
   if (!this.acceptDirty_()) return;

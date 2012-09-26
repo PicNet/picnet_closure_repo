@@ -63,7 +63,7 @@ pn.data.EntityUtils.getTargetEntity =
     function(cache, path, type, target, opt_parentField) {
   pn.ass(cache);
   pn.ass(path);
-  pn.ass(goog.isString(type));
+  pn.assStr(type);
   pn.ass(target);
 
   // Lets always work with arrays just to simplify
@@ -191,7 +191,7 @@ pn.data.EntityUtils.isChildrenProperty = function(property) {
  * @param {!Array.<!Object>} list The entities to order.
  */
 pn.data.EntityUtils.orderEntities = function(type, list) {
-  pn.ass(goog.isString(type));
+  pn.assStr(type);
   pn.ass(list);
   if (!list.length) return;
 
@@ -220,8 +220,8 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
  * @return {string} The name of the given value in the specified enumeration.
  */
 pn.data.EntityUtils.getEnumName = function(enumeration, val) {
-  pn.ass(goog.isObject(enumeration));
-  pn.ass(goog.isNumber(val));
+  pn.assObj(enumeration);
+  pn.assNum(val);
 
   for (var name in enumeration) {
     var evald = enumeration[name];

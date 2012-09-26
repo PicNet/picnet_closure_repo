@@ -32,7 +32,7 @@ pn.ui.edit.ReadOnlyFields.textField = function(fctx, parent, entity) {
  * @return {string} The html representation of the server side text.
  */
 pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
-  pn.ass(goog.isString(text));
+  pn.assStr(text);
   return text.
       replace(/\n/g, '<br/>').
       replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
