@@ -36,7 +36,7 @@ pn.ui.edit.FieldBuilder.getFieldContainer = function(fctx) {
  * @return {string} The value in the specified field.
  */
 pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
-  goog.asserts.assert(inp);
+  pn.ass(inp);
 
   if (inp.getValue) { return inp.getValue(opt_target); }
   else if (inp.options) {

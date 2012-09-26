@@ -29,9 +29,9 @@ goog.require('pn.ui.grid.Grid');
  *    related entities.
  */
 pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(entity);
-  goog.asserts.assert(cache);
+  pn.ass(spec);
+  pn.ass(entity);
+  pn.ass(cache);
 
   goog.ui.Component.call(this);
 
@@ -120,7 +120,7 @@ pn.ui.edit.CommandsComponent.prototype.getCommandButtons = function() {
 
 /** @override */
 pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
-  goog.asserts.assert(element);
+  pn.ass(element);
 
   this.setElementInternal(element);
   this.addCommandsPanel_(element, 'commands-container');
@@ -129,12 +129,12 @@ pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
 
 /**
  * @private
- * @param {!Element} parent The parent for this commands panel.
+ * @param {Element} parent The parent for this commands panel.
  * @param {string} className The name of the css class for this control.
  */
 pn.ui.edit.CommandsComponent.prototype.addCommandsPanel_ =
     function(parent, className) {
-  goog.asserts.assert(parent);
+  pn.ass(parent);
   if (!this.commands_.length) return;
 
   var div = goog.dom.getElementsByClass(className)[0];

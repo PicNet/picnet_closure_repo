@@ -13,7 +13,7 @@ goog.require('pn.model.TimerInstance');
  * @param {!Array.<!Object>} src The source array to create the model from.
  */
 pn.model.Collection = function(src) {
-  goog.asserts.assert(goog.isArray(src));
+  pn.ass(goog.isArray(src));
 
   pn.model.ModelBase.call(this);
 
@@ -51,12 +51,12 @@ pn.model.Collection.prototype.getChanges = function() {
     delete map[key];
 
     if (!lastmodel) {
-      goog.asserts.assert(!(key in this.map_));
+      pn.ass(!(key in this.map_));
       changes.push({item: now, inserted: true});
       this.map_[key] = new pn.model.Model(now, false);
     }
     else if (mchanges.length) {
-      goog.asserts.assert(mchanges.length);
+      pn.ass(mchanges.length);
       changes.push({item: lastmodel.src_, changes: mchanges});
     }
   }

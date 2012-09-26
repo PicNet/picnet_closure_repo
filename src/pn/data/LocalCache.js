@@ -57,9 +57,9 @@ goog.inherits(pn.data.LocalCache, goog.Disposable);
  * @return {!pn.data.Entity} The entity with the specified id.
  */
 pn.data.LocalCache.prototype.getEntity = function(type, id) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(type in this.cache_, type + ' not in cache');
-  goog.asserts.assert(goog.isNumber(id) && id !== 0);
+  pn.ass(goog.isString(type));
+  pn.ass(type in this.cache_, type + ' not in cache');
+  pn.ass(goog.isNumber(id) && id !== 0);
 
   var en = this.cache_[type].pnsingle(function(entity) {
     return entity.id === id;
@@ -80,10 +80,10 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
  *    is now set to the temporary ID and the entity is 'live'.
  */
 pn.data.LocalCache.prototype.createEntity = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(entity.type in this.cache_,
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(entity.type in this.cache_,
       entity.type + ' not in cache');
-  goog.asserts.assert(entity.id < 0);
+  pn.ass(entity.id < 0);
 
   this.cache_[entity.type].push(entity);
   this.flush_(entity.type);
@@ -99,8 +99,8 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
  *    an entity that has not hit the server yet.
  */
 pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(!goog.isDef(opt_tmpid) ||
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(!goog.isDef(opt_tmpid) ||
       (goog.isNumber(opt_tmpid) && opt_tmpid < 0));
 
   var id = opt_tmpid || entity.id;
@@ -125,9 +125,9 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
  * @param {number} id The ID of the entity to delete.
  */
 pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(type in this.cache_, type + ' not in cache');
-  goog.asserts.assert(goog.isNumber(id) && id !== 0);
+  pn.ass(goog.isString(type));
+  pn.ass(type in this.cache_, type + ' not in cache');
+  pn.ass(goog.isNumber(id) && id !== 0);
 
   // var live = this.getEntity(type, id);
   // live.delete(); // TODO: fire live entity deleted
@@ -144,7 +144,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  * @param {!pn.data.Entity} entity The entity to undelete.
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   this.cache_[entity.type].push(entity);
   this.flush_(entity.type);
@@ -157,7 +157,7 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
  * @return {boolean} Wether the specified type list exists in this cache.
  */
 pn.data.LocalCache.prototype.contains = function(query) {
-  goog.asserts.assert(query instanceof pn.data.Query);
+  pn.ass(query instanceof pn.data.Query);
   return (query.Type in this.cache_);
 };
 
@@ -168,9 +168,9 @@ pn.data.LocalCache.prototype.contains = function(query) {
  */
 pn.data.LocalCache.prototype.query = function(queries) {
   return queries.pnreduce(goog.bind(function(results, q) {
-    goog.asserts.assert(q instanceof pn.data.Query);
+    pn.ass(q instanceof pn.data.Query);
 
-    goog.asserts.assert(q.Type in this.cache_, 'The type: ' + q.Type +
+    pn.ass(q.Type in this.cache_, 'The type: ' + q.Type +
         ' does not exist in the local cache');
 
     var list = this.cache_[q.Type];
@@ -196,8 +196,8 @@ pn.data.LocalCache.prototype.getCachedQueries = function() {
  *    the specified type.
  */
 pn.data.LocalCache.prototype.saveQuery = function(query, list) {
-  goog.asserts.assert(query instanceof pn.data.Query);
-  goog.asserts.assert(goog.isArray(list));
+  pn.ass(query instanceof pn.data.Query);
+  pn.ass(goog.isArray(list));
 
   var type = query.Type;
   var current = this.cache_[type];
@@ -269,7 +269,7 @@ pn.data.LocalCache.prototype.init_ = function() {
       continue;
     }
 
-    goog.asserts.assert(goog.isArray(rawList));
+    pn.ass(goog.isArray(rawList));
 
     var list = pn.data.TypeRegister.parseEntities(query.Type, rawList);
     this.cache_[query.Type] = list;
@@ -285,8 +285,8 @@ pn.data.LocalCache.prototype.init_ = function() {
  * @param {string} type The type (cache key) to flush to disk.
  */
 pn.data.LocalCache.prototype.flush_ = function(type) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(type in this.cache_, type + ' not in cache');
+  pn.ass(goog.isString(type));
+  pn.ass(type in this.cache_, type + ' not in cache');
 
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list, true);

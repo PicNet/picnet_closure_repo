@@ -93,7 +93,7 @@ pn.ui.grid.pipe.GridHandler.prototype.onCustomEvent =
  */
 pn.ui.grid.pipe.GridHandler.prototype.fireCustomEvent =
     function(eventType, opt_data) {
-  goog.asserts.assert(this.pipeline, 'Ensure that fireCustomEvent is not ' +
+  pn.ass(this.pipeline, 'Ensure that fireCustomEvent is not ' +
       'called before init is called on the pn.ui.grid.pipe.GridHandler.');
 
   this.pipeline.fireCustomEvent(eventType, opt_data);

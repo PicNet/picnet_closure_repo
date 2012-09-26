@@ -25,7 +25,7 @@ goog.inherits(pn.ui.grid.pipe.HandlerPipeline, goog.events.EventTarget);
  *    of the pipeline.
  */
 pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
-  goog.asserts.assert(handler);
+  pn.ass(handler);
 
   this.registerDisposable(handler);
 
@@ -73,7 +73,7 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.postRender = function() {
  */
 pn.ui.grid.pipe.HandlerPipeline.prototype.fireCustomEvent =
     function(eventType, opt_data) {
-  goog.asserts.assert(eventType);
+  pn.ass(eventType);
 
   this.handlers_.pnforEach(function(h) {
     h.onCustomEvent(eventType, opt_data);

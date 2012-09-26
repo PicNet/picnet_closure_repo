@@ -68,7 +68,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
  */
 pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
     function(sortData, opt_updateUi) {
-  goog.asserts.assert(sortData);
+  pn.ass(sortData);
 
   var col = sortData['colid'];
   var asc = sortData['asc'];

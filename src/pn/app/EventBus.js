@@ -42,8 +42,8 @@ goog.inherits(pn.app.EventBus, goog.Disposable);
  * @param {...*} args Arguments that are applied to each subscription function.
  */
 pn.app.EventBus.prototype.pub = function(topic, args) {
-  goog.asserts.assert(topic);
-  goog.asserts.assert(this.pubsub_.getCount(topic) > 0,
+  pn.ass(topic);
+  pn.ass(this.pubsub_.getCount(topic) > 0,
       'No subscribers found [' + topic + ']');
 
   var msg = topic;

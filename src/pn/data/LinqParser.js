@@ -13,7 +13,7 @@ goog.require('pn');
  *    the form of a function that filters an array.
  */
 pn.data.LinqParser.parse = function(expression) {
-  goog.asserts.assert(goog.isString(expression));
+  pn.ass(goog.isString(expression));
   if (!pn.data.LinqParser.isValidExpression_)
     throw 'Expression is not valid: ' + expression;
 
@@ -39,7 +39,7 @@ pn.data.LinqParser.parse = function(expression) {
  * @return {!Array.<string>} The parsed expressions in valid JS syntax.
  */
 pn.data.LinqParser.compileLinq_ = function(expression) {
-  goog.asserts.assert(goog.isString(expression));
+  pn.ass(goog.isString(expression));
   if (!pn.data.LinqParser.isValidExpression_(expression))
     throw 'Expression is not valid: ' + expression;
 
@@ -70,7 +70,7 @@ pn.data.LinqParser.compileLinq_ = function(expression) {
  * @return {boolean} Wether the specified expression was a valid Linq query.
  */
 pn.data.LinqParser.isValidExpression_ = function(expression) {
-  goog.asserts.assert(goog.isString(expression));
+  pn.ass(goog.isString(expression));
 
   var SUPPORTED_OPERATORS = ['Where'];
   var re = /([A-z]+)\s*\(/g,

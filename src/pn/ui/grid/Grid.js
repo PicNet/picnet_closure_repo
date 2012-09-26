@@ -43,9 +43,9 @@ goog.require('pn.ui.soy');
  *    entities.
  */
 pn.ui.grid.Grid = function(spec, list, cache) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(list);
-  goog.asserts.assert(cache);
+  pn.ass(spec);
+  pn.ass(list);
+  pn.ass(cache);
 
   goog.ui.Component.call(this);
 

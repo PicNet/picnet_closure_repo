@@ -12,7 +12,7 @@ goog.require('pn.ui.grid.pipe.GridHandler');
  * @param {Element} parent The parent Grid element container.
  */
 pn.ui.grid.pipe.TotalsHandler = function(parent) {
-  goog.asserts.assert(parent);
+  pn.ass(parent);
 
   pn.ui.grid.pipe.GridHandler.call(this);
 

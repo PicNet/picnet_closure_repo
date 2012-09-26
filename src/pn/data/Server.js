@@ -22,7 +22,7 @@ goog.require('pn.log');
  * @param {string} controller The controller Uri.
  */
 pn.data.Server = function(controller) {
-  goog.asserts.assert(goog.isString(controller));
+  pn.ass(goog.isString(controller));
 
   goog.events.EventTarget.call(this);
 
@@ -65,10 +65,10 @@ goog.inherits(pn.data.Server, goog.events.EventTarget);
  */
 pn.data.Server.prototype.ajax =
     function(uri, data, success, failure) {
-  goog.asserts.assert(goog.isString(uri));
-  goog.asserts.assert(goog.isObject(data));
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(goog.isString(uri));
+  pn.ass(goog.isObject(data));
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   this.ajax_(pn.app.ctx.cfg.appPath + uri, data, success, failure);
 };
@@ -82,9 +82,9 @@ pn.data.Server.prototype.ajax =
  */
 pn.data.Server.prototype.createEntity =
     function(entity, success, failure) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = this.getEntityJson_(entity);
   var uri = this.getFacadeControllerAction_('CreateEntity');
@@ -100,9 +100,9 @@ pn.data.Server.prototype.createEntity =
  */
 pn.data.Server.prototype.updateEntity =
     function(entity, success, failure) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = this.getEntityJson_(entity);
   var uri = this.getFacadeControllerAction_('UpdateEntity');
@@ -118,9 +118,9 @@ pn.data.Server.prototype.updateEntity =
  */
 pn.data.Server.prototype.deleteEntity =
     function(entity, success, failure) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = this.getEntityJson_(entity);
   var uri = this.getFacadeControllerAction_('DeleteEntity');
@@ -137,10 +137,10 @@ pn.data.Server.prototype.deleteEntity =
  */
 pn.data.Server.prototype.getQueryUpdates =
     function(queries, lastUpdate, success, failure) {
-  goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(goog.isArray(queries) && queries.length > 0);
+  pn.ass(goog.isNumber(lastUpdate) && lastUpdate >= 0);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = {
     'lastUpdate': lastUpdate,
@@ -159,9 +159,9 @@ pn.data.Server.prototype.getQueryUpdates =
  */
 pn.data.Server.prototype.getAllUpdates =
     function(lastUpdate, success, failure) {
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(goog.isNumber(lastUpdate) && lastUpdate >= 0);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = { 'lastUpdate': lastUpdate };
   var uri = this.getFacadeControllerAction_('GetAllUpdates');
@@ -181,10 +181,10 @@ pn.data.Server.prototype.getAllUpdates =
  */
 pn.data.Server.prototype.query =
     function(queries, queriesToUpdate, lastUpdate, success, failure) {
-  goog.asserts.assert(goog.isArray(queries) && queries.length > 0);
-  goog.asserts.assert(goog.isNumber(lastUpdate) && lastUpdate >= 0);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(goog.isArray(queries) && queries.length > 0);
+  pn.ass(goog.isNumber(lastUpdate) && lastUpdate >= 0);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var json = {
     'queriesJson': pn.json.serialiseJson(queries),
@@ -203,8 +203,8 @@ pn.data.Server.prototype.query =
  * @return {string} The full uri to the specified server action.
  */
 pn.data.Server.prototype.getFacadeControllerAction_ = function(action) {
-  goog.asserts.assert(goog.isString(this.controller_));
-  goog.asserts.assert(goog.isString(action));
+  pn.ass(goog.isString(this.controller_));
+  pn.ass(goog.isString(action));
 
   return this.controller_ + action;
 };
@@ -216,7 +216,7 @@ pn.data.Server.prototype.getFacadeControllerAction_ = function(action) {
  * @return {{type:string, entityJson:string}}
  */
 pn.data.Server.prototype.getEntityJson_ = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   return {
     'type': entity.type,
@@ -236,10 +236,10 @@ pn.data.Server.prototype.getEntityJson_ = function(entity) {
  *    show loading panel), default is false.
  */
 pn.data.Server.prototype.ajax_ = function(uri, data, success, failure, opt_bg) {
-  goog.asserts.assert(goog.isString(uri));
-  goog.asserts.assert(goog.isObject(data));
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
+  pn.ass(goog.isString(uri));
+  pn.ass(goog.isObject(data));
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
 
   var bg = goog.isDef(opt_bg) ? opt_bg : false;
   try { this.ajaxImpl_(uri, data, success, failure, bg); }
@@ -262,11 +262,11 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure, opt_bg) {
  *    show loading panel).
  */
 pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
-  goog.asserts.assert(goog.isString(uri));
-  goog.asserts.assert(goog.isObject(data));
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
-  goog.asserts.assert(goog.isBoolean(bg));
+  pn.ass(goog.isString(uri));
+  pn.ass(goog.isObject(data));
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
+  pn.ass(goog.isBoolean(bg));
 
   var eventType = bg ?
       pn.data.Server.EventType.LOADING_BG :
@@ -278,7 +278,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
       rid = uri + (this.requestCount_++),
       qd = goog.uri.utils.buildQueryDataFromMap(data),
       callback = goog.bind(function(e) {
-        goog.asserts.assert(e.target instanceof goog.net.XhrIo);
+        pn.ass(e.target instanceof goog.net.XhrIo);
         this.reply_(e.target, start, success, failure, bg);
       }, this);
 
@@ -298,11 +298,11 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
  *    show loading panel).
  */
 pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
-  goog.asserts.assert(xhr instanceof goog.net.XhrIo);
-  goog.asserts.assert(goog.isNumber(start) && start > 0);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
-  goog.asserts.assert(goog.isBoolean(bg));
+  pn.ass(xhr instanceof goog.net.XhrIo);
+  pn.ass(goog.isNumber(start) && start > 0);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
+  pn.ass(goog.isBoolean(bg));
 
   try { this.replyImpl_(xhr, start, success, failure, bg); }
   catch (ex) {
@@ -325,11 +325,11 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
  */
 pn.data.Server.prototype.replyImpl_ =
     function(xhr, start, success, failure, bg) {
-  goog.asserts.assert(xhr instanceof goog.net.XhrIo);
-  goog.asserts.assert(goog.isNumber(start) && start > 0);
-  goog.asserts.assert(goog.isFunction(success));
-  goog.asserts.assert(goog.isFunction(failure));
-  goog.asserts.assert(goog.isBoolean(bg));
+  pn.ass(xhr instanceof goog.net.XhrIo);
+  pn.ass(goog.isNumber(start) && start > 0);
+  pn.ass(goog.isFunction(success));
+  pn.ass(goog.isFunction(failure));
+  pn.ass(goog.isBoolean(bg));
 
   if (!xhr.isSuccess()) {
     failure('An unexpected error has occurred.');
@@ -385,7 +385,7 @@ pn.data.Server.RawResponse;
  *    from the server.
  */
 pn.data.Server.Response = function(raw) {
-  goog.asserts.assert(goog.isObject(raw));
+  pn.ass(goog.isObject(raw));
 
   /** @type {Array.<pn.data.Server.Update>} */
   this.updates = raw['Updates'] ? goog.array.map(raw['Updates'],
@@ -417,16 +417,16 @@ pn.data.Server.Response = function(raw) {
         return acc;
       }, {}) : null;
 
-  goog.asserts.assert(this.updates === null || goog.isArray(this.updates));
-  goog.asserts.assert(goog.isNumber(this.lastUpdate));
-  goog.asserts.assert(
+  pn.ass(this.updates === null || goog.isArray(this.updates));
+  pn.ass(goog.isNumber(this.lastUpdate));
+  pn.ass(
       this.responseEntity === null ||
       this.responseEntity instanceof pn.data.Entity);
-  goog.asserts.assert(
+  pn.ass(
       this.ajaxData === null ||
       goog.isObject(this.ajaxData) ||
       goog.isString(this.ajaxData));
-  goog.asserts.assert(
+  pn.ass(
       goog.isString(this.error) ||
       goog.isDefAndNotNull(this.ajaxData) ||
       goog.isDefAndNotNull(this.responseEntity) ||
@@ -441,7 +441,7 @@ pn.data.Server.Response = function(raw) {
  *    the server.
  */
 pn.data.Server.Update = function(raw) {
-  goog.asserts.assert(goog.isObject(raw));
+  pn.ass(goog.isObject(raw));
 
   /** @type {string} */
   this.queryId = raw['QueryId'];
@@ -464,12 +464,12 @@ pn.data.Server.Update = function(raw) {
           /** @type {!Object} */ (pn.json.parseJson(raw['Entity']))) :
       null;
 
-  goog.asserts.assert(goog.isNumber(this.id));
-  goog.asserts.assert(goog.isString(this.entityType));
-  goog.asserts.assert(this.type === 'create' ||
+  pn.ass(goog.isNumber(this.id));
+  pn.ass(goog.isString(this.entityType));
+  pn.ass(this.type === 'create' ||
       this.type === 'update' || this.type === 'delete');
-  goog.asserts.assert(this.type !== 'delete' || this.entity === null);
-  goog.asserts.assert(this.type === 'delete' ||
+  pn.ass(this.type !== 'delete' || this.entity === null);
+  pn.ass(this.type === 'delete' ||
       this.entity instanceof pn.data.Entity);
 };
 

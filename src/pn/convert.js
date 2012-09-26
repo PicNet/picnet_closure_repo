@@ -10,7 +10,7 @@ goog.provide('pn.convert');
  * @return {string} The dollar / cents string.
  */
 pn.convert.centsToCurrency = function(cents) {
-  goog.asserts.assert(goog.isNumber(cents));
+  pn.ass(goog.isNumber(cents));
   var actualDollars = Math.floor(cents / 100);
   var actualCents = Math.floor(cents % 100);
   return '$' + actualDollars + '.' + goog.string.padNumber(actualCents, 2);
@@ -22,7 +22,7 @@ pn.convert.centsToCurrency = function(cents) {
  * @return {number} The cents value amount.
  */
 pn.convert.currencyToCents = function(currency) {
-  goog.asserts.assert(goog.isDefAndNotNull(currency));
+  pn.ass(goog.isDefAndNotNull(currency));
   if (goog.isNumber(currency)) return /** @type {number} */ (currency);
 
   if (currency.indexOf('$') === 0) currency = currency.substring(1);
@@ -38,7 +38,7 @@ pn.convert.currencyToCents = function(currency) {
  * @return {number} The number of minutes form 00:00.
  */
 pn.convert.timeToMinutes = function(time) {
-  goog.asserts.assert(goog.isDefAndNotNull(time));
+  pn.ass(goog.isDefAndNotNull(time));
   var hour = parseInt(time, 10);
   var minutes = parseInt(time.split(':')[1], 10);
   var isPm = goog.string.endsWith(time, 'PM') && hour !== 12;

@@ -31,7 +31,7 @@ pn.model.Timer = function() {
 
 /** @param {!pn.model.ModelBase} model The model to register. */
 pn.model.Timer.prototype.register = function(model) {
-  goog.asserts.assert(model instanceof pn.model.ModelBase);
+  pn.ass(model instanceof pn.model.ModelBase);
   this.models_.push(model);
   if (this.intervalId_) { return; }
   this.startTimer_();
@@ -40,7 +40,7 @@ pn.model.Timer.prototype.register = function(model) {
 
 /** @param {!pn.model.ModelBase} model The model to deregister. */
 pn.model.Timer.prototype.deregister = function(model) {
-  goog.asserts.assert(model instanceof pn.model.ModelBase);
+  pn.ass(model instanceof pn.model.ModelBase);
   var idx = this.models_.pnindexOf(model);
   this.models_.splice(idx, 1);
   if (this.models_.length) return;

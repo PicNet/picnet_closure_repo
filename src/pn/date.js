@@ -37,7 +37,7 @@ pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
  * @return {boolean} Wether the specified date is a weekday.
  */
 pn.date.isWeekday = function(date) {
-  goog.asserts.assert(date);
+  pn.ass(date);
 
   var day = date.getIsoWeekday();
   return day !== goog.date.weekDay.SAT && day !== goog.date.weekDay.SUN;
@@ -59,7 +59,7 @@ pn.date.isWeekend = function(date) {
  * @return {boolean} Wether the specified date is today.
  */
 pn.date.isToday = function(date) {
-  goog.asserts.assert(date);
+  pn.ass(date);
 
   return goog.date.isSameDay(date);
 };
@@ -70,7 +70,7 @@ pn.date.isToday = function(date) {
  * @return {boolean} Wether the specified date is in the future.
  */
 pn.date.isFuture = function(date) {
-  goog.asserts.assert(date);
+  pn.ass(date);
 
   var now = new Date(goog.now());
   if (goog.date.isSameDay(date, now)) return false;
@@ -83,7 +83,7 @@ pn.date.isFuture = function(date) {
  * @return {boolean} Wether the specified date is in the past.
  */
 pn.date.isPast = function(date) {
-  goog.asserts.assert(date);
+  pn.ass(date);
 
   var now = new Date(goog.now());
   if (goog.date.isSameDay(date, now)) return false;

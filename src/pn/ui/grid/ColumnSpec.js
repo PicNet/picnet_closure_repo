@@ -25,9 +25,9 @@ goog.require('pn.ui.BaseFieldSpec');
  *    the entity being displayed.
  */
 pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
-  goog.asserts.assert(id);
-  goog.asserts.assert(props);
-  goog.asserts.assert(entitySpec);
+  pn.ass(id);
+  pn.ass(props);
+  pn.ass(entitySpec);
 
   pn.ui.BaseFieldSpec.call(this, id, entitySpec);
 
@@ -111,7 +111,7 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
  *    this column.
  */
 pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
-  goog.asserts.assert(!this.renderer);
+  pn.ass(!this.renderer);
 
   var schemaType;
   if (this.id.indexOf('.') > 0) {

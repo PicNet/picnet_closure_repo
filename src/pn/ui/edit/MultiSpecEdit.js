@@ -36,10 +36,10 @@ goog.require('pn.ui.grid.Grid');
  *    defines things like commands for the entire UI, etc.
  */
 pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
-  goog.asserts.assert(cache);
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(specs);
-  goog.asserts.assert(mainSpecId);
+  pn.ass(cache);
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(specs);
+  pn.ass(mainSpecId);
 
   pn.ui.edit.CommandsComponent.call(this, specs[mainSpecId], entity, cache);
 

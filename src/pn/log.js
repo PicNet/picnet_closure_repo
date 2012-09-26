@@ -36,7 +36,7 @@ pn.log.isInitialised_ = false;
  * Initialised the log utilities.  This is done lazily internally.
  */
 pn.log.initialise_ = function() {
-  goog.asserts.assert(!pn.log.isInitialised_);
+  pn.ass(!pn.log.isInitialised_);
   pn.log.isInitialised_ = true;
 
   new goog.debug.Console().setCapturing(true);

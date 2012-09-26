@@ -26,9 +26,9 @@ goog.provide('pn.ui.edit.FieldSpec.Renderer');
  *    the entity being displayed.
  */
 pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
-  goog.asserts.assert(id);
-  goog.asserts.assert(props);
-  goog.asserts.assert(entitySpec);
+  pn.ass(id);
+  pn.ass(props);
+  pn.ass(entitySpec);
 
   pn.ui.BaseFieldSpec.call(this, id, entitySpec);
 
@@ -168,7 +168,7 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
 
   if (!this.renderer) {
     this.renderer = this.getDefaultRenderer();
-    goog.asserts.assert(this.renderer);
+    pn.ass(this.renderer);
   }
 };
 

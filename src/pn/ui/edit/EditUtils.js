@@ -12,7 +12,7 @@ goog.require('goog.dom');
  *    visible.
  */
 pn.ui.edit.EditUtils.isShown = function(control, id) {
-  goog.asserts.assert(control, 'control is null - id: ' + id);
+  pn.ass(control, 'control is null - id: ' + id);
 
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
   return !!parent && goog.style.isElementShown(parent);
@@ -26,7 +26,7 @@ pn.ui.edit.EditUtils.isShown = function(control, id) {
  * @param {boolean} visible Wether to show or hide the element.
  */
 pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
-  goog.asserts.assert(control,
+  pn.ass(control,
       'Could not find a component for field: ' + id);
 
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
@@ -42,7 +42,7 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
  * @return {!Element} The parent container of the speicified field id.
  */
 pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
-  goog.asserts.assert(control, 'control is null - id: ' + id);
+  pn.ass(control, 'control is null - id: ' + id);
 
   var element = control.getElement ? control.getElement() : control;
   var isControlId = id.indexOf('___') >= 0;

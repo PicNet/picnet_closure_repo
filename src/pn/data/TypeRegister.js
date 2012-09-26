@@ -16,8 +16,8 @@ pn.data.TypeRegister.types_ = {};
  * @param {pn.data.Entity.EntityType} ctor The entity type ctor.
  */
 pn.data.TypeRegister.register = function(name, ctor) {
-  goog.asserts.assert(goog.isString(name));
-  goog.asserts.assert(goog.isFunction(ctor));
+  pn.ass(goog.isString(name));
+  pn.ass(goog.isFunction(ctor));
 
   pn.data.TypeRegister.types_[name] = ctor;
 };
@@ -29,10 +29,10 @@ pn.data.TypeRegister.register = function(name, ctor) {
  *    specified entity type.
  */
 pn.data.TypeRegister.fromName = function(name) {
-  goog.asserts.assert(goog.isString(name));
+  pn.ass(goog.isString(name));
 
   var ctor = pn.data.TypeRegister.types_[name];
-  goog.asserts.assert(ctor, 'Could not find entity factory of type: ' + name);
+  pn.ass(ctor, 'Could not find entity factory of type: ' + name);
 
   return ctor;
 };
@@ -61,8 +61,8 @@ pn.data.TypeRegister.create = function(type, raw) {
  * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntities = function(type, data) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(goog.isObject(data));
+  pn.ass(goog.isString(type));
+  pn.ass(goog.isObject(data));
 
   var action = goog.partial(pn.data.TypeRegister.parseEntity, type);
   return data.pnmap(action);
@@ -75,8 +75,8 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
  * @return {pn.data.Entity} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntity = function(type, data) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(goog.isObject(data));
+  pn.ass(goog.isString(type));
+  pn.ass(goog.isObject(data));
 
   var ctor = pn.data.TypeRegister.fromName(type);
   return new ctor(data);
@@ -90,8 +90,8 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
  * @return {pn.data.FieldSchema} The field schema of the specified field.
  */
 pn.data.TypeRegister.getFieldSchema = function(type, property) {
-  goog.asserts.assert(goog.isString(type), '"type" not specified');
-  goog.asserts.assert(goog.isString(property), '"property" not specified');
+  pn.ass(goog.isString(type), '"type" not specified');
+  pn.ass(goog.isString(property), '"property" not specified');
 
   return pn.data.TypeRegister.fromName(type).prototype.getFieldSchema(property);
 };

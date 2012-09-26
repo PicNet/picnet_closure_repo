@@ -26,8 +26,8 @@ goog.require('pn.data.EntityUtils');
 pn.ui.BaseFieldSpec = function(id, entitySpec) {
   goog.Disposable.call(this);
 
-  goog.asserts.assert(id);
-  goog.asserts.assert(entitySpec);
+  pn.ass(id);
+  pn.ass(entitySpec);
 
   /**
    * The ID of this field or column.  An ID must be unique within a parent
@@ -98,7 +98,7 @@ goog.inherits(pn.ui.BaseFieldSpec, goog.Disposable);
  *    explicitally set.
  */
 pn.ui.BaseFieldSpec.prototype.extend = function(props) {
-  goog.asserts.assert(goog.isObject(props));
+  pn.ass(goog.isObject(props));
 
   goog.object.extend(this, props);
 
@@ -160,8 +160,8 @@ pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
  * @return {string} The final entity type in this entity path.
  */
 pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(steps.length);
+  pn.ass(goog.isString(type));
+  pn.ass(steps.length);
   steps = goog.array.clone(steps);
 
   var ltype = type;

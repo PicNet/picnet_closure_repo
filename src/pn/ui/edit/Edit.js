@@ -35,9 +35,9 @@ goog.require('pn.ui.soy');
  *    entities.
  */
 pn.ui.edit.Edit = function(spec, entity, cache) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(cache);
+  pn.ass(spec);
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(cache);
 
   pn.ui.edit.CommandsComponent.call(this, spec, entity, cache);
 

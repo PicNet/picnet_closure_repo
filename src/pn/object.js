@@ -13,8 +13,8 @@ goog.provide('pn.object');
  * @param {...Object} var_args The objects from which values will be copied.
  */
 pn.object.uniqueExtend = function(target, var_args) {
-  goog.asserts.assert(target);
-  goog.asserts.assert(arguments.length > 1);
+  pn.ass(target);
+  pn.ass(arguments.length > 1);
   var args = goog.array.clone(arguments);
   var keys = [];
   args.pnforEach(function(o) {

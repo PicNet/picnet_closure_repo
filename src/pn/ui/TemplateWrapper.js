@@ -19,9 +19,9 @@ goog.require('pn.ui.IDirtyAware');
  *    specified html.
  */
 pn.ui.TemplateWrapper = function(html, idOfParent, component) {
-  goog.asserts.assert(html);
-  goog.asserts.assert(idOfParent);
-  goog.asserts.assert(component);
+  pn.ass(html);
+  pn.ass(idOfParent);
+  pn.ass(component);
 
   goog.ui.Component.call(this);
 

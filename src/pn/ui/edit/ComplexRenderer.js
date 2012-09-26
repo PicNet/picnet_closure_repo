@@ -11,7 +11,7 @@ goog.require('goog.ui.Component');
  * @param {!pn.data.Entity} entity The entity being edited.
  */
 pn.ui.edit.ComplexRenderer = function(entity) {
-  goog.asserts.assert(entity);
+  pn.ass(entity);
 
   goog.ui.Component.call(this);
 

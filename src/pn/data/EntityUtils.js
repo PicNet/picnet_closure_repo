@@ -30,10 +30,10 @@ pn.data.EntityUtils.isNew = function(entity) {
  */
 pn.data.EntityUtils.getEntityDisplayValue =
     function(cache, path, type, target, opt_parentField) {
-  goog.asserts.assert(cache);
-  goog.asserts.assert(path);
-  goog.asserts.assert(type);
-  goog.asserts.assert(target);
+  pn.ass(cache);
+  pn.ass(path);
+  pn.ass(type);
+  pn.ass(target);
 
   var cacheKey = path + '_cache';
   if (goog.isDef(target[cacheKey])) return target[cacheKey];
@@ -61,10 +61,10 @@ pn.data.EntityUtils.getEntityDisplayValue =
  */
 pn.data.EntityUtils.getTargetEntity =
     function(cache, path, type, target, opt_parentField) {
-  goog.asserts.assert(cache);
-  goog.asserts.assert(path);
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(target);
+  pn.ass(cache);
+  pn.ass(path);
+  pn.ass(goog.isString(type));
+  pn.ass(target);
 
   // Lets always work with arrays just to simplify
   if (!goog.isArray(target)) { target = [target]; }
@@ -123,8 +123,8 @@ pn.data.EntityUtils.getFromEntities = function(entities, property) {
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.getTypeProperty = function(type, property) {
-  goog.asserts.assert(goog.isString(type), '"type" not specified');
-  goog.asserts.assert(goog.isString(property), '"property" not specified');
+  pn.ass(goog.isString(type), '"type" not specified');
+  pn.ass(goog.isString(property), '"property" not specified');
 
   var fs = pn.data.TypeRegister.getFieldSchema(type, property);
   return /** @type {string} */ (fs.entityType);
@@ -139,8 +139,8 @@ pn.data.EntityUtils.getTypeProperty = function(type, property) {
  *    parameter or the property itself.
  */
 pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
-  goog.asserts.assert(goog.isString(type), '"type" not specified');
-  goog.asserts.assert(goog.isString(property), '"property" not specified');
+  pn.ass(goog.isString(type), '"type" not specified');
+  pn.ass(goog.isString(property), '"property" not specified');
 
   if (!pn.data.EntityUtils.isRelationshipProperty(property)) return null;
 
@@ -156,7 +156,7 @@ pn.data.EntityUtils.tryGetTypeProperty = function(type, property) {
  *    property.
  */
 pn.data.EntityUtils.isRelationshipProperty = function(property) {
-  goog.asserts.assert(property);
+  pn.ass(property);
 
   return property !== 'ID' &&
       (goog.string.endsWith(property, 'ID') ||
@@ -170,7 +170,7 @@ pn.data.EntityUtils.isRelationshipProperty = function(property) {
  * @return {boolean} Wether the specified property is a parent property.
  */
 pn.data.EntityUtils.isParentProperty = function(property) {
-  goog.asserts.assert(property);
+  pn.ass(property);
   return property !== 'ID' && goog.string.endsWith(property, 'ID');
 };
 
@@ -181,7 +181,7 @@ pn.data.EntityUtils.isParentProperty = function(property) {
  * @return {boolean} Wether the specified property is a children property.
  */
 pn.data.EntityUtils.isChildrenProperty = function(property) {
-  goog.asserts.assert(property);
+  pn.ass(property);
   return goog.string.endsWith(property, 'Entities');
 };
 
@@ -191,8 +191,8 @@ pn.data.EntityUtils.isChildrenProperty = function(property) {
  * @param {!Array.<!Object>} list The entities to order.
  */
 pn.data.EntityUtils.orderEntities = function(type, list) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(list);
+  pn.ass(goog.isString(type));
+  pn.ass(list);
   if (!list.length) return;
 
   var template = list[0];
@@ -220,8 +220,8 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
  * @return {string} The name of the given value in the specified enumeration.
  */
 pn.data.EntityUtils.getEnumName = function(enumeration, val) {
-  goog.asserts.assert(goog.isObject(enumeration));
-  goog.asserts.assert(goog.isNumber(val));
+  pn.ass(goog.isObject(enumeration));
+  pn.ass(goog.isNumber(val));
 
   for (var name in enumeration) {
     var evald = enumeration[name];

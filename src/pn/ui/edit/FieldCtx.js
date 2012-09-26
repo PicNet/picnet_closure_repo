@@ -16,8 +16,8 @@ goog.require('pn.ui.grid.ColumnRenderers');
  * @param {!pn.data.BaseDalCache} cache The current cache.
  */
 pn.ui.edit.FieldCtx = function(spec, cache) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(cache);
+  pn.ass(spec);
+  pn.ass(cache);
 
   goog.Disposable.call(this);
 
@@ -67,7 +67,7 @@ pn.ui.edit.FieldCtx.ID_COUNTER_ = 0;
  * @return {boolean} Wether this field is editable.
  */
 pn.ui.edit.FieldCtx.prototype.isEditable = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   return !this.spec.readonly && !this.spec.tableType &&
       (this.spec.showOnAdd || !pn.data.EntityUtils.isNew(entity));
@@ -122,7 +122,7 @@ pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
  * @return {*} The value of  this field.
  */
 pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   var prop = this.spec.dataProperty;
   var v = entity[prop];
@@ -148,7 +148,7 @@ pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
  * @return {*} The display value of this field.
  */
 pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
@@ -166,8 +166,8 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
  *    different than the entity value).
  */
 pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
-  goog.asserts.assert(control);
+  pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(control);
 
   if (!this.isShown(control)) return false;
 
@@ -230,7 +230,7 @@ pn.ui.edit.FieldCtx.prototype.getValidationErrors = function(control) {
  * @return {*} The default value of  this field.
  */
 pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
-  goog.asserts.assert(goog.isDefAndNotNull(this.spec.defaultValue));
+  pn.ass(goog.isDefAndNotNull(this.spec.defaultValue));
 
   var val = this.spec.defaultValue;
   if (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty)) {

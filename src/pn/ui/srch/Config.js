@@ -13,8 +13,8 @@ goog.require('pn.ui.edit.Config');
  *    specifications that describes all fields to be searched.
  */
 pn.ui.srch.Config = function(type, fCtxs) {
-  goog.asserts.assert(type);
-  goog.asserts.assert(fCtxs.length > 0);
+  pn.ass(type);
+  pn.ass(fCtxs.length > 0);
 
   pn.ui.edit.Config.call(this, fCtxs, []);
 

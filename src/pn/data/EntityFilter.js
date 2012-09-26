@@ -67,8 +67,8 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
 pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
-  goog.asserts.assert(entity);
-  goog.asserts.assert(filters);
+  pn.ass(entity);
+  pn.ass(filters);
 
   this.dbg_('filterEntity: ', filters);
   for (var filterId in filters) {
@@ -95,7 +95,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  */
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
     function(filterValue, entity, fieldId) {
-  goog.asserts.assert(goog.isDefAndNotNull(filterValue));
+  pn.ass(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (filterValue === '0') return true;
 

@@ -12,8 +12,8 @@ goog.require('pn.json');
  * @param {string=} opt_linq The optional linq query text to filter the query.
  */
 pn.data.Query = function(type, opt_linq) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(!goog.isDef(opt_linq) || goog.isString(opt_linq));
+  pn.ass(goog.isString(type));
+  pn.ass(!goog.isDef(opt_linq) || goog.isString(opt_linq));
 
   /**
    * @type {string}
@@ -33,8 +33,8 @@ pn.data.Query = function(type, opt_linq) {
 
 /** @override */
 pn.data.Query.prototype.toString = function() {
-  goog.asserts.assert(goog.isString(this.Type));
-  goog.asserts.assert(goog.isString(this.Linq));
+  pn.ass(goog.isString(this.Type));
+  pn.ass(goog.isString(this.Linq));
 
   return this.Type + ':' + this.Linq;
 };
@@ -45,7 +45,7 @@ pn.data.Query.prototype.toString = function() {
  * @return {!pn.data.Query} The parsed query object.
  */
 pn.data.Query.fromString = function(str) {
-  goog.asserts.assert(goog.isString(str));
+  pn.ass(goog.isString(str));
 
   var tokens = str.split(':');
   return new pn.data.Query(tokens[0], tokens[1]);

@@ -16,7 +16,7 @@ goog.require('pn.ui.grid.Grid');
  * @param {!Element} parent The main view parent.
  */
 pn.ui.ViewMgr = function(parent) {
-  goog.asserts.assert(parent);
+  pn.ass(parent);
 
   goog.events.EventHandler.call(this, this);
 
@@ -37,8 +37,8 @@ goog.inherits(pn.ui.ViewMgr, goog.events.EventHandler);
 
 /** @param {goog.ui.Component|Node} component The component to display. */
 pn.ui.ViewMgr.prototype.showComponent = function(component) {
-  goog.asserts.assert(component);
-  goog.asserts.assert(this.parent_);
+  pn.ass(component);
+  pn.ass(this.parent_);
 
   this.clearExistingState_();
   this.currentView_ = component;
@@ -61,9 +61,9 @@ pn.ui.ViewMgr.prototype.showComponent = function(component) {
  *    entities.
  */
 pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
-  goog.asserts.assert(spec && spec.type);
-  goog.asserts.assert(cache);
-  goog.asserts.assert(entity);
+  pn.ass(spec && spec.type);
+  pn.ass(cache);
+  pn.ass(entity);
 
   var edit = new pn.ui.edit.Edit(spec, entity, cache);
   this.showComponent(edit);

@@ -61,7 +61,7 @@ goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
  * @return {boolean} Wether the item meets the quick filters.
  */
 pn.ui.grid.QuickFind.prototype.matches = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   for (var columnId in this.filters_) {
     if (columnId && this.filters_[columnId]) {

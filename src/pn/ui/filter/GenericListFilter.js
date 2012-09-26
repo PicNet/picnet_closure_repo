@@ -520,7 +520,7 @@ pn.ui.filter.GenericListFilter.prototype.hideElementsThatDoNotMatchAnyFiltres_ =
  */
 pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
     function(state, item, textTokens, opt_txt) {
-  goog.asserts.assert(!goog.isDef(opt_txt) || goog.isArray(opt_txt));
+  pn.ass(!goog.isDef(opt_txt) || goog.isArray(opt_txt));
 
   var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
   var txt = opt_txt || [goog.string.trim(goog.dom.getTextContent(item))];
@@ -555,7 +555,7 @@ pn.ui.filter.GenericListFilter.prototype.checkMatchingElementCallback_ =
  */
 pn.ui.filter.GenericListFilter.prototype.doesTextContainText =
     function(text, textTokens, exact) {
-  goog.asserts.assert(goog.isArray(text));
+  pn.ass(goog.isArray(text));
 
   return this.search_.doesTextMatchTokens(text, textTokens, exact);
 };

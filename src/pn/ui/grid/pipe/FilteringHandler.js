@@ -118,7 +118,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.onCustomEvent =
  * @param {function(Object):boolean} filter The filter function to apply.
  */
 pn.ui.grid.pipe.FilteringHandler.prototype.filter_ = function(filter) {
-  goog.asserts.assert(goog.isFunction(filter));
+  pn.ass(goog.isFunction(filter));
 
   this.log_.info('Filtering grid');
   this.currentFilter_ = filter;

@@ -14,7 +14,7 @@ goog.require('pn.log');
  *    before they are considered stale and invalidated. 0 is indefinate.
  */
 pn.data.MemCache = function(maxAgeMinutes) {
-  goog.asserts.assert(goog.isNumber(maxAgeMinutes) && maxAgeMinutes >= 0);
+  pn.ass(goog.isNumber(maxAgeMinutes) && maxAgeMinutes >= 0);
 
   goog.Disposable.call(this);
 
@@ -56,7 +56,7 @@ goog.inherits(pn.data.MemCache, goog.Disposable);
  * @return {Array} The cached list or null/undefined if its not cached.
  */
 pn.data.MemCache.prototype.getCachedList = function(type) {
-  goog.asserts.assert(goog.isString(type));
+  pn.ass(goog.isString(type));
   return this.cache_[type];
 };
 
@@ -65,7 +65,7 @@ pn.data.MemCache.prototype.getCachedList = function(type) {
  * @param {string} type The type of entity list to load.
  */
 pn.data.MemCache.prototype.invalidateCache = function(type) {
-  goog.asserts.assert(goog.isString(type));
+  pn.ass(goog.isString(type));
 
   delete this.cache_[type];
 };
@@ -76,8 +76,8 @@ pn.data.MemCache.prototype.invalidateCache = function(type) {
  * @param {Array} lst The loaded list from the server.
  */
 pn.data.MemCache.prototype.updateList = function(type, lst) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(goog.isArray(lst));
+  pn.ass(goog.isString(type));
+  pn.ass(goog.isArray(lst));
 
   this.cache_[type] = lst;
   this.cache_[type].lastUpdate = goog.now();
@@ -90,7 +90,7 @@ pn.data.MemCache.prototype.updateList = function(type, lst) {
  * @return {!Object.<!Array.<!Object>>} The cached lists in the current cache.
  */
 pn.data.MemCache.prototype.getLists = function(types) {
-  goog.asserts.assert(goog.isArray(types));
+  pn.ass(goog.isArray(types));
 
   if (!types.length) return {};
 
@@ -98,7 +98,7 @@ pn.data.MemCache.prototype.getLists = function(types) {
   var cached = {};
 
   types.pnforEach(function(type) {
-    goog.asserts.assert(goog.isString(type));
+    pn.ass(goog.isString(type));
 
     if (goog.isDef(this.cache_[type])) { cached[type] = this.cache_[type]; }
   }, this);
@@ -108,7 +108,7 @@ pn.data.MemCache.prototype.getLists = function(types) {
 
 /** @private */
 pn.data.MemCache.prototype.invalidateCache_ = function() {
-  goog.asserts.assert(this.maxAgeMinutes_ > 0);
+  pn.ass(this.maxAgeMinutes_ > 0);
 
   var now = goog.now();
   var max = now - (this.maxAgeMinutes_ * 60 * 1000);

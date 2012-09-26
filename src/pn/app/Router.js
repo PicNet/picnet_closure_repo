@@ -68,7 +68,7 @@ goog.inherits(pn.app.Router, goog.events.EventTarget);
  *    application.
  */
 pn.app.Router.prototype.initialise = function(routes) {
-  goog.asserts.assert(routes);
+  pn.ass(routes);
 
   this.routes_ = routes;
   if (!this.defaultRoute) {
@@ -93,7 +93,7 @@ pn.app.Router.prototype.back = function() {
  * @param {!string} path The token to replace the current token with.
  */
 pn.app.Router.prototype.replaceLocation = function(path) {
-  goog.asserts.assert(path);
+  pn.ass(path);
 
   this.stack_.pop();
   if (path !== this.history_.getToken()) {
@@ -118,7 +118,7 @@ pn.app.Router.prototype.replaceLocation = function(path) {
  * @param {!string} path The full route path to navigate to.
  */
 pn.app.Router.prototype.navigate = function(path) {
-  goog.asserts.assert(path);
+  pn.ass(path);
   this.log_.fine('path: ' + path + ' added to history stack');
   // This will trigger a NAVIGATE event which will inturn call navigateImpl_
   this.history_.setToken(path);

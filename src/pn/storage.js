@@ -10,7 +10,7 @@ goog.provide('pn.storage');
  * @return {string} The value from storage.
  */
 pn.storage.get = function(id) {
-  goog.asserts.assert(id && goog.isString(id));
+  pn.ass(id && goog.isString(id));
   var ls = window['localStorage'];
   return ls ? ls[id] : goog.net.cookies.get(id);
 };
@@ -21,8 +21,8 @@ pn.storage.get = function(id) {
  * @param {string} value The value of the item to store in local storage.
  */
 pn.storage.set = function(id, value) {
-  goog.asserts.assert(id && goog.isString(id));
-  goog.asserts.assert(goog.isString(value));
+  pn.ass(id && goog.isString(id));
+  pn.ass(goog.isString(value));
 
   var ls = window['localStorage'];
   if (ls) ls[id] = value;
@@ -34,7 +34,7 @@ pn.storage.set = function(id, value) {
  * Clear the current site local storage.
  */
 pn.storage.clear = function() {
-  goog.asserts.assert(goog.isDef(window['localStorage']));
+  pn.ass(goog.isDef(window['localStorage']));
   for (var key in window['localStorage']) {
     delete window['localStorage'][key];
   }

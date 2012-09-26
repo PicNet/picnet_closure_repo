@@ -12,8 +12,8 @@ goog.provide('pn.ui.edit.cmd.Command');
  *    to firing this event.  If not valid then the event will not fire.
  */
 pn.ui.edit.cmd.Command = function(name, eventType, opt_validate) {
-  goog.asserts.assert(name);
-  goog.asserts.assert(eventType);
+  pn.ass(name);
+  pn.ass(eventType);
 
   /** @type {string} */
   this.name = name;

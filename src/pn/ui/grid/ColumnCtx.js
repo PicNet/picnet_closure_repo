@@ -16,8 +16,8 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @param {!pn.data.BaseDalCache} cache The current cache.
  */
 pn.ui.grid.ColumnCtx = function(spec, cache) {
-  goog.asserts.assert(spec);
-  goog.asserts.assert(cache);
+  pn.ass(spec);
+  pn.ass(cache);
 
   goog.Disposable.call(this);
 
@@ -59,7 +59,7 @@ pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
  * @return {*} The compareable value of this column, suitable for sorting, etc.
  */
 pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   if (this.spec.sortValueRenderer) {
     return this.spec.sortValueRenderer(this, entity);
@@ -80,7 +80,7 @@ pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
  * @return {*} The value of  this field.
  */
 pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
-  goog.asserts.assert(entity instanceof pn.data.Entity);
+  pn.ass(entity instanceof pn.data.Entity);
 
   return entity[this.spec.dataProperty];
 };

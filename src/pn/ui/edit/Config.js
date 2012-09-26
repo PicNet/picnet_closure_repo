@@ -28,7 +28,7 @@ goog.require('pn.ui.edit.cmd.SaveCommand');
  */
 pn.ui.edit.Config =
     function(fCtxs, opt_commands, opt_template, opt_interceptor) {
-  goog.asserts.assert(fCtxs);
+  pn.ass(fCtxs);
 
   goog.Disposable.call(this);
 

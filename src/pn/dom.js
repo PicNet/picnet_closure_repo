@@ -13,7 +13,7 @@ goog.provide('pn.dom');
  * @return {!Element} the element with the specified ID.
  */
 pn.dom.getElement = function(id) {
-  goog.asserts.assert(id);
+  pn.ass(id);
 
   var e = goog.dom.getElement(id);
   if (!e) throw new Error('Could not find the DOM element with ID: ' + id);
@@ -38,7 +38,7 @@ pn.dom.get = pn.dom.getElement;
  * @return {number} The width in pixels.
  */
 pn.dom.getComputedPixelWidth = function(e) {
-  goog.asserts.assert(e);
+  pn.ass(e);
   var w = goog.style.getComputedStyle(e, 'width');
   while (w.indexOf('px') < 0) {
     e = /** @type {!Element} */ (e.parentNode);
@@ -56,8 +56,8 @@ pn.dom.getComputedPixelWidth = function(e) {
  * @return {!Element} The created node from the specified HTML.
  */
 pn.dom.addHtml = function(parent, html) {
-  goog.asserts.assert(parent);
-  goog.asserts.assert(goog.isString(html));
+  pn.ass(parent);
+  pn.ass(goog.isString(html));
 
   var el = pn.dom.htmlToEl(html);
   goog.dom.appendChild(parent, el);
@@ -70,7 +70,7 @@ pn.dom.addHtml = function(parent, html) {
  * @return {!Element} The generated document fragment element.
  */
 pn.dom.htmlToEl = function(html) {
-  goog.asserts.assert(goog.isString(html));
+  pn.ass(goog.isString(html));
 
   return /** @type {!Element} */ (goog.dom.htmlToDocumentFragment(html));
 };

@@ -14,7 +14,7 @@ goog.require('pn.model.TimerInstance');
  *    check (default = true).
  */
 pn.model.Model = function(src, opt_register) {
-  goog.asserts.assert(goog.isObject(src));
+  pn.ass(goog.isObject(src));
 
   pn.model.ModelBase.call(this);
 

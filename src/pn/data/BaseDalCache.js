@@ -8,8 +8,8 @@ goog.provide('pn.data.BaseDalCache');
  * @param {!Object.<!Array.<pn.data.Entity>>} cache The current context cache.
  */
 pn.data.BaseDalCache = function(cache) {
-  goog.asserts.assert(goog.isObject(cache));
-  goog.asserts.assert(goog.object.every(cache, goog.isArray));
+  pn.ass(goog.isObject(cache));
+  pn.ass(goog.object.every(cache, goog.isArray));
 
   /**
    * @private
@@ -20,7 +20,7 @@ pn.data.BaseDalCache = function(cache) {
   //  map keys.
   for (var key in cache) {
     var type = key.split(':')[0];
-    goog.asserts.assert(!(type in this.cache_));
+    pn.ass(!(type in this.cache_));
     this.cache_[type] = cache[key];
   }
 };
@@ -31,7 +31,7 @@ pn.data.BaseDalCache = function(cache) {
  * @return {!Array.<pn.data.Entity>} The entities of the specified type.
  */
 pn.data.BaseDalCache.prototype.get = function(type) {
-  goog.asserts.assert(goog.isString(type));
+  pn.ass(goog.isString(type));
 
   var arr = this.cache_[type];
   if (!arr) throw new Error('Type: ' + type + ' not in cache.');
@@ -45,8 +45,8 @@ pn.data.BaseDalCache.prototype.get = function(type) {
  * @return {!pn.data.Entity} The entities of the specified type.
  */
 pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(goog.isNumber(id) && id > 0);
+  pn.ass(goog.isString(type));
+  pn.ass(goog.isNumber(id) && id > 0);
 
   return this.get(type).pnsingle(function(e) { return e.id === id; });
 };

@@ -10,7 +10,7 @@ goog.provide('pn.model.EventType');
  * @param {!Array} changes The details of the changes to this model.
  */
 pn.model.ChangeEvent = function(changes) {
-  goog.asserts.assert(changes);
+  pn.ass(changes);
 
   goog.events.Event.call(this, pn.model.EventType.CHANGE);
 

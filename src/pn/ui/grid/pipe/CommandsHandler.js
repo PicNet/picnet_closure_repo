@@ -47,7 +47,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCustomEvent =
  * @param {pn.ui.grid.cmd.Command} cmd The command to listen to.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
-  goog.asserts.assert(cmd);
+  pn.ass(cmd);
 
   this.listen(cmd, cmd.eventType, this.onCommand_);
 };
@@ -58,7 +58,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
  * @param {goog.events.Event} event The command event fired.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.onCommand_ = function(event) {
-  goog.asserts.assert(event);
+  pn.ass(event);
 
   if (this.cfg.publishEventBusEvents) this.doPubSubEvent_(event);
   else this.pipeline.raiseGridEvent(event);
@@ -71,7 +71,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCommand_ = function(event) {
  *    pn.app.ctx.pub publishing mechanism.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
-  goog.asserts.assert(e);
+  pn.ass(e);
 
   var ae = pn.app.AppEvents;
   switch (e.type) {

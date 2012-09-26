@@ -107,8 +107,8 @@ pn.ui.edit.AddOnFlyDialog.prototype.validate_ = function(edit) {
  * @param {string} type The entity type being added.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
-  goog.asserts.assert(edit);
-  goog.asserts.assert(goog.isString(type));
+  pn.ass(edit);
+  pn.ass(goog.isString(type));
 
   var entity = edit.getCurrentFormData();
   var cb = goog.bind(this.entityAdded_, this, type);
@@ -122,8 +122,8 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
  * @param {(string|Object)} saved The server error or the entity that was added.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
-  goog.asserts.assert(goog.isString(type));
-  goog.asserts.assert(saved);
+  pn.ass(goog.isString(type));
+  pn.ass(saved);
 
   if (goog.isString(saved)) {
     pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, saved);

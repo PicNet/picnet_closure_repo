@@ -21,8 +21,8 @@ goog.require('pn.ui.srch.SearchPanel');
  *    entities.
  */
 pn.ui.srch.SearchGrid = function(spec, list, cache) {
-  goog.asserts.assert(list);
-  goog.asserts.assert(cache);
+  pn.ass(list);
+  pn.ass(cache);
 
   goog.ui.Component.call(this);
 
@@ -78,7 +78,7 @@ goog.inherits(pn.ui.srch.SearchGrid, goog.ui.Component);
  * @param {!Object.<string>} filters The filters to use to filter the list by.
  */
 pn.ui.srch.SearchGrid.prototype.filterList = function(filters) {
-  goog.asserts.assert(filters);
+  pn.ass(filters);
   this.grid_.fireCustomPipelineEvent('filter', goog.bind(function(entity) {
     return this.filter_.filterEntity(entity, filters);
   }, this));

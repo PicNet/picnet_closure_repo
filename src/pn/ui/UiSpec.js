@@ -31,7 +31,7 @@ goog.require('pn.ui.srch.Config');
  *    If this is omitted it is inferred from the type.
  */
 pn.ui.UiSpec = function(id, opt_type, opt_name) {
-  goog.asserts.assert(id);
+  pn.ass(id);
 
   goog.Disposable.call(this);
 

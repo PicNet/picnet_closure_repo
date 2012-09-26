@@ -50,7 +50,7 @@ goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
  * @param {string} idprop The ID property name .
  */
 pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
-  goog.asserts.assert(goog.isArray(items));
+  pn.ass(goog.isArray(items));
 
   this.origSetItems_(items.pnclone(), idprop);
 
@@ -69,7 +69,7 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
  *    changed items in the grid.
  */
 pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
-  goog.asserts.assert(e);
+  pn.ass(e);
 
   var changes = e.changes;
   this.beginUpdate();

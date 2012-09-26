@@ -67,7 +67,7 @@ pn.ui.KeyShortcutMgr.prototype.register = function(id, shortcuts, callback) {
 
 /** @param {string} id The ID of the shortcut to deregister. */
 pn.ui.KeyShortcutMgr.prototype.unregister = function(id) {
-  goog.asserts.assert(this.idShortcuts_[id]);
+  pn.ass(this.idShortcuts_[id]);
 
   var shortcuts = this.idShortcuts_[id];
   goog.array.forEach(
@@ -83,7 +83,7 @@ pn.ui.KeyShortcutMgr.prototype.unregister = function(id) {
  * @param {boolean} enable Wether to enable or disable the ID.
  */
 pn.ui.KeyShortcutMgr.prototype.setEnabled = function(id, enable) {
-  goog.asserts.assert(this.callbacks_[id]);
+  pn.ass(this.callbacks_[id]);
 
   this.callbacks_[id].disabled = !enable;
 };

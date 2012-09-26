@@ -14,9 +14,9 @@ goog.provide('pn.data.FieldSchema');
  *     string fields).
  */
 pn.data.FieldSchema = function(name, type, entityType, allowNull, length) {
-  goog.asserts.assert(name);
-  goog.asserts.assert(type);
-  goog.asserts.assert(
+  pn.ass(name);
+  pn.ass(type);
+  pn.ass(
       !entityType || goog.isString(entityType) || goog.isObject(entityType));
 
   /**

@@ -113,8 +113,8 @@ pn.ui.grid.ColumnRenderers.parentColumnRenderer = function(cctx, entity) {
  */
 pn.ui.grid.ColumnRenderers.entitiesCsvRenderer =
     function(cctx, parentField, entity) {
-  goog.asserts.assert(entity);
-  goog.asserts.assert(cctx.spec.id.indexOf('Entities') >= 0);
+  pn.ass(entity);
+  pn.ass(cctx.spec.id.indexOf('Entities') >= 0);
 
   return (pn.data.EntityUtils.getEntityDisplayValue(
       cctx.cache, cctx.spec.displayPath, cctx.spec.entitySpec.type,

@@ -32,7 +32,7 @@ pn.ui.edit.ReadOnlyFields.textField = function(fctx, parent, entity) {
  * @return {string} The html representation of the server side text.
  */
 pn.ui.edit.ReadOnlyFields.toHtmlText = function(text) {
-  goog.asserts.assert(goog.isString(text));
+  pn.ass(goog.isString(text));
   return text.
       replace(/\n/g, '<br/>').
       replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
@@ -156,7 +156,7 @@ pn.ui.edit.ReadOnlyFields.entityParentListField =
  * @return {!Element} The readonly text field control.
  */
 pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
-  goog.asserts.assert(type);
+  pn.ass(type);
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   var val = type === ft.ITEM_LIST ?
       fctx.getDisplayValue(entity) :

@@ -33,7 +33,7 @@ pn.ui.YesNoDialog = function(title, content) {
  * @param {function(boolean):undefined} callback The callback.
  */
 pn.ui.YesNoDialog.prototype.show = function(callback) {
-  goog.asserts.assert(callback);
+  pn.ass(callback);
 
   var dialog = new pn.ui.Dialog();
   dialog.setContent(this.content_);

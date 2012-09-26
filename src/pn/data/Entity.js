@@ -12,8 +12,8 @@ goog.require('pn.data.FieldSchema');
  * @param {number} id The entity id.
  */
 pn.data.Entity = function(type, id) {
-  goog.asserts.assert(goog.isString(type), 'Type [' + type + '] is invalid');
-  goog.asserts.assert(goog.isNumber(id), 'ID [' + id + '] is invalid');
+  pn.ass(goog.isString(type), 'Type [%s] is invalid', type);
+  pn.ass(goog.isNumber(id), 'ID [%s] is invalid', id);
 
   /**
    * @expose

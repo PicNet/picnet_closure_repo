@@ -16,7 +16,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
  *    fly control.
  */
 pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId) {
-  goog.asserts.assert(specId);
+  pn.ass(specId);
 
   pn.ui.edit.ComplexRenderer.call(this, fctx, entity);
 
@@ -62,7 +62,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
 
 /** @override */
 pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
-  goog.asserts.assert(element);
+  pn.ass(element);
   this.setElementInternal(element);
 
   var dom = goog.dom.createDom('div', 'add-on-fly', this.select_, this.add_);

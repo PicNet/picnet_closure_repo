@@ -303,11 +303,11 @@ pn.ui.edit.FieldRenderers.entityParentListField =
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
     function(selectTxt, list, selValue, opt_noneId) {
-  goog.asserts.assert(!selectTxt || goog.isString(selectTxt));
-  goog.asserts.assert(goog.isArray(list));
-  goog.asserts.assert(!goog.isDef(selValue) || goog.isNumber(selValue),
+  pn.ass(!selectTxt || goog.isString(selectTxt));
+  pn.ass(goog.isArray(list));
+  pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
       'Not supported: ' + selValue);
-  goog.asserts.assert(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),
+  pn.ass(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),
       'Not supported: ' + opt_noneId);
 
   var select = goog.dom.createDom('select');
@@ -321,7 +321,7 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
     if (goog.isDef(selValue) && e.id === selValue) {
       opts['selected'] = 'selected'; }
     var txt = e.name ? e.name.toString() : '';
-    goog.asserts.assert(txt !== undefined);
+    pn.ass(txt !== undefined);
 
     if (txt) {
       var option = goog.dom.createDom('option', opts, txt);
@@ -342,13 +342,13 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
  */
 pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
     function(fctx, parent, entity) {
-  goog.asserts.assert(fctx.spec.tableType);
-  goog.asserts.assert(entity.id != 0);
+  pn.ass(fctx.spec.tableType);
+  pn.ass(entity.id != 0);
 
   var parentId = entity.id;
 
   var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache.get(fctx.spec.tableType);
+  var list = fctx.cache.get(/** @type {string} */ (fctx.spec.tableType));
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));

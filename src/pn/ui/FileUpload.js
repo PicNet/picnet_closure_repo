@@ -25,8 +25,8 @@ goog.require('goog.ui.Component');
  *    validator.
  */
 pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
-  goog.asserts.assert(id);
-  goog.asserts.assert(serverAction);
+  pn.ass(id);
+  pn.ass(serverAction);
 
   goog.ui.Component.call(this);
 

@@ -48,7 +48,7 @@ pn.ui.filter.SearchEngine.prototype.matches = function(text, expression) {
  */
 pn.ui.filter.SearchEngine.prototype.doesTextMatchTokens =
     function(textToMatch, postFixTokens, exactMatch) {
-  goog.asserts.assert(goog.isArray(textToMatch));
+  pn.ass(goog.isArray(textToMatch));
 
   return !postFixTokens || textToMatch.pnfindIndex(function(txt) {
     return this.doesTextMatchTokensImpl_(txt, postFixTokens, exactMatch);
@@ -66,7 +66,7 @@ pn.ui.filter.SearchEngine.prototype.doesTextMatchTokens =
  */
 pn.ui.filter.SearchEngine.prototype.doesTextMatchTokensImpl_ =
     function(textToMatch, postFixTokens, exactMatch) {
-  goog.asserts.assert(goog.isString(textToMatch));
+  pn.ass(goog.isString(textToMatch));
 
   textToMatch = exactMatch ? textToMatch : textToMatch.toLowerCase();
   var stackResult = [];

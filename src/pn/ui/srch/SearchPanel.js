@@ -28,7 +28,7 @@ goog.require('pn.ui.grid.Grid');
  *    search on.
  */
 pn.ui.srch.SearchPanel = function(filters, fctxs) {
-  goog.asserts.assert(filters);
+  pn.ass(filters);
 
   goog.ui.Component.call(this);
 
@@ -303,8 +303,8 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
  */
 pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     function(fctx, option) {
-  goog.asserts.assert(fctx);
-  goog.asserts.assert(option);
+  pn.ass(fctx);
+  pn.ass(option);
 
   var FieldBuilder = pn.ui.edit.FieldBuilder;
   var remove = goog.dom.createDom('div', { 'class': 'remove' }, 'Remove');

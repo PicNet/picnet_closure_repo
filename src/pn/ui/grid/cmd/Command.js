@@ -18,8 +18,8 @@ goog.require('pn.ui.grid.cmd.ICommand');
  * @param {string=} opt_tooltip The optional tooltip for this command.
  */
 pn.ui.grid.cmd.Command = function(name, eventType, opt_tooltip) {
-  goog.asserts.assert(name);
-  goog.asserts.assert(eventType);
+  pn.ass(name);
+  pn.ass(eventType);
 
   goog.ui.Component.call(this);
 

@@ -12,7 +12,7 @@ goog.require('pn.ui.grid.pipe.GridHandler');
  * @param {Element} noDataElement The element to show when there is no data.
  */
 pn.ui.grid.pipe.NoDataHandler = function(noDataElement) {
-  goog.asserts.assert(noDataElement);
+  pn.ass(noDataElement);
 
   pn.ui.grid.pipe.GridHandler.call(this);
 

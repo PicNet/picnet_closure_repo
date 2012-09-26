@@ -18,8 +18,8 @@ goog.require('pn.ui.grid.Interceptor');
  *    internal workings of the grid.
  */
 pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
-  goog.asserts.assert(cCtxs.length > 0);
-  goog.asserts.assert(commands);
+  pn.ass(cCtxs.length > 0);
+  pn.ass(commands);
 
   goog.Disposable.call(this);
 

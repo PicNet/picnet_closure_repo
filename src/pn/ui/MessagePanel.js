@@ -61,8 +61,8 @@ pn.ui.MessagePanel.prototype.showError = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showErrors = function(list) {
-  goog.asserts.assert(list.length);
-  goog.asserts.assert(goog.isString(list[0]),
+  pn.ass(list.length);
+  pn.ass(goog.isString(list[0]),
       'Expected array of strings: ' + typeof(list[0]));
   this.showMessage_('<ul><li>' + list.join('</li><li>') +
       '</li></ul>', 'error');
@@ -81,8 +81,8 @@ pn.ui.MessagePanel.prototype.showMessage = function(message) {
  * @param {Array.<string>} list The message list to display.
  */
 pn.ui.MessagePanel.prototype.showMessages = function(list) {
-  goog.asserts.assert(list.length);
-  goog.asserts.assert(goog.isString(list[0]));
+  pn.ass(list.length);
+  pn.ass(goog.isString(list[0]));
 
   this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', 'info');
 };

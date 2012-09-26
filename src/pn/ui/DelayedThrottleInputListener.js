@@ -16,7 +16,7 @@ goog.require('goog.events.EventType');
  * @extends {goog.events.EventTarget}
  */
 pn.ui.DelayedThrottleInputListener = function(delay) {
-  goog.asserts.assert(goog.isNumber(delay));
+  pn.ass(goog.isNumber(delay));
 
   goog.events.EventTarget.call(this);
 
@@ -67,8 +67,8 @@ goog.inherits(pn.ui.DelayedThrottleInputListener, goog.events.EventTarget);
  */
 pn.ui.DelayedThrottleInputListener.prototype.addInput =
     function(inp, opt_eventType) {
-  goog.asserts.assert(inp);
-  goog.asserts.assert(!goog.isDef(opt_eventType) ||
+  pn.ass(inp);
+  pn.ass(!goog.isDef(opt_eventType) ||
       goog.isString(opt_eventType));
 
   var eventType = opt_eventType || this.inferEventType_(inp);
@@ -95,7 +95,7 @@ pn.ui.DelayedThrottleInputListener.prototype.inferEventType_ = function(inp) {
  * @param {!goog.events.Event} e The change/keyup event fired.
  */
 pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
-  goog.asserts.assert(e && e.target);
+  pn.ass(e && e.target);
   this.currentValue_ = e.target.value;
   this.lastInputTime_ = new Date().getTime();
 

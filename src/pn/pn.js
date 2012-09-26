@@ -2,8 +2,13 @@
 goog.provide('pn');
 
 goog.require('goog.array');
+goog.require('goog.asserts');
 goog.require('goog.functions');
 goog.require('goog.object');
+
+////////////////////////////////////////////////////////////////////////////////
+// Misc Static Convenience Helpers
+////////////////////////////////////////////////////////////////////////////////
 
 
 /**
@@ -11,8 +16,84 @@ goog.require('goog.object');
  *    array like) object to turn into an array.
  * @return {!Array} The array object from the given arguments object.
  */
-pn.toarr = function(args) {
-  return goog.array.clone(args);
+pn.toarr = function(args) { return goog.array.clone(args); };
+
+
+/**
+ * Checks if the condition evaluates to true if goog.asserts.ENABLE_ASSERTS is
+ * true.
+ * @param {*} condition The condition to check.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.ass = function(condition, opt_message, var_args) {
+  goog.asserts.assert.apply(null, arguments);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assStr = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isString, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assNum = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isNumber, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assObj = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isObject, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assArr = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isArray, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assFun = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isFunction, arguments); };
+
+
+/**
+ * @private
+ * @param {function(*):boolean} predicate The actual function that checks the
+ *    given value for matching type.
+ * @param {!goog.array.ArrayLike} args The arguments passed to the original
+ *    function.  These arguments should be (val, opt_message, var_args).
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assType_ = function(predicate, args) {
+  var arr = pn.toarr(args);
+  arr[0] = predicate(arr[0]);
+  pn.ass.apply(null, arr);
 };
 
 
