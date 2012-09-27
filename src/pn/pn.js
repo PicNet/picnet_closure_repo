@@ -91,9 +91,8 @@ pn.assFun = function(val, opt_message, var_args)
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
 pn.assType_ = function(predicate, args) {
-  var arr = pn.toarr(args);
-  arr[0] = predicate(arr[0]);
-  pn.ass.apply(null, arr);
+  args[0] = predicate(args[0]);
+  pn.ass.apply(null, args);
 };
 
 
