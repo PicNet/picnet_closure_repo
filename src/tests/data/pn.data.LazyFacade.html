@@ -59,20 +59,21 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
 
   var calls = server.calls;
   assertEquals(5, calls.length); // GetEntity does not call the server
-  var assertCall = function(idx, method) {
+  var assertCall = function(idx, method, opt_explastUpdate) {
     var call = calls[idx];
     var args = goog.array.clone(call.args);
     assertEquals(method, call.method);
     if (method.indexOf('uery') >= 0) {
       var lastUpdate = args[args.length - 3];
-      assertTrue(lastUpdate > new Date(2050, 1, 1).getTime());
+      if (!opt_explastUpdate) assertTrue(lastUpdate > new Date(2050, 1, 1).getTime());
+      else assertTrue(lastUpdate < new Date(2050, 1, 1).getTime());
     }
   };
   assertCall(0, 'ajax');
   assertCall(1, 'createEntity');
   assertCall(2, 'updateEntity');
   assertCall(3, 'deleteEntity');
-  assertCall(4, 'query');
+  assertCall(4, 'query', true);
 };
 
 var testNewQueryGoesToServer = function() {

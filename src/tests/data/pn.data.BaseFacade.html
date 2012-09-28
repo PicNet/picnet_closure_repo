@@ -21,6 +21,7 @@ var facade,
     origsync;
 
 var setUp = function() {
+  localStorage.clear();
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};
@@ -36,6 +37,10 @@ var setUp = function() {
     delete entity.ID;
     return entity;
   };
+};
+
+var tearDown = function() {
+  localStorage.clear();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

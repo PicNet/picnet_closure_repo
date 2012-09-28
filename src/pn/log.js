@@ -5,6 +5,7 @@ goog.require('goog.debug.FancyWindow');
 goog.require('goog.debug.LogManager');
 goog.require('goog.debug.Logger');
 goog.require('goog.object');
+goog.require('pn');
 
 goog.provide('pn.log');
 

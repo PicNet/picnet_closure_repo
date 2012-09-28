@@ -146,7 +146,7 @@ pn.testing.MockServer.prototype.doSuccess_ = function(resData, callback) {
   rawEntity.ID = rawEntity.id;
 
   var response = new pn.data.Server.Response({
-    lastUpdate: 1,
+    LastUpdate: 1,
     Updates: this.nextServerResponseUpdates,
     ResponseEntityType: rawEntity.type,
     ResponseEntity: rawEntity
@@ -165,7 +165,7 @@ pn.testing.MockServer.prototype.doSuccess_ = function(resData, callback) {
  */
 pn.testing.MockServer.prototype.doAjaxSuccess_ = function(resData, callback) {
   var response = new pn.data.Server.Response({
-    lastUpdate: 1,
+    LastUpdate: 1,
     Updates: this.nextServerResponseUpdates,
     AjaxResponse: resData
   });
@@ -183,7 +183,7 @@ pn.testing.MockServer.prototype.doAjaxSuccess_ = function(resData, callback) {
  */
 pn.testing.MockServer.prototype.doQuerySuccess_ = function(results, callback) {
   var response = new pn.data.Server.Response({
-    lastUpdate: 1,
+    LastUpdate: 1,
     Updates: this.nextServerResponseUpdates
   });
   response.queryResults = results;
