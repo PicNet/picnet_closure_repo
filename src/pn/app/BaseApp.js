@@ -104,8 +104,6 @@ pn.app.BaseApp = function(opt_cfg) {
 
   // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
   this.pub = goog.bind(this.bus_.pub, this.bus_);
-
-  this.init_();
 };
 goog.inherits(pn.app.BaseApp, goog.Disposable);
 
@@ -166,8 +164,11 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/** @private */
-pn.app.BaseApp.prototype.init_ = function() {
+/**
+ * Needs to be called by implementing class to initialise the application.
+ * @protected
+ */
+pn.app.BaseApp.prototype.init = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
   var sset = pn.data.Server.EventType;
