@@ -7,7 +7,7 @@ goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.LinqParser');
 goog.require('pn.data.Query');
 goog.require('pn.json');
-goog.require('pn.storage');
+goog.require('pn.log');
 
 
 
@@ -17,6 +17,14 @@ goog.require('pn.storage');
  */
 pn.data.LocalCache = function() {
   goog.Disposable.call(this);
+  if (!window['localStorage'])
+    throw new Error('The current browser is not supported');
+
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.log.getLogger('pn.data.LocalCache', false);
 
   /**
    * @private
@@ -43,6 +51,7 @@ pn.data.LocalCache = function() {
    */
   this.cachedQueries_ = [];
 
+  this.checkDbVer_();
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
@@ -228,16 +237,30 @@ pn.data.LocalCache.prototype.getLastUpdate = function() {
 /** @param {number} lastUpdate The last updated date in millis. */
 pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
   this.lastUpdate_ = lastUpdate;
-  pn.storage.set(this.STORE_PREFIX_ + 'version', lastUpdate.toString());
+  window['localStorage'][this.STORE_PREFIX_ + 'last'] = lastUpdate.toString();
+};
+
+
+/** @private */
+pn.data.LocalCache.prototype.checkDbVer_ = function() {
+  var actual = pn.app.ctx.cfg.dbver;
+  var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
+  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = actual;
+  if (!actual || !exp || actual === exp) return;
+
+  this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
+      subs(exp, actual));
+
+  window['localStorage'].clear();
 };
 
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
-  var cachedtime = pn.storage.get(this.STORE_PREFIX_ + 'version');
+  var cachedtime = window['localStorage'][this.STORE_PREFIX_ + 'last'];
   this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
 
-  var queriesJson = pn.storage.get(this.STORE_PREFIX_ + 'queries');
+  var queriesJson = window['localStorage'][this.STORE_PREFIX_ + 'queries'];
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
     this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
@@ -247,7 +270,7 @@ pn.data.LocalCache.prototype.init_ = function() {
     }, {});
   } else { this.cachedQueries_ = {}; }
   var parse = goog.bind(function(type) {
-    return pn.json.parseJson(pn.storage.get(this.STORE_PREFIX_ + type));
+    return pn.json.parseJson(window['localStorage'][this.STORE_PREFIX_ + type]);
   }, this);
 
   if (!queriesJson) {
@@ -290,12 +313,12 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list, true);
-  pn.storage.set(this.STORE_PREFIX_ + type, json);
+  window['localStorage'][this.STORE_PREFIX_ + type] = json;
 };
 
 
 /** @private */
 pn.data.LocalCache.prototype.flushCachedQueries_ = function() {
   var json = pn.json.serialiseJson(goog.object.getKeys(this.cachedQueries_));
-  pn.storage.set(this.STORE_PREFIX_ + 'queries', json);
+  window['localStorage'][this.STORE_PREFIX_ + 'queries'] = json;
 };

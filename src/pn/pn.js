@@ -111,6 +111,22 @@ pn.aargs_ = function(thiso, args) {
   return arr;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// String prototype enhancements
+////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * Does simple python-style string substitution.
+ * subs("foo%s hot%s", "bar", "dog") becomes "foobar hotdog".
+ * @this {string} The string containing the pattern.
+ * @param {...*} var_args The items to substitute into the pattern.
+ * @return {string} A copy of {@code str} in which each occurrence of
+ *     {@code %s} has been replaced an argument from {@code var_args}.
+ */
+String.prototype.subs = function(var_args) {
+  return goog.string.subs.apply(null, pn.aargs_(this, arguments));
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Array prototype enhancements
