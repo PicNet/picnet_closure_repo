@@ -293,7 +293,7 @@ Array.prototype.pnsingle = function(f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
   if (arr.length !== 1) {
-    throw 'Expected single match got: ' + arr.length;
+    throw new Error('Expected single match got: ' + arr.length);
   }
   return arr[0];
 };
@@ -338,7 +338,7 @@ Array.prototype.pnfirstOrNull = function(opt_f, opt_obj) {
 Array.prototype.pnfirst = function(opt_f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length < 1) throw 'Expected at least one element';
+  if (arr.length < 1) throw new Error('Expected at least one element');
   return arr[0];
 };
 
@@ -382,7 +382,7 @@ Array.prototype.pnlastOrNull = function(opt_f, opt_obj) {
 Array.prototype.pnlast = function(opt_f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
-  if (arr.length < 1) throw 'Expected at least one element';
+  if (arr.length < 1) throw new Error('Expected at least one element');
   return arr[arr.length - 1];
 };
 
