@@ -94,33 +94,24 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
 
-  var rawList = fctx.cache[entityType];
-  if (!rawList) throw new Error('Expected access to "' + entityType +
+  var list = fctx.cache[entityType];
+  if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
-  var namep = cascading ? entityType + 'Name' : steps.join('.');
-  var nameAndIds = {};
-  goog.array.forEach(rawList, function(e) {
-    var id = e['ID'];
-    var name = pn.data.EntityUtils.getEntityDisplayValue(fctx.cache, namep, e);
-    if (name in nameAndIds) {
-      nameAndIds[name].push(id);
-    } else {
-      nameAndIds[name] = [id];
-    }
-  });
-  var uniqueList = [];
-  goog.object.forEach(nameAndIds, function(ids, name) {
-    goog.asserts.assert(ids.length);
-
-    var id = ids.length === 1 ? ids[0] : '[' + ids.join(',') + ']';
-    uniqueList.push({ 'ID': id, 'Name': name });
+  var namePath = cascading ? entityType + 'Name' : steps.join('.');
+  var namerenderer = fctx.spec.additionalProperties.nameRenderer ||
+      pn.data.EntityUtils.getEntityDisplayValue;
+  list = goog.array.map(list, function(e) {
+    return {
+      'ID': e['ID'],
+      'Name': namerenderer(fctx.cache, namePath, e)
+    };
   });
   var sort = fctx.spec.additionalProperties['sortedValues'];
   if (!goog.isDef(sort)) sort = true;
   return pn.ui.edit.FieldBuilder.createDropDownList_(
-      selTxt, uniqueList, fctx.getEntityValue(), sort);
+      selTxt, list, fctx.getEntityValue(), sort);
 };
 
 
