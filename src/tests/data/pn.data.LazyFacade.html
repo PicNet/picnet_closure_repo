@@ -22,6 +22,8 @@ var facade,
     xhrs;
 
 var setUp = function() {
+  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
+
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};

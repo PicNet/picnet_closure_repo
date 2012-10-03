@@ -21,6 +21,8 @@ var facade,
     origsync;
 
 var setUp = function() {
+  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
+
   localStorage.clear();
   xhrs = [];
   events = [];
