@@ -135,10 +135,10 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     } else if (renderer === FieldRenderers.centsRenderer) {
       ev = pn.convert.centsToCurrency(ev);
     }
-    var eval = ev.toString().toLowerCase();
-    var result = exact ? eval === fv : this.search_.matches(eval, fv);
+    var evaled = ev.toString().toLowerCase();
+    var result = exact ? evaled === fv : this.search_.matches(evaled, fv);
 
-    this.dbg_('matchesFilter_.matcher result: ', result, ' eval: ', eval,
+    this.dbg_('matchesFilter_.matcher result: ', result, ' evaled: ', evaled,
         ' exact: ', exact, ' fv: ', fv);
     return result;
   };

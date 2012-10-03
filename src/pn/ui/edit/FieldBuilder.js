@@ -23,7 +23,7 @@ pn.ui.edit.FieldBuilder.getFieldLabel = function(fctx) {
 
 
 /**
- * @param {Element|goog.ui.Component} inp The input field.
+ * @param {Element|goog.ui.Component|Text} inp The input field.
  * @param {Object=} opt_target The optional 'entity' target to inject values
  *    into if required.
  * @return {string} The value in the specified field.

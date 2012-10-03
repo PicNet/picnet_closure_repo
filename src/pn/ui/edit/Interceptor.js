@@ -31,7 +31,7 @@ pn.ui.edit.Interceptor = function() {
   this.cache = {};
 
   /**
-   * @type {!Object.<!(Element|goog.ui.Component)>} The components map for
+   * @type {!Object.<!(Element|goog.ui.Component|Text)>} The components map for
    *    this UI.
    */
   this.components = {};
@@ -61,8 +61,8 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  *    currently being shown.
  * @param {!Object} entity The entity that was just decorated.
  * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
- * @param {!Object.<Element|goog.ui.Component>} components The components map
- *    for this UI.
+ * @param {!Object.<Element|goog.ui.Component|Text>} components The components
+ *    map for this UI.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
@@ -77,7 +77,7 @@ pn.ui.edit.Interceptor.prototype.init =
   /** @type {!Object.<!Array.<!Object>>} */
   this.cache = cache;
 
-  /** @type {!Object.<Element|goog.ui.Component>} */
+  /** @type {!Object.<Element|goog.ui.Component|Text>} */
   this.components = components;
 
   /** @type {!Object.<goog.ui.Button>} */
@@ -153,7 +153,7 @@ pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
 
 /**
  * @private
- * @param {!(Element|goog.ui.Component)} el The element to get the parent
+ * @param {!(Element|goog.ui.Component|Text)} el The element to get the parent
  *    container element for.
  * @param {string} id The id of the element we are looking for.
  * @return {!Element} The parent container of the speicified field id.

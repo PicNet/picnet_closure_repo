@@ -40,7 +40,7 @@ pn.ui.FieldCtx = function(spec, entity, cache) {
   /** @type {pn.app.schema.FieldSchema} */
   this.schema = pn.app.ctx.schema.getFieldSchema(spec);
 
-  /** @type {(Element|goog.ui.Component)} */
+  /** @type {(Element|goog.ui.Component|Text)} */
   this.component = null;
 
   /** @type {Element} */
