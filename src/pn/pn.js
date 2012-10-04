@@ -83,6 +83,26 @@ pn.assFun = function(val, opt_message, var_args)
 
 
 /**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assDefAndNotNull = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isDefAndNotNull, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assDef = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isDef, arguments); };
+
+
+/**
  * @private
  * @param {function(*):boolean} predicate The actual function that checks the
  *    given value for matching type.
@@ -124,7 +144,7 @@ pn.aargs_ = function(thiso, args) {
  * @return {string} A copy of {@code str} in which each occurrence of
  *     {@code %s} has been replaced an argument from {@code var_args}.
  */
-String.prototype.subs = function(var_args) {
+String.prototype.pnsubs = function(var_args) {
   return goog.string.subs.apply(null, pn.aargs_(this, arguments));
 };
 

@@ -1,6 +1,7 @@
 - Demos are all broken
 
-- Should try to remove dependency on pn.app.ctx everywhere.  Ugly
+- Should try to remove dependency on pn.app.ctx everywhere.  Ugly. Start with
+    LocalCache appVer usage.
 
 - Replace Element|Text|goog.ui.Control everywhere with a typedef
 - Remove jquery externs dependency in QuickFind.js

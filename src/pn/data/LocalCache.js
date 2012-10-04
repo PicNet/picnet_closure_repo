@@ -156,12 +156,12 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
   var entities = this.cache_[entity.type];
-  // If this entity already exists in cache (was added locally) then we can 
+  // If this entity already exists in cache (was added locally) then we can
   // just update it.
   var idx = entities.pnfindIndex(function(e2) {
     return e2.id === entity.id;
   });
-  if (idx < 0) idx = entities.length;  
+  if (idx < 0) idx = entities.length;
   entities[idx] = entity;
   this.flush_(entity.type);
 };
@@ -256,7 +256,7 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
   if (!actual || !exp || actual === exp) return;
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      subs(exp, actual));
+      pnsubs(exp, actual));
 
   window['localStorage'].clear();
 };
