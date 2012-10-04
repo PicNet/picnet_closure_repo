@@ -1,0 +1,61 @@
+﻿<!doctype html>
+<html>
+  <head></head>   
+  <body>    
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+goog.require('pn');
+goog.require('pn.alg.bt');
+    </script>
+    <script>
+var test_tree_is_ordered_as_expected = function() {
+  var bt = new pn.alg.bt();
+  bt.add(new pn.alg.btnode(4));
+  bt.add(new pn.alg.btnode(2));
+  bt.add(new pn.alg.btnode(7));
+  bt.add(new pn.alg.btnode(17));
+  bt.add(new pn.alg.btnode(22));
+
+  assertTreeInvariants(bt);
+};
+
+var test_large_random_tree_is_ordered_as_expected = function() {
+  var bt = new pn.alg.bt();
+  for (var i = 0; i < 100000; i++) {
+    bt.add(new pn.alg.btnode(Math.random()));
+  }
+  assertTreeInvariants(bt);
+};
+
+var assertTreeInvariants = function(bt) { assertNodeInvariant(bt, 1); };
+
+var assertNodeInvariant = function(bt, idx) {
+  var node = bt.arr_[idx];
+  assertNotNull(node);
+  var lefti = idx * 2;
+  var righti = idx * 2 + 1;
+  var left = bt.arr_[lefti];
+  var right = bt.arr_[righti];
+  if (left) {
+    // console.log('node.key: %s left.key: %s nodei: %s lefti: %s'.
+    //    pnsubs(node.key, left.key, idx, lefti));
+    if (node.key < left.key)
+      fail('node.key: %s left.key: %s nodei: %s lefti: %s', 
+            node.key, left.key, idx, lefti);
+    assertNodeInvariant(bt, lefti);
+  }
+  if (right) {
+    // console.log('node.key: %s right.key: %s nodei: %s righti: %s'.
+    //    pnsubs(node.key, right.key, idx, righti));
+    if (node.key < right.key) 
+      fail('node.key: %s right.key: %s nodei: %s righti: %s', 
+            node.key, right.key, idx, righti);
+    assertNodeInvariant(bt, righti);
+  }
+};
+    </script>    
+  </body>
+</html>
