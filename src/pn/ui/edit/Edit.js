@@ -190,7 +190,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     if (!f.renderer || f.renderer.showLabel !== false) {
       var required = !!f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(
-          f.id, required, f.name, f.className, f.tooltip);
+          f.id, required, f.name, f.className, f.tooltip, f.footnote);
       this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
@@ -199,6 +199,10 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
 
     var input = fb.createAndAttach(f, fieldParent, this.data_, this.cache_);
+    if (f.footnote) {
+      var footnote = goog.dom.createDom('div', 'footnote', '* ' + f.footnote);
+      goog.dom.appendChild(fieldParent, footnote);
+    }
     this.disposables_.push(input);
     if (f.oncreate) {
       f.oncreate(input, this.data_);

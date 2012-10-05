@@ -50,6 +50,9 @@ pn.ui.edit.Field = function(id, name) {
   /** @type {string} */
   this.tooltip = '';
 
+  /** @type {string} */
+  this.footnote = '';
+
   /** @type {*} */
   this.defaultValue = undefined;
 
