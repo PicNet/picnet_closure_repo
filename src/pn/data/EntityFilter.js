@@ -192,9 +192,9 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
   var matcher = function(ev, fv, exact) {
     this.dbg_('matchesFilter_.matcher: ' + goog.debug.expose(arguments));
     if (ev['ID']) return ev['ID'].toString() === fv;
-    var eval = ev.toString().toLowerCase();
-    if (exact) return eval === fv;
-    else return eval.indexOf(fv) >= 0;
+    var evaled = ev.toString().toLowerCase();
+    if (exact) return evaled === fv;
+    else return evaled.indexOf(fv) >= 0;
   };
   if (goog.isArray(entityValue)) {
     return goog.array.findIndex(entityValue, function(entity) {

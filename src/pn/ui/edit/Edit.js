@@ -190,7 +190,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     if (!f.renderer || f.renderer.showLabel !== false) {
       var required = !!f.validator && f.validator.required;
       fieldParent = fb.getFieldLabel(
-          f.id, required, f.name, f.className, f.tooltip, f.footnote);
+          f.id, required, f.name, f.className, f.tooltip);
       this.disposables_.push(fieldParent);
       if (fr.hiddenTextField === f.renderer) {
         goog.style.showElement(fieldParent, false);
@@ -230,7 +230,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 /**
  * @private
  * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {!Element} input The element to attach the change listener to.
+ * @param {!(Element|goog.ui.Component)} input The element to attach the 
+ *    change listener to.
  */
 pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
     function(field, input) {
