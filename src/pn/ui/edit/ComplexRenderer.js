@@ -72,6 +72,7 @@ pn.ui.edit.ComplexRenderer.prototype.initialise =
 
 
 /**
+ * @param {Object=} opt_target The entity to push values onto if specified.
  * @return {*} Gets the value in the current editor.
  */
 pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;

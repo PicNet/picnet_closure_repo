@@ -85,7 +85,7 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    */
   this.log_ = pn.LogUtils.getLogger('pn.ui.edit.Edit');
 
-  this.normaliseDateOnlyFields_(data);
+  this.normaliseDateOnlyFields_(data);  
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
@@ -160,7 +160,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(element, div);
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
-  this.decorateFields_(div);
+  this.decorateFields_(div);  
 
   goog.style.showElement(div, true);
 };
@@ -283,19 +283,21 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.data_);
-  goog.object.extend(current, this.getFormData());
+  goog.object.extend(current, this.getFormData(current));
   return current;
 };
 
 
 /**
+ * @param {Object=} opt_target The entity to push values onto if specified.
  * @return {!Object.<*>} The values of each field in the current form.  This
  *    does not include the base data object (this.data_) information.
  */
-pn.ui.edit.Edit.prototype.getFormData = function() {
+pn.ui.edit.Edit.prototype.getFormData = function(opt_target) {
   var current = {};
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(
+        this.inputs_[f.id], opt_target);
     if (val !== undefined) current[f.dataColumn] = val;
   }, this);
   return current;
@@ -334,6 +336,8 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
   if (this.cfg_.interceptor) this.cfg_.interceptor.init(this.data_);
+  // Hack to handle other Timer.callOnce hack in BaseMaterialRenderer:270
+  goog.Timer.callOnce(this.resetDirty, 2, this);
 };
 
 
