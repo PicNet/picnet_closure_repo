@@ -33,7 +33,7 @@ pn.alg.bt = function(opt_keyComparer) {
  */
 pn.alg.bt.prototype.add = function(node) {
   pn.ass(node instanceof pn.alg.btnode);
-  
+
   this.arr_[this.N_] = node;
   this.swim_(this.N_++);
 };

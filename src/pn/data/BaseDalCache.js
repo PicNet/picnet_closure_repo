@@ -16,6 +16,13 @@ pn.data.BaseDalCache = function(cache) {
    * @type {!Object.<!Array.<pn.data.Entity>>}
    */
   this.cache_ = {};
+
+  /**
+   * @private
+   * @type {!Object.<!pn.data.Entity>}
+   */
+  this.memoized_ = {};
+
   // This handles LocalCache style query results that have Type:Linq
   //  map keys.
   for (var key in cache) {
@@ -47,6 +54,10 @@ pn.data.BaseDalCache.prototype.get = function(type) {
 pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.assStr(type);
   pn.ass(goog.isNumber(id) && id > 0);
+  var key = type + '_' + id;
 
-  return this.get(type).pnsingle(function(e) { return e.id === id; });
+  if (key in this.memoized_) return this.memoized_[key];
+
+  return this.memoized_[key] =
+      this.get(type).pnsingle(function(e) { return e.id === id; });
 };

@@ -4,6 +4,7 @@ goog.provide('pn.alg.heapsort');
 goog.require('pn.alg.bt');
 
 
+/** @param {!Array} arr The array to sort in place. */
 pn.alg.heapsort.sort = function(arr) {
   arr.splice(0, 0, null); // Start the index at 1
   var bt = new pn.alg.bt();
