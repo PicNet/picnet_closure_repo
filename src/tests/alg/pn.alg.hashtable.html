@@ -1,0 +1,116 @@
+﻿<!doctype html>
+<html>
+  <head></head>   
+  <body>    
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+goog.require('pn');
+goog.require('pn.alg.hashtable');
+    </script>
+    <script>
+var test_simple_get_and_set_operations = function() {
+  var ht = new pn.alg.hashtable();
+  ht.set(1, {value:1});
+  ht.set('key2', 'val2');
+  ht.set({key:3}, 3);
+
+  assertEquals(3, ht.count());
+
+  assertEquals(1, ht.get(1).value);
+  assertEquals('val2', ht.get('key2'));
+  assertEquals(3, ht.get({key:3}));
+};
+
+var test_remove = function() {
+  var ht = new pn.alg.hashtable();
+  ht.set(1, 1);
+  assertEquals(1, ht.count());
+  
+  assertTrue(ht.remove(1));
+  assertEquals(0, ht.count());
+  assertEquals(null, ht.get(1));
+
+  assertFalse(ht.remove(1));
+  assertEquals(0, ht.count());
+};
+
+var test_performance_for_int_keys = function() {  
+  performanceTest('INT KEYS', getKeys(
+      function(i) { return i + Math.floor(Math.random() * 999999); }));
+};
+
+var test_performance_for_string_keys = function() {  
+  performanceTest('STRING KEYS', getKeys(
+      function(i) { return i + Math.floor(Math.random() * 999999).toString(); }));
+};
+
+var test_performance_for_object_keys = function() {  
+  performanceTest('OBJECT KEYS', 
+      getKeys(function(i) { return {key: i + Math.floor(Math.random() * 999999)}; }),
+      function(k) { return JSON.stringify(k); });
+};
+
+var getKeys = function(strategy) {
+  var keys = [],  
+      len = 100000;
+  for (var i = 0; i < len; i++) {    
+    keys.push(strategy(i));
+  }
+  return keys;
+};
+
+var performanceTest = function(description, keys, opt_omapKey) {
+  var ht = new pn.alg.hashtable(),
+      omap = {},
+      i,
+      start,
+      len = 100000,
+      omapkey = opt_omapKey || function(k) { return k; };
+
+  for (i = 0; i < len; i++) {
+    var key = Math.floor(Math.random() * 999999);
+    keys.push(key);
+  }
+  start = goog.now();
+  for (i = 0; i < len; i++) { omap[omapkey(keys[i])] = 1; }  
+  var omap_set_ms = goog.now() - start;
+  
+  start = goog.now();
+  for (i = 0; i < len; i++) { ht.set(keys[i], 1); }
+  var ht_set_ms = goog.now() - start;
+
+  start = goog.now();
+  for (i = 0; i < len; i++) { omap[omapkey(keys[i])]; }
+  var omap_get_ms = goog.now() - start;
+
+  start = goog.now();
+  for (i = 0; i < len; i++) { ht.get(keys[i]); }
+  var ht_get_ms = goog.now() - start;
+
+  start = goog.now();
+  for (i = 0; i < len; i++) { delete omap[omapkey(keys[i])]; }
+  var omap_remove_ms = goog.now() - start;
+
+  start = goog.now();
+  for (i = 0; i < len; i++) { ht.remove(keys[i]); }
+  var ht_remove_ms = goog.now() - start;
+
+  var msg = 'Hashtable (%s) Performance Summary (%s iterations)\n\n'+
+        'OBJ LITERAL PERF\n' + 
+        'Set: %sms\n' +
+        'Get: %sms\n' +
+        'Remove: %sms\n\n' +
+        'HASH TABLE PERF\n' + 
+        'Set: %sms\n' +
+        'Get: %sms\n' +
+        'Remove: %sms\n';
+  console.log(msg.pnsubs(description, len, omap_set_ms, omap_get_ms, 
+      omap_remove_ms, ht_set_ms, ht_get_ms, ht_remove_ms)
+  ); 
+};
+    </script>    
+  </body>
+</html>
