@@ -34,6 +34,31 @@ pn.data.BaseDalCache = function(cache) {
 
 
 /**
+ * @param {string} key The key to get from the memoized cache.
+ * @return {Object} The cached value with the specified key.
+ */
+pn.data.BaseDalCache.prototype.getMemoized = function(key) {
+  pn.assStr(key);
+
+  return this.memoized_[key];
+};
+
+
+/**
+ * @param {string} key The key to get from the memoized cache.
+ * @param {T} value The value to memoize.
+ * @return {T} The value stored in the memoized cache.
+ * @template T
+ */
+pn.data.BaseDalCache.prototype.setMemoized = function(key, value) {
+  pn.assStr(key);
+
+  this.memoized_[key] = value;
+  return value;
+};
+
+
+/**
  * @param {string} type The type to retreive from the cache.
  * @return {!Array.<pn.data.Entity>} The entities of the specified type.
  */
@@ -56,8 +81,9 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.ass(goog.isNumber(id) && id > 0);
   var key = type + '_' + id;
 
-  if (key in this.memoized_) return this.memoized_[key];
+  var cached = this.getMemoized(key);
+  if (cached) return /** @type {!pn.data.Entity} */ (cached);
 
-  return this.memoized_[key] =
-      this.get(type).pnsingle(function(e) { return e.id === id; });
+  var result = this.get(type).pnsingle(function(e) { return e.id === id; });
+  return this.setMemoized(key, result);
 };
