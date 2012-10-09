@@ -40,16 +40,12 @@ var assertNodeInvariant = function(bt, idx) {
   var left = bt.arr_[lefti];
   var right = bt.arr_[righti];
   if (left) {
-    // console.log('node.key: %s left.key: %s nodei: %s lefti: %s'.
-    //    pnsubs(node.key, left.key, idx, lefti));
     if (node.key < left.key)
       fail('node.key: %s left.key: %s nodei: %s lefti: %s', 
             node.key, left.key, idx, lefti);
     assertNodeInvariant(bt, lefti);
   }
   if (right) {
-    // console.log('node.key: %s right.key: %s nodei: %s righti: %s'.
-    //    pnsubs(node.key, right.key, idx, righti));
     if (node.key < right.key) 
       fail('node.key: %s right.key: %s nodei: %s righti: %s', 
             node.key, right.key, idx, righti);

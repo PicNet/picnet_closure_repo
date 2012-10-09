@@ -22,7 +22,9 @@ var test_merge = function() { assertAlgorithm(pn.alg.sort.merge); };
 
 var test_quick = function() { assertAlgorithm(pn.alg.sort.quick); };
 
-var test_heap = function() { assertAlgorithm(pn.alg.heapsort.sort); };
+var test_heap = function() { 
+  assertAlgorithm(function(arr) { var hs = new pn.alg.heapsort(arr); hs.sort(); }); 
+};
 
 // Actual Perf: N^2 / 2
 var test_selection_performance_is_quadratic = function() { assertAlgorithmIsQuadratic(pn.alg.sort.selection); };

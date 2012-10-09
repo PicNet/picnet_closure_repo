@@ -18,7 +18,7 @@ goog.require('goog.string.StringBuffer');
  */
 pn.alg.bt = function(opt_keyComparer) {
   this.arr_ = [null];
-  this.N_ = 1;
+  this.size_ = 1;
 
   /**
    * @private
@@ -34,8 +34,8 @@ pn.alg.bt = function(opt_keyComparer) {
 pn.alg.bt.prototype.add = function(node) {
   pn.ass(node instanceof pn.alg.btnode);
 
-  this.arr_[this.N_] = node;
-  this.swim_(this.N_++);
+  this.arr_[this.size_] = node;
+  this.swim_(this.size_++);
 };
 
 
@@ -45,19 +45,19 @@ pn.alg.bt.prototype.add = function(node) {
  * @return {!pn.alg.btnode} The maximum node just removed from this tree.
  */
 pn.alg.bt.prototype.delMax = function() {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
 
   var max = this.arr_[1];
-  this.exch_(1, this.N_ - 1);
+  this.exch_(1, this.size_ - 1);
   this.sink_(1);
-  delete this.arr_[this.N_ + 1];
+  delete this.arr_[this.size_ + 1];
   return max;
 };
 
 
 /** @override */
 pn.alg.bt.prototype.toString = function() {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
 
   var output = new goog.string.StringBuffer();
   this.appendNode_(output, 1, 0);
@@ -75,7 +75,7 @@ pn.alg.bt.prototype.appendNode_ = function(output, idx, depth) {
   pn.ass(output instanceof goog.string.StringBuffer);
   pn.assNum(idx);
   pn.assNum(depth);
-  pn.ass(idx >= 1 && idx < this.N_);
+  pn.ass(idx >= 1 && idx < this.size_);
   pn.ass(depth >= 0);
 
   var node = this.arr_[idx];
@@ -97,9 +97,9 @@ pn.alg.bt.prototype.appendNode_ = function(output, idx, depth) {
  *    location on the tree.
  */
 pn.alg.bt.prototype.swim_ = function(idx) {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
   pn.assNum(idx);
-  pn.ass(idx >= 1 && idx < this.N_);
+  pn.ass(idx >= 1 && idx < this.size_);
 
   while (idx > 1) {
     var half = Math.floor(idx / 2);
@@ -116,16 +116,16 @@ pn.alg.bt.prototype.swim_ = function(idx) {
  *    location on the tree.
  */
 pn.alg.bt.prototype.sink_ = function(idx) {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
   pn.assNum(idx);
-  pn.ass(idx >= 1 && idx < this.N_);
+  pn.ass(idx >= 1 && idx < this.size_);
 
-  var len = this.N_;
+  var len = this.size_;
   while (2 * idx <= len) {
     var j = idx * 2;
     if (j < len && this.less_(j, j + 1)) j++;
     if (!this.less_(idx, j)) break;
-    this.exch(idx, j);
+    this.exch_(idx, j);
     idx = j;
   }
 };
@@ -137,11 +137,11 @@ pn.alg.bt.prototype.sink_ = function(idx) {
  * @param {number} i2 The second index of the node to exchange.
  */
 pn.alg.bt.prototype.exch_ = function(i1, i2) {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
   pn.assNum(i1);
-  pn.ass(i1 >= 1 && i1 < this.N_);
+  pn.ass(i1 >= 1 && i1 < this.size_);
   pn.assNum(i2);
-  pn.ass(i2 >= 1 && i2 < this.N_);
+  //pn.ass(i2 >= 1 && i2 < this.size_);
 
   var tmp = this.arr_[i1];
   this.arr_[i1] = this.arr_[i2];
@@ -157,11 +157,11 @@ pn.alg.bt.prototype.exch_ = function(i1, i2) {
  *    index i2.
  */
 pn.alg.bt.prototype.less_ = function(i1, i2) {
-  pn.ass(this.N_ > 1, 'Tree is empty');
+  pn.ass(this.size_ > 1, 'Tree is empty');
   pn.assNum(i1);
-  pn.ass(i1 >= 1 && i1 < this.N_);
+  pn.ass(i1 >= 1 && i1 < this.size_);
   pn.assNum(i2);
-  pn.ass(i2 >= 1 && i2 < this.N_);
+  //pn.ass(i2 >= 1 && i2 < this.size_);
   return this.arr_[i1].less(this.arr_[i2], this.keyComparer_);
 };
 
