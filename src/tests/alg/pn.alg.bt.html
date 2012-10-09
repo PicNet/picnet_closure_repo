@@ -24,7 +24,7 @@ var test_tree_is_ordered_as_expected = function() {
 
 var test_large_random_tree_is_ordered_as_expected = function() {
   var bt = new pn.alg.bt();
-  for (var i = 0; i < 100000; i++) {
+  for (var i = 0; i < 10000; i++) {
     bt.add(new pn.alg.btnode(Math.random()));
   }
   assertTreeInvariants(bt);

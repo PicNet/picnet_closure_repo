@@ -9,6 +9,7 @@ goog.require('goog.testing.jsunit');
 
 goog.require('pn');
 goog.require('pn.alg.sort');
+goog.require('pn.alg.heapsort');
     </script>
     <script>
 var test_selection = function() { assertAlgorithm(pn.alg.sort.selection); };
@@ -20,6 +21,8 @@ var test_shell = function() { assertAlgorithm(pn.alg.sort.shell); };
 var test_merge = function() { assertAlgorithm(pn.alg.sort.merge); };
 
 var test_quick = function() { assertAlgorithm(pn.alg.sort.quick); };
+
+var test_heap = function() { assertAlgorithm(pn.alg.heapsort.sort); };
 
 // Actual Perf: N^2 / 2
 var test_selection_performance_is_quadratic = function() { assertAlgorithmIsQuadratic(pn.alg.sort.selection); };

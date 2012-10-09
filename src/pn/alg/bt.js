@@ -13,9 +13,18 @@ goog.require('goog.string.StringBuffer');
  *    If a child node is found to have a larger key than its parent then it
  *    must swim to the top of the tree until both its children are smaller.
  * @constructor
+ * @param {function(*, *):number=} opt_keyComparer An optional comparer function
+ *    that returns 0 if values are equal, > 0 if a > b and < 0 if a < b.
  */
-pn.alg.bt = function() {
+pn.alg.bt = function(opt_keyComparer) {
   this.arr_ = [null];
+  this.N_ = 1;
+
+  /**
+   * @private
+   * @type {function(*, *):number}
+   */
+  this.keyComparer_ = opt_keyComparer || null;
 };
 
 
@@ -24,10 +33,9 @@ pn.alg.bt = function() {
  */
 pn.alg.bt.prototype.add = function(node) {
   pn.ass(node instanceof pn.alg.btnode);
-
-  var idx = this.arr_.length;
-  this.arr_[idx] = node;
-  this.swim_(idx);
+  
+  this.arr_[this.N_] = node;
+  this.swim_(this.N_++);
 };
 
 
@@ -37,19 +45,19 @@ pn.alg.bt.prototype.add = function(node) {
  * @return {!pn.alg.btnode} The maximum node just removed from this tree.
  */
 pn.alg.bt.prototype.delMax = function() {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
 
   var max = this.arr_[1];
-  this.exch_(1, this.arr_.length - 1);
+  this.exch_(1, this.N_ - 1);
   this.sink_(1);
-  delete this.arr_[this.arr_.length + 1];
+  delete this.arr_[this.N_ + 1];
   return max;
 };
 
 
 /** @override */
 pn.alg.bt.prototype.toString = function() {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
 
   var output = new goog.string.StringBuffer();
   this.appendNode_(output, 1, 0);
@@ -67,7 +75,7 @@ pn.alg.bt.prototype.appendNode_ = function(output, idx, depth) {
   pn.ass(output instanceof goog.string.StringBuffer);
   pn.assNum(idx);
   pn.assNum(depth);
-  pn.ass(idx >= 1 && idx < this.arr_.length);
+  pn.ass(idx >= 1 && idx < this.N_);
   pn.ass(depth >= 0);
 
   var node = this.arr_[idx];
@@ -89,9 +97,9 @@ pn.alg.bt.prototype.appendNode_ = function(output, idx, depth) {
  *    location on the tree.
  */
 pn.alg.bt.prototype.swim_ = function(idx) {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
   pn.assNum(idx);
-  pn.ass(idx >= 1 && idx < this.arr_.length);
+  pn.ass(idx >= 1 && idx < this.N_);
 
   while (idx > 1) {
     var half = Math.floor(idx / 2);
@@ -108,11 +116,11 @@ pn.alg.bt.prototype.swim_ = function(idx) {
  *    location on the tree.
  */
 pn.alg.bt.prototype.sink_ = function(idx) {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
   pn.assNum(idx);
-  pn.ass(idx >= 1 && idx < this.arr_.length);
+  pn.ass(idx >= 1 && idx < this.N_);
 
-  var len = this.arr_.length;
+  var len = this.N_;
   while (2 * idx <= len) {
     var j = idx * 2;
     if (j < len && this.less_(j, j + 1)) j++;
@@ -129,11 +137,11 @@ pn.alg.bt.prototype.sink_ = function(idx) {
  * @param {number} i2 The second index of the node to exchange.
  */
 pn.alg.bt.prototype.exch_ = function(i1, i2) {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
   pn.assNum(i1);
-  pn.ass(i1 >= 1 && i1 < this.arr_.length);
+  pn.ass(i1 >= 1 && i1 < this.N_);
   pn.assNum(i2);
-  pn.ass(i2 >= 1 && i2 < this.arr_.length);
+  pn.ass(i2 >= 1 && i2 < this.N_);
 
   var tmp = this.arr_[i1];
   this.arr_[i1] = this.arr_[i2];
@@ -149,12 +157,12 @@ pn.alg.bt.prototype.exch_ = function(i1, i2) {
  *    index i2.
  */
 pn.alg.bt.prototype.less_ = function(i1, i2) {
-  pn.ass(this.arr_.length > 1, 'Tree is empty');
+  pn.ass(this.N_ > 1, 'Tree is empty');
   pn.assNum(i1);
-  pn.ass(i1 >= 1 && i1 < this.arr_.length);
+  pn.ass(i1 >= 1 && i1 < this.N_);
   pn.assNum(i2);
-  pn.ass(i2 >= 1 && i2 < this.arr_.length);
-  return this.arr_[i1].less(this.arr_[i2]);
+  pn.ass(i2 >= 1 && i2 < this.N_);
+  return this.arr_[i1].less(this.arr_[i2], this.keyComparer_);
 };
 
 
@@ -175,11 +183,15 @@ pn.alg.btnode = function(key, val) {
 
 /**
  * @param {!pn.alg.btnode} other The other node to compare.
+ * @param {function(*, *):number=} opt_comparer An optional comparer function
+ *    that returns 0 if values are equal, > 0 if a > b and < 0 if a < b.
  * @return {boolean} Wether the this node smaller than the 'other' node.
  */
-pn.alg.btnode.prototype.less = function(other) {
+pn.alg.btnode.prototype.less = function(other, opt_comparer) {
   pn.ass(other instanceof pn.alg.btnode);
-  return this.key < other.key;
+
+  if (!opt_comparer) return this.key < other.key;
+  return opt_comparer(this.key, other.key) < 0;
 };
 
 
