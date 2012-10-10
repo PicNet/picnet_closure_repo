@@ -27,7 +27,7 @@ goog.inherits(pn.ui.grid.Interceptor, goog.Disposable);
  * Override this if you need to only display part of the results passed to the
  *    grid.  Careful with this, it may be better to do a custom server call
  *    and return less entities to this grid saving on bandwith also.
- * @param {!Array.<!Object>} list The list to filter.
- * @return {!Array.<!Object>} The filtered list.
+ * @param {!Array.<!pn.data.Entity>} list The list to filter.
+ * @return {!Array.<!pn.data.Entity>} The filtered list.
  */
 pn.ui.grid.Interceptor.prototype.filterList = function(list) { return list; };

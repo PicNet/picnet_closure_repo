@@ -21,6 +21,10 @@ goog.require('pn.ui.edit.Edit');
  *    prefilled values.
  */
 pn.ui.edit.AddOnFlyDialog = function(specId, cache, entity) {
+  pn.assStr(specId);
+  pn.ass(cache instanceof pn.data.BaseDalCache);
+  pn.ass(entity instanceof pn.data.Entity);
+
   goog.events.EventTarget.call(this);
 
   /**
@@ -118,12 +122,10 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
 
 /**
  * @private
- * @param {string} type The entity type being added.
- * @param {(string|Object)} saved The server error or the entity that was added.
+ * @param {!pn.data.Entity} saved The server error or the entity that was added.
  */
-pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
-  pn.assStr(type);
-  pn.ass(saved);
+pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(saved) {
+  pn.ass(saved instanceof pn.data.Entity);
 
   if (goog.isString(saved)) {
     pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, saved);

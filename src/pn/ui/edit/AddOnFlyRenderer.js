@@ -10,15 +10,15 @@ goog.require('pn.ui.edit.ComplexRenderer');
 /**
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
- * @param {!pn.ui.edit.FieldCtx} fctx The field context object.
  * @param {!pn.data.Entity} entity The entity being edited.
  * @param {string} specId The ID of the specs to display in this add on the
  *    fly control.
  */
-pn.ui.edit.AddOnFlyRenderer = function(fctx, entity, specId) {
-  pn.ass(specId);
+pn.ui.edit.AddOnFlyRenderer = function(entity, specId) {
+  pn.assStr(specId);
+  pn.ass(entity instanceof pn.data.Entity);
 
-  pn.ui.edit.ComplexRenderer.call(this, fctx, entity);
+  pn.ui.edit.ComplexRenderer.call(this, entity);
 
   /**
    * @private
@@ -100,7 +100,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
  *    in a subclass or in an interceptor.
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity = function() {
-  return new this.spec_.type({});
+  return pn.data.TypeRegister.create(this.spec_.type, {id: -goog.now()});
 };
 
 
