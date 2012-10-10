@@ -2,7 +2,8 @@
 
 - Should try to remove dependency on pn.app.ctx everywhere.  Ugly. Start with
     LocalCache appVer usage.
-
+- Should checkbox field renderers show the required '*'? makes no sense since 
+    they are already checked or unchecked.
 - Replace Element|Text|goog.ui.Control everywhere with a typedef
 - Remove jquery externs dependency in QuickFind.js
 - Use goog.expose to remove the need for the toSlick methods.

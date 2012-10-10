@@ -242,6 +242,7 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   });
   goog.style.showElement(parent, false);
   goog.dom.appendChild(parent, inp);
+  inp.getValue = function() { return parseInt(inp.value, 10); };
   return inp;
 };
 

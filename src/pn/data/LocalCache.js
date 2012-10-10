@@ -93,7 +93,6 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
   pn.ass(entity.type in this.cache_,
       entity.type + ' not in cache');
   pn.ass(entity.id < 0);
-
   this.cache_[entity.type].push(entity);
   this.flush_(entity.type);
 
