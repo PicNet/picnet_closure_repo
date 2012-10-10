@@ -122,9 +122,10 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
 
 /**
  * @private
+ * @param {string} type The entity type saved.
  * @param {!pn.data.Entity} saved The server error or the entity that was added.
  */
-pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(saved) {
+pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
   pn.ass(saved instanceof pn.data.Entity);
 
   if (goog.isString(saved)) {

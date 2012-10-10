@@ -213,17 +213,12 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.QUERY] = bind(this.data.query, this.data);
   evs[ae.LIST_EXPORT] = bind(this.listExport_, this);
   evs[ae.LIST_ORDERED] = bind(this.orderEntities_, this);
-  evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
+  evs[ae.ENTITY_SAVE] = bind(function(type, raw, opt_cb) {
     var entity = pn.data.TypeRegister.create(type, raw);
-    if (entity.id > 0) {
-      this.data.updateEntity(entity, function(entity2) {
-        this.pub(ae.ENTITY_SAVED, entity2);
-      }.pnbind(this));
-    } else {
-      this.data.createEntity(entity, goog.bind(function(created) {
-        this.pub(ae.ENTITY_SAVED, created);
-      }, this));
-    }
+    var cb = opt_cb ||
+        goog.bind(function(e) { this.pub(ae.ENTITY_SAVED, e); }, this);
+    if (entity.id > 0) { this.data.updateEntity(entity, cb); }
+    else { this.data.createEntity(entity, cb); }
   }, this);
   evs[ae.ENTITY_CLONE] = bind(this.cloneEntity_, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
