@@ -80,15 +80,13 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
       var id = e.selected.id;
       pn.app.ctx.pub(e.type, this.entityType_, id);
       break;
-    case ae.ENTITY_ADD:
-      pn.app.ctx.pub(e.type, this.entityType_);
-      break;
     case ae.LIST_EXPORT:
       var cols = this.cctxs;
       var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
       pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
       break;
-    default: throw new Error('Event: ' + e.type + ' is not supported');
+    default:
+      pn.app.ctx.pub(e.type, this.entityType_);
   }
 };

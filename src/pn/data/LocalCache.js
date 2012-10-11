@@ -153,7 +153,9 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(entity.id > 0);
 
+  if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
   var entities = this.cache_[entity.type];
   // If this entity already exists in cache (was added locally) then we can
   // just update it.
