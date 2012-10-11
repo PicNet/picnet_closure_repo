@@ -226,7 +226,8 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   }, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
     var entity = pn.data.TypeRegister.create(type, raw);
-    this.data.deleteEntity(entity);
+    var cb = goog.bind(function() { this.pub(ae.ENTITY_DELETED); }, this);
+    this.data.deleteEntity(entity, cb);
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 

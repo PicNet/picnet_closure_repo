@@ -182,21 +182,23 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
 
 /**
  * @param {!pn.data.Entity} entity The entity to delete.
+ * @param {function():undefined} callback The success callback.
  */
-pn.data.BaseFacade.prototype.deleteEntity = function(entity) {
+pn.data.BaseFacade.prototype.deleteEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id > 0);
 
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.deleteEntity(entity.type, entity.id);
+
   var onfail = goog.bind(function(error, opt_ex) {
     this.cache.undeleteEntity(current); // Revert client cache
     this.handleError(error, opt_ex);
   }, this);
 
   this.server.deleteEntity(entity,
-      goog.bind(this.parseServerResponse, this),
+      goog.bind(this.parseServerResponse, this, callback),
       onfail);
 };
 

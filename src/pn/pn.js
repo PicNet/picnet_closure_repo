@@ -51,6 +51,7 @@ pn.assStr = function(val, opt_message, var_args)
 pn.assNum = function(val, opt_message, var_args) 
     { pn.assType_(goog.isNumber, arguments); };
 
+
 /**
  * @param {*} val The value to check for the type.
  * @param {string=} opt_message Error message in case of failure.
@@ -59,6 +60,7 @@ pn.assNum = function(val, opt_message, var_args)
  */
 pn.assBool = function(val, opt_message, var_args) 
     { pn.assType_(goog.isBoolean, arguments); };
+
 
 /**
  * @param {*} val The value to check for the type.

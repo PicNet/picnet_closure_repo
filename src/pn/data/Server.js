@@ -119,12 +119,12 @@ pn.data.Server.prototype.updateEntity =
 pn.data.Server.prototype.deleteEntity =
     function(entity, success, failure) {
   pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(entity.id > 0);
   pn.assFun(success);
   pn.assFun(failure);
 
-  var json = this.getEntityJson_(entity);
   var uri = this.getFacadeControllerAction_('DeleteEntity');
-  this.ajax_(uri, json, success, failure);
+  this.ajax_(uri, {'type': entity.type, 'id': entity.id}, success, failure);
 };
 
 
