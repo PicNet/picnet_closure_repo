@@ -212,6 +212,7 @@ pn.ui.grid.QuickFind.prototype.setFilterStates = function(states) {
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var input = goog.dom.getChildren(header)[0];
     this.filters_[fctx.id] = input.value = states[fctx.id];
+    this.inputListener_.setCurrentFilter(states[fctx.id]);
     needsRefresh = true;
   }
   if (needsRefresh) {

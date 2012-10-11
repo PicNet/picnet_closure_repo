@@ -1,5 +1,7 @@
 - Demos are all broken
 
+- DelayedThrottleInputListener has a bug; The lastFilterValue and 
+    currentFilterValue do not work if we have mulitple inputs.
 - Should try to remove dependency on pn.app.ctx everywhere.  Ugly. Start with
     LocalCache appVer usage.
 - Should checkbox field renderers show the required '*'? makes no sense since 

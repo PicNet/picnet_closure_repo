@@ -76,6 +76,12 @@ pn.ui.DelayedThrottleInputListener.prototype.addInput =
 };
 
 
+/** @param {string} val The current filter value. */
+pn.ui.DelayedThrottleInputListener.prototype.setCurrentFilter = function(val) {
+  this.lastFilterValue_ = val;
+};
+
+
 /**
  * @private
  * @param {!Element} inp The input element to check.
@@ -123,7 +129,6 @@ pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {
 /** @private */
 pn.ui.DelayedThrottleInputListener.prototype.fireIfChanged_ = function() {
   clearTimeout(this.timerId_);
-
   if (this.lastFilterValue_ !== this.currentValue_) {
     var e = new goog.events.Event(pn.ui.DelayedThrottleInputListener.CHANGED);
     e.value = (this.lastFilterValue_ = this.currentValue_);
