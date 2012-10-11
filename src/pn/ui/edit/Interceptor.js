@@ -77,6 +77,6 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
  * @return {!(Element|Text|goog.ui.Component)} The control for the specified id.
  */
 pn.ui.edit.Interceptor.prototype.getControl = function(id) {
-  pn.ass(this.controls_[id]);
+  pn.ass(this.controls_[id], 'Could not find control with ID "%s"', id);
   return this.controls_[id];
 };

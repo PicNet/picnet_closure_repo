@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.AddOnFlyRenderer');
 
+goog.require('goog.events.Event');
 goog.require('pn.ui.edit.AddOnFlyDialog');
 goog.require('pn.ui.edit.AddOnFlyDialog.EventType');
 goog.require('pn.ui.edit.ComplexRenderer');
@@ -60,6 +61,32 @@ pn.ui.edit.AddOnFlyRenderer.prototype.getValue = function() {
 };
 
 
+/** @param {number=} opt_selectedId The ID of the entity to select. */
+pn.ui.edit.AddOnFlyRenderer.prototype.refresh = function(opt_selectedId) {
+  var list = this.fctx.spec.additionalProperties.list ?
+      this.fctx.spec.additionalProperties.list() :
+      this.fctx.cache.get(this.spec_.type);
+
+  var selected = opt_selectedId ? opt_selectedId :
+      this.getValue() ? this.getValue() : 0;
+
+  pn.data.EntityUtils.orderEntities(this.spec_.type, list);
+
+  goog.dom.removeChildren(this.select_);
+  goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
+    'value': '0',
+    'text': 'Select ' + this.spec_.name + '...'
+  }));
+  list.pnforEach(function(e) {
+    goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
+      'value': e.id,
+      'text': e[this.spec_.type + 'Name'],
+      'selected': e.id === selected
+    }));
+  }, this);
+};
+
+
 /** @override */
 pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
   pn.ass(element);
@@ -75,10 +102,10 @@ pn.ui.edit.AddOnFlyRenderer.prototype.decorateInternal = function(element) {
 pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
   pn.ui.edit.AddOnFlyRenderer.superClass_.enterDocument.call(this);
 
-  var click = goog.events.EventType.CLICK;
-  this.getHandler().listen(this.add_, click, this.addOnFly_);
-
-  this.refreshList_(
+  var EventType = goog.events.EventType;
+  this.getHandler().listen(this.add_, EventType.CLICK, this.addOnFly_);
+  this.getHandler().listen(this.select_, EventType.CHANGE, this.fireChanged_);
+  this.refresh(
       /** @type {number} */ (this.fctx.getEntityValue(this.entity)));
 };
 
@@ -86,7 +113,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 /** @private */
 pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(
-      this.spec_.id, this.fctx.cache, this.getNewEntity());
+      this.spec_.id, this.fctx.cache, this.getNewEntity_());
 
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   this.getHandler().listenOnce(this.dialog_, eventType, this.aofAdded_);
@@ -95,12 +122,15 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
 
 
 /**
+ * @private
  * @return {!pn.data.Entity} An object representing the entity to use as a
  *    template. This means that if any presets are required they can be set
  *    in a subclass or in an interceptor.
  */
-pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity = function() {
-  return pn.data.TypeRegister.create(this.spec_.type, {id: -goog.now()});
+pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity_ = function() {
+  return this.fctx.spec.additionalProperties.getNewEntity ?
+      this.fctx.spec.additionalProperties.getNewEntity :
+      pn.data.TypeRegister.create(this.spec_.type, {id: -goog.now()});
 };
 
 
@@ -112,28 +142,14 @@ pn.ui.edit.AddOnFlyRenderer.prototype.aofAdded_ = function(e) {
   goog.dispose(this.dialog_);
   this.dialog_ = null;
 
-  this.refreshList_(e.entityId);
+  this.refresh(e.entityId);
+  this.fireChanged_();
 };
 
 
-/**
- * @private
- * @param {number} selectedId The ID of the entity to select.
- */
-pn.ui.edit.AddOnFlyRenderer.prototype.refreshList_ = function(selectedId) {
-  var list = this.fctx.cache.get(this.spec_.type);
-  pn.data.EntityUtils.orderEntities(this.spec_.type, list);
-
-  goog.dom.removeChildren(this.select_);
-  goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
-    'value': '0',
-    'text': 'Select ' + this.spec_.name + '...'
-  }));
-  list.pnforEach(function(e) {
-    goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
-      'value': e.id,
-      'text': e[this.spec_.type + 'Name'],
-      'selected': e.id === selectedId
-    }));
-  }, this);
+/** @private */
+pn.ui.edit.AddOnFlyRenderer.prototype.fireChanged_ = function() {
+  var e = new goog.events.Event(goog.events.EventType.CHANGE);
+  e.selectedid = this.getValue();
+  this.dispatchEvent(e);
 };
