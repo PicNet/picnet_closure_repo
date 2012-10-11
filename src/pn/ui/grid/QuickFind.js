@@ -2,7 +2,9 @@
 goog.provide('pn.ui.grid.QuickFind');
 
 goog.require('goog.events.Event');
+goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventTarget');
+goog.require('pn.ui.DelayedThrottleInputListener');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
 goog.require('pn.ui.grid.ColumnSpec');
@@ -17,8 +19,11 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
  *    displayed.
  * @param {Slick.Grid} slick The instance of the slick grid.
+ * @param {Element=} opt_quickfind An optional quickfind control.  The
+ *    quickfind control is a Text box that is used to search for a match
+ *    anywhere in a row.
  */
-pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
+pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind) {
   goog.events.EventTarget.call(this);
 
   /**
@@ -41,6 +46,18 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
 
   /**
    * @private
+   * @type {undefined|Element}
+   */
+  this.quickfind_ = opt_quickfind;
+
+  /**
+   * @private
+   * @type {!Array.<!Element>}
+   */
+  this.filterControls_ = [];
+
+  /**
+   * @private
    * @type {Object.<string>}
    */
   this.filters_ = {};
@@ -50,6 +67,20 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick) {
    * @type {!pn.ui.filter.SearchEngine}
    */
   this.search_ = new pn.ui.filter.SearchEngine();
+
+  /**
+   * @private
+   * @type {!goog.events.EventHandler}
+   */
+  this.eh_ = new goog.events.EventHandler();
+  this.registerDisposable(this.eh_);
+
+  /**
+   * @private
+   * @type {!pn.ui.DelayedThrottleInputListener}
+   */
+  this.inputListener_ = new pn.ui.DelayedThrottleInputListener(250);
+  this.registerDisposable(this.inputListener_);
 
   this.init_();
 };
@@ -63,9 +94,10 @@ goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
 pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
+  var row = [];
   for (var columnId in this.filters_) {
-    if (columnId && this.filters_[columnId]) {
-      var filterVal = this.filters_[columnId];
+    var isFiltering = columnId in this.filters_;
+    if (isFiltering || this.quickfind_) {
       var cctx = /** @type {!pn.ui.grid.ColumnCtx} */ (goog.array.find(
           this.cctxs_, function(fctx1) { return fctx1.id === columnId; }));
       var val = cctx.getEntityValue(entity);
@@ -79,8 +111,17 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
       }
       var strval = '';
       if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
-      if (!this.search_.matches(strval, filterVal)) { return false; }
+      row.push(strval);
+      if (isFiltering &&
+          !this.search_.matches(strval, this.filters_[columnId])) {
+        return false;
+      }
     }
+  }
+  if (this.quickfind_) {
+    var value = goog.string.trim(this.quickfind_.value);
+    var rowstr = row.join('');
+    return !value || this.search_.matches(rowstr, value);
   }
   return true;
 };
@@ -91,33 +132,37 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
  * Initialises the quick filters and attaches the filters row to the grid
  */
 pn.ui.grid.QuickFind.prototype.init_ = function() {
-
   for (var i = 0; i < this.cctxs_.length; i++) {
     var fctx = this.cctxs_[i];
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var val = this.filters_[fctx.id];
     var tt = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
     var input = this.createFilterInput_(fctx, 100, val, tt);
+    this.filterControls_.push(input);
 
     goog.dom.removeChildren(header);
     goog.dom.appendChild(header, input);
   }
 
-  var dataView = this.slick_.getData();
-  var qf = this.filters_;
-
-  var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
-  var fire = goog.bind(this.dispatchEvent, this, event);
-
-  $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
-      function() {
-        qf[this['data-id']] = $.trim(
-            /** @type {string} */ ($(this).val())).toLowerCase();
-        dataView.refresh();
-        fire();
-      });
+  var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
+  this.eh_.listen(this.inputListener_, eventtype, this.refresh_.pnbind(this));
+  this.filterControls_.pnforEach(
+      function(inp) { this.inputListener_.addInput(inp); }, this);
+  if (this.quickfind_) { this.inputListener_.addInput(this.quickfind_); }
 
   this.resize();
+};
+
+
+/** @private */
+pn.ui.grid.QuickFind.prototype.refresh_ = function() {
+  this.filterControls_.pnforEach(function(inp) {
+    this.filters_[inp['data-id']] = goog.string.trim(inp.value);
+  }, this);
+  this.slick_.getData().refresh();
+
+  var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
+  this.dispatchEvent(event);
 };
 
 
