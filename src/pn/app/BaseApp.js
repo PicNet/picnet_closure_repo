@@ -220,7 +220,10 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
     if (entity.id > 0) { this.data.updateEntity(entity, cb); }
     else { this.data.createEntity(entity, cb); }
   }, this);
-  evs[ae.ENTITY_CLONE] = bind(this.cloneEntity_, this);
+  evs[ae.ENTITY_CLONE] = bind(function(type, raw) {
+    var entity = pn.data.TypeRegister.create(type, raw);
+    this.cloneEntity_(entity);
+  }, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
     var entity = pn.data.TypeRegister.create(type, raw);
     this.data.deleteEntity(entity);
@@ -265,19 +268,20 @@ pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
 
 /**
  * @private
- * @param {string} type The type of the entity to save.
- * @param {pn.data.Entity} entity The entity to clone.
+ * @param {!pn.data.Entity} entity The entity to clone.
  */
-pn.app.BaseApp.prototype.cloneEntity_ = function(type, entity) {
-  pn.assStr(type);
+pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
   if (!this.acceptDirty_()) return;
 
-  var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
+  var data = {
+    'type': entity.type,
+    'entityJson': pn.json.serialiseJson(entity)
+  };
   this.data.ajax('CloneEntity/CloneEntity', data, function(cloned) {
-    cloned = pn.data.TypeRegister.parseEntity(type, cloned);
-    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
+    cloned = pn.data.TypeRegister.parseEntity(entity.type, cloned);
+    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, entity.type, cloned);
   });
 };
 
