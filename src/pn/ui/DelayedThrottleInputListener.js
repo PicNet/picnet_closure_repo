@@ -28,15 +28,15 @@ pn.ui.DelayedThrottleInputListener = function(delay) {
 
   /**
    * @private
-   * @type {string}
+   * @type {!Object.<string>}
    */
-  this.currentValue_ = '';
+  this.currentValues_ = {};
 
   /**
    * @private
-   * @type {string}
+   * @type {!Object.<string>}
    */
-  this.lastFilterValue_ = '';
+  this.lastValues_ = {};
 
   /**
    * @private
@@ -76,9 +76,21 @@ pn.ui.DelayedThrottleInputListener.prototype.addInput =
 };
 
 
-/** @param {string} val The current filter value. */
-pn.ui.DelayedThrottleInputListener.prototype.setCurrentFilter = function(val) {
-  this.lastFilterValue_ = val;
+/**
+ * Clears all saved filter values.
+ */
+pn.ui.DelayedThrottleInputListener.prototype.clearFilterValues = function() {
+  this.lastValues_ = {};
+};
+
+
+/**
+ * @param {string} id The id of the control whose value we are settings.
+ * @param {string} val The current filter value.
+ */
+pn.ui.DelayedThrottleInputListener.prototype.setCurrentFilter =
+    function(id, val) {
+  this.lastValues_[id] = val;
 };
 
 
@@ -102,7 +114,7 @@ pn.ui.DelayedThrottleInputListener.prototype.inferEventType_ = function(inp) {
  */
 pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
   pn.ass(e && e.target);
-  this.currentValue_ = e.target.value;
+  this.currentValues_ = e.target.value;
   this.lastInputTime_ = new Date().getTime();
 
   if (this.timerId_) {
@@ -129,11 +141,23 @@ pn.ui.DelayedThrottleInputListener.prototype.checkTimer_ = function() {
 /** @private */
 pn.ui.DelayedThrottleInputListener.prototype.fireIfChanged_ = function() {
   clearTimeout(this.timerId_);
-  if (this.lastFilterValue_ !== this.currentValue_) {
-    var e = new goog.events.Event(pn.ui.DelayedThrottleInputListener.CHANGED);
-    e.value = (this.lastFilterValue_ = this.currentValue_);
-    this.dispatchEvent(e);
-  }
+  if (!this.hasChanged_()) return;
+  var e = new goog.events.Event(pn.ui.DelayedThrottleInputListener.CHANGED);
+  e.value = (this.lastValues_ = this.currentValues_);
+  this.dispatchEvent(e);
+};
+
+
+/**
+ * @private
+ * @return {boolean} Wether the filters have changed since last time the
+ *    filters were applied.
+ */
+pn.ui.DelayedThrottleInputListener.prototype.hasChanged_ = function() {
+  return !goog.array.equals(goog.object.getKeys(this.currentValues_),
+      goog.object.getKeys(this.lastValues_)) ||
+      !goog.array.equals(goog.object.getValues(this.currentValues_),
+          goog.object.getValues(this.lastValues_));
 };
 
 

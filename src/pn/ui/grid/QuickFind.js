@@ -22,8 +22,10 @@ goog.require('pn.ui.grid.ColumnSpec');
  * @param {Element=} opt_quickfind An optional quickfind control.  The
  *    quickfind control is a Text box that is used to search for a match
  *    anywhere in a row.
+ * @param {Element=} opt_clear An optional clear control.  This control will
+ *    trigger a clear event that will clear all filters.
  */
-pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind) {
+pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
   goog.events.EventTarget.call(this);
 
   /**
@@ -49,6 +51,12 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind) {
    * @type {undefined|Element}
    */
   this.quickfind_ = opt_quickfind;
+
+  /**
+   * @private
+   * @type {undefined|Element}
+   */
+  this.clear_ = opt_clear;
 
   /**
    * @private
@@ -148,7 +156,13 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
   this.eh_.listen(this.inputListener_, eventtype, this.refresh_.pnbind(this));
   this.filterControls_.pnforEach(
       function(inp) { this.inputListener_.addInput(inp); }, this);
-  if (this.quickfind_) { this.inputListener_.addInput(this.quickfind_); }
+  if (this.quickfind_) {
+    this.inputListener_.addInput(this.quickfind_);
+  }
+  if (this.clear_) {
+    var click = goog.events.EventType.CLICK;
+    this.eh_.listen(this.clear_, click, this.clearFilters_.pnbind(this));
+  }
 
   this.resize();
 };
@@ -163,6 +177,15 @@ pn.ui.grid.QuickFind.prototype.refresh_ = function() {
 
   var event = new goog.events.Event(pn.ui.grid.QuickFind.EventType.FILTERED);
   this.dispatchEvent(event);
+};
+
+
+/** @private */
+pn.ui.grid.QuickFind.prototype.clearFilters_ = function() {
+  this.filterControls_.pnforEach(function(inp) { inp.value = ''; });
+  if (this.quickfind_) { this.quickfind_.value = ''; }
+  this.inputListener_.clearFilterValues();
+  this.refresh_();
 };
 
 
@@ -195,6 +218,9 @@ pn.ui.grid.QuickFind.prototype.getFilterStates = function() {
     var value = input.value;
     if (value) { states[fctx.id] = value; }
   }
+  if (this.quickfind_ && this.quickfind_.value) {
+    states['quick-find'] = this.quickfind_.value;
+  }
   return states;
 };
 
@@ -212,12 +238,16 @@ pn.ui.grid.QuickFind.prototype.setFilterStates = function(states) {
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var input = goog.dom.getChildren(header)[0];
     this.filters_[fctx.id] = input.value = states[fctx.id];
-    this.inputListener_.setCurrentFilter(states[fctx.id]);
+    this.inputListener_.setCurrentFilter(fctx.id, states[fctx.id]);
     needsRefresh = true;
   }
-  if (needsRefresh) {
-    this.slick_.getData().refresh();
+  var qfval = states['quick-find'];
+  if (qfval && this.quickfind_) {
+    needsRefresh = true;
+    this.quickfind_.value = qfval;
+    this.inputListener_.setCurrentFilter('quick-find', qfval);
   }
+  if (needsRefresh) { this.slick_.getData().refresh(); }
 };
 
 
