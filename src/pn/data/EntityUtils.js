@@ -78,7 +78,7 @@ pn.data.EntityUtils.getTargetEntity =
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     var entities = cache.get(type);
-    next = /** @type {!Array.<!Object>} */ (goog.array.filter(entities,
+    next = /** @type {!Array.<!Object>} */ (entities.pnfilter(
         function(e) { return ids.pncontains(e.id); }));
   } else if (goog.string.endsWith(step, 'Entities')) {
     type = pn.data.EntityUtils.getTypeProperty(type, step);

@@ -83,7 +83,7 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.gridId_ = goog.array.reduce(this.cfg_.cCtxs,
+  this.gridId_ = this.cfg_.cCtxs.pnreduce(
       function(acc, f) { return acc + f.id; }, '');
 
   /**
@@ -191,7 +191,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   this.dataView_ = new pn.ui.grid.DataView();
   this.registerDisposable(this.dataView_);
 
-  var columns = goog.array.map(this.cfg_.cCtxs,
+  var columns = this.cfg_.cCtxs.pnmap(
       function(cctx) { return cctx.toSlick(); });
   this.slick_ = new Slick.Grid(
       gridContainer, this.dataView_, columns, this.cfg_.toSlick());

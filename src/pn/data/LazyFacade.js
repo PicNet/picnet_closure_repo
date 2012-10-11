@@ -55,9 +55,9 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
   pn.assFun(callback);
 
-  var loaded = goog.array.filter(queries,
+  var loaded = queries.pnfilter(
       function(q) { return this.cache.contains(q); }, this);
-  var unloaded = goog.array.filter(queries,
+  var unloaded = queries.pnfilter(
       function(q) { return !this.cache.contains(q); }, this);
   var cached = this.cache.query(loaded);
   if (unloaded.length === 0) {

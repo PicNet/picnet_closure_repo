@@ -140,7 +140,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
   // var live = this.getEntity(type, id);
   // live.delete(); // TODO: fire live entity deleted
 
-  this.cache_[type] = goog.array.filter(this.cache_[type],
+  this.cache_[type] = this.cache_[type].pnfilter(
       function(e) { return e.id !== id; });
   this.flush_(type);
 };

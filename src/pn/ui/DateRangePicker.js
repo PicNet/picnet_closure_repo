@@ -212,11 +212,9 @@ pn.ui.DateRangePicker.prototype.listenToPickers = function(listen) {
  */
 pn.ui.DateRangePicker.prototype.showHideFromToLabels_ = function() {
   var visible = this.showFromAndToLabels_;
-  goog.array.forEach(
-      goog.dom.getElementsByTagNameAndClass('div',
-      goog.getCssName('picnet-daterangepicker-fromto-label')), function(d) {
-        goog.style.showElement(d, visible);
-      });
+  var divs = pn.toarr(goog.dom.getElementsByTagNameAndClass('div',
+      goog.getCssName('picnet-daterangepicker-fromto-label')));
+  divs.pnforEach(function(d) { goog.style.showElement(d, visible); });
 };
 
 

@@ -128,7 +128,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     this.dbg_('matchesFilter_.matcher: ', arguments);
     if (ev.id) return ev.id.toString() === fv;
 
-    var fctx = goog.array.find(this.cfg_.fCtxs,
+    var fctx = this.cfg_.fCtxs.pnfind(
         function(fctx1) { return fctx1.id === fieldId; });
     var renderer = fctx.spec.renderer;
     if (renderer === FieldRenderers.dateRenderer) {

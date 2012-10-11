@@ -284,7 +284,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   if (!val) return;
 
   var fieldId = val.substring(val.indexOf('.') + 1);
-  var fctx = /** @type {!pn.ui.edit.FieldCtx} */ (goog.array.find(this.fctxs_,
+  var fctx = /** @type {!pn.ui.edit.FieldCtx} */ (this.fctxs_.pnfind(
       function(fctx1) { return fctx1.id === fieldId; }));
 
   this.select_.selectedIndex = 0;

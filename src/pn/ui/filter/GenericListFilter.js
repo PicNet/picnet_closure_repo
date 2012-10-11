@@ -166,10 +166,8 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
 /** Clears all filter values */
 pn.ui.filter.GenericListFilter.prototype.clearAllFilters = function() {
   this.filters.pnforEach(this.clearFilterValue, this);
-  if (this.options['additionalFilterTriggers']) {
-    goog.array.forEach(this.options['additionalFilterTriggers'],
-        this.clearFilterValue, this);
-  }
+  var additional = this.options['additionalFilterTriggers'];
+  if (additional) { additional.pnforEach(this.clearFilterValue, this); }
   this.refresh();
 };
 

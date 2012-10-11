@@ -183,7 +183,7 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
  */
 pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
   if (!cmd.shortcut) return cmd.name;
-  var shortcuts = goog.array.map(cmd.shortcut.split(','), function(sc) {
+  var shortcuts = cmd.shortcut.split(',').pnmap(function(sc) {
     var components = sc.split('+').pnmap(function(comp) {
       return comp.toUpperCase();
     });

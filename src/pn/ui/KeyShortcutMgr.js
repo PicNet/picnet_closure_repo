@@ -58,7 +58,7 @@ pn.ui.KeyShortcutMgr.prototype.register = function(id, shortcuts, callback) {
   this.callbacks_[id] = callback;
   this.idShortcuts_[id] = [];
 
-  goog.array.forEach(shortcuts.split(','), function(sc) {
+  shortcuts.split(',').pnforEach(function(sc) {
     this.shortcuts_.registerShortcut(id, sc);
     this.idShortcuts_[id].push(sc);
   }, this);
@@ -70,8 +70,7 @@ pn.ui.KeyShortcutMgr.prototype.unregister = function(id) {
   pn.ass(this.idShortcuts_[id]);
 
   var shortcuts = this.idShortcuts_[id];
-  goog.array.forEach(
-      shortcuts, this.shortcuts_.unregisterShortcut, this.shortcuts_);
+  shortcuts.pnforEach(this.shortcuts_.unregisterShortcut, this.shortcuts_);
   delete this.callbacks_[id];
   delete this.shortcuts_[id];
   delete this.idShortcuts_[id];

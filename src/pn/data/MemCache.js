@@ -94,7 +94,7 @@ pn.data.MemCache.prototype.getLists = function(types) {
 
   if (!types.length) return {};
 
-  goog.array.removeDuplicates(types);
+  types.pnremoveDuplicates();
   var cached = {};
 
   types.pnforEach(function(type) {

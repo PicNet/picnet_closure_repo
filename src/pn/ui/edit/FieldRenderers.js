@@ -372,7 +372,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  var data = !parentId ? [] : goog.array.filter(list,
+  var data = !parentId ? [] : list.pnfilter(
       function(c) { return c[parentField] === parentId; });
   var spec = pn.app.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
   var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
@@ -394,7 +394,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(fctx, parent, entity) {
-    var manyToManys = goog.array.filter(fctx.cache.get(mappingEntity),
+    var manyToManys = fctx.cache.get(mappingEntity).pnfilter(
         function(manyToMany) {
           return manyToMany[parentIdField] === entity.id;
         });

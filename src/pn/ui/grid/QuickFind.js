@@ -98,8 +98,8 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   for (var columnId in this.filters_) {
     var isFiltering = columnId in this.filters_;
     if (isFiltering || this.quickfind_) {
-      var cctx = /** @type {!pn.ui.grid.ColumnCtx} */ (goog.array.find(
-          this.cctxs_, function(fctx1) { return fctx1.id === columnId; }));
+      var cctx = /** @type {!pn.ui.grid.ColumnCtx} */ (this.cctxs_.pnfind(
+          function(fctx1) { return fctx1.id === columnId; }));
       var val = cctx.getEntityValue(entity);
       var renderer = cctx.getColumnRenderer();
       if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {

@@ -388,7 +388,7 @@ pn.data.Server.Response = function(raw) {
   pn.assObj(raw);
 
   /** @type {Array.<pn.data.Server.Update>} */
-  this.updates = raw['Updates'] ? goog.array.map(raw['Updates'],
+  this.updates = raw['Updates'] ? raw['Updates'].pnmap(
       function(u) { return new pn.data.Server.Update(u); }, this) : null;
 
   /** @type {number} */

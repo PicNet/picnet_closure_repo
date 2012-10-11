@@ -15,13 +15,13 @@ goog.provide('pn.object');
 pn.object.uniqueExtend = function(target, var_args) {
   pn.ass(target);
   pn.ass(arguments.length > 1);
-  var args = goog.array.clone(arguments);
+  var args = pn.toarr(arguments);
   var keys = [];
   args.pnforEach(function(o) {
     keys = keys.pnconcat(goog.object.getKeys(o));
   });
   var exp = keys.length;
-  goog.array.removeDuplicates(keys);
+  keys.pnremoveDuplicates();
   if (exp !== keys.length) {
     throw new Error('Keys not unique amongst all objects');
   }
