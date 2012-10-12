@@ -74,15 +74,12 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refresh = function(opt_selectedId) {
 
   goog.dom.removeChildren(this.select_);
   goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
-    'value': '0',
-    'text': 'Select ' + this.spec_.name + '...'
-  }));
+    'value': '0' }, 'Select ' + this.spec_.name + '...'));
   list.pnforEach(function(e) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e.id,
-      'text': e[this.spec_.type + 'Name'],
       'selected': e.id === selected
-    }));
+    }, e[this.spec_.type + 'Name']));
   }, this);
 };
 
