@@ -35,7 +35,7 @@ pn.ui.filter.TableFilter = function(grid, opts) {
    * @private
    * @type {Array.<number>}
    */
-  this.filterColumnIndexes_;
+  this.filterIndexes_;
 
   /**
    * @private
@@ -115,14 +115,12 @@ pn.ui.filter.TableFilter.prototype.initialiseControlCaches = function() {
 
   var tHeadFilters = goog.dom.getElementsByTagNameAndClass(
       'tr', 'filters', this.thead_)[0];
-  this.filters = /** @type {!Array.<!Element>} */(goog.array.concat(
-      goog.dom.getElementsByTagNameAndClass(
-      'input'.pnmap(null, tHeadFilters), function(ctl) { return ctl; }),
-      goog.dom.getElementsByTagNameAndClass(
-      'select'.pnmap(null, tHeadFilters), function(ctl) { return ctl; })
-      ));
-  this.filterColumnIndexes_ =
-      this.filters.pnmap(this.getColumnIndexOfFilter_, this);
+  this.filters = goog.array.concat(
+      goog.array.map(goog.dom.getElementsByTagNameAndClass(
+      'input', null, tHeadFilters), function(ctl) { return ctl; }),
+      goog.array.map(goog.dom.getElementsByTagNameAndClass(
+      'select', null, tHeadFilters), function(ctl) { return ctl; }));
+  this.filterIndexes_ = this.filters.pnmap(this.getColumnIndexOfFilter_, this);
 };
 
 

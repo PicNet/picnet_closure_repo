@@ -7,16 +7,20 @@ goog.require('pn.data.BaseFacade');
 /**
  * @constructor
  * @extends {pn.data.BaseFacade}
- * @param {string} controller The controller uri for the server.
+ * @param {!pn.data.LocalCache} cache The local cache.
+ * @param {!pn.data.Server} server The remote server source.
  */
-pn.data.LazyFacade = function(controller) {
+pn.data.LazyFacade = function(cache, server) {
+  pn.ass(cache instanceof pn.data.LocalCache);
+  pn.ass(server instanceof pn.data.Server);
+
   /**
    * @private
    * @type {number}
    */
   this.defaultTime_ = new Date(3000, 1, 1).getTime();
 
-  pn.data.BaseFacade.call(this, controller);
+  pn.data.BaseFacade.call(this, cache, server);
 };
 goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
 

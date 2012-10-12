@@ -83,9 +83,13 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
+  var cache = new pn.data.LocalCache(this.cfg.dbver);
+  var server = new pn.data.Server(this.cfg.facadeUri);
   /** @type {!pn.data.BaseFacade} */
-  this.data = new pn.data.LazyFacade(this.cfg.facadeControllerPath);
+  this.data = new pn.data.LazyFacade(cache, server);
   this.registerDisposable(this.data);
+  this.registerDisposable(server);
+  this.registerDisposable(cache);
 
   /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));

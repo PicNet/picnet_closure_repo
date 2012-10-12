@@ -19,8 +19,6 @@ var entity,
     cache;
 
 var setUp = function() {
-  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
-
   pn.storage.clear();
   cache = new pn.data.LocalCache(); // Reset cache
   cache.cache_['EntityType'] = [];

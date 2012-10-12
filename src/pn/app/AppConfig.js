@@ -36,7 +36,14 @@ pn.app.AppConfig = function(opt_opts) {
    *    go this this controller.
    * @type {string}
    */
-  this.facadeControllerPath = '';
+  this.facadeUri = '';
+
+  /**
+   * The version of the current database.  If this number does not match the
+   *    currently client cached db version the local client will be deleted.
+   * @type {string}
+   */
+  this.dbver = '';
 
   /**
    * If true all client data is kept upto date live with the server. That is,

@@ -14,8 +14,11 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.Disposable}
+ * @param {string} dbver The current db version.
+ * @param {string=} opt_cachePrefix An optional prefix to use for all
+ *    read/writes from/to the local cache.
  */
-pn.data.LocalCache = function() {
+pn.data.LocalCache = function(dbver, opt_cachePrefix) {
   goog.Disposable.call(this);
   if (!window['localStorage'])
     throw new Error('The current browser is not supported');
@@ -37,7 +40,8 @@ pn.data.LocalCache = function() {
    * @const
    * @type {string}
    */
-  this.STORE_PREFIX_ = 'LOCAL_DATA_CACHE:';
+  this.STORE_PREFIX_ = (opt_cachePrefix ?
+      opt_cachePrefix : '' + 'LOCAL_DATA_CACHE:');
 
   /**
    * @private
@@ -51,7 +55,7 @@ pn.data.LocalCache = function() {
    */
   this.cachedQueries_ = [];
 
-  this.checkDbVer_();
+  this.checkDbVer_(dbver);
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
@@ -249,17 +253,33 @@ pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
 };
 
 
-/** @private */
-pn.data.LocalCache.prototype.checkDbVer_ = function() {
-  var actual = pn.app.ctx.cfg.dbver;
+/**
+ * @private
+ * @param {string} dbver The current db version. If this version does not
+ *    match the current cached version then the entire local cache is
+ *    invalidated.
+ */
+pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
   var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
-  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = actual;
-  if (!actual || !exp || actual === exp) return;
+  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
+  if (!dbver || !exp || dbver === exp) return;
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      pnsubs(exp, actual));
+      pnsubs(exp, dbver));
 
-  window['localStorage'].clear();
+  this.clear();
+};
+
+
+/**
+ * Clears the local cache.
+ */
+pn.data.LocalCache.prototype.clear = function() {
+  for (var key in window['localStorage']) {
+    if (goog.string.startsWith(key, this.STORE_PREFIX_)) {
+      delete window['localStorage'][key];
+    }
+  }
 };
 
 

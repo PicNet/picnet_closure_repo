@@ -1,0 +1,47 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn');
+goog.require('pn.data.BaseFacade');
+goog.require('pn.data.Entity');
+goog.require('pn.testing.MockServer');
+
+var facade,
+    server,
+    events,
+    xhrs,
+    origsync;
+
+var setUp = function() {  
+  xhrs = [];
+  events = [];
+  goog.global.setInterval = function() {};
+  if (!origsync) origsync = pn.data.BaseFacade.prototype.sync;
+  pn.data.BaseFacade.prototype.sync = function() {}; // Disable Sync
+  facade = new pn.data.BaseFacade('controller_uri');    
+  facade.cache.STORE_PREFIX_ = 'pn.data.BaseFacade_SyncTests.html';
+  facade.cache.clear();
+  facade.cache.cache_['EntityType'] = [];
+  facade.server = (server = new pn.testing.MockServer());
+  
+  pn.data.TypeRegister.parseEntity = function(type, raw) {
+    var entity = new pn.data.Entity(type, raw.ID);
+    goog.object.extend(entity, raw);
+    delete entity.ID;
+    return entity;
+  };
+};
+
+var tearDown = function() { localStorage.clear(); };
+
+        </script>
+    </body>
+</html>

@@ -1,5 +1,5 @@
 REM set BASE=../../../../projects/picnet_closure_repo/src/
-set BASE=../../../../rr/resources/scripts/lib/picnet_closure_repo/src/
+set BASE=../../../../oms/resources/scripts/lib/picnet_closure_repo/src/
 
 U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^

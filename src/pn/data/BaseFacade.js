@@ -15,33 +15,27 @@ goog.require('pn.data.Server');
  *
  * @constructor
  * @extends {goog.events.EventTarget}
- * @param {string} controller The path to the controller.
+ * @param {!pn.data.LocalCache} cache The local cache.
+ * @param {!pn.data.Server} server The remote server source.
  */
-pn.data.BaseFacade = function(controller) {
-  pn.assStr(controller);
+pn.data.BaseFacade = function(cache, server) {
+  pn.ass(cache instanceof pn.data.LocalCache);
+  pn.ass(server instanceof pn.data.Server);
 
   goog.events.EventTarget.call(this);
 
   /**
-   * @private
-   * @type {string}
-   */
-  this.controller_ = controller;
-
-  /**
    * @protected
-   * @type {pn.data.LocalCache}
+   * @type {!pn.data.LocalCache}
    */
-  this.cache = new pn.data.LocalCache();
-  this.registerDisposable(this.cache);
+  this.cache = cache;
 
 
   /**
    * @protected
-   * @type {pn.data.Server}
+   * @type {!pn.data.Server}
    */
-  this.server = new pn.data.Server(controller);
-  this.registerDisposable(this.cache);
+  this.server = server;
 
   /**
    * @private

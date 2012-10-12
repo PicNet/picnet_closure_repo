@@ -15,23 +15,23 @@ goog.require('pn.data.Entity');
 goog.require('pn.testing.MockServer');
 
 var facade,
+    cache,
     server,
     events,
     xhrs,
     origsync;
 
-var setUp = function() {
-  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
-
-  localStorage.clear();
+var setUp = function() {  
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};
   if (!origsync) origsync = pn.data.BaseFacade.prototype.sync;
   pn.data.BaseFacade.prototype.sync = function() {}; // Disable Sync
-  facade = new pn.data.BaseFacade('controller_uri');    
-  facade.cache.cache_['EntityType'] = [];
-  facade.server = (server = new pn.testing.MockServer());
+  server = new pn.testing.MockServer();
+  cache = new pn.data.LocalCache('1', 'pn.data.BaseFacade.html');
+  facade = new pn.data.BaseFacade(cache, server);      
+  cache.clear();
+  cache.cache_['EntityType'] = [];  
   
   pn.data.TypeRegister.parseEntity = function(type, raw) {
     var entity = new pn.data.Entity(type, raw.ID);
@@ -41,9 +41,7 @@ var setUp = function() {
   };
 };
 
-var tearDown = function() {
-  localStorage.clear();
-};
+var tearDown = function() { facade.cache.clear(); };
 
 ////////////////////////////////////////////////////////////////////////////////
 // BaseFacade.getEntity

@@ -22,8 +22,6 @@ var facade,
     xhrs;
 
 var setUp = function() {
-  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
-
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};
@@ -56,7 +54,7 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
   facade.createEntity(entity, function() {});
   facade.updateEntity(updated, function() {});
   facade.getEntity('EntityType', updated.id);
-  facade.deleteEntity(updated);
+  facade.deleteEntity(updated, function() {});
   facade.query([new pn.data.Query('EntityType2')], function() {});
 
   var calls = server.calls;
