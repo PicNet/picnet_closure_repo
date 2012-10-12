@@ -1,0 +1,103 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+
+goog.require('pn');
+goog.require('pn.data.LocalCache');
+goog.require('pn.data.LazyFacade');
+goog.require('pn.data.Entity');
+goog.require('pn.testing.MockServer');
+
+var facade1,
+    facade2,
+    origsync,
+    type = 'EntityType';
+
+var setUp = function() {  
+  goog.global.setInterval = function() {};
+  if (!origsync) origsync = pn.data.LazyFacade.prototype.sync;
+  pn.data.LazyFacade.prototype.sync = function() {}; // Disable Sync  
+  
+
+  var cache1 = new pn.data.LocalCache(goog.now().toString(), '1');
+  var cache2 = new pn.data.LocalCache(goog.now().toString(), '2');
+  cache1.clear();
+  cache2.clear();
+  var server = new pn.testing.MockServer(); // Only 1 Server!!!
+  facade1 = new pn.data.LazyFacade(cache1, server);        
+  facade2 = new pn.data.LazyFacade(cache2, server);          
+  
+  facade1.query([new pn.data.Query(type)], function() {});
+  facade2.query([new pn.data.Query(type)], function() {});
+
+  pn.data.TypeRegister.parseEntity = function(type, raw) {
+    var entity = new pn.data.Entity(type, raw.ID);
+    goog.object.extend(entity, raw);
+    delete entity.ID;
+    return entity;
+  };
+};
+
+var tearDown = function() { 
+  facade1.cache.clear();
+  facade2.cache.clear();
+};
+
+var test_created_in_1_can_be_queried_in_2 = function() {    
+  var created;
+  facade1.createEntity(create(), function(created2) { created = created2; });  
+  sync();  
+  assertArrayEquals([created], query(facade2));
+};
+
+var test_created_in_1_can_be_retreived_in_2 = function() {    
+  var created;
+  facade1.createEntity(create(), function(created2) { created = created2; });  
+  sync();  
+  assertTrue(created.equals(facade2.getEntity(created.type, created.id)));
+};
+
+var test_create_in_1_can_be_updated_in_2_then_back_to_1 = function() {
+  var created;
+  facade1.createEntity(create(), function(created2) { created = created2; });  
+  sync();  
+  console.log('created:',created);
+  var cloned = goog.object.unsafeClone(created);
+  cloned.newprop = 'newvalue';
+
+  facade2.updateEntity(cloned, function() {});
+  sync();  
+
+  var updated = facade2.getEntity(created.type, created.id);
+  assertTrue(cloned.equals(updated));
+  
+};
+
+var create = function() {
+  var entity = new pn.data.Entity(type, 0);
+  entity.id = -1;
+  return entity;
+};
+
+var query = function(facade) {
+  var q = new pn.data.Query(type);
+  var list;
+  facade.query([q], function(results) { list = results[q.toString()]; });
+  return list;
+};
+
+var sync = function() {
+  origsync.call(facade1);
+  origsync.call(facade2);
+};
+
+        </script>
+    </body>
+</html>

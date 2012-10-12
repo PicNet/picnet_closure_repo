@@ -33,7 +33,7 @@ goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
  */
 pn.data.LazyFacade.prototype.getLastUpdate = function() {
   var val = pn.data.LazyFacade.superClass_.getLastUpdate.call(this);
-  return val || this.defaultTime_;
+  return goog.isDef(val) ? val : this.defaultTime_;
 };
 
 

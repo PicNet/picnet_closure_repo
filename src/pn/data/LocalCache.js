@@ -275,6 +275,7 @@ pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
  * Clears the local cache.
  */
 pn.data.LocalCache.prototype.clear = function() {
+  this.lastUpdate_ = 0;
   for (var key in window['localStorage']) {
     if (goog.string.startsWith(key, this.STORE_PREFIX_)) {
       delete window['localStorage'][key];
@@ -303,7 +304,9 @@ pn.data.LocalCache.prototype.init_ = function() {
 
   if (!queriesJson) {
     if (this.lastUpdate_ > 0) {
-      throw 'Last update time is set but the cache is empty.';
+      var err = 'Last update time is set (%s) but the cache is empty.'.
+          pnsubs(this.lastUpdate_);
+      throw new Error(err);
     }
     this.cache_ = {};
     return;

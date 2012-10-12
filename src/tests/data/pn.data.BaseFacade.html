@@ -16,14 +16,10 @@ goog.require('pn.testing.MockServer');
 
 var facade,
     cache,
-    server,
-    events,
-    xhrs,
+    server,    
     origsync;
 
-var setUp = function() {  
-  xhrs = [];
-  events = [];
+var setUp = function() {      
   goog.global.setInterval = function() {};
   if (!origsync) origsync = pn.data.BaseFacade.prototype.sync;
   pn.data.BaseFacade.prototype.sync = function() {}; // Disable Sync
@@ -41,7 +37,7 @@ var setUp = function() {
   };
 };
 
-var tearDown = function() { facade.cache.clear(); };
+var tearDown = function() { cache.clear(); };
 
 ////////////////////////////////////////////////////////////////////////////////
 // BaseFacade.getEntity
@@ -86,7 +82,7 @@ var testCreateEntityCreatesInCacheFirstWithNegativeID = function() {
   facade.createEntity(entity, function(created) {
     assertTrue(created.id < 0);
     var query = new pn.data.Query('EntityType');
-    assertArrayEquals([created], facade.cache.query([query])[query.toString()]);  
+    assertArrayEquals([created], cache.query([query])[query.toString()]);  
     validateServerCalls([]); 
   });   
 };
@@ -98,7 +94,7 @@ var testCreateEntityUpdatesServerAndThenUpdatesLocalID = function() {
     validateServerCalls([{method:'createEntity', entity:created}]); 
     assertTrue(created.id > 0);  
     var query = new pn.data.Query('EntityType');
-    assertArrayEquals([created], facade.cache.query([query])[query.toString()]);
+    assertArrayEquals([created], cache.query([query])[query.toString()]);
   });    
 };
 
@@ -112,7 +108,7 @@ var testCreateEntityWithErrorRemovesEntityFromTheLocalCache = function() {
     
   validateServerCalls([{method:'createEntity', entity: entity}]);   
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.toString()]; 
+  var list = cache.query([query])[query.toString()]; 
   assertArrayEquals([], list);
 };
 
@@ -124,14 +120,14 @@ var testUpdateEntityUpdatesInCacheFirst = function() {
   server.updateEntity = function() {}; // Dissable the server call
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
     facade.updateEntity(entity2, function(entity3) {
       assertEquals(1, entity3.id);
       var query = new pn.data.Query('EntityType');
-      assertArrayEquals([entity3], facade.cache.query([query])[query.toString()]);  
+      assertArrayEquals([entity3], cache.query([query])[query.toString()]);  
       validateServerCalls([]); 
     });    
   }).clone();  
@@ -140,10 +136,10 @@ var testUpdateEntityUpdatesInCacheFirst = function() {
 var testUpdateEntityUpdatesCacheThenServer = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
     facade.updateEntity(entity2, function(entity3) {
       assertTrue(entity3.id > 0);  
       validateServerCalls([{method:'updateEntity', entity:entity3}]); 
@@ -154,10 +150,10 @@ var testUpdateEntityUpdatesCacheThenServer = function() {
 var testUpdateEntityWithErrorUndoesLocalChange = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
   
     var before = entity2.clone();
     var after = entity2.clone();
@@ -171,7 +167,7 @@ var testUpdateEntityWithErrorUndoesLocalChange = function() {
     validateServerCalls([{method:'updateEntity', entity:after}]); 
   
     var query = new pn.data.Query('EntityType');
-    var list = facade.cache.query([query])[query.toString()]; 
+    var list = cache.query([query])[query.toString()]; 
     assertArrayEquals([before], list);
   });  
 };
@@ -184,15 +180,15 @@ var testDeleteEntityDeletesInCacheFirst = function() {
   server.deleteEntity = function() {}; // Dissable the server call
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
 
     facade.deleteEntity(entity2);
   
     var query = new pn.data.Query('EntityType');
-    assertArrayEquals([], facade.cache.query([query])[query.toString()]);  
+    assertArrayEquals([], cache.query([query])[query.toString()]);  
     validateServerCalls([]); 
   });  
 };
@@ -200,14 +196,14 @@ var testDeleteEntityDeletesInCacheFirst = function() {
 var testDeleteEntityDeletesCacheThenServer = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
     facade.deleteEntity(entity2);
   
     var query = new pn.data.Query('EntityType');
-    assertArrayEquals([], facade.cache.query([query])[query.toString()]);
+    assertArrayEquals([], cache.query([query])[query.toString()]);
     validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
   });
 };
@@ -215,10 +211,10 @@ var testDeleteEntityDeletesCacheThenServer = function() {
 var testDeleteEntityWithErrorUndoesLocalChange = function() {
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
   
     server.nextFail = true;  
     try { facade.deleteEntity(entity2); fail('1'); } 
@@ -226,7 +222,7 @@ var testDeleteEntityWithErrorUndoesLocalChange = function() {
     
     validateServerCalls([{method:'deleteEntity', entity:entity2}]);  
     var query = new pn.data.Query('EntityType');
-    var list = facade.cache.query([query])[query.toString()]; 
+    var list = cache.query([query])[query.toString()]; 
     assertArrayEquals([entity2], list);
   });  
 };
@@ -288,10 +284,10 @@ var testUpdateEntityResponse = function() {
   
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
     facade.updateEntity(entity2, function(entity3) {
       validateResponseDetails([entity3]);
     });    
@@ -303,10 +299,10 @@ var testDeleteEntityResponse = function() {
   
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  facade.cache.createEntity(entity, function(entity2) {
+  cache.createEntity(entity, function(entity2) {
     var tmpid = entity2.id;
     entity2.id = 1;
-    facade.cache.updateEntity(entity2, tmpid);
+    cache.updateEntity(entity2, tmpid);
     facade.deleteEntity(entity2);
 
     validateResponseDetails();
@@ -347,7 +343,7 @@ var prepareServerReponse = function() {
 
 var validateResponseDetails = function(opt_additional) {
   var query = new pn.data.Query('EntityType');
-  var list = facade.cache.query([query])[query.toString()];  
+  var list = cache.query([query])[query.toString()];  
   var entity = new pn.data.Entity('EntityType', 100);
   entity.NewProp = 'NewProp';
   var exp = opt_additional ? opt_additional : [];
