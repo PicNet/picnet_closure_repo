@@ -12,61 +12,24 @@ goog.require('pn.alg.sort');
 goog.require('pn.alg.heapsort');
     </script>
     <script>
+
+// Actual Perf: N^2 / 2
 var test_selection = function() { assertAlgorithm(pn.alg.sort.selection); };
 
+// Actual Perf: N^2 / 4
 var test_insertion = function() { assertAlgorithm(pn.alg.sort.insertion); };
 
+// Actual Perf: N^1.5
 var test_shell = function() { assertAlgorithm(pn.alg.sort.shell); };
 
+// Actual Perf: N log N
 var test_merge = function() { assertAlgorithm(pn.alg.sort.merge); };
 
+// Actual Perf: N log N
 var test_quick = function() { assertAlgorithm(pn.alg.sort.quick); };
 
 var test_heap = function() { 
   assertAlgorithm(function(arr) { var hs = new pn.alg.heapsort(arr); hs.sort(); }); 
-};
-
-// Actual Perf: N^2 / 2
-var test_selection_performance_is_quadratic = function() { assertAlgorithmIsQuadratic(pn.alg.sort.selection); };
-
-// Actual Perf: N^2 / 4
-var test_insertion_performance_is_quadratic = function() { assertAlgorithmIsQuadratic(pn.alg.sort.insertion); };
-
-// Actual Perf: N^1.5
-var test_shell_performance_is_quadratic = function() { assertAlgorithmIsQuadratic(pn.alg.sort.insertion); };
-
-// Actual Perf: N log N
-var test_merge_performance_is_linearithmic = function() { 
-  // Should have a better test for linearithmic, perhaps remove these 
-  // perhformance tests, they are not adding much
-  assertAlgorithmIsLinearithmic(pn.alg.sort.merge); 
-};
-
-// Actual Perf: N log N
-var test_quick_performance_is_linearithmic = function() { 
-  // Should have a better test for linearithmic, perhaps remove these 
-  // perhformance tests, they are not adding much
-  assertAlgorithmIsLinearithmic(pn.alg.sort.quick); 
-};
-
-var assertAlgorithmIsQuadratic = function(alg) {
-  assertAlgorithmPerformance(alg, function(tookSmall, tookLarge, multiplier) {
-    assertTrue(tookLarge > tookSmall * multiplier);    
-  });
-};
-
-var assertAlgorithmIsLinearithmic = function(alg) {
-  assertAlgorithmPerformance(alg, function(tookSmall, tookLarge, multiplier) {
-    assertTrue(tookLarge > tookSmall * 2);    
-  });
-};
-
-var assertAlgorithmPerformance = function(alg, testCallback) {
-  var base = 100;
-  var mult = 20;
-  var took200 = timeSort(createArray(base), alg);
-  var took20k = timeSort(createArray(base * mult), alg);
-  testCallback(took200, took20k, mult);    
 };
 
 var assertAlgorithm = function(alg) {
@@ -76,12 +39,6 @@ var assertAlgorithm = function(alg) {
   
   exp.sort();
   assertArrayEquals(exp, arr);
-};
-
-var timeSort = function(arr, alg) {
-  var start = goog.now();
-  alg(arr);
-  return goog.now() - start;
 };
 
 var createArray = function(len) {

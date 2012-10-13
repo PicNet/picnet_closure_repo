@@ -1,0 +1,1 @@
+build\cleancode.bat && build\compile.bat

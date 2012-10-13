@@ -1,6 +1,7 @@
 
 goog.require('goog.date.DateTime');
 goog.require('goog.json');
+goog.require('pn');
 goog.require('pn.date');
 
 goog.provide('pn.json');
@@ -31,13 +32,24 @@ pn.json.parseJson = function(json) {
  */
 pn.json.serialiseJson = function(o, opt_useDotNetDates) {
   if (!goog.isDefAndNotNull(o)) return '';
-  return goog.json.serialize(o, function(id, val) {
-    if (val instanceof goog.date.Date ||
-        val instanceof goog.date.DateTime || val instanceof Date) {
-      return opt_useDotNetDates ?
-          '\\/Date(' + val.getTime() + ')\\/' :
-          val.getTime();
-    }
-    return val;
-  });
+  var replacer = pn.json.replacer_.pnpartial(!!opt_useDotNetDates);
+  return goog.json.serialize(o, replacer);
+};
+
+/**
+ * @private
+ * @param {boolean} dotNetDates If this is true then dates are
+ *    serialized as standard .Net /Date(...)/ format. Otherwise the epoch
+ *    millis are used.
+ * @param {string} id The property name being stringified.
+ * @param {*} val The value being stringified.
+ */
+pn.json.replacer_ = function(dotNetDates, id, val) {
+  if (val instanceof goog.date.Date ||
+      val instanceof goog.date.DateTime || val instanceof Date) {
+    return dotNetDates ?
+        '\\/Date(' + val.getTime() + ')\\/' :
+        val.getTime();
+  }
+  return val;
 };
