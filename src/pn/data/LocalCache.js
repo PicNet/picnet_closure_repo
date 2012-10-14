@@ -8,7 +8,7 @@ goog.require('pn.data.LinqParser');
 goog.require('pn.data.Query');
 goog.require('pn.json');
 goog.require('pn.log');
-
+goog.require('pn.data.TypeRegister');
 
 
 /**
@@ -18,7 +18,7 @@ goog.require('pn.log');
  * @param {string=} opt_cachePrefix An optional prefix to use for all
  *    read/writes from/to the local cache.
  */
-pn.data.LocalCache = function(dbver, opt_cachePrefix) {
+pn.data.LocalCache = function(dbver, opt_cachePrefix, opt_bucketIdLimits) {
   goog.Disposable.call(this);
   if (!window['localStorage'])
     throw new Error('The current browser is not supported');
@@ -28,7 +28,7 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.data.LocalCache', false);
-
+  
   /**
    * @private
    * @type {number}
@@ -55,11 +55,31 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    */
   this.cachedQueries_ = [];
 
+  /**
+   * @private
+   * @type {Array.<string>}
+   */
+  this.transaction_ = null;
+
   this.checkDbVer_(dbver);
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
 
+/** Begins a transaction */
+pn.data.LocalCache.prototype.begin = function() {
+  if (this.transaction_) throw new Error('A transaction is already active');
+  this.transaction_ = [];
+};
+
+/** Commits the active transaction */
+pn.data.LocalCache.prototype.commit = function() {
+  this.transaction_.
+    pnremoveDuplicates().
+    pnforEach(this.flush_, this);
+  this.transaction_ = null;
+  this.flushCachedQueries_();
+};
 
 /**
  * Gets an entity from the local cache.  If this entity does not exist in the
@@ -74,9 +94,8 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
   pn.ass(type in this.cache_, type + ' not in cache');
   pn.ass(goog.isNumber(id) && id !== 0);
 
-  var en = this.cache_[type].pnsingle(function(entity) {
-    return entity.id === id;
-  }, this);
+  var en = this.cache_[type].pnsingle(
+      function(entity) { return entity.id === id; }, this);
   return en;
 };
 
@@ -98,7 +117,9 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
       entity.type + ' not in cache');
   pn.ass(entity.id < 0);
   this.cache_[entity.type].push(entity);
-  this.flush_(entity.type);
+
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 
   return entity;
 };
@@ -127,7 +148,8 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
 
   // entity.update(); // TODO: fire live entity changed
 
-  this.flush_(entity.type);
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 };
 
 
@@ -146,7 +168,9 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
 
   this.cache_[type] = this.cache_[type].pnfilter(
       function(e) { return e.id !== id; });
-  this.flush_(type);
+  
+  if (this.transaction_) this.transaction_.push(type);
+  else this.flush_(type);
 };
 
 
@@ -168,7 +192,9 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   });
   if (idx < 0) idx = entities.length;
   entities[idx] = entity;
-  this.flush_(entity.type);
+
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 };
 
 
@@ -235,8 +261,12 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
   this.cache_[type] = list;
   var qid = query.toString();
   this.cachedQueries_[qid] = query;
-  this.flush_(type);
-  this.flushCachedQueries_();
+  
+  if (this.transaction_) this.transaction_.push(type);
+  else {
+    this.flush_(type);  
+    this.flushCachedQueries_();
+  }
 };
 
 
@@ -344,11 +374,9 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
   this.log_.info('Flushing "%s".'.pnsubs(type));
 
   var list = this.cache_[type];
-  // Using JSON.stringify for performance as we will handle dates in the toJson
-  // method.
-  var json = JSON.stringify(list.pnmap(
-      function(e) { return e.toJson(); }), true);
-  window['localStorage'][this.STORE_PREFIX_ + type] = json;
+  
+  var json = pn.json.serialiseJson(list, true);
+  window['localStorage'][this.STORE_PREFIX_ + type] = json;  
 };
 
 

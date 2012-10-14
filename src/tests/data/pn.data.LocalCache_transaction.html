@@ -1,0 +1,61 @@
+﻿<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+        <script src="../../deps.js"></script>
+        <script>        
+goog.require('goog.testing.jsunit');        
+        </script>
+        <script>
+goog.require('pn');
+goog.require('pn.data.LocalCache');
+goog.require('pn.data.Entity');
+goog.require('goog.object');
+goog.require('pn.data.Query');
+goog.require('pn.storage');
+
+var cache,
+    arr,
+    iterations = 1000;
+
+var setUp = function() {
+  pn.data.TypeRegister.parseEntities = function(type, list) { return list; };
+  cache = new pn.data.LocalCache(goog.now(), 'pn.data.LocalCache_transaction');
+  cache.clear();
+  arr = new Array(iterations);
+  for (var i = 0; i < iterations; i++) { arr[i] = create(i+1); }  
+};
+
+var create = function(opt_id) {
+  var entity = new pn.data.Entity('', 0);
+  entity.id = opt_id || 100;
+  return entity;
+};
+
+var test_no_transaction_multi_save_query = function() {  
+  var start = goog.now();
+  for (var i = 0; i < 5; i++) {    
+    ['1', '2', '3'].pnforEach(function(t) {
+      cache.saveQuery(new pn.data.Query(t), arr);
+    });
+  }
+  var took = goog.now() - start;
+  console.log('no transaction: %sms'.pnsubs(took));
+};
+
+var test_transacted_multi_save_query = function() {
+  var start = goog.now();
+  cache.begin();
+  for (var i = 0; i < 5; i++) {
+    ['1', '2', '3'].pnforEach(function(t) {
+      cache.saveQuery(new pn.data.Query(t), arr);
+    });
+  }
+  cache.commit();
+  var took = goog.now() - start;
+  console.log('transacted: %sms'.pnsubs(took));
+};
+        </script>
+    </body>
+</html>

@@ -1,0 +1,164 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <div id="summary"></div>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('goog.date.DateTime');
+
+goog.require('pn');
+goog.require('pn.json');
+
+var arr = [],
+    replacer,    
+    iterations = 10000,
+    exp = '[';
+
+var setUpPage = function() {
+  replacer = pn.json.replacer_.pnpartial(true);
+  var date = new goog.date.DateTime(),
+      str = 'A long string to store in the object with all special chars [~`!@#$%^&*()_+[]{}\|;:\'",.<>/?]',
+      single = '{"date":"\\\\/Date(%s)\\\\/","num":1,"str":"%s"}'.
+          pnsubs(date.getTime(), str.replace('"', '\\"')),            
+      O = function() {
+        this.date = date;
+        this.num = 1;
+        this.str = str;
+        this.opperation = function() { return 'should be ignored'; };
+      };
+
+  O.prototype.subsToJson = function() {
+    return '{"date":"\\\\/Date(%s)\\\\/","num":%s,"str":"%s"}'.
+        pnsubs(this.date.getTime(), this.num, this.getStr());
+  };
+
+  O.prototype.concatToJson = function() {
+    return '{"date":"\\\\/Date(' + this.date.getTime() + 
+        ')\\\\/","num":' + this.num + ',"str":"' + this.getStr() + '"}';
+  };
+
+  O.prototype.joinToJson = function() {
+    return [
+      '{"date":"\\\\/Date(', 
+      this.date.getTime(),
+      ')\\\\/","num":',
+      this.num,
+      ',"str":"',
+      this.getStr(),
+      '"}'
+    ].join('');
+  };
+
+  O.prototype.getStr = function() { return this.str.replace(/"/g, '\\"'); };
+
+  for (var i = 0; i < iterations; i++) { 
+    arr.push(new O()); 
+    exp += single;
+    if (i < iterations - 1) exp += ',';
+  }
+  exp += ']';
+};
+
+var test_performance_of_JSON_stringify = function() {
+  performance('JSON.stringify', JSON_stringify);
+};
+
+var JSON_stringify = function() {
+  return JSON.stringify(arr, replacer);
+};
+
+var test_performance_of_pn_json_stringify = function() {
+  performance('pn.json.serialiseJson', pn_json_stringify);
+};
+
+var pn_json_stringify = function() {
+  return pn.json.serialiseJson(arr, true);
+};
+
+var test_performance_of_custom_subsToJson_with_array_join = function() {
+  performance('o.subsToJson', subs_to_json);  
+};
+
+var subs_to_json = function() {
+  var newarr = new Array(arr.length);
+  for (var i = 0, len = arr.length; i < len; i++) { newarr[i] = arr[i].subsToJson(); }
+  return '[' + newarr.join(',') + ']';
+};
+
+var test_performance_of_custom_toJson_with_string_concat = function() {
+  performance('o.subsToJson w/ string concat', subs_to_json_concat);  
+};
+
+var subs_to_json_concat = function() {
+  var json = '[';
+  for (var i = 0, len = arr.length; i < len; i++) { 
+    if (i > 0) json += ',';
+    json += arr[i].subsToJson(); 
+  }
+  return json+ ']';    
+};
+
+var test_performance_of_custom_concatToJson_with_array_join = function() {
+  performance('o.concatToJson', concat_to_json);  
+};
+
+var concat_to_json = function() {
+  var newarr = new Array(arr.length);
+  for (var i = 0, len = arr.length; i < len; i++) { newarr[i] = arr[i].concatToJson(); }
+  return '[' + newarr.join(',') + ']';
+};
+
+var test_performance_of_custom_joinToJson_with_array_join = function() {
+  performance('o.joinToJson', join_to_json);  
+};
+
+var join_to_json = function() {
+  var newarr = new Array(arr.length);
+  for (var i = 0, len = arr.length; i < len; i++) { newarr[i] = arr[i].joinToJson(); }
+  return '[' + newarr.join(',') + ']';
+};
+
+var test_do_display_of_performance = function() {
+  var tests = [];
+  for (var name in window) {
+    if (name.indexOf('_') > 0 && !goog.string.startsWith(name, 'test') && 
+        typeof(window[name]) === 'function' && 
+        name !== 'TO_STRING_EQUALITY_PREDICATE' &&
+        name !== 'DOUBLE_EQUALITY_PREDICATE') {      
+      tests.push({name:name, took: performance(name, window[name])});
+    }
+  }
+  var sorted = tests.
+      pnsortObjectsByKey('took').
+      pnmap(function(t) {
+        return '<td>%s</td><td>%s</td>'.pnsubs(t.name, t.took);
+      });
+  document.getElementById('summary').innerHTML = 
+      '<table><tr><th colspan="2">Performance Summary</th><tr>' + 
+          '<tr><th>Name</th><th>Took (ms)</th></tr>' +
+          sorted.join('</tr><tr>') + '</table>';
+};
+
+
+var performance = function(test, op) {
+  var start = goog.now();
+  var json = op();
+
+  var took = goog.now() - start;
+  validateJson(json);
+  if (window.console) console.log('\n\n%s took: %sms\n\n'.pnsubs(test, took));
+  return took;
+};
+
+var validateJson = function(json) {
+  var msg = 'exp[%s] act[%s]'.
+      pnsubs(exp.substring(0, 200), json.substring(0, 200));
+  if (exp !== json) { fail(msg); }
+};
+
+    </script>    
+  </body>
+</html>

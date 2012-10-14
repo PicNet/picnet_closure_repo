@@ -38,6 +38,8 @@
     <None Include="build\cleancode.bat" />
     <None Include="build\compile.bat" />
     <None Include="build\compile_tablefilter.bat" />
+    <None Include="build\clean_and_compile.bat" />
+    <None Include="clean_and_compile.bat" />
     <None Include="README.md" />
     <None Include="build\release_tablefilter.bat" />
     <None Include="src\pn\ui\soy\pn.soy" />
@@ -51,7 +53,6 @@
     <Content Include="src\demos\app1\ShowListPage.js" />
     <Content Include="src\demos\app1\UserSpec.js" />
     <Content Include="src\demos\css\demo.css" />
-    <Content Include="src\demos\datamanagerdemo.js" />
     <Content Include="src\demos\daterangepickerdemo.js" />
     <Content Include="src\demos\dbdemo.js" />
     <Content Include="src\demos\demoscripts.js" />
@@ -59,7 +60,6 @@
     <Content Include="src\demos\images\window_right_tab.png" />
     <Content Include="src\demos\index.html" />
     <Content Include="src\demos\indexeddbtest.html" />
-    <Content Include="src\demos\pn.data.DataManager.html" />
     <Content Include="src\demos\pn.ui.DateRangePicker.html" />
     <Content Include="src\demos\pn.ui.TabSlideMenu.html" />
     <Content Include="src\demos\scripts.min.js" />
@@ -69,6 +69,10 @@
     <Content Include="src\demos\tablefilter_demosrc3.htm" />
     <Content Include="src\demos\tabslidemenudemo.js" />
     <Content Include="src\deps.js" />
+    <Content Include="src\pn\alg\bt.js" />
+    <Content Include="src\pn\alg\hashtable.js" />
+    <Content Include="src\pn\alg\heapsort.js" />
+    <Content Include="src\pn\alg\sort.js" />
     <Content Include="src\pn\app\AppConfig.js" />
     <Content Include="src\pn\app\AppEvents.js" />
     <Content Include="src\pn\app\BaseApp.js" />
@@ -76,11 +80,11 @@
     <Content Include="src\pn\app\Router.js" />
     <Content Include="src\pn\convert.js" />
     <Content Include="src\pn\data\BaseDalCache.js" />
+    <Content Include="src\pn\data\BaseFacade.js" />
     <Content Include="src\pn\data\DataDownloader.js" />
     <Content Include="src\pn\data\Entity.js" />
     <Content Include="src\pn\data\EntityFilter.js" />
     <Content Include="src\pn\data\EntityUtils.js" />
-    <Content Include="src\pn\data\BaseFacade.js" />
     <Content Include="src\pn\data\FieldSchema.js" />
     <Content Include="src\pn\data\IDataSource.js" />
     <Content Include="src\pn\data\LazyFacade.js" />
@@ -100,8 +104,7 @@
     <Content Include="src\pn\model\ModelBase.js" />
     <Content Include="src\pn\model\Timer.js" />
     <Content Include="src\pn\object.js" />
-    <Content Include="src\pn\rx.externs.js" />
-    <Content Include="src\pn\rx.js" />
+    <Content Include="src\pn\pn.js" />
     <Content Include="src\pn\slick.grid.externs.js" />
     <Content Include="src\pn\storage.js" />
     <Content Include="src\pn\testing\MockServer.js" />
@@ -118,7 +121,7 @@
     <Content Include="src\pn\ui\Dialog.js" />
     <Content Include="src\pn\ui\edit\AddOnFlyDialog.js" />
     <Content Include="src\pn\ui\edit\AddOnFlyRenderer.js" />
-    <Content Include="src\pn\ui\edit\cmd\CancelCommand.js" />
+    <Content Include="src\pn\ui\edit\cmd\BackCommand.js" />
     <Content Include="src\pn\ui\edit\cmd\CloneCommand.js" />
     <Content Include="src\pn\ui\edit\cmd\Command.js" />
     <Content Include="src\pn\ui\edit\cmd\DeleteCommand.js" />
@@ -174,6 +177,7 @@
     <Content Include="src\pn\ui\KeyShortcutMgr.js" />
     <Content Include="src\pn\ui\LoadingPnl.js" />
     <Content Include="src\pn\ui\MessagePanel.js" />
+    <Content Include="src\pn\ui\soy\pn.compiled.soy.js" />
     <Content Include="src\pn\ui\srch\Config.js" />
     <Content Include="src\pn\ui\srch\SearchGrid.js" />
     <Content Include="src\pn\ui\srch\SearchPanel.js" />
@@ -184,35 +188,36 @@
     <Content Include="src\pn\ui\UiSpecsRegister.js" />
     <Content Include="src\pn\ui\ViewMgr.js" />
     <Content Include="src\pn\ui\YesNoDialog.js" />
+    <Content Include="src\tests\alg\pn.alg.bt.html" />
+    <Content Include="src\tests\alg\pn.alg.hashtable.html" />
+    <Content Include="src\tests\alg\pn.alg.sort.html" />
     <Content Include="src\tests\all_tests.html" />
-    <Content Include="src\tests\pn_function.html" />
-    <Content Include="src\tests\data\pn.data.LazyFacade.html" />
-    <Content Include="src\tests\data\pn.data.LinqParser.html" />
+    <Content Include="src\tests\data\pn.data.LocalCache_transaction.html" />
     <Content Include="src\tests\data\pn.data.BaseFacade.html" />
+    <Content Include="src\tests\data\pn.data.LazyFacade.html" />
+    <Content Include="src\tests\data\pn.data.LazyFacade_SyncTests.html" />
+    <Content Include="src\tests\data\pn.data.LinqParser.html" />
     <Content Include="src\tests\data\pn.data.LocalCache.html" />
     <Content Include="src\tests\data\pn.data.MemCache.html" />
     <Content Include="src\tests\data\pn.data.Server.html" />
     <Content Include="src\tests\pn.app.Router.html" />
-    <Content Include="src\tests\pn_array.html" />
     <Content Include="src\tests\pn.json.html" />
     <Content Include="src\tests\pn.model.Collection.html" />
     <Content Include="src\tests\pn.model.Model.html" />
-    <Content Include="src\tests\pn.rx.html" />
     <Content Include="src\tests\pn.ui.KeyShortcutMgr.html" />
+    <Content Include="src\tests\pn_array.html" />
+    <Content Include="src\tests\pn_function.html" />
     <Content Include="src\tests\tablefilter\AdditionalFiltersTests.js" />
     <Content Include="src\tests\tablefilter\AjaxDataLoadTests.js" />
-    <Content Include="src\tests\tablefilter\QuickFindTests.js" />
-    <Content Include="src\tests\tablefilter\TableFilterTests.html" />
-    <Content Include="src\tests\tablefilter\TextColumnTests.js" />
-    <Content Include="src\tests\tablefilter\SearchEngineTests.html" />
     <Content Include="src\tests\tablefilter\BasicTests.js" />
+    <Content Include="src\tests\tablefilter\pn.json.performance.html" />
+    <Content Include="src\tests\tablefilter\pn.ui.filter.SearchEngine.html" />
+    <Content Include="src\tests\tablefilter\pn.ui.filter.TableFilter.html" />
+    <Content Include="src\tests\tablefilter\QuickFindTests.js" />
+    <Content Include="src\tests\tablefilter\TextColumnTests.js" />
     <Content Include="src\tests\typetest.js" />
-    <Content Include="src\tests\update_all_tests.bin.js" />
     <Content Include="tablefilter_readme.txt" />
     <Content Include="TODO.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="src\pn\pn.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

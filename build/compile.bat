@@ -1,5 +1,5 @@
-REM set BASE=../../../../projects/picnet_closure_repo/src/
-set BASE=../../../../oms/resources/scripts/lib/picnet_closure_repo/src/
+set BASE=../../../../projects/picnet_closure_repo/src/
+REM set BASE=../../../../oms/resources/scripts/lib/picnet_closure_repo/src/
 
 U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar u:\shared\lib\closure-templates\SoyToJsSrcCompiler.jar ^
@@ -20,7 +20,7 @@ c:\Python27\python.exe ^
   --root=src\ ^
   --output_mode=compiled ^
   --compiler_jar=U:\shared\lib\picnetcompiler.jar ^
-  --compiler_flags="--externs=U:\shared\lib\closure-compiler-src\contrib\externs\jquery-1.6.js" ^
+  --compiler_flags="--externs=lib\jquery1.7.externs.js" ^
   --compiler_flags="--externs=src\pn\slick.grid.externs.js" ^
   --compiler_flags="--debug=true" ^
   --compiler_flags="--process_closure_primitives=true" ^
