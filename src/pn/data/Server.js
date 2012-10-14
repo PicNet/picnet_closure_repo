@@ -434,6 +434,21 @@ pn.data.Server.Response = function(raw) {
 };
 
 
+/** @override */
+pn.data.Server.Response.prototype.toString = function() {
+  return 'updates[%s] last[%s] resEntity[%s] ajax[%s] error[%s] queries[%s]'.
+      pnsubs(
+      this.updates ? this.updates.length : 'n/a',
+      this.lastUpdate,
+      this.responseEntity ? this.responseEntity.type +
+      '#' + this.responseEntity.id : 'n/a',
+      this.ajaxData ? 'yes' : 'n/a',
+      this.error ? this.error : 'n/a',
+      this.queryResults ? goog.object.getCount(this.queryResults) : 'n/a'
+      );
+};
+
+
 
 /**
  * @constructor

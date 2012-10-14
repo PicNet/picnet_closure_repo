@@ -562,6 +562,18 @@ Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
 
 
 /**
+ * @see goog.array.remove
+ * Removes the first occurrence of a particular value from an array.
+ * @this {Array} The array from which to remove the specified item.
+ * @param {*} obj Object to remove.
+ * @return {boolean} True if an element was removed.
+ */
+Array.prototype.pnremove = function(obj) {
+  return goog.array.remove.apply(null, pn.aargs_(this, arguments));
+};
+
+
+/**
  * @see goog.array.removeDuplicates
  * @this {!Array.<T>} arr The array from which to remove duplicates.
  * @param {Array=} opt_rv An optional array in which to return the results,

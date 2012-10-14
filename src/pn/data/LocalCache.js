@@ -28,7 +28,7 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.log.getLogger('pn.data.LocalCache', false);
+  this.log_ = pn.log.getLogger('pn.data.LocalCache');
 
   /**
    * @private

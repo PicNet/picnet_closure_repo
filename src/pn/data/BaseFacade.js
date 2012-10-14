@@ -7,6 +7,7 @@ goog.require('pn.data.Entity');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.Query');
 goog.require('pn.data.Server');
+goog.require('pn.log');
 
 
 
@@ -36,6 +37,13 @@ pn.data.BaseFacade = function(cache, server) {
    * @type {!pn.data.Server}
    */
   this.server = server;
+
+
+  /**
+   * @private
+   * @type {goog.debug.Logger}
+   */
+  this.log_ = pn.log.getLogger('pn.data.BaseFacade');
 
   /**
    * @private
@@ -73,6 +81,8 @@ pn.data.BaseFacade.prototype.ajax = function(uri, data, callback) {
   pn.assObj(data);
   pn.assFun(callback);
 
+  this.log_.info('ajax: ' + uri);
+
   this.server.ajax(uri, data,
       goog.bind(this.parseServerResponse, this, callback),
       goog.bind(this.handleError, this));
@@ -92,6 +102,8 @@ pn.data.BaseFacade.prototype.getEntity = function(type, id) {
   pn.assStr(type);
   pn.assNum(id);
 
+  this.log_.info('getEntity: ' + type + '#' + id);
+
   return this.cache.getEntity(type, id);
 };
 
@@ -110,6 +122,8 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id <= 0);
   pn.assFun(callback);
+
+  this.log_.info('createEntity: ' + entity.type + '#' + entity.id);
 
   entity = this.cache.createEntity(entity).clone();
   var tmpid = entity.id;
@@ -151,6 +165,9 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id > 0);
   pn.assFun(callback);
+
+  this.log_.info('updateEntity: ' + entity.type + '#' + entity.id);
+
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.updateEntity(entity);
@@ -182,6 +199,8 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity, callback) {
   pn.ass(entity instanceof pn.data.Entity);
   pn.ass(entity.id > 0);
 
+  this.log_.info('deleteEntity: ' + entity.type + '#' + entity.id);
+
   var current = this.cache.getEntity(entity.type, entity.id);
 
   this.cache.deleteEntity(entity.type, entity.id);
@@ -207,6 +226,7 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity, callback) {
 pn.data.BaseFacade.prototype.query = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
   pn.assFun(callback);
+
   var parsed = queries.pnmap(function(q) {
     if (q instanceof pn.data.Query) return q;
     return new pn.data.Query(q);
@@ -251,6 +271,8 @@ pn.data.BaseFacade.prototype.getLastUpdate = function() {
 
 /** @protected */
 pn.data.BaseFacade.prototype.sync = function() {
+  this.log_.info('sync: ' + this.getLastUpdate());
+
   this.server.getAllUpdates(this.getLastUpdate(),
       goog.bind(this.parseServerResponse, this),
       goog.bind(this.handleError, this));
@@ -276,10 +298,10 @@ pn.data.BaseFacade.prototype.parseServerResponse =
   pn.ass(goog.isNull(callback) || goog.isFunction(callback));
   pn.ass(response instanceof pn.data.Server.Response);
 
+  this.log_.info('parseServerResponse response[' + response.toString() + ']');
+
   if (response.lastUpdate > 0) this.cache.setLastUpdate(response.lastUpdate);
-
   if (response.updates) this.applyUpdates_(response.updates);
-
   if (callback) callback.call(this,
       response.responseEntity || response.ajaxData || response.queryResults);
 };

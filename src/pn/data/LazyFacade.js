@@ -59,15 +59,19 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
   pn.assFun(callback);
 
+  var cachedQueries = this.cache.getCachedQueries();
+  queries.pnforEach(function(q) { cachedQueries.pnremove(q); });
+
   var loaded = queries.pnfilter(
       function(q) { return this.cache.contains(q); }, this);
   var unloaded = queries.pnfilter(
       function(q) { return !this.cache.contains(q); }, this);
+
   var cached = this.cache.query(loaded);
   if (unloaded.length === 0) {
     callback(cached);
   } else {
-    this.server.query(unloaded, loaded, this.getLastUpdate(),
+    this.server.query(unloaded, cachedQueries, this.getLastUpdate(),
         goog.bind(this.parseServerResponse, this, function(results) {
           goog.object.forEach(results, function(list, key) {
             pn.assArr(list);
