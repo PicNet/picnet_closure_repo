@@ -9,3 +9,9 @@
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 - Make the authentication model pluggable (Forms/Windows)
+
+- LocalCache
+  * For large lists of a single type LocalCache could be inneficcient, consider using
+      buckets for ID ranges to make the update flush operation faster.
+  * Handling lots of updates from server is innefficient, we should batch flushes to the
+      localStorage.

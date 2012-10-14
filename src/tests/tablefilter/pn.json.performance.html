@@ -20,9 +20,9 @@ var arr = [],
 var setUpPage = function() {
   replacer = pn.json.replacer_.pnpartial(true);
   var date = new goog.date.DateTime(),
-      single = '{"date":"\\\\/Date(%s)\\\\/","num":1,"str":"A long string to store in the object"}'.
-          pnsubs(date.getTime()),      
-      str = 'A long string to store in the object',
+      str = 'A long string to store in the object with all special chars [~`!@#$%^&*()_+[]{}\|;:\'",.<>/?]',
+      single = '{"date":"\\\\/Date(%s)\\\\/","num":1,"str":"%s"}'.
+          pnsubs(date.getTime(), str.replace('"', '\\"')),            
       O = function() {
         this.date = date;
         this.num = 1;
@@ -32,12 +32,12 @@ var setUpPage = function() {
 
   O.prototype.subsToJson = function() {
     return '{"date":"\\\\/Date(%s)\\\\/","num":%s,"str":"%s"}'.
-        pnsubs(this.date.getTime(), this.num, this.str);
+        pnsubs(this.date.getTime(), this.num, this.getStr());
   };
 
   O.prototype.concatToJson = function() {
     return '{"date":"\\\\/Date(' + this.date.getTime() + 
-        ')\\\\/","num":' + this.num + ',"str":"' + this.str + '"}';
+        ')\\\\/","num":' + this.num + ',"str":"' + this.getStr() + '"}';
   };
 
   O.prototype.joinToJson = function() {
@@ -47,10 +47,12 @@ var setUpPage = function() {
       ')\\\\/","num":',
       this.num,
       ',"str":"',
-      this.str,
+      this.getStr(),
       '"}'
     ].join('');
   };
+
+  O.prototype.getStr = function() { return this.str.replace(/"/g, '\\"'); };
 
   for (var i = 0; i < iterations; i++) { 
     arr.push(new O()); 
@@ -153,8 +155,8 @@ var performance = function(test, op) {
 
 var validateJson = function(json) {
   var msg = 'exp[%s] act[%s]'.
-      pnsubs(exp.substring(0, 100), json.substring(0, 100));
-  if (exp !== json) fail(msg);
+      pnsubs(exp.substring(0, 200), json.substring(0, 200));
+  if (exp !== json) { fail(msg); }
 };
 
     </script>    

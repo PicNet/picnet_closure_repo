@@ -18,9 +18,9 @@ goog.require('pn.storage');
 var entity,
     cache;
 
-var setUp = function() {
-  pn.storage.clear();
-  cache = new pn.data.LocalCache(); // Reset cache
+var setUp = function() {  
+  // Reset cache
+  cache = new pn.data.LocalCache(goog.now(), 'pn.data.LocalCache.html'); 
   cache.cache_['EntityType'] = [];
   entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;

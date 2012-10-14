@@ -192,6 +192,7 @@
     <Content Include="src\tests\alg\pn.alg.hashtable.html" />
     <Content Include="src\tests\alg\pn.alg.sort.html" />
     <Content Include="src\tests\all_tests.html" />
+    <Content Include="src\tests\data\pn.data.LocalCache_transaction.html" />
     <Content Include="src\tests\data\pn.data.BaseFacade.html" />
     <Content Include="src\tests\data\pn.data.LazyFacade.html" />
     <Content Include="src\tests\data\pn.data.LazyFacade_SyncTests.html" />
