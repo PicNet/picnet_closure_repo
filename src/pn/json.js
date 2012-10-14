@@ -36,6 +36,7 @@ pn.json.serialiseJson = function(o, opt_useDotNetDates) {
   return goog.json.serialize(o, replacer);
 };
 
+
 /**
  * @private
  * @param {boolean} dotNetDates If this is true then dates are
@@ -43,6 +44,7 @@ pn.json.serialiseJson = function(o, opt_useDotNetDates) {
  *    millis are used.
  * @param {string} id The property name being stringified.
  * @param {*} val The value being stringified.
+ * @return {*} A json friendly value.
  */
 pn.json.replacer_ = function(dotNetDates, id, val) {
   if (val instanceof goog.date.Date ||

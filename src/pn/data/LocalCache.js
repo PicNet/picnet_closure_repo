@@ -6,9 +6,10 @@ goog.require('goog.array');
 goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.LinqParser');
 goog.require('pn.data.Query');
+goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
 goog.require('pn.log');
-goog.require('pn.data.TypeRegister');
+
 
 
 /**
@@ -18,7 +19,7 @@ goog.require('pn.data.TypeRegister');
  * @param {string=} opt_cachePrefix An optional prefix to use for all
  *    read/writes from/to the local cache.
  */
-pn.data.LocalCache = function(dbver, opt_cachePrefix, opt_bucketIdLimits) {
+pn.data.LocalCache = function(dbver, opt_cachePrefix) {
   goog.Disposable.call(this);
   if (!window['localStorage'])
     throw new Error('The current browser is not supported');
@@ -28,7 +29,7 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix, opt_bucketIdLimits) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.data.LocalCache', false);
-  
+
   /**
    * @private
    * @type {number}
@@ -66,20 +67,23 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix, opt_bucketIdLimits) {
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
 
+
 /** Begins a transaction */
 pn.data.LocalCache.prototype.begin = function() {
   if (this.transaction_) throw new Error('A transaction is already active');
   this.transaction_ = [];
 };
 
+
 /** Commits the active transaction */
 pn.data.LocalCache.prototype.commit = function() {
   this.transaction_.
-    pnremoveDuplicates().
-    pnforEach(this.flush_, this);
+      pnremoveDuplicates().
+      pnforEach(this.flush_, this);
   this.transaction_ = null;
   this.flushCachedQueries_();
 };
+
 
 /**
  * Gets an entity from the local cache.  If this entity does not exist in the
@@ -168,7 +172,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
 
   this.cache_[type] = this.cache_[type].pnfilter(
       function(e) { return e.id !== id; });
-  
+
   if (this.transaction_) this.transaction_.push(type);
   else this.flush_(type);
 };
@@ -261,10 +265,10 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
   this.cache_[type] = list;
   var qid = query.toString();
   this.cachedQueries_[qid] = query;
-  
+
   if (this.transaction_) this.transaction_.push(type);
   else {
-    this.flush_(type);  
+    this.flush_(type);
     this.flushCachedQueries_();
   }
 };
@@ -371,12 +375,15 @@ pn.data.LocalCache.prototype.init_ = function() {
 pn.data.LocalCache.prototype.flush_ = function(type) {
   pn.assStr(type);
   pn.ass(type in this.cache_, type + ' not in cache');
-  this.log_.info('Flushing "%s".'.pnsubs(type));
+
+  var start = goog.now();
 
   var list = this.cache_[type];
-  
   var json = pn.json.serialiseJson(list, true);
-  window['localStorage'][this.STORE_PREFIX_ + type] = json;  
+  window['localStorage'][this.STORE_PREFIX_ + type] = json;
+
+  var took = goog.now() - start;
+  this.log_.info('Flushed "%s" took %sms.'.pnsubs(type, took));
 };
 
 

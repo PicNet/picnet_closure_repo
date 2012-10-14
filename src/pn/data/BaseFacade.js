@@ -325,7 +325,9 @@ pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
 pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
   pn.assArr(updates);
 
+  this.cache.begin();
   updates.pnforEach(this.applyUpdate_, this);
+  this.cache.commit();
 };
 
 
