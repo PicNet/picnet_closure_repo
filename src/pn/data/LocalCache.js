@@ -341,9 +341,13 @@ pn.data.LocalCache.prototype.init_ = function() {
 pn.data.LocalCache.prototype.flush_ = function(type) {
   pn.assStr(type);
   pn.ass(type in this.cache_, type + ' not in cache');
+  this.log_.info('Flushing "%s".'.pnsubs(type));
 
   var list = this.cache_[type];
-  var json = pn.json.serialiseJson(list, true);
+  // Using JSON.stringify for performance as we will handle dates in the toJson
+  // method.
+  var json = JSON.stringify(list.pnmap(
+      function(e) { return e.toJson(); }), true);
   window['localStorage'][this.STORE_PREFIX_ + type] = json;
 };
 
