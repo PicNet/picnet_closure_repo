@@ -125,8 +125,8 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
  *    in a subclass or in an interceptor.
  */
 pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity_ = function() {
-  return this.fctx.spec.additionalProperties.getNewEntity ?
-      this.fctx.spec.additionalProperties.getNewEntity :
+  return !!this.fctx.spec.additionalProperties.getNewEntity ?
+      this.fctx.spec.additionalProperties.getNewEntity() :
       pn.data.TypeRegister.create(this.spec_.type, {id: -goog.now()});
 };
 
