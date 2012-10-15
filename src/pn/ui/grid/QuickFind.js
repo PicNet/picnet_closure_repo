@@ -103,29 +103,26 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
   var row = [];
-  for (var columnId in this.filters_) {
-    var isFiltering = columnId in this.filters_;
-    if (isFiltering || this.quickfind_) {
-      var cctx = /** @type {!pn.ui.grid.ColumnCtx} */ (this.cctxs_.pnfind(
-          function(fctx1) { return fctx1.id === columnId; }));
-      var val = cctx.getEntityValue(entity);
-      var renderer = cctx.getColumnRenderer();
-      if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
-        val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
-            this.cache_, cctx.spec.displayPath,
-            cctx.spec.entitySpec.type, entity) || '').toString() : '';
-      } else if (renderer) {
-        val = renderer(cctx, entity);
-      }
-      var strval = '';
-      if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
-      row.push(strval);
-      if (isFiltering &&
-          !this.search_.matches(strval, this.filters_[columnId])) {
-        return false;
-      }
+  var noMatchIdx = this.cctxs_.pnfindIndex(function(cctx) {
+    var isFiltering = cctx.id in this.filters_;
+    if (!isFiltering && !this.quickfind_) { return false; }
+    var val = cctx.getEntityValue(entity);
+    var fv = this.filters_[cctx.id];
+    var renderer = cctx.getColumnRenderer();
+    if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
+      val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
+          this.cache_, cctx.spec.displayPath,
+          cctx.spec.entitySpec.type, entity) || '').toString() : '';
+    } else if (renderer) {
+      val = renderer(cctx, entity);
     }
-  }
+    var strval = '';
+    if (goog.isDefAndNotNull(val)) { strval = val.toString().toLowerCase(); }
+    row.push(strval);
+    return isFiltering && !this.search_.matches(strval, fv);
+  }, this);
+  if (noMatchIdx >= 0) return false;
+
   if (this.quickfind_) {
     var value = goog.string.trim(this.quickfind_.value);
     var rowstr = row.join('');
