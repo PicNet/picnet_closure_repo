@@ -296,12 +296,13 @@ pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
 pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
   var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
   window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
-  if (!dbver || !exp || dbver === exp) return;
+  if (!dbver || !exp || dbver === exp) { return; }
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
       pnsubs(exp, dbver));
 
   this.clear();
+  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
 };
 
 

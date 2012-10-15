@@ -92,6 +92,6 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
 pn.data.TypeRegister.getFieldSchema = function(type, property) {
   pn.ass(goog.isString(type), '"type" not specified');
   pn.ass(goog.isString(property), '"property" not specified');
-
+  if (goog.string.startsWith(property, '_')) return null;
   return pn.data.TypeRegister.fromName(type).prototype.getFieldSchema(property);
 };
