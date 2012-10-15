@@ -155,6 +155,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
       function(inp) { this.inputListener_.addInput(inp); }, this);
   if (this.quickfind_) {
     this.inputListener_.addInput(this.quickfind_);
+    goog.Timer.callOnce(this.quickfind_.focus, 1, this.quickfind_);
   }
   if (this.clear_) {
     var click = goog.events.EventType.CLICK;
