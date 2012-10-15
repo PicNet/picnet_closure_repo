@@ -218,6 +218,8 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   goog.object.forEach(enumo, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
+  lst.pnsortObjectsByKey('name');
+
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       fctx, txt, lst, selected, -1);
@@ -271,8 +273,9 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var list = fctx.cache.get(entityType);
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  pn.data.EntityUtils.orderEntities(entityType, list);
+
   if (opt_filter) list = opt_filter(entity, list);
+  pn.data.EntityUtils.orderEntities(entityType, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
@@ -329,7 +332,6 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
     }
     var arr = fctx.spec.additionalProperties.list ?
         fctx.spec.additionalProperties.list() : list;
-    arr.pnsortObjectsByKey('name');
 
     var selected = opt_selectedid ? opt_selectedid :
         selValue ? selValue :

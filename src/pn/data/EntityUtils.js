@@ -204,12 +204,9 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
   var namet = goog.isDef(template[namep]) ?
       pn.data.TypeRegister.getFieldSchema(type, namep).type : null;
 
-  if (ordert === 'number') {
-    list.pnsort(function(a, b) { return a[orderp] - b[orderp]; });
-  } else if (namet === 'string') {
-    list.pnsort(function(a, b) {
-      return goog.string.caseInsensitiveCompare(a[namep], b[namep]);
-    });
+  if (ordert === 'number') { list.pnsortObjectsByKey(orderp); }
+  else if (namet === 'string') {
+    list.pnsortObjectsByKey(namep, goog.string.caseInsensitiveCompare);
   }
 };
 
