@@ -38,7 +38,7 @@ goog.require('pn.ui.soy');
  * @extends {goog.ui.Component}
  * @param {!pn.ui.UiSpec} spec The specs for the entities in
  *    this grid.
- * @param {!Array} list The entities to display.
+ * @param {!Array.<!pn.data.Entity>} list The entities to display.
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
  */
@@ -83,14 +83,15 @@ pn.ui.grid.Grid = function(spec, list, cache) {
    * @const
    * @type {string}
    */
-  this.gridId_ = goog.array.reduce(this.cfg_.cCtxs,
+  this.gridId_ = this.cfg_.cCtxs.pnreduce(
       function(acc, f) { return acc + f.id; }, '');
 
   /**
    * @private
-   * @type {!Array}
+   * @type {!Array.<!pn.data.Entity>}
    */
-  this.list_ = this.interceptor_ ? this.interceptor_.filterList(list) : list;
+  this.list_ = this.interceptor_ ?
+      this.interceptor_.filterList(list) : list;
 
   /**
    * @private
@@ -150,11 +151,13 @@ pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
   // TODO: The commands should be rendered by the CommandsHandler.  But to do
   // this we need to ensure that the GridHandler has access to the current
   // grid element (this.getElement());
+
+  var parent = goog.dom.getElement('commands-container') || this.getElement();
   this.cfg_.commands.pnforEach(function(c) {
     if (this.cfg_.readonly && !c.visibleOnReadOnly) { return; }
 
     var hasData = this.list_.length > 0;
-    if (hasData || c.visibleOnEmpty) { c.decorate(this.getElement()); }
+    if (hasData || c.visibleOnEmpty) { c.decorate(parent); }
   }, this);
 };
 
@@ -188,7 +191,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   this.dataView_ = new pn.ui.grid.DataView();
   this.registerDisposable(this.dataView_);
 
-  var columns = goog.array.map(this.cfg_.cCtxs,
+  var columns = this.cfg_.cCtxs.pnmap(
       function(cctx) { return cctx.toSlick(); });
   this.slick_ = new Slick.Grid(
       gridContainer, this.dataView_, columns, this.cfg_.toSlick());
@@ -198,6 +201,20 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
 /** @override */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
+
+  this.attachGridEvents_();
+
+  this.initialisePipeline_();
+  this.pipeline_.preRender(!this.slick_);
+
+  this.renderGrid_();
+
+  this.pipeline_.postRender(!this.slick_);
+};
+
+
+/** @private */
+pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
   // No data, do not display grid. This could cause issues if we ever do need
   // to support changing data sets i.e. 'pn.model.Collection'
   if (!this.slick_) return;
@@ -218,15 +235,16 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.slick_.onColumnsResized.subscribe(goog.bind(function() {
     this.fireCustomPipelineEvent('resize');
   }, this));
+};
 
-  this.initialisePipeline_();
-  this.pipeline_.preRender();
+
+/** @private */
+pn.ui.grid.Grid.prototype.renderGrid_ = function() {
+  if (!this.dataView_) return;
 
   this.dataView_.beginUpdate();
   this.dataView_.setItems(this.list_, 'id');
   this.dataView_.endUpdate();
-
-  this.pipeline_.postRender();
 };
 
 

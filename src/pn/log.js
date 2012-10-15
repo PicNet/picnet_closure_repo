@@ -82,6 +82,17 @@ pn.log.getLogger = function(name, opt_exclusive) {
 
 
 /**
+ * A convenience logging method for types that do not need to initialise their
+ *    own logger.
+ * @param {string} msg The string message.
+ * @param {Error=} opt_exception An exception associated with the message.
+ */
+pn.log.info = function(msg, opt_exception) {
+  pn.log.deflogger_.info.apply(pn.log.deflogger_, arguments);
+};
+
+
+/**
  * @private
  * @param {string} name The name of the logger.
  * @param {goog.debug.Logger.Level} level The level to allow logging at.
@@ -92,3 +103,10 @@ pn.log.getLoggerImpl_ = function(name, level) {
   log.setLevel(level);
   return log;
 };
+
+
+/**
+ * @private
+ * @type {!goog.debug.Logger}
+ */
+pn.log.deflogger_ = pn.log.getLogger('pn.log');

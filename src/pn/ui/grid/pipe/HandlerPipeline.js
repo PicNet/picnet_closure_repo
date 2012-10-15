@@ -50,19 +50,25 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.setMembers =
 };
 
 
-/** Called before the grid and dataview have their display data */
-pn.ui.grid.pipe.HandlerPipeline.prototype.preRender = function() {
-  this.handlers_.pnforEach(function(h) {
-    h.preRender();
-  }, this);
+/**
+ * Called before the grid and dataview have their display data
+ * @param {boolean} isEmpty Wether the grid is empty.  By default the handlers
+ *    are not initialised if the grid is empty.
+ */
+pn.ui.grid.pipe.HandlerPipeline.prototype.preRender = function(isEmpty) {
+  this.handlers_.pnforEach(
+      function(h) { if (!isEmpty || h.requiredOnEmptyGrid) h.preRender(); });
 };
 
 
-/** Called after the grid and dataview have their data */
-pn.ui.grid.pipe.HandlerPipeline.prototype.postRender = function() {
-  this.handlers_.pnforEach(function(h) {
-    h.postRender();
-  }, this);
+/**
+ * Called after the grid and dataview have their data
+ * @param {boolean} isEmpty Wether the grid is empty.  By default the handlers
+ *    are not initialised if the grid is empty.
+ */
+pn.ui.grid.pipe.HandlerPipeline.prototype.postRender = function(isEmpty) {
+  this.handlers_.pnforEach(
+      function(h) { if (!isEmpty || h.requiredOnEmptyGrid) h.postRender(); });
 };
 
 

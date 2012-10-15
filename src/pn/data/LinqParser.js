@@ -19,7 +19,7 @@ pn.data.LinqParser.parse = function(expression) {
 
   var filters;
   try {
-    filters = goog.array.map(pn.data.LinqParser.compileLinq_(expression),
+    filters = pn.data.LinqParser.compileLinq_(expression).pnmap(
         function(js) { return eval(js); });
   } catch (ex) { throw 'Expression is not valid: ' + expression; }
 

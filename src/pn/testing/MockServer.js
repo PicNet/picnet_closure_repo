@@ -31,6 +31,18 @@ pn.testing.MockServer = function() {
 
   /** @type {!Array.<pn.data.Server.Update>} */
   this.nextServerResponseUpdates = [];
+
+  /**
+   * @private
+   * @type {!Object.<!Array.<!pn.data.Entity>>}
+   */
+  this.db_ = {};
+
+  /**
+   * @private
+   * @type {!Array.<{type:string, id:number}>}
+   */
+  this.deleted_ = [];
 };
 goog.inherits(pn.testing.MockServer, pn.data.Server);
 
@@ -57,10 +69,9 @@ pn.testing.MockServer.prototype.ajax =
 pn.testing.MockServer.prototype.createEntity =
     function(entity, success, failure) {
   this.calls.push({ method: 'createEntity', args: arguments });
-
-  if (this.nextFail) { this.doFail_(failure); return; }
-  entity.id = pn.testing.MockServer.nextId_++;
-  this.doSuccess_(entity, success);
+  var cloned = goog.object.unsafeClone(entity);
+  cloned.id = pn.testing.MockServer.nextId_++;
+  this.updateEntityImpl_(cloned, success, failure);
 };
 
 
@@ -69,7 +80,25 @@ pn.testing.MockServer.prototype.updateEntity =
     function(entity, success, failure) {
   this.calls.push({ method: 'updateEntity', args: arguments });
 
+  this.updateEntityImpl_(entity, success, failure);
+};
+
+
+/**
+ * @private
+ * @param {!pn.data.Entity} entity The entity to update.
+ * @param {!function(!pn.data.Server.Response):undefined} success The
+ *    success callback.
+ * @param {!function(string):undefined} failure The failure callback.
+ */
+pn.testing.MockServer.prototype.updateEntityImpl_ =
+    function(entity, success, failure) {
   if (this.nextFail) { this.doFail_(failure); return; }
+
+  var list = this.db_[entity.type];
+  if (!list) list = this.db_[entity.type] = [];
+  var idx = list.pnfind(function(e) { return e.id === entity.id; });
+  if (idx >= 0) list[idx] = entity;
   this.doSuccess_(entity, success);
 };
 
@@ -80,6 +109,13 @@ pn.testing.MockServer.prototype.deleteEntity =
   this.calls.push({ method: 'deleteEntity', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
+
+  var list = this.db_[entity.type];
+  if (!list) list = [];
+  this.db_[entity.type] = list.pnfilter(
+      function(e) { return e.id !== entity.id; });
+  this.deleted_.push(entity);
+
   this.doSuccess_(entity, success);
 };
 
@@ -92,9 +128,13 @@ pn.testing.MockServer.prototype.getQueryUpdates =
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
-  queries.pnforEach(function(q) {
-    results[q.toString()] = {'List' : [], 'LastUpdate': 1};
-  });
+  queries.pnforEach(goog.bind(function(q) {
+    results[q.toString()] = {
+      'List' : this.db_[q.Type],
+      'LastUpdate': goog.now()
+    };
+  }, this));
+  // TODO: Add deleted here
   this.doAjaxSuccess_(results, success);
 };
 
@@ -105,7 +145,7 @@ pn.testing.MockServer.prototype.getAllUpdates =
   this.calls.push({ method: 'getAllUpdates', args: arguments });
 
   if (this.nextFail) { this.doFail_(failure); return; }
-  this.doAjaxSuccess_({}, success);
+  this.doAjaxSuccess_(goog.object.unsafeClone(this.db_), success);
 };
 
 
@@ -116,9 +156,10 @@ pn.testing.MockServer.prototype.query =
   if (this.nextFail) { this.doFail_(failure); return; }
 
   var results = {};
-  queries.pnforEach(function(q) {
-    results[q.toString()] = [];
-  });
+  queries.pnforEach(goog.bind(function(q) {
+    if (!this.db_[q.Type]) this.db_[q.Type] = [];
+    results[q.toString()] = this.db_[q.Type];
+  }, this));
   this.doQuerySuccess_(results, success);
 };
 
@@ -146,7 +187,7 @@ pn.testing.MockServer.prototype.doSuccess_ = function(resData, callback) {
   rawEntity.ID = rawEntity.id;
 
   var response = new pn.data.Server.Response({
-    LastUpdate: 1,
+    LastUpdate: goog.now(),
     Updates: this.nextServerResponseUpdates,
     ResponseEntityType: rawEntity.type,
     ResponseEntity: rawEntity
@@ -165,7 +206,7 @@ pn.testing.MockServer.prototype.doSuccess_ = function(resData, callback) {
  */
 pn.testing.MockServer.prototype.doAjaxSuccess_ = function(resData, callback) {
   var response = new pn.data.Server.Response({
-    LastUpdate: 1,
+    LastUpdate: goog.now(),
     Updates: this.nextServerResponseUpdates,
     AjaxResponse: resData
   });
@@ -183,7 +224,7 @@ pn.testing.MockServer.prototype.doAjaxSuccess_ = function(resData, callback) {
  */
 pn.testing.MockServer.prototype.doQuerySuccess_ = function(results, callback) {
   var response = new pn.data.Server.Response({
-    LastUpdate: 1,
+    LastUpdate: goog.now(),
     Updates: this.nextServerResponseUpdates
   });
   response.queryResults = results;

@@ -21,6 +21,8 @@ pn.ui.grid.pipe.CommandsHandler = function(entityType) {
    * @type {string}
    */
   this.entityType_ = entityType;
+
+  this.requiredOnEmptyGrid = true;
 };
 goog.inherits(pn.ui.grid.pipe.CommandsHandler, pn.ui.grid.pipe.GridHandler);
 
@@ -47,7 +49,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCustomEvent =
  * @param {pn.ui.grid.cmd.Command} cmd The command to listen to.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
-  pn.ass(cmd);
+  pn.ass(cmd instanceof pn.ui.grid.cmd.Command);
 
   this.listen(cmd, cmd.eventType, this.onCommand_);
 };
@@ -59,7 +61,6 @@ pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.onCommand_ = function(event) {
   pn.ass(event);
-
   if (this.cfg.publishEventBusEvents) this.doPubSubEvent_(event);
   else this.pipeline.raiseGridEvent(event);
 };
@@ -79,15 +80,13 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
       var id = e.selected.id;
       pn.app.ctx.pub(e.type, this.entityType_, id);
       break;
-    case ae.ENTITY_ADD:
-      pn.app.ctx.pub(e.type, this.entityType_);
-      break;
     case ae.LIST_EXPORT:
       var cols = this.cctxs;
       var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
       pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
       break;
-    default: throw new Error('Event: ' + e.type + ' is not supported');
+    default:
+      pn.app.ctx.pub(e.type, this.entityType_);
   }
 };

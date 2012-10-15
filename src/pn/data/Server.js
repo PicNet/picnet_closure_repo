@@ -119,12 +119,12 @@ pn.data.Server.prototype.updateEntity =
 pn.data.Server.prototype.deleteEntity =
     function(entity, success, failure) {
   pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(entity.id > 0);
   pn.assFun(success);
   pn.assFun(failure);
 
-  var json = this.getEntityJson_(entity);
   var uri = this.getFacadeControllerAction_('DeleteEntity');
-  this.ajax_(uri, json, success, failure);
+  this.ajax_(uri, {'type': entity.type, 'id': entity.id}, success, failure);
 };
 
 
@@ -388,7 +388,7 @@ pn.data.Server.Response = function(raw) {
   pn.assObj(raw);
 
   /** @type {Array.<pn.data.Server.Update>} */
-  this.updates = raw['Updates'] ? goog.array.map(raw['Updates'],
+  this.updates = raw['Updates'] ? raw['Updates'].pnmap(
       function(u) { return new pn.data.Server.Update(u); }, this) : null;
 
   /** @type {number} */
@@ -431,6 +431,21 @@ pn.data.Server.Response = function(raw) {
       goog.isDefAndNotNull(this.ajaxData) ||
       goog.isDefAndNotNull(this.responseEntity) ||
       goog.isDefAndNotNull(this.updates), 'Response is not a FacadeResponse.');
+};
+
+
+/** @override */
+pn.data.Server.Response.prototype.toString = function() {
+  return 'updates[%s] last[%s] resEntity[%s] ajax[%s] error[%s] queries[%s]'.
+      pnsubs(
+      this.updates ? this.updates.length : 'n/a',
+      this.lastUpdate,
+      this.responseEntity ? this.responseEntity.type +
+      '#' + this.responseEntity.id : 'n/a',
+      this.ajaxData ? 'yes' : 'n/a',
+      this.error ? this.error : 'n/a',
+      this.queryResults ? goog.object.getCount(this.queryResults) : 'n/a'
+      );
 };
 
 

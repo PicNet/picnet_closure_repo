@@ -86,14 +86,11 @@ goog.inherits(pn.ui.grid.Config, goog.Disposable);
 
 /** @private */
 pn.ui.grid.Config.prototype.init_ = function() {
-  var hasOrderColumn = !this.readonly && goog.array.findIndex(this.cCtxs,
-      function(cctx) {
-        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
-      }) >= 0;
-  if (hasOrderColumn) {
-    this.cCtxs.pnforEach(function(cctx) {
-      cctx.spec.sortable = false;
-    });
+  var hasOrder = !this.readonly && this.cCtxs.pnfindIndex(function(cctx) {
+    return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec; }) >= 0;
+
+  if (hasOrder) {
+    this.cCtxs.pnforEach(function(cctx) { cctx.spec.sortable = false; });
   }
 };
 

@@ -58,8 +58,11 @@ pn.ui.grid.pipe.FilteringHandler.prototype.postRender = function() {
 
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.initQuickFilters_ = function() {
-  this.quickFind_ =
-      new pn.ui.grid.QuickFind(this.cache_, this.cctxs, this.slick);
+  // This can be null, in which case we do not add the quick find filter.
+  var quickfind = goog.dom.getElement('quick-find');
+  var clear = goog.dom.getElement('clear-filters');
+  this.quickFind_ = new pn.ui.grid.QuickFind(
+      this.cache_, this.cctxs, this.slick, quickfind, clear);
   this.registerDisposable(this.quickFind_);
   this.initPersistentFilters_();
 };

@@ -58,6 +58,16 @@ pn.assNum = function(val, opt_message, var_args)
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
+pn.assBool = function(val, opt_message, var_args) 
+    { pn.assType_(goog.isBoolean, arguments); };
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
 pn.assObj = function(val, opt_message, var_args) 
     { pn.assType_(goog.isObject, arguments); };
 
@@ -548,6 +558,18 @@ Array.prototype.pnsort = function(opt_compareFn) {
 Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
   goog.array.sortObjectsByKey.apply(null, pn.aargs_(this, arguments));
   return this;
+};
+
+
+/**
+ * @see goog.array.remove
+ * Removes the first occurrence of a particular value from an array.
+ * @this {Array} The array from which to remove the specified item.
+ * @param {*} obj Object to remove.
+ * @return {boolean} True if an element was removed.
+ */
+Array.prototype.pnremove = function(obj) {
+  return goog.array.remove.apply(null, pn.aargs_(this, arguments));
 };
 
 

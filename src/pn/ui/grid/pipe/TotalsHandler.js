@@ -44,7 +44,7 @@ goog.inherits(pn.ui.grid.pipe.TotalsHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.TotalsHandler.prototype.preRender = function() {
-  this.totalColumns_ = goog.array.filter(this.cctxs,
+  this.totalColumns_ = this.cctxs.pnfilter(
       function(cctx) { return !!cctx.spec.total; });
   if (!this.totalColumns_.length) { return; }
 
@@ -80,7 +80,7 @@ pn.ui.grid.pipe.TotalsHandler.prototype.updateTotals_ = function() {
   }, {}, this);
   var html = [];
   for (var field in total) {
-    var cctx = goog.array.find(this.totalColumns_,
+    var cctx = this.totalColumns_.pnfind(
         function(cctx1) { return cctx1.id === field; });
     var val;
     var ctor = pn.data.TypeRegister.fromName(cctx.entitySpec.type);

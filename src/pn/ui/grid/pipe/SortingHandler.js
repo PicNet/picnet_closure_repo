@@ -86,7 +86,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
  * @param {boolean} asc Wether to sort ascending.
  */
 pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
-  var cctx = goog.array.find(this.cctxs,
+  var cctx = this.cctxs.pnfind(
       function(cctx1) { return cctx1.id === col; });
 
   this.view.sort(function(a, b) {

@@ -15,6 +15,7 @@ goog.require('pn.data.Entity');
 goog.require('pn.testing.MockServer');
 
 var facade,
+    cache,
     server,
     events,
     updated,
@@ -22,24 +23,24 @@ var facade,
     xhrs;
 
 var setUp = function() {
-  pn.app = { ctx: { cfg: {}} }; // Mock AppConfig
-
   xhrs = [];
   events = [];
   goog.global.setInterval = function() {};
   pn.data.LazyFacade.prototype.sync = function() {};
   pn.data.LocalCache.prototype.init_ = function() {};
 
-  facade = new pn.data.LazyFacade('controller_uri');  
-  facade.cache.cache_['EntityType'] = [];
-  facade.server = (server = new pn.testing.MockServer());
+  cache = new pn.data.LocalCache(goog.now().toString(), '1');
+  cache.clear();
+  cache.cache_['EntityType'] = [];
+  server = new pn.testing.MockServer();
+  facade = new pn.data.LazyFacade(cache, server);    
   
   var entity = new pn.data.Entity('EntityType', 0);
   entity.id = -1;
-  updated = facade.cache.createEntity(entity).clone();
+  updated = cache.createEntity(entity).clone();
   var tmpid = updated.id;
   updated.id = 11;
-  facade.cache.updateEntity(updated, tmpid);
+  cache.updateEntity(updated, tmpid);
 
   pn.data.TypeRegister.parseEntity = function(type, raw) {
     var entity2 = new pn.data.Entity(type, raw.ID);
@@ -56,7 +57,7 @@ var testCallingServerMethodsAlwaysHasLargeLastUpdate = function() {
   facade.createEntity(entity, function() {});
   facade.updateEntity(updated, function() {});
   facade.getEntity('EntityType', updated.id);
-  facade.deleteEntity(updated);
+  facade.deleteEntity(updated, function() {});
   facade.query([new pn.data.Query('EntityType2')], function() {});
 
   var calls = server.calls;

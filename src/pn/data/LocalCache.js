@@ -6,6 +6,7 @@ goog.require('goog.array');
 goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.LinqParser');
 goog.require('pn.data.Query');
+goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
 goog.require('pn.log');
 
@@ -14,8 +15,11 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.Disposable}
+ * @param {string} dbver The current db version.
+ * @param {string=} opt_cachePrefix An optional prefix to use for all
+ *    read/writes from/to the local cache.
  */
-pn.data.LocalCache = function() {
+pn.data.LocalCache = function(dbver, opt_cachePrefix) {
   goog.Disposable.call(this);
   if (!window['localStorage'])
     throw new Error('The current browser is not supported');
@@ -24,7 +28,7 @@ pn.data.LocalCache = function() {
    * @private
    * @type {goog.debug.Logger}
    */
-  this.log_ = pn.log.getLogger('pn.data.LocalCache', false);
+  this.log_ = pn.log.getLogger('pn.data.LocalCache');
 
   /**
    * @private
@@ -37,7 +41,8 @@ pn.data.LocalCache = function() {
    * @const
    * @type {string}
    */
-  this.STORE_PREFIX_ = 'LOCAL_DATA_CACHE:';
+  this.STORE_PREFIX_ = (opt_cachePrefix ?
+      opt_cachePrefix : '' + 'LOCAL_DATA_CACHE:');
 
   /**
    * @private
@@ -51,10 +56,33 @@ pn.data.LocalCache = function() {
    */
   this.cachedQueries_ = [];
 
-  this.checkDbVer_();
+  /**
+   * @private
+   * @type {Array.<string>}
+   */
+  this.transaction_ = null;
+
+  this.checkDbVer_(dbver);
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
+
+
+/** Begins a transaction */
+pn.data.LocalCache.prototype.begin = function() {
+  if (this.transaction_) throw new Error('A transaction is already active');
+  this.transaction_ = [];
+};
+
+
+/** Commits the active transaction */
+pn.data.LocalCache.prototype.commit = function() {
+  this.transaction_.
+      pnremoveDuplicates().
+      pnforEach(this.flush_, this);
+  this.transaction_ = null;
+  this.flushCachedQueries_();
+};
 
 
 /**
@@ -70,9 +98,8 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
   pn.ass(type in this.cache_, type + ' not in cache');
   pn.ass(goog.isNumber(id) && id !== 0);
 
-  var en = this.cache_[type].pnsingle(function(entity) {
-    return entity.id === id;
-  }, this);
+  var en = this.cache_[type].pnsingle(
+      function(entity) { return entity.id === id; }, this);
   return en;
 };
 
@@ -93,9 +120,10 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
   pn.ass(entity.type in this.cache_,
       entity.type + ' not in cache');
   pn.ass(entity.id < 0);
-
   this.cache_[entity.type].push(entity);
-  this.flush_(entity.type);
+
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 
   return entity;
 };
@@ -124,7 +152,8 @@ pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
 
   // entity.update(); // TODO: fire live entity changed
 
-  this.flush_(entity.type);
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 };
 
 
@@ -141,9 +170,11 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
   // var live = this.getEntity(type, id);
   // live.delete(); // TODO: fire live entity deleted
 
-  this.cache_[type] = goog.array.filter(this.cache_[type],
+  this.cache_[type] = this.cache_[type].pnfilter(
       function(e) { return e.id !== id; });
-  this.flush_(type);
+
+  if (this.transaction_) this.transaction_.push(type);
+  else this.flush_(type);
 };
 
 
@@ -154,7 +185,9 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
+  pn.ass(entity.id > 0);
 
+  if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
   var entities = this.cache_[entity.type];
   // If this entity already exists in cache (was added locally) then we can
   // just update it.
@@ -163,7 +196,9 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   });
   if (idx < 0) idx = entities.length;
   entities[idx] = entity;
-  this.flush_(entity.type);
+
+  if (this.transaction_) this.transaction_.push(entity.type);
+  else this.flush_(entity.type);
 };
 
 
@@ -230,8 +265,12 @@ pn.data.LocalCache.prototype.saveQuery = function(query, list) {
   this.cache_[type] = list;
   var qid = query.toString();
   this.cachedQueries_[qid] = query;
-  this.flush_(type);
-  this.flushCachedQueries_();
+
+  if (this.transaction_) this.transaction_.push(type);
+  else {
+    this.flush_(type);
+    this.flushCachedQueries_();
+  }
 };
 
 
@@ -248,17 +287,34 @@ pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
 };
 
 
-/** @private */
-pn.data.LocalCache.prototype.checkDbVer_ = function() {
-  var actual = pn.app.ctx.cfg.dbver;
+/**
+ * @private
+ * @param {string} dbver The current db version. If this version does not
+ *    match the current cached version then the entire local cache is
+ *    invalidated.
+ */
+pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
   var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
-  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = actual;
-  if (!actual || !exp || actual === exp) return;
+  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
+  if (!dbver || !exp || dbver === exp) return;
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      pnsubs(exp, actual));
+      pnsubs(exp, dbver));
 
-  window['localStorage'].clear();
+  this.clear();
+};
+
+
+/**
+ * Clears the local cache.
+ */
+pn.data.LocalCache.prototype.clear = function() {
+  this.lastUpdate_ = 0;
+  for (var key in window['localStorage']) {
+    if (goog.string.startsWith(key, this.STORE_PREFIX_)) {
+      delete window['localStorage'][key];
+    }
+  }
 };
 
 
@@ -282,7 +338,9 @@ pn.data.LocalCache.prototype.init_ = function() {
 
   if (!queriesJson) {
     if (this.lastUpdate_ > 0) {
-      throw 'Last update time is set but the cache is empty.';
+      var err = 'Last update time is set (%s) but the cache is empty.'.
+          pnsubs(this.lastUpdate_);
+      throw new Error(err);
     }
     this.cache_ = {};
     return;
@@ -318,9 +376,14 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
   pn.assStr(type);
   pn.ass(type in this.cache_, type + ' not in cache');
 
+  var start = goog.now();
+
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list, true);
   window['localStorage'][this.STORE_PREFIX_ + type] = json;
+
+  var took = goog.now() - start;
+  this.log_.info('Flushed "%s" took %sms.'.pnsubs(type, took));
 };
 
 

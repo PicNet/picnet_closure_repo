@@ -13,6 +13,18 @@ pn.ui.grid.pipe.GridHandler = function() {
   goog.events.EventHandler.call(this);
 
   /**
+   * Be default handlers are not initialised (preRender/postRender) when the
+   *    grid is empty. This is because there is actually no grid control and
+   *    DataView and most handlers depend on these.  However, if you do need
+   *    a handler to be initialised even when no grid is present (like the
+   *    CommandsHandler) then set this to true in your child class.
+   *
+   * @see pn.ui.grid.pipe.CommandsHandler
+   * @type {boolean}
+   */
+  this.requiredOnEmptyGrid = false;
+
+  /**
    * @protected
    * @type {Slick.Grid}
    */

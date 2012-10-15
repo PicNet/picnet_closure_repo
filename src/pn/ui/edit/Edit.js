@@ -265,7 +265,7 @@ pn.ui.edit.Edit.prototype.getFormData = function() {
  * @return {!Array.<!pn.ui.edit.FieldCtx>} All editable fields.
  */
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
-  return goog.array.filter(this.cfg.fCtxs,
+  return this.cfg.fCtxs.pnfilter(
       function(fctx) { return fctx.isEditable(this.entity); }, this);
 };
 

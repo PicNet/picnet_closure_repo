@@ -83,9 +83,13 @@ pn.app.BaseApp = function(opt_cfg) {
   this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
+  var cache = new pn.data.LocalCache(this.cfg.dbver);
+  var server = new pn.data.Server(this.cfg.facadeUri);
   /** @type {!pn.data.BaseFacade} */
-  this.data = new pn.data.LazyFacade(this.cfg.facadeControllerPath);
+  this.data = new pn.data.LazyFacade(cache, server);
   this.registerDisposable(this.data);
+  this.registerDisposable(server);
+  this.registerDisposable(cache);
 
   /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));
@@ -213,22 +217,21 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
   evs[ae.QUERY] = bind(this.data.query, this.data);
   evs[ae.LIST_EXPORT] = bind(this.listExport_, this);
   evs[ae.LIST_ORDERED] = bind(this.orderEntities_, this);
-  evs[ae.ENTITY_SAVE] = bind(function(type, raw) {
+  evs[ae.ENTITY_SAVE] = bind(function(type, raw, opt_cb) {
     var entity = pn.data.TypeRegister.create(type, raw);
-    if (entity.id > 0) {
-      this.data.updateEntity(entity, function(entity2) {
-        this.pub(ae.ENTITY_SAVED, entity2);
-      }.pnbind(this));
-    } else {
-      this.data.createEntity(entity, goog.bind(function(created) {
-        this.pub(ae.ENTITY_SAVED, created);
-      }, this));
-    }
+    var cb = opt_cb ||
+        goog.bind(function(e) { this.pub(ae.ENTITY_SAVED, e); }, this);
+    if (entity.id > 0) { this.data.updateEntity(entity, cb); }
+    else { this.data.createEntity(entity, cb); }
   }, this);
-  evs[ae.ENTITY_CLONE] = bind(this.cloneEntity_, this);
+  evs[ae.ENTITY_CLONE] = bind(function(type, raw) {
+    var entity = pn.data.TypeRegister.create(type, raw);
+    this.cloneEntity_(entity);
+  }, this);
   evs[ae.ENTITY_DELETE] = bind(function(type, raw) {
     var entity = pn.data.TypeRegister.create(type, raw);
-    this.data.deleteEntity(entity);
+    var cb = goog.bind(function() { this.pub(ae.ENTITY_DELETED); }, this);
+    this.data.deleteEntity(entity, cb);
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
 
@@ -270,19 +273,20 @@ pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
 
 /**
  * @private
- * @param {string} type The type of the entity to save.
- * @param {pn.data.Entity} entity The entity to clone.
+ * @param {!pn.data.Entity} entity The entity to clone.
  */
-pn.app.BaseApp.prototype.cloneEntity_ = function(type, entity) {
-  pn.assStr(type);
+pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
   if (!this.acceptDirty_()) return;
 
-  var data = { 'type': type, 'entityJson': pn.json.serialiseJson(entity) };
+  var data = {
+    'type': entity.type,
+    'entityJson': pn.json.serialiseJson(entity)
+  };
   this.data.ajax('CloneEntity/CloneEntity', data, function(cloned) {
-    cloned = pn.data.TypeRegister.parseEntity(type, cloned);
-    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, type, cloned);
+    cloned = pn.data.TypeRegister.parseEntity(entity.type, cloned);
+    pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, entity.type, cloned);
   });
 };
 

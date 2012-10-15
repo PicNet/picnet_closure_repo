@@ -3,6 +3,7 @@ goog.provide('pn.data.Entity');
 goog.provide('pn.data.Entity.EntityType');
 
 goog.require('pn.data.FieldSchema');
+goog.require('pn.log');
 
 
 
@@ -44,8 +45,15 @@ pn.data.Entity.prototype.equals = function(other) {
     var eq;
     if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
       eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
-    } else { eq = v1 === v2; }
-    // if (!eq) console.info('not equal: ', key, v1, v2);
+    }
+    else {
+      eq = (!goog.isDefAndNotNull(v1) && !goog.isDefAndNotNull(v2)) ||
+          v1 === v2;
+    }
+    if (!eq) {
+      var msg = 'Entity not equal - field: %s 1: %s 2: %s'.pnsubs(key, v1, v2);
+      pn.log.info(msg);
+    }
     return !eq;
   }, this) < 0;
 };

@@ -162,7 +162,8 @@ pn.ui.BaseFieldSpec.prototype.inderDisplayPath_ = function() {
 pn.ui.BaseFieldSpec.prototype.getLastRelationshipType_ = function(type, steps) {
   pn.assStr(type);
   pn.ass(steps.length);
-  steps = goog.array.clone(steps);
+
+  steps = steps.pnclone();
 
   var ltype = type;
   while (true) {

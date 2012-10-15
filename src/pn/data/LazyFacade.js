@@ -7,16 +7,20 @@ goog.require('pn.data.BaseFacade');
 /**
  * @constructor
  * @extends {pn.data.BaseFacade}
- * @param {string} controller The controller uri for the server.
+ * @param {!pn.data.LocalCache} cache The local cache.
+ * @param {!pn.data.Server} server The remote server source.
  */
-pn.data.LazyFacade = function(controller) {
+pn.data.LazyFacade = function(cache, server) {
+  pn.ass(cache instanceof pn.data.LocalCache);
+  pn.ass(server instanceof pn.data.Server);
+
   /**
    * @private
    * @type {number}
    */
   this.defaultTime_ = new Date(3000, 1, 1).getTime();
 
-  pn.data.BaseFacade.call(this, controller);
+  pn.data.BaseFacade.call(this, cache, server);
 };
 goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
 
@@ -29,7 +33,7 @@ goog.inherits(pn.data.LazyFacade, pn.data.BaseFacade);
  */
 pn.data.LazyFacade.prototype.getLastUpdate = function() {
   var val = pn.data.LazyFacade.superClass_.getLastUpdate.call(this);
-  return val || this.defaultTime_;
+  return goog.isDef(val) ? val : this.defaultTime_;
 };
 
 
@@ -55,15 +59,19 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
   pn.ass(goog.isArray(queries) && queries.length > 0);
   pn.assFun(callback);
 
-  var loaded = goog.array.filter(queries,
+  var cachedQueries = this.cache.getCachedQueries();
+  queries.pnforEach(function(q) { cachedQueries.pnremove(q); });
+
+  var loaded = queries.pnfilter(
       function(q) { return this.cache.contains(q); }, this);
-  var unloaded = goog.array.filter(queries,
+  var unloaded = queries.pnfilter(
       function(q) { return !this.cache.contains(q); }, this);
+
   var cached = this.cache.query(loaded);
   if (unloaded.length === 0) {
     callback(cached);
   } else {
-    this.server.query(unloaded, loaded, this.getLastUpdate(),
+    this.server.query(unloaded, cachedQueries, this.getLastUpdate(),
         goog.bind(this.parseServerResponse, this, function(results) {
           goog.object.forEach(results, function(list, key) {
             pn.assArr(list);

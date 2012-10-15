@@ -166,10 +166,8 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
 /** Clears all filter values */
 pn.ui.filter.GenericListFilter.prototype.clearAllFilters = function() {
   this.filters.pnforEach(this.clearFilterValue, this);
-  if (this.options['additionalFilterTriggers']) {
-    goog.array.forEach(this.options['additionalFilterTriggers'],
-        this.clearFilterValue, this);
-  }
+  var additional = this.options['additionalFilterTriggers'];
+  if (additional) { additional.pnforEach(this.clearFilterValue, this); }
   this.refresh();
 };
 
@@ -242,7 +240,7 @@ pn.ui.filter.GenericListFilter.prototype.loadFiltersFromCookie_ = function() {
             null : goog.dom.getTextContent(header);
 
         if (headerText && headerText == stateHeaderTextOrAdditionalFilterId) {
-          var filter = this.filters[this.filterColumnIndexes_.indexOf(hidx)];
+          var filter = this.filters[this.filterIndexes_.indexOf(hidx)];
           var fid = filter.getAttribute('id');
           var fs = new pn.ui.filter.FilterState(fid, state[3], hidx, state[2]);
           additionalStates.push(fs);

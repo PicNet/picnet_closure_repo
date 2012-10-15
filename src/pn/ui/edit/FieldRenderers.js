@@ -218,9 +218,11 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   goog.object.forEach(enumo, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });
+  lst.pnsortObjectsByKey('name');
+
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
-      txt, lst, selected, -1);
+      fctx, txt, lst, selected, -1);
   goog.dom.appendChild(parent, select);
   return select;
 };
@@ -242,6 +244,7 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
   });
   goog.style.showElement(parent, false);
   goog.dom.appendChild(parent, inp);
+  inp.getValue = function() { return parseInt(inp.value, 10); };
   return inp;
 };
 
@@ -270,8 +273,9 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var list = fctx.cache.get(entityType);
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  pn.data.EntityUtils.orderEntities(entityType, list);
+
   if (opt_filter) list = opt_filter(entity, list);
+  pn.data.EntityUtils.orderEntities(entityType, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
@@ -285,7 +289,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   });
   var current = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
-      selTxt, list, current);
+      fctx, selTxt, list, current);
   goog.dom.appendChild(parent, select);
   return select;
 };
@@ -293,6 +297,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
 
 /**
  * @private
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {string} selectTxt The message to display in the first element of the
  *    list.
  * @param {!Array.<{ID:number, Name: string}>} list The list of entities
@@ -302,7 +307,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
-    function(selectTxt, list, selValue, opt_noneId) {
+    function(fctx, selectTxt, list, selValue, opt_noneId) {
   pn.ass(!selectTxt || goog.isString(selectTxt));
   pn.assArr(list);
   pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
@@ -311,25 +316,42 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
       'Not supported: ' + opt_noneId);
 
   var select = goog.dom.createDom('select');
-  if (selectTxt) {
-    goog.dom.appendChild(select, goog.dom.createDom('option',
-        {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
-        selectTxt));
-  }
-  list.pnforEach(function(e) {
-    var opts = {'value': e.id};
-    if (goog.isDef(selValue) && e.id === selValue) {
-      opts['selected'] = 'selected'; }
-    var txt = e.name ? e.name.toString() : '';
-    pn.ass(txt !== undefined);
 
-    if (txt) {
-      var option = goog.dom.createDom('option', opts, txt);
-      goog.dom.appendChild(select, option);
-    }
-  });
+  // TODO: This shoudl really be another class that delegates to a HtmlSelect
 
+  /** @return {number} The selected ID. */
   select.getValue = function() { return parseInt(select.value, 10); };
+
+  /** @param {number=} opt_selectedid The optional selected id. */
+  select.refresh = function(opt_selectedid) {
+    goog.dom.removeChildren(select);
+    if (selectTxt) {
+      goog.dom.appendChild(select, goog.dom.createDom('option',
+          {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
+          selectTxt));
+    }
+    var arr = fctx.spec.additionalProperties.list ?
+        fctx.spec.additionalProperties.list() : list;
+
+    var selected = opt_selectedid ? opt_selectedid :
+        selValue ? selValue :
+        select.getValue() ? select.getValue() :
+        opt_noneId ? opt_noneId : 0;
+
+    arr.pnforEach(function(e) {
+      var opts = {'value': e.id};
+      if (e.id === selected) { opts['selected'] = 'selected'; }
+
+      var txt = e.name ? e.name.toString() : '';
+      pn.ass(txt !== undefined);
+
+      if (txt) {
+        var option = goog.dom.createDom('option', opts, txt);
+        goog.dom.appendChild(select, option);
+      }
+    });
+  };
+  select.refresh();
   return select;
 };
 
@@ -352,7 +374,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-  var data = !parentId ? [] : goog.array.filter(list,
+  var data = !parentId ? [] : list.pnfilter(
       function(c) { return c[parentField] === parentId; });
   var spec = pn.app.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
   var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
@@ -374,7 +396,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, opt_displayStrategy) {
   var renderer = function(fctx, parent, entity) {
-    var manyToManys = goog.array.filter(fctx.cache.get(mappingEntity),
+    var manyToManys = fctx.cache.get(mappingEntity).pnfilter(
         function(manyToMany) {
           return manyToMany[parentIdField] === entity.id;
         });
