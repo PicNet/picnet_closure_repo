@@ -334,9 +334,9 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
         fctx.spec.additionalProperties.list() : list;
 
     var selected = opt_selectedid ? opt_selectedid :
-        selValue ? selValue :
-        select.getValue() ? select.getValue() :
-        opt_noneId ? opt_noneId : 0;
+        goog.isDef(selValue) ? selValue :
+            select.getValue() ? select.getValue() :
+                opt_noneId ? opt_noneId : 0;
 
     arr.pnforEach(function(e) {
       var opts = {'value': e.id};
