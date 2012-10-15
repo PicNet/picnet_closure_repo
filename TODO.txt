@@ -1,4 +1,5 @@
 - Demos are all broken
+- DalToJsDal.tt requires access to its own dal.  This is not ideal (for enumerations).
 
 - Should try to remove dependency on pn.app.ctx everywhere.  Ugly. Start with
     LocalCache appVer usage.
