@@ -161,10 +161,12 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
  * @return {!Element} The textarea control.
  */
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
+  var value = fctx.spec.additionalProperties.clearOnLoad ?
+      '' : (fctx.getEntityValue(entity) || '');
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
-    'value': fctx.getEntityValue(entity) || ''
+    'value': value
   });
   goog.dom.appendChild(parent, textarea);
   return textarea;

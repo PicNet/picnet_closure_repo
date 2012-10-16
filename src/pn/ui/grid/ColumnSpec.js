@@ -50,7 +50,7 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   this.headerCssClass = '';
 
   /** @type {string} */
-  this.tooltip = '';
+  this.headerTooltip = '';
 
   /** @type {string} */
   this.cssClass = '';
@@ -100,7 +100,7 @@ pn.ui.grid.ColumnSpec.prototype.extend = function(props) {
   if (!this.renderer && this.displayPath) {
     this.renderer = pn.ui.grid.ColumnRenderers.parentColumnRenderer;
   }
-  if (!this.tooltip) this.tooltip = this.name;
+  if (!this.headerTooltip) this.headerTooltip = this.name;
   if (!this.renderer) this.renderer = this.getDefaultRenderer_();
 };
 
@@ -136,7 +136,7 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
     'dataColumn': this.dataProperty,
     'field': this.id,
     'name': this.name,
-    'toolTip': this.tooltip,
+    'toolTip': this.headerTooltip,
     'resizable': this.resizable,
     'sortable': this.sortable,
     'minWidth': this.minWidth,
@@ -151,7 +151,7 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   col.dataColumn = this.dataProperty;
   col.field = this.id;
   col.name = this.name;
-  col.tooltip = this.tooltip;
+  col.headerTooltip = this.headerTooltip;
   col.resizable = this.resizable;
   col.sortable = this.sortable;
   col.minWidth = this.minWidth;
