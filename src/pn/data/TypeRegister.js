@@ -62,7 +62,7 @@ pn.data.TypeRegister.create = function(type, raw) {
  */
 pn.data.TypeRegister.parseEntities = function(type, data) {
   pn.assStr(type);
-  pn.assObj(data);
+  pn.assArr(data);
 
   var action = goog.partial(pn.data.TypeRegister.parseEntity, type);
   return data.pnmap(action);
