@@ -114,7 +114,7 @@ pn.ui.DelayedThrottleInputListener.prototype.inferEventType_ = function(inp) {
  */
 pn.ui.DelayedThrottleInputListener.prototype.onInputEvent_ = function(e) {
   pn.ass(e && e.target);
-  this.currentValues_ = e.target.value;
+  this.currentValues_[e.target.id || 'default'] = e.target.value;
   this.lastInputTime_ = new Date().getTime();
 
   if (this.timerId_) {
@@ -143,7 +143,6 @@ pn.ui.DelayedThrottleInputListener.prototype.fireIfChanged_ = function() {
   clearTimeout(this.timerId_);
   if (!this.hasChanged_()) return;
   var e = new goog.events.Event(pn.ui.DelayedThrottleInputListener.CHANGED);
-  e.value = (this.lastValues_ = this.currentValues_);
   this.dispatchEvent(e);
 };
 
@@ -154,10 +153,10 @@ pn.ui.DelayedThrottleInputListener.prototype.fireIfChanged_ = function() {
  *    filters were applied.
  */
 pn.ui.DelayedThrottleInputListener.prototype.hasChanged_ = function() {
-  return !goog.array.equals(goog.object.getKeys(this.currentValues_),
-      goog.object.getKeys(this.lastValues_)) ||
-      !goog.array.equals(goog.object.getValues(this.currentValues_),
-          goog.object.getValues(this.lastValues_));
+  return !goog.object.getKeys(this.currentValues_).
+      pnequals(goog.object.getKeys(this.lastValues_)) ||
+          !goog.object.getValues(this.currentValues_).
+              pnequals(goog.object.getValues(this.lastValues_));
 };
 
 

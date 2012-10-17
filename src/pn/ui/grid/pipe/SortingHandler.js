@@ -41,11 +41,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
 
 
 /** @override */
-pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent =
-    function(eventType, opt_data) {
-  if (eventType === 'sort') {
-    this.sortBy_(/** @type {!Object} */ (opt_data));
-  }
+pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent = function(ev, opt_d) {
+  if (ev === 'sort') { this.sortBy_(/** @type {!Object} */ (opt_d)); }
 };
 
 
@@ -90,8 +87,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
       function(cctx1) { return cctx1.id === col; });
 
   this.view.sort(function(a, b) {
-    var x = cctx.getEntityValue(a);
-    var y = cctx.getEntityValue(b);
-    return (x === y ? 0 : (x > y ? 1 : -1));
+    var x = cctx.getCompareableValue(a);
+    var y = cctx.getCompareableValue(b);
+    return x - y;
   }, asc);
 };

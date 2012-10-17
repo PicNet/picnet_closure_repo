@@ -3,6 +3,7 @@ goog.require('goog.date.Date');
 goog.require('goog.date.DateTime');
 goog.require('goog.i18n.DateTimeFormat');
 goog.require('goog.i18n.DateTimeParse');
+goog.require('pn');
 
 goog.provide('pn.date');
 
@@ -32,7 +33,7 @@ pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
 
 /**
- * @param {!goog.date.DateTime} date The date to check, if its a
+ * @param {!goog.date.Date} date The date to check, if its a
  *    weekday (MON-FRI).
  * @return {boolean} Wether the specified date is a weekday.
  */
@@ -45,7 +46,7 @@ pn.date.isWeekday = function(date) {
 
 
 /**
- * @param {!goog.date.DateTime} date The date to check, if its a
+ * @param {!goog.date.Date} date The date to check, if its a
  *    weekend (SAT, SUN).
  * @return {boolean} Wether the specified date is a weekend.
  */
@@ -55,7 +56,7 @@ pn.date.isWeekend = function(date) {
 
 
 /**
- * @param {!goog.date.DateTime} date The date to check, if its today.
+ * @param {!goog.date.Date} date The date to check, if its today.
  * @return {boolean} Wether the specified date is today.
  */
 pn.date.isToday = function(date) {
@@ -66,7 +67,7 @@ pn.date.isToday = function(date) {
 
 
 /**
- * @param {!goog.date.DateTime} date The date to check, if its in the future.
+ * @param {!goog.date.Date} date The date to check, if its in the future.
  * @return {boolean} Wether the specified date is in the future.
  */
 pn.date.isFuture = function(date) {
@@ -79,7 +80,7 @@ pn.date.isFuture = function(date) {
 
 
 /**
- * @param {!goog.date.DateTime} date The date to check, if its in the past.
+ * @param {!goog.date.Date} date The date to check, if its in the past.
  * @return {boolean} Wether the specified date is in the past.
  */
 pn.date.isPast = function(date) {
