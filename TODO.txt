@@ -1,3 +1,6 @@
+
+- TODO: Proper Mvc see great code: https://raw.github.com/petermichaux/uMVC/master/uMVC.js
+
 - Demos are all broken
 - DalToJsDal.tt requires access to its own dal.  This is not ideal (for enumerations).
 
