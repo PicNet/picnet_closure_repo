@@ -1,9 +1,9 @@
 
 goog.require('goog.date.Date');
 goog.require('goog.date.DateTime');
-
 goog.require('goog.i18n.DateTimeFormat');
 goog.require('goog.i18n.DateTimeParse');
+goog.require('pn');
 
 goog.provide('pn.date');
 
