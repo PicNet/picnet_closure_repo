@@ -89,6 +89,6 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
   this.view.sort(function(a, b) {
     var x = cctx.getCompareableValue(a);
     var y = cctx.getCompareableValue(b);
-    return x - y;
+    return x > y ? 1 : x < y ? -1 : 0;
   }, asc);
 };

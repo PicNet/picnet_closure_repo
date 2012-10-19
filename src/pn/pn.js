@@ -22,6 +22,7 @@ pn.toarr = function(args) { return goog.array.clone(args); };
 // Assertion Helpers
 ////////////////////////////////////////////////////////////////////////////////
 
+
 /**
  * Checks if the condition evaluates to true if goog.asserts.ENABLE_ASSERTS is
  * true.
@@ -114,6 +115,7 @@ pn.assDefAndNotNull = function(val, opt_message, var_args)
 pn.assDef = function(val, opt_message, var_args) 
     { pn.assType_(goog.isDef, arguments, 'defined'); };
 
+
 /**
  * @param {*} val The value to check for isntanceof type.
  * @param {Function} ctor The expected type to do an instanceof check.
@@ -121,9 +123,10 @@ pn.assDef = function(val, opt_message, var_args)
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assInst = function(val, ctor, opt_message, var_args) { 
+pn.assInst = function(val, ctor, opt_message, var_args) {
   pn.ass(val instanceof ctor, opt_message || 'Not expected type');
 };
+
 
 /**
  * @private
@@ -131,19 +134,19 @@ pn.assInst = function(val, ctor, opt_message, var_args) {
  *    given value for matching type.
  * @param {!goog.array.ArrayLike} args The arguments passed to the original
  *    function.  These arguments should be (val, opt_message, var_args).
- * @param {string} typeName The type expected, this will be used for the 
+ * @param {string} typeName The type expected, this will be used for the
  *    default message if no other message is specified.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
 pn.assType_ = function(predicate, args, typeName) {
   if (args.length === 0) args = [undefined];
   var target = args[0];
-  var success = predicate(target);  
+  var success = predicate(target);
   args[0] = success;
-  if (!success && args.length === 1) {        
+  if (!success && args.length === 1) {
     args = pn.toarr(args);
     args.push('Expected %s but was %s'.pnsubs(typeName, goog.typeOf(target)));
-  } 
+  }
   pn.ass.apply(null, args);
 };
 
