@@ -3,7 +3,6 @@ goog.provide('pn.model.Collection');
 
 goog.require('pn.model.Model');
 goog.require('pn.model.ModelBase');
-goog.require('pn.model.TimerInstance');
 
 
 
@@ -31,8 +30,7 @@ pn.model.Collection = function(src) {
   src.pnforEach(function(e) {
     this.map_[e.id] = new pn.model.Model(e, false);
   }, this);
-
-  pn.model.TimerInstance.register(this);
+  
 };
 goog.inherits(pn.model.Collection, pn.model.ModelBase);
 
@@ -77,8 +75,7 @@ pn.model.Collection.prototype.getChanges = function() {
 pn.model.Collection.prototype.disposeInternal = function() {
   pn.model.Collection.superClass_.disposeInternal.call(this);
 
-  goog.object.forEach(this.map_, goog.dispose);
-  pn.model.TimerInstance.deregister(this);
+  goog.object.forEach(this.map_, goog.dispose);  
 };
 
 
