@@ -2,7 +2,6 @@
 - TODO: Proper Mvc see great code: https://raw.github.com/petermichaux/uMVC/master/uMVC.js
 
 - Demos are all broken
-- DalToJsDal.tt requires access to its own dal.  This is not ideal (for enumerations).
 
 - Should try to remove dependency on pn.app.ctx everywhere. 
 - Should checkbox field renderers show the required '*' ? makes no sense since 

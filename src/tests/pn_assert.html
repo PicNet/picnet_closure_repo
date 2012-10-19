@@ -1,0 +1,100 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/libs/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+goog.require('pn');
+
+var test_pn_ass_with_booleans = function() {
+  run(function() { pn.ass(true); }, function() { pn.ass(false); });
+};
+
+var test_pn_ass_with_defined_and_undefines = function() {
+  run(function() { pn.ass({}); }, function() { pn.ass(); });
+};
+
+var test_pn_ass_with_default_fail_message = function() {
+  run(function() { pn.ass({}); }, 
+      function() { pn.ass(null, 'Exp not null'); }, 'Exp not null');
+};
+
+var test_pn_assBool_with_no_message = function() {
+  run(function() { pn.assBool(false); }, 
+      function() { pn.assBool({}); }, 'Expected boolean but was object');
+};
+
+var test_pn_assBool_with_specified_message = function() {
+  run(function() { pn.assBool(false); }, 
+      function() { pn.assBool({}, 'FAIL!'); }, 'FAIL!');
+};
+
+var test_pn_assStr = function() {
+  run(function() { pn.assStr(''); }, 
+      function() { pn.assStr({}); }, 
+          'Expected string but was object');
+};
+
+var test_pn_assNum = function() {
+  run(function() { pn.assNum(0); }, 
+      function() { pn.assNum(''); }, 
+          'Expected number but was string');
+};
+
+var test_pn_assObj = function() {
+  run(function() { pn.assObj({}); }, 
+      function() { pn.assObj(this); }, 
+          'Expected object but was function');
+};
+
+var test_pn_assArr = function() {
+  run(function() { pn.assArr([]); }, 
+      function() { pn.assArr(this); }, 
+          'Expected array but was object');
+};
+
+var test_pn_assFun = function() {
+  run(function() { pn.assFun(this); }, 
+      function() { pn.assFun(test_pn_assFun); }, 
+          'Expected function but was object');
+};
+
+var test_pn_assDefAndNotNull = function() {
+  run(function() { pn.assDefAndNotNull(this); }, 
+      function() { pn.assDefAndNotNull(); }, 
+          'Expected defined and not null but was undefined');
+};
+
+var test_pn_assDef = function() {
+  run(function() { pn.assDef({}); }, 
+      function() { pn.assDef(); }, 
+          'Expected defined but was undefined');
+};
+
+var test_pn_assInst = function() {
+  var TestO = function() {};
+  var TestO2 = function() {};
+  var o = new TestO();
+  run(function() { pn.assInst(o, TestO); }, 
+      function() { pn.assInst(o, TestO2); }, 
+          'Not expected type');
+};
+
+var run = function(pass, fail, opt_expFailMsg) {
+  try { pass(); }
+  catch (e) {
+    fail('Expected test to pass but actually failed.', e);    
+  };
+
+  try { fail(); }
+  catch (e) {
+    var msg = e.message;
+    if (opt_expFailMsg) { assertEquals('Assertion failed: ' + opt_expFailMsg, msg); }
+    else assertTrue(msg === 'Assertion failed');
+  };
+};
+    </script>    
+  </body>
+</html>

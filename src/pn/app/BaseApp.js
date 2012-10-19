@@ -53,6 +53,7 @@ pn.app.ctx = null;
  */
 pn.app.BaseApp = function(opt_cfg) {
   goog.Disposable.call(this);
+  pn.ass(pn.app.ctx === null, 'Only a single instance of base app supported');
 
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
