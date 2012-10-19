@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>        
+  </head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../deps.js"></script>
+<script>
+  goog.require('goog.testing.AsyncTestCase');
+  goog.require('goog.testing.jsunit');
+
+  goog.require('pn.model.ModelBase');
+  goog.require('goog.events.EventHandler');
+</script>
+<script>  
+  
+var eh;
+var setUp = function() {
+  eh = new goog.events.EventHandler();
+};
+
+var test_multiple_changes_are_only_fired_once = function() {
+  var mb = new pn.model.ModelBase();  
+  var fires = 0,
+      changes;
+  eh.listen(mb, pn.model.EventType.CHANGE, function(e) {
+    fires++;
+    changes = e.changes;
+  });
+  console.log('mb:', mb);
+  mb.queueChange('prop1', 1, 2);
+  mb.queueChange('prop2', 2, 3);
+  mb.queueChange('prop3', 3, 4);
+
+  setTimeout(function() {
+    asyncTestCase.continueTesting();
+    assertEquals(1, fires); // Only 1 change fired
+    assertArrayEquals([
+      new pn.model.Change(mb, 'prop1', 1, 2),
+      new pn.model.Change(mb, 'prop2', 2, 3),
+      new pn.model.Change(mb, 'prop3', 3, 4)
+    ], changes);
+  }, 50);
+  asyncTestCase.waitForAsync();
+};
+
+
+var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
+</script>    
+  </body>
+</html>
