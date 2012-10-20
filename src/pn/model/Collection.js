@@ -27,7 +27,7 @@ pn.model.Collection = function(opt_initial) {
    * @private
    * @type {!Array.<!pn.model.ModelBase>}
    */
-  this.src_ = opt_initial || [];  
+  this.src_ = opt_initial || [];    
   this.src_.pnforEach(this.intern_, this);
 };
 goog.inherits(pn.model.Collection, pn.model.ModelBase);
