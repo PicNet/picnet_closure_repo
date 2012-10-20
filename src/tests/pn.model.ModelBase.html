@@ -10,24 +10,28 @@
   goog.require('goog.testing.jsunit');
 
   goog.require('pn.model.ModelBase');
-  goog.require('goog.events.EventHandler');
+  goog.require('goog.events');
 </script>
 <script>  
   
-var eh;
+var fires,
+    changes,
+    mb;
 var setUp = function() {
-  eh = new goog.events.EventHandler();
-};
-
-var test_multiple_changes_are_only_fired_once = function() {
-  var mb = new pn.model.ModelBase();  
-  var fires = 0,
-      changes;
-  eh.listen(mb, pn.model.EventType.CHANGE, function(e) {
+  fires = 0;
+  changes = [];
+  mb = new pn.model.ModelBase();
+  goog.events.listen(mb, pn.model.EventType.CHANGE, function(e) {
     fires++;
     changes = e.changes;
   });
-  console.log('mb:', mb);
+};
+
+var tearDown = function() {
+  goog.dispose(mb);
+};
+
+var test_multiple_changes_are_only_fired_once = function() {    
   mb.queueChange('prop1', 1, 2);
   mb.queueChange('prop2', 2, 3);
   mb.queueChange('prop3', 3, 4);
@@ -44,6 +48,75 @@ var test_multiple_changes_are_only_fired_once = function() {
   asyncTestCase.waitForAsync();
 };
 
+var test_explicit_fire_clears_any_queued_changes = function() {
+  mb.queueChange('prop1', 1, 2);
+  mb.fire();
+  assertEquals(1, fires); 
+  assertArrayEquals([new pn.model.Change(mb, 'prop1', 1, 2)], changes);
+  setTimeout(function() {
+    asyncTestCase.continueTesting(); // No additional fires dispatched
+    assertEquals(1, fires); 
+  }, 50);
+  asyncTestCase.waitForAsync();
+};
+
+var test_same_with_primatives = function() {
+  assertTrue(pn.model.ModelBase.same(1, 1));
+  assertFalse(pn.model.ModelBase.same(1, 2));
+
+  assertTrue(pn.model.ModelBase.same(true, true));
+  assertTrue(pn.model.ModelBase.same(false, false));
+  assertFalse(pn.model.ModelBase.same(true, false));
+
+  assertTrue(pn.model.ModelBase.same(null, null));
+  assertTrue(pn.model.ModelBase.same(null, undefined));
+
+  assertFalse(pn.model.ModelBase.same(undefined, 1));
+  assertFalse(pn.model.ModelBase.same(undefined, {}));
+};
+
+var test_same_with_equality_methods = function() {
+  var c1 = new pn.model.Change(mb, 'prop1', 1, 2);
+  var c2 = new pn.model.Change(mb, 'prop1', 1, 2);
+  var c3 = new pn.model.Change(mb, 'prop2', 1, 2);
+  assertTrue(pn.model.ModelBase.same(c1, c2));
+  assertFalse(pn.model.ModelBase.same(c1, c3));
+  assertFalse(pn.model.ModelBase.same(c1, null));
+  assertFalse(pn.model.ModelBase.same(c1, 0));
+};
+
+var test_multiple_fires_are_independent = function() {
+  mb.queueChange('prop1', 1, 2);
+
+  setTimeout(function() {    
+    assertEquals(1, fires); // Only 1 change fired
+    assertArrayEquals([ new pn.model.Change(mb, 'prop1', 1, 2) ], changes);
+    mb.queueChange('prop1', 1, 3);
+
+    setTimeout(function() {    
+      asyncTestCase.continueTesting();
+      assertEquals(2, fires); // An additional fire but changes are only last change set
+      assertArrayEquals([ new pn.model.Change(mb, 'prop1', 1, 3) ], changes);
+    }, 50);
+
+  }, 50);
+  asyncTestCase.waitForAsync();
+};
+
+var test_delay_not_running_until_a_queue_is_done = function() {
+  assertFalse(mb.delay_.isActive());
+  mb.queueChange('prop1', 1, 2);
+  assertTrue(mb.delay_.isActive());
+};
+
+var test_delay_not_running_after_a_fire = function() {
+  mb.queueChange('prop1', 1, 2);
+  assertTrue(mb.delay_.isActive());
+  mb.fire();
+  assertFalse(mb.delay_.isActive());
+};
+
+var test_delay_not_running_after_a_set_all = function() {};
 
 var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
 </script>    

@@ -8,18 +8,24 @@ goog.require('pn.model.ModelBase');
 /**
  * @constructor
  * @extends {pn.model.ModelBase}
+ * @param {Object=} opt_initialValues The optional initial existing values 
+ *    of the model.  These do not trigger a change event.
  */
-pn.model.Model = function() {
+pn.model.Model = function(opt_initialValues) {
   pn.model.ModelBase.call(this);
 
   /**
    * @private
    * @type {!Object.<*>}
    */
-  this.values_ = {};  
+  this.values_ = opt_initialValues || {};  
 };
 goog.inherits(pn.model.Model, pn.model.ModelBase);
 
+/** 
+ * @param {string} name The property name of the prop to retreive.
+ * @return {*} The value of the specified property.
+ */
 pn.model.Model.prototype.get = function(name) {
   return this.values_[name];
 };
@@ -29,31 +35,20 @@ pn.model.Model.prototype.get = function(name) {
  * @param {*} val The new value of the property to set.
  */
 pn.model.Model.prototype.set = function(name, val) {
-  var old = this.values_[name];
+  var old = this.values_[name];  
   if (this.same(old, val)) return;  
-  this.queueChange(this, name, old, val);
+  this.values_[name] = val;
+  this.queueChange(name, old, val);
 };
 
 /**
- * @constructor
- * @param {!pn.model.ModelBase} model The model that changed.
- * @param {string} property The name of the property that changed.
- * @param {*} oldv The old value of the changed property.
- * @param {*} newv The new value of the changed property.
+ * @param {!Object} obj An object with all the property names and values 
+ *    to set.  This immediatelly calls fire() methods to inform all observers
+ *    of the changes to this model.
  */
-pn.model.Change = function(model, property, oldv, newv) {
-  pn.assInst(model, pn.model.ModelBase);
-  pn.assStr(property);
+pn.model.Model.prototype.setAll = function(obj) {
+  pn.assObj(obj);
 
-  /** @type {!pn.model.ModelBase} */
-  this.model = model;
-
-  /** @type {string} */
-  this.property = property;
-
-  /** @type {*} */
-  this.oldv = oldv;
-
-  /** @type {*} */
-  this.newv = newv;
-}; 
+  goog.object.forEach(obj, this.set.pnflip(), this);
+  this.fire();
+};

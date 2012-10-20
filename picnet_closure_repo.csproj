@@ -39,7 +39,6 @@
     <None Include="build\compile.bat" />
     <None Include="build\compile_tablefilter.bat" />
     <None Include="build\clean_and_compile.bat" />
-    <None Include="clean_and_compile.bat" />
     <None Include="README.md" />
     <None Include="build\release_tablefilter.bat" />
     <None Include="src\pn\ui\soy\pn.soy" />
@@ -98,11 +97,11 @@
     <Content Include="src\pn\dom.js" />
     <Content Include="src\pn\json.js" />
     <Content Include="src\pn\log.js" />
+    <Content Include="src\pn\model\Change.js" />
     <Content Include="src\pn\model\ChangeEvent.js" />
     <Content Include="src\pn\model\Collection.js" />
     <Content Include="src\pn\model\Model.js" />
     <Content Include="src\pn\model\ModelBase.js" />
-    <Content Include="src\pn\model\Timer.js" />
     <Content Include="src\pn\object.js" />
     <Content Include="src\pn\pn.js" />
     <Content Include="src\pn\slick.grid.externs.js" />
@@ -202,10 +201,13 @@
     <Content Include="src\tests\data\pn.data.Server.html" />
     <Content Include="src\tests\pn.app.Router.html" />
     <Content Include="src\tests\pn.json.html" />
+    <Content Include="src\tests\pn.json.performance.html" />
     <Content Include="src\tests\pn.model.Collection.html" />
     <Content Include="src\tests\pn.model.Model.html" />
+    <Content Include="src\tests\pn.model.ModelBase.html" />
     <Content Include="src\tests\pn.ui.KeyShortcutMgr.html" />
     <Content Include="src\tests\pn_array.html" />
+    <Content Include="src\tests\pn_assert.html" />
     <Content Include="src\tests\pn_function.html" />
     <Content Include="src\tests\tablefilter\AdditionalFiltersTests.js" />
     <Content Include="src\tests\tablefilter\AjaxDataLoadTests.js" />
@@ -217,6 +219,7 @@
     <Content Include="src\tests\tablefilter\TextColumnTests.js" />
     <Content Include="src\tests\typetest.js" />
     <Content Include="tablefilter_readme.txt" />
+    <Content Include="build\testacular.conf.js" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
