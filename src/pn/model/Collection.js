@@ -2,82 +2,114 @@
 goog.provide('pn.model.Collection');
 
 goog.require('pn.model.Model');
-goog.require('pn.model.ModelBase');
-
+goog.require('goog.events.EventHandler');
 
 
 /**
  * @constructor
  * @extends {pn.model.ModelBase}
- * @param {!Array.<!Object>} src The source array to create the model from.
+ * @param {Array.<!pn.model.ModelBase>=} opt_initial An optional array of 
+ *    models to listen to.
  */
-pn.model.Collection = function(src) {
-  pn.assArr(src);
+pn.model.Collection = function(opt_initial) {
+  pn.ass(!goog.isDef(opt_initial) || goog.isArray(opt_initial));
 
   pn.model.ModelBase.call(this);
 
   /**
    * @private
-   * @type {!Array.<!Object>}
+   * @type {!goog.events.EventHandler}
    */
-  this.src_ = src;
+  this.eh_ = new goog.events.EventHandler();
+  this.registerDisposable(this.eh_);
 
   /**
    * @private
-   * @type {!Object.<!Object>}
+   * @type {!Array.<!pn.model.ModelBase>}
    */
-  this.map_ = {};
-  src.pnforEach(function(e) {
-    this.map_[e.id] = new pn.model.Model(e, false);
-  }, this);
-  
+  this.src_ = opt_initial || [];  
+  this.src_.pnforEach(this.intern_, this);
 };
 goog.inherits(pn.model.Collection, pn.model.ModelBase);
 
+/** 
+ * @param {number} idx The index of the model to return.
+ */
+pn.model.Collection.prototype.get = function(idx) { return this.src_[idx]; };
 
-/** @override */
-pn.model.Collection.prototype.getChanges = function() {
-  var map = goog.object.clone(this.map_);
-  var changes = [];
+/** 
+ * @param {!pn.model.ModelBase} model The model to add to the end of the 
+ *    collection. 
+ */
+pn.model.Collection.prototype.add = function(model) {
+  pn.assInst(model, pn.model.ModelBase);
 
-  for (var i = 0, len = this.src_.length; i < len; i++) {
-    var now = this.src_[i];
-    if (!goog.isDef(now)) continue;
-    var key = now.id.toString();
-    var lastmodel = map[key];
-    var mchanges = lastmodel ? lastmodel.getChanges() : null;
-    delete map[key];
-
-    if (!lastmodel) {
-      pn.ass(!(key in this.map_));
-      changes.push({item: now, inserted: true});
-      this.map_[key] = new pn.model.Model(now, false);
-    }
-    else if (mchanges.length) {
-      pn.ass(mchanges.length);
-      changes.push({item: lastmodel.src_, changes: mchanges});
-    }
-  }
-
-  for (var id in map) {
-    var last = map[id];
-    changes.push({item: last.src_, removed: true});
-
-    var model = this.map_[id];
-    goog.dispose(model);
-    delete this.map_[id];
-  }
-  return changes;
+  this.intern_(model);    
+  this.src_.push(model);
+  this.queueChange(this.src_.length - 1, undefined, model);
 };
 
+/** 
+ * @param {!pn.model.ModelBase} model The model to insert into the collection.
+ * @param {number} idx The index to insert the specified model into.
+ */
+pn.model.Collection.prototype.insert = function(model, idx) {
+  pn.assInst(model, pn.model.ModelBase);
+  pn.assNum(idx);
+  pn.ass(idx >= 0 && idx < this.src_.length);
 
-/** @override */
-pn.model.Collection.prototype.disposeInternal = function() {
-  pn.model.Collection.superClass_.disposeInternal.call(this);
-
-  goog.object.forEach(this.map_, goog.dispose);  
+  this.intern_(model);    
+  this.src_.splice(idx, 0, model);
+  this.queueChange(idx, undefined, model);
 };
 
+/** 
+ * @param {!pn.model.ModelBase} model The model to add to the collection, 
+ *    overwriting the existing model at the specified index.
+ * @param {number} idx The index to add the specified model into.
+ */
+pn.model.Collection.prototype.replace = function(model, idx) {
+  pn.assInst(model, pn.model.ModelBase);
+  pn.assNum(idx);
+  pn.ass(idx >= 0 && idx < this.src_.length);
 
-/** @typedef {{item: !Object, changes: !Array.<pn.model.Model.Change>}} */
-pn.model.Collection.CollectionChange;
+  var old = this.src_[idx];
+  if (this.same(old, model)) return; 
+
+  this.intern_(model);    
+  this.src_[idx] = model;
+  this.queueChange(idx, old, model);
+};
+
+/**
+ * @param {number} idx The index to add the specified model into.
+ */
+pn.model.Collection.prototype.remove = function(idx) {
+  pn.assNum(idx);
+  pn.ass(idx >= 0 && idx < this.src_.length);
+    
+  var removed = this.src_.splice(idx, 1)[0];
+  this.queueChange(idx, removed, undefined);
+};
+
+/**
+ * @private
+ * @param {!pn.model.ModelBase} model The model to listen to changes on.
+ */
+pn.model.Collection.prototype.intern_ = function(model) {
+  var eventType = pn.model.EventType.CHANGE;
+  this.eh_.listen(model, eventType, this.childChanged_.pnbind(this));
+  this.registerDisposable(model);
+};
+
+/**
+ * @private
+ * @param {!pn.model.ChangeEvent} e The change event fired.
+ */
+pn.model.Collection.prototype.childChanged_ = function(e) {
+  e.changes.pnforEach(function(change) {    
+    var model = change.model;
+    var idx = this.src_.pnindexOf(model);
+    this.queueChange(idx, undefined, model);
+  }, this);  
+};

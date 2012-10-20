@@ -4,122 +4,133 @@
   <body>
     <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
     <script src="../deps.js"></script>
+<script>
+  goog.require('goog.testing.AsyncTestCase');
+  goog.require('goog.testing.jsunit');
+
+  goog.require('pn.model.Model');
+  goog.require('goog.events');
+</script>
     <script>
 goog.require('goog.testing.jsunit');
 
-goog.require('pn.model.Model');
-goog.require('pn.model.EventType');
-goog.require('pn.model.TimerInstance');
-goog.require('goog.events');
-goog.require('goog.date.DateTime');
-
 var obj,
     model,
+    fires,
     changes;
 
-var setUp = function() {
-  pn.model.TimerInstance.startTimer_ = function() {};
-
-  obj = {
-    'Name': 'Name Value',    
-    'Num': 1,
-    'Date': new goog.date.DateTime(2000, 0, 1),
-    'ObjRef': {},
-    'ObjEquality': {
-      'Val': 1,
-      clone: function() { return {'Val' : this['Val']}; },
-      equals: function(other) { return this['Val'] == other['Val']; }
-    },
-  };
-  model = new pn.model.Model(obj);  
+var setUp = function() {  
+  model = new pn.model.Model();  
+  fires = 0;
+  changes = [];
   goog.events.listen(model, pn.model.EventType.CHANGE, function(e) {
+    fires++;
     changes = e.changes;
   });
-  assertEquals(changes, undefined);
 };
 
-var tearDown = function() {
-  goog.dispose(model);
-  changes = undefined;
+var tearDown = function() { goog.dispose(model); };
+
+var test_single_set_fires_a_single_time = function () {      
+  model.set('prop', 'val');
+  
+  setTimeout(function() {
+    asyncTestCase.continueTesting();
+    assertEquals(1, fires); // Only 1 change fired
+    assertArrayEquals([
+      new pn.model.Change(model, 'prop', undefined, 'val')
+    ], changes);
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_event_on_str_change = function () {      
-  obj['Name'] = 'New Name Value';
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
-
-  var change = changes[0];
-  assertEquals('Name', change.field);
-  assertEquals('Name Value', change.oldval);
-  assertEquals('New Name Value', change.newval);  
+var test_multiple_sets_fires_a_single_time = function () {      
+  model.set('prop1', 'val1');
+  model.set('prop2', 'val2');
+  model.set('prop3', 'val3');
+  
+  setTimeout(function() {
+    asyncTestCase.continueTesting();
+    assertEquals(1, fires); // Only 1 change fired
+    assertArrayEquals([
+      new pn.model.Change(model, 'prop1', undefined, 'val1'),
+      new pn.model.Change(model, 'prop2', undefined, 'val2'),
+      new pn.model.Change(model, 'prop3', undefined, 'val3')
+    ], changes);
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_event_on_num_change = function () {      
-  obj['Num'] = 2;
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+var test_multiple_fires = function() {
+  model.set('prop1', 'val1');
+  
+  setTimeout(function() {  
+    assertEquals(1, fires); 
+    assertArrayEquals([ new pn.model.Change(model, 'prop1', undefined, 'val1') ], changes);
+    model.set('prop2', 'val2');
 
-  var change = changes[0];
-  assertEquals('Num', change.field);
-  assertEquals(1, change.oldval);
-  assertEquals(2, change.newval);  
+    setTimeout(function() {
+      asyncTestCase.continueTesting();
+      assertEquals(2, fires); 
+      assertArrayEquals([ new pn.model.Change(model, 'prop2', undefined, 'val2') ], changes);
+    }, 50);
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_event_on_date_change = function () {      
-  obj['Date'].setYear(2001);
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+var test_get_and_set_all_work_as_expected = function() {
+  model.set('prop1', 'val1');  
+  assertEquals('val1', model.get('prop1'));
+  assertEquals(undefined, model.get('prop2'));
 
-  var change = changes[0];
-  assertEquals('Date', change.field);
-  assertTrue(new goog.date.DateTime(2001, 0, 1).equals(change.newval));  
-  assertTrue(new goog.date.DateTime(2000, 0, 1).equals(change.oldval));
+  setTimeout(function() {
+    asyncTestCase.continueTesting();
+    
+    // Vals still the same
+    assertEquals('val1', model.get('prop1'));
+    assertEquals(undefined, model.get('prop2'));
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_event_on_obj_ref_change = function () {      
-  obj['ObjRef'] = {};
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+var test_updates_in_a_batch_are_all_reported_bundling_is_not_supported = function() {
+  model.set('prop1', 'val1');  
+  model.set('prop1', 'val2');  
+  assertEquals('val2', model.get('prop1'));
 
-  var change = changes[0];
-  assertEquals('ObjRef', change.field);
+  setTimeout(function() {
+    asyncTestCase.continueTesting();
+    assertArrayEquals([ 
+      new pn.model.Change(model, 'prop1', undefined, 'val1'),
+      new pn.model.Change(model, 'prop1', 'val1', 'val2')
+    ], changes);
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_event_on_obj_equality_change = function () {      
-  obj['ObjEquality']['Val'] = 2;
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(1, changes.length);
+var test_updates_accross_multiple_fires_are_as_expected = function() {
+   model.set('prop1', 'val1');
+  
+  setTimeout(function() {  
+    assertEquals(1, fires); 
+    assertArrayEquals([ new pn.model.Change(model, 'prop1', undefined, 'val1') ], changes);
+    model.set('prop1', 'val2');
 
-  var change = changes[0];
-  assertEquals('ObjEquality', change.field);
-  assertEquals(1, change.oldval['Val']);
-  assertEquals(2, change.newval['Val']);  
+    setTimeout(function() {
+      asyncTestCase.continueTesting();
+      assertEquals(2, fires); 
+      assertArrayEquals([ new pn.model.Change(model, 'prop1', 'val1', 'val2') ], changes);
+    }, 50);
+  }, 50);
+  asyncTestCase.waitForAsync();  
 };
 
-var test_model_change_on_multi_field_change = function() {
-  obj['Name'] = 'New Name Value';
-  obj['Num'] = 2;
-  obj['Date'].setYear(2001);
-  pn.model.TimerInstance.checkForChanges_();  
-  assertEquals(3, changes.length);
-
-  var change = changes[0];
-  assertEquals('Name', change.field);
-  assertEquals('Name Value', change.oldval);
-  assertEquals('New Name Value', change.newval);  
-
-  change = changes[1];
-  assertEquals('Num', change.field);
-  assertEquals(1, change.oldval);
-  assertEquals(2, change.newval);
-
-  change = changes[2];
-  assertEquals('Date', change.field);
-  assertTrue(new goog.date.DateTime(2001, 0, 1).equals(change.newval));  
-  assertTrue(new goog.date.DateTime(2000, 0, 1).equals(change.oldval));
+var test_created_values_are_retreiveable = function() {
+  var model = new pn.model.Model({'prop1': 'val1'});
+  assertEquals('val1', model.get('prop1'));
 };
 
-
+var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
 
     </script>    
   </body>
