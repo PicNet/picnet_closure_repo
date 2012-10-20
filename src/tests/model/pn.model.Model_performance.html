@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+<script>
+  goog.require('goog.testing.AsyncTestCase');
+  goog.require('goog.testing.jsunit');
+
+  goog.require('pn.model.Model');
+  goog.require('pn.model.Collection');
+  goog.require('goog.events');
+</script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+var iterations = 10000;
+
+var test_perf_of_model_creations = function() {
+  var start = goog.now();
+  for (var i = 0; i < iterations; i++) {
+    new pn.model.Model({'1':1, '2':2, '3':2});
+  }
+  console.log('model creation: %sms'.pnsubs(goog.now() - start));
+};
+
+var test_perf_of_model_sets = function() {
+  var start = goog.now();
+  var models = [];
+  for (var i = 0; i < iterations; i++) {
+    models.push(new pn.model.Model({'1':1, '2':2, '3':2}));
+  }
+  for (i = 0; i < iterations; i++) {
+    models[i].set('1', i);
+    models[i].fire();
+  };
+  console.log('model set: %sms'.pnsubs(goog.now() - start));
+};
+
+var test_perf_of_model_setAlls = function() {
+  var start = goog.now();
+  var models = [];
+  for (var i = 0; i < iterations; i++) {
+    models.push(new pn.model.Model({'1':1, '2':2, '3':2}));
+  }
+  for (i = 0; i < iterations; i++) {
+    models[i].setAll({'1': i, '2': i, '3': i});
+  };
+  console.log('model setAll: %sms'.pnsubs(goog.now() - start));
+};
+
+var test_perf_of_collection_creations = function() {
+  var start = goog.now(),
+      collections = [];
+
+  for (var i = 0; i < 10; i++) {
+    var models = [];
+    for (var j = 0; j < 1000; j++) {
+      models.push(new pn.model.Model({'1':1, '2':2, '3':2}));
+    }
+    collections.push(new pn.model.Collection(models));
+  }
+  console.log('collection creation: %sms'.pnsubs(goog.now() - start));
+};
+
+var test_perf_of_collection_modifications = function() {
+  var start = goog.now(),
+      collections = [];
+  
+  for (var i = 0; i < 10; i++) {
+    var models = [];
+    for (var j = 0; j < 1000; j++) {
+      models.push(new pn.model.Model({'1':1, '2':2, '3':2}));
+    }
+    collections.push(new pn.model.Collection(models));
+  }
+  for (i = 0; i < 10; i++) {
+    collections[i].add(new pn.model.Model({'1':1, '2':2, '3':2}));
+    collections[i].fire();
+    collections[i].remove(0);
+    collections[i].fire();
+    collections[i].get(1).setAll({'1': 100});
+  }
+  console.log('collection modifications: %sms'.pnsubs(goog.now() - start));
+};
+
+var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();
+
+    </script>    
+  </body>
+</html>

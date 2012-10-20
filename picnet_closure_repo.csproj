@@ -199,12 +199,13 @@
     <Content Include="src\tests\data\pn.data.LocalCache.html" />
     <Content Include="src\tests\data\pn.data.MemCache.html" />
     <Content Include="src\tests\data\pn.data.Server.html" />
+    <Content Include="src\tests\model\pn.model.Model_performance.html" />
     <Content Include="src\tests\pn.app.Router.html" />
     <Content Include="src\tests\pn.json.html" />
     <Content Include="src\tests\pn.json.performance.html" />
-    <Content Include="src\tests\pn.model.Collection.html" />
-    <Content Include="src\tests\pn.model.Model.html" />
-    <Content Include="src\tests\pn.model.ModelBase.html" />
+    <Content Include="src\tests\model\pn.model.Collection.html" />
+    <Content Include="src\tests\model\pn.model.Model.html" />
+    <Content Include="src\tests\model\pn.model.ModelBase.html" />
     <Content Include="src\tests\pn.ui.KeyShortcutMgr.html" />
     <Content Include="src\tests\pn_array.html" />
     <Content Include="src\tests\pn_assert.html" />
