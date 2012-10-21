@@ -9,7 +9,7 @@
   goog.require('goog.testing.AsyncTestCase');
   goog.require('goog.testing.jsunit');
 
-  goog.require('pn.model.ModelBase');
+  goog.require('pn.mvc.ModelBase');
   goog.require('goog.events');
 </script>
 <script>  
@@ -20,8 +20,8 @@ var fires,
 var setUp = function() {
   fires = 0;
   changes = [];
-  mb = new pn.model.ModelBase();
-  goog.events.listen(mb, pn.model.EventType.CHANGE, function(e) {
+  mb = new pn.mvc.ModelBase();
+  goog.events.listen(mb, pn.mvc.EventType.CHANGE, function(e) {
     fires++;
     changes = e.changes;
   });
@@ -40,9 +40,9 @@ var test_multiple_changes_are_only_fired_once = function() {
     asyncTestCase.continueTesting();
     assertEquals(1, fires); // Only 1 change fired
     assertArrayEquals([
-      new pn.model.Change(mb, 'prop1', 1, 2),
-      new pn.model.Change(mb, 'prop2', 2, 3),
-      new pn.model.Change(mb, 'prop3', 3, 4)
+      new pn.mvc.Change(mb, 'prop1', 1, 2),
+      new pn.mvc.Change(mb, 'prop2', 2, 3),
+      new pn.mvc.Change(mb, 'prop3', 3, 4)
     ], changes);
   }, 50);
   asyncTestCase.waitForAsync();
@@ -52,7 +52,7 @@ var test_explicit_fire_clears_any_queued_changes = function() {
   mb.queueChange('prop1', 1, 2);
   mb.fire();
   assertEquals(1, fires); 
-  assertArrayEquals([new pn.model.Change(mb, 'prop1', 1, 2)], changes);
+  assertArrayEquals([new pn.mvc.Change(mb, 'prop1', 1, 2)], changes);
   setTimeout(function() {
     asyncTestCase.continueTesting(); // No additional fires dispatched
     assertEquals(1, fires); 
@@ -61,28 +61,28 @@ var test_explicit_fire_clears_any_queued_changes = function() {
 };
 
 var test_same_with_primatives = function() {
-  assertTrue(pn.model.ModelBase.same(1, 1));
-  assertFalse(pn.model.ModelBase.same(1, 2));
+  assertTrue(pn.mvc.ModelBase.same(1, 1));
+  assertFalse(pn.mvc.ModelBase.same(1, 2));
 
-  assertTrue(pn.model.ModelBase.same(true, true));
-  assertTrue(pn.model.ModelBase.same(false, false));
-  assertFalse(pn.model.ModelBase.same(true, false));
+  assertTrue(pn.mvc.ModelBase.same(true, true));
+  assertTrue(pn.mvc.ModelBase.same(false, false));
+  assertFalse(pn.mvc.ModelBase.same(true, false));
 
-  assertTrue(pn.model.ModelBase.same(null, null));
-  assertTrue(pn.model.ModelBase.same(null, undefined));
+  assertTrue(pn.mvc.ModelBase.same(null, null));
+  assertTrue(pn.mvc.ModelBase.same(null, undefined));
 
-  assertFalse(pn.model.ModelBase.same(undefined, 1));
-  assertFalse(pn.model.ModelBase.same(undefined, {}));
+  assertFalse(pn.mvc.ModelBase.same(undefined, 1));
+  assertFalse(pn.mvc.ModelBase.same(undefined, {}));
 };
 
 var test_same_with_equality_methods = function() {
-  var c1 = new pn.model.Change(mb, 'prop1', 1, 2);
-  var c2 = new pn.model.Change(mb, 'prop1', 1, 2);
-  var c3 = new pn.model.Change(mb, 'prop2', 1, 2);
-  assertTrue(pn.model.ModelBase.same(c1, c2));
-  assertFalse(pn.model.ModelBase.same(c1, c3));
-  assertFalse(pn.model.ModelBase.same(c1, null));
-  assertFalse(pn.model.ModelBase.same(c1, 0));
+  var c1 = new pn.mvc.Change(mb, 'prop1', 1, 2);
+  var c2 = new pn.mvc.Change(mb, 'prop1', 1, 2);
+  var c3 = new pn.mvc.Change(mb, 'prop2', 1, 2);
+  assertTrue(pn.mvc.ModelBase.same(c1, c2));
+  assertFalse(pn.mvc.ModelBase.same(c1, c3));
+  assertFalse(pn.mvc.ModelBase.same(c1, null));
+  assertFalse(pn.mvc.ModelBase.same(c1, 0));
 };
 
 var test_multiple_fires_are_independent = function() {
@@ -90,13 +90,13 @@ var test_multiple_fires_are_independent = function() {
 
   setTimeout(function() {    
     assertEquals(1, fires); // Only 1 change fired
-    assertArrayEquals([ new pn.model.Change(mb, 'prop1', 1, 2) ], changes);
+    assertArrayEquals([ new pn.mvc.Change(mb, 'prop1', 1, 2) ], changes);
     mb.queueChange('prop1', 1, 3);
 
     setTimeout(function() {    
       asyncTestCase.continueTesting();
       assertEquals(2, fires); // An additional fire but changes are only last change set
-      assertArrayEquals([ new pn.model.Change(mb, 'prop1', 1, 3) ], changes);
+      assertArrayEquals([ new pn.mvc.Change(mb, 'prop1', 1, 3) ], changes);
     }, 50);
 
   }, 50);

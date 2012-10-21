@@ -1,20 +1,20 @@
 
-goog.provide('pn.model.Collection');
+goog.provide('pn.mvc.Collection');
 
-goog.require('pn.model.Model');
+goog.require('pn.mvc.Model');
 goog.require('goog.events.EventHandler');
 
 
 /**
  * @constructor
- * @extends {pn.model.ModelBase}
- * @param {Array.<!pn.model.ModelBase>=} opt_initial An optional array of 
+ * @extends {pn.mvc.ModelBase}
+ * @param {Array.<!pn.mvc.ModelBase>=} opt_initial An optional array of 
  *    models to listen to.
  */
-pn.model.Collection = function(opt_initial) {
+pn.mvc.Collection = function(opt_initial) {
   pn.ass(!goog.isDef(opt_initial) || goog.isArray(opt_initial));
 
-  pn.model.ModelBase.call(this);
+  pn.mvc.ModelBase.call(this);
 
   /**
    * @private
@@ -25,24 +25,24 @@ pn.model.Collection = function(opt_initial) {
 
   /**
    * @private
-   * @type {!Array.<!pn.model.ModelBase>}
+   * @type {!Array.<!pn.mvc.ModelBase>}
    */
   this.src_ = opt_initial || [];    
   this.src_.pnforEach(this.intern_, this);
 };
-goog.inherits(pn.model.Collection, pn.model.ModelBase);
+goog.inherits(pn.mvc.Collection, pn.mvc.ModelBase);
 
 /** 
  * @param {number} idx The index of the model to return.
  */
-pn.model.Collection.prototype.get = function(idx) { return this.src_[idx]; };
+pn.mvc.Collection.prototype.get = function(idx) { return this.src_[idx]; };
 
 /** 
- * @param {!pn.model.ModelBase} model The model to add to the end of the 
+ * @param {!pn.mvc.ModelBase} model The model to add to the end of the 
  *    collection. 
  */
-pn.model.Collection.prototype.add = function(model) {
-  pn.assInst(model, pn.model.ModelBase);
+pn.mvc.Collection.prototype.add = function(model) {
+  pn.assInst(model, pn.mvc.ModelBase);
 
   this.intern_(model);    
   this.src_.push(model);
@@ -50,11 +50,11 @@ pn.model.Collection.prototype.add = function(model) {
 };
 
 /** 
- * @param {!pn.model.ModelBase} model The model to insert into the collection.
+ * @param {!pn.mvc.ModelBase} model The model to insert into the collection.
  * @param {number} idx The index to insert the specified model into.
  */
-pn.model.Collection.prototype.insert = function(model, idx) {
-  pn.assInst(model, pn.model.ModelBase);
+pn.mvc.Collection.prototype.insert = function(model, idx) {
+  pn.assInst(model, pn.mvc.ModelBase);
   pn.assNum(idx);
   pn.ass(idx >= 0 && idx < this.src_.length);
 
@@ -64,12 +64,12 @@ pn.model.Collection.prototype.insert = function(model, idx) {
 };
 
 /** 
- * @param {!pn.model.ModelBase} model The model to add to the collection, 
+ * @param {!pn.mvc.ModelBase} model The model to add to the collection, 
  *    overwriting the existing model at the specified index.
  * @param {number} idx The index to add the specified model into.
  */
-pn.model.Collection.prototype.replace = function(model, idx) {
-  pn.assInst(model, pn.model.ModelBase);
+pn.mvc.Collection.prototype.replace = function(model, idx) {
+  pn.assInst(model, pn.mvc.ModelBase);
   pn.assNum(idx);
   pn.ass(idx >= 0 && idx < this.src_.length);
 
@@ -84,7 +84,7 @@ pn.model.Collection.prototype.replace = function(model, idx) {
 /**
  * @param {number} idx The index to add the specified model into.
  */
-pn.model.Collection.prototype.remove = function(idx) {
+pn.mvc.Collection.prototype.remove = function(idx) {
   pn.assNum(idx);
   pn.ass(idx >= 0 && idx < this.src_.length);
     
@@ -94,19 +94,19 @@ pn.model.Collection.prototype.remove = function(idx) {
 
 /**
  * @private
- * @param {!pn.model.ModelBase} model The model to listen to changes on.
+ * @param {!pn.mvc.ModelBase} model The model to listen to changes on.
  */
-pn.model.Collection.prototype.intern_ = function(model) {
-  var eventType = pn.model.EventType.CHANGE;
+pn.mvc.Collection.prototype.intern_ = function(model) {
+  var eventType = pn.mvc.EventType.CHANGE;
   this.eh_.listen(model, eventType, this.childChanged_.pnbind(this));
   this.registerDisposable(model);
 };
 
 /**
  * @private
- * @param {!pn.model.ChangeEvent} e The change event fired.
+ * @param {!pn.mvc.ChangeEvent} e The change event fired.
  */
-pn.model.Collection.prototype.childChanged_ = function(e) {
+pn.mvc.Collection.prototype.childChanged_ = function(e) {
   e.changes.pnforEach(function(change) {    
     var model = change.model;
     var idx = this.src_.pnindexOf(model);

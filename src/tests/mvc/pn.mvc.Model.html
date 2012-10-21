@@ -8,7 +8,7 @@
   goog.require('goog.testing.AsyncTestCase');
   goog.require('goog.testing.jsunit');
 
-  goog.require('pn.model.Model');
+  goog.require('pn.mvc.Model');
   goog.require('goog.events');
 </script>
     <script>
@@ -20,10 +20,10 @@ var obj,
     changes;
 
 var setUp = function() {  
-  model = new pn.model.Model();  
+  model = new pn.mvc.Model();  
   fires = 0;
   changes = [];
-  goog.events.listen(model, pn.model.EventType.CHANGE, function(e) {
+  goog.events.listen(model, pn.mvc.EventType.CHANGE, function(e) {
     fires++;
     changes = e.changes;
   });
@@ -38,7 +38,7 @@ var test_single_set_fires_a_single_time = function () {
     asyncTestCase.continueTesting();
     assertEquals(1, fires); // Only 1 change fired
     assertArrayEquals([
-      new pn.model.Change(model, 'prop', undefined, 'val')
+      new pn.mvc.Change(model, 'prop', undefined, 'val')
     ], changes);
   }, 50);
   asyncTestCase.waitForAsync();  
@@ -53,9 +53,9 @@ var test_multiple_sets_fires_a_single_time = function () {
     asyncTestCase.continueTesting();
     assertEquals(1, fires); // Only 1 change fired
     assertArrayEquals([
-      new pn.model.Change(model, 'prop1', undefined, 'val1'),
-      new pn.model.Change(model, 'prop2', undefined, 'val2'),
-      new pn.model.Change(model, 'prop3', undefined, 'val3')
+      new pn.mvc.Change(model, 'prop1', undefined, 'val1'),
+      new pn.mvc.Change(model, 'prop2', undefined, 'val2'),
+      new pn.mvc.Change(model, 'prop3', undefined, 'val3')
     ], changes);
   }, 50);
   asyncTestCase.waitForAsync();  
@@ -66,13 +66,13 @@ var test_multiple_fires = function() {
   
   setTimeout(function() {  
     assertEquals(1, fires); 
-    assertArrayEquals([ new pn.model.Change(model, 'prop1', undefined, 'val1') ], changes);
+    assertArrayEquals([ new pn.mvc.Change(model, 'prop1', undefined, 'val1') ], changes);
     model.set('prop2', 'val2');
 
     setTimeout(function() {
       asyncTestCase.continueTesting();
       assertEquals(2, fires); 
-      assertArrayEquals([ new pn.model.Change(model, 'prop2', undefined, 'val2') ], changes);
+      assertArrayEquals([ new pn.mvc.Change(model, 'prop2', undefined, 'val2') ], changes);
     }, 50);
   }, 50);
   asyncTestCase.waitForAsync();  
@@ -101,8 +101,8 @@ var test_updates_in_a_batch_are_all_reported_bundling_is_not_supported = functio
   setTimeout(function() {
     asyncTestCase.continueTesting();
     assertArrayEquals([ 
-      new pn.model.Change(model, 'prop1', undefined, 'val1'),
-      new pn.model.Change(model, 'prop1', 'val1', 'val2')
+      new pn.mvc.Change(model, 'prop1', undefined, 'val1'),
+      new pn.mvc.Change(model, 'prop1', 'val1', 'val2')
     ], changes);
   }, 50);
   asyncTestCase.waitForAsync();  
@@ -113,20 +113,20 @@ var test_updates_accross_multiple_fires_are_as_expected = function() {
   
   setTimeout(function() {  
     assertEquals(1, fires); 
-    assertArrayEquals([ new pn.model.Change(model, 'prop1', undefined, 'val1') ], changes);
+    assertArrayEquals([ new pn.mvc.Change(model, 'prop1', undefined, 'val1') ], changes);
     model.set('prop1', 'val2');
 
     setTimeout(function() {
       asyncTestCase.continueTesting();
       assertEquals(2, fires); 
-      assertArrayEquals([ new pn.model.Change(model, 'prop1', 'val1', 'val2') ], changes);
+      assertArrayEquals([ new pn.mvc.Change(model, 'prop1', 'val1', 'val2') ], changes);
     }, 50);
   }, 50);
   asyncTestCase.waitForAsync();  
 };
 
 var test_created_values_are_retreiveable = function() {
-  var model = new pn.model.Model({'prop1': 'val1'});
+  var model = new pn.mvc.Model({'prop1': 'val1'});
   assertEquals('val1', model.get('prop1'));
 };
 

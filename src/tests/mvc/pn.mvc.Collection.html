@@ -7,8 +7,8 @@
     <script>
 goog.require('goog.testing.jsunit');
 
-goog.require('pn.model.Collection');
-goog.require('pn.model.EventType');
+goog.require('pn.mvc.Collection');
+goog.require('pn.mvc.EventType');
 goog.require('goog.events');
 goog.require('goog.date.DateTime');
 
@@ -20,10 +20,10 @@ var arr,
 
 var setUp = function() {
   arr = [create(1), create(2), create(3)];
-  collection = new pn.model.Collection(arr);  
+  collection = new pn.mvc.Collection(arr);  
   fires = 0;
   changes = [];
-  goog.events.listen(collection, pn.model.EventType.CHANGE, function(e) { changes = e.changes; fires++; });
+  goog.events.listen(collection, pn.mvc.EventType.CHANGE, function(e) { changes = e.changes; fires++; });
 };
 
 var tearDown = function() {
@@ -32,7 +32,7 @@ var tearDown = function() {
 
 var create = function(id) {
   id = id + (++counter);
-  return new pn.model.Model({ id: id, Name: 'Name Value', Num: 1,
+  return new pn.mvc.Model({ id: id, Name: 'Name Value', Num: 1,
     Date: new goog.date.DateTime(2000, 0, 1), ObjRef: {}, 
     ObjEquality: {
       Val: 1,
@@ -50,7 +50,7 @@ var test_collection_change_event_on_basic_changes_on_all_indexes_of_arr = functi
     model.fire();
     collection.fire();  
     
-    assertArrayEquals([new pn.model.Change(collection, idx, undefined, model)], changes);    
+    assertArrayEquals([new pn.mvc.Change(collection, idx, undefined, model)], changes);    
   });
 };
 
@@ -59,7 +59,7 @@ var test_collection_change_event_on_add = function() {
   collection.add(added);
 
   collection.fire();  
-  assertArrayEquals([new pn.model.Change(collection, 3, undefined, added)], changes);    
+  assertArrayEquals([new pn.mvc.Change(collection, 3, undefined, added)], changes);    
 };
 
 var test_collection_change_event_on_delete_in_middle = function() {
@@ -69,7 +69,7 @@ var test_collection_change_event_on_delete_in_middle = function() {
   collection.fire();  
 
   // TODO: We do need change types like 'deleted'
-  assertArrayEquals([new pn.model.Change(collection, 1, old, undefined)], changes);    
+  assertArrayEquals([new pn.mvc.Change(collection, 1, old, undefined)], changes);    
 };
 
 var test_collection_change_event_on_delete_in_start = function() {
@@ -78,7 +78,7 @@ var test_collection_change_event_on_delete_in_start = function() {
   collection.remove(0);
   collection.fire();  
 
-  assertArrayEquals([new pn.model.Change(collection, 0, old, undefined)], changes);    
+  assertArrayEquals([new pn.mvc.Change(collection, 0, old, undefined)], changes);    
 };
 
 var test_collection_change_event_on_delete_in_end = function() {
@@ -87,7 +87,7 @@ var test_collection_change_event_on_delete_in_end = function() {
   collection.remove(2);
   collection.fire();  
 
-  assertArrayEquals([new pn.model.Change(collection, 2, old, undefined)], changes);    
+  assertArrayEquals([new pn.mvc.Change(collection, 2, old, undefined)], changes);    
 };
 
 var test_collection_change_event_on_insert = function() {
@@ -95,7 +95,7 @@ var test_collection_change_event_on_insert = function() {
   collection.insert(inserted, 1);
   collection.fire();  
   
-  assertArrayEquals([new pn.model.Change(collection, 1, undefined, inserted)], changes);    
+  assertArrayEquals([new pn.mvc.Change(collection, 1, undefined, inserted)], changes);    
 };
 
 var test_adding_multiple = function() {
@@ -106,8 +106,8 @@ var test_adding_multiple = function() {
   collection.fire();  
 
   assertArrayEquals([
-    new pn.model.Change(collection, 3, undefined, added1),
-    new pn.model.Change(collection, 4, undefined, added2)
+    new pn.mvc.Change(collection, 3, undefined, added1),
+    new pn.mvc.Change(collection, 4, undefined, added2)
   ], changes);    
 };
 
@@ -119,8 +119,8 @@ var test_deleting_multiple = function() {
   collection.fire();  
 
   assertArrayEquals([
-    new pn.model.Change(collection, 2, removed2, undefined),
-    new pn.model.Change(collection, 0, removed1, undefined)    
+    new pn.mvc.Change(collection, 2, removed2, undefined),
+    new pn.mvc.Change(collection, 0, removed1, undefined)    
   ], changes);    
 };
 
@@ -132,8 +132,8 @@ var test_insert_multiple_fires_correct_details = function() {
   collection.fire();  
   
   assertArrayEquals([
-    new pn.model.Change(collection, 1, undefined, inserted1),
-    new pn.model.Change(collection, 2, undefined, inserted2)
+    new pn.mvc.Change(collection, 1, undefined, inserted1),
+    new pn.mvc.Change(collection, 2, undefined, inserted2)
   ], changes);    
 };
 
@@ -147,8 +147,8 @@ var test_remove_multiple_fires_correct_details = function() {
   assertEquals(2, changes.length);
 
   assertArrayEquals([
-    new pn.model.Change(collection, 1, remove1, undefined),
-    new pn.model.Change(collection, 0, remove0, undefined)
+    new pn.mvc.Change(collection, 1, remove1, undefined),
+    new pn.mvc.Change(collection, 0, remove0, undefined)
   ], changes);  
 };
 
