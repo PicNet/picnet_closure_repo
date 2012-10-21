@@ -41,6 +41,8 @@
     <None Include="build\clean_and_compile.bat" />
     <None Include="README.md" />
     <None Include="build\release_tablefilter.bat" />
+    <Content Include="src\pn\mvc\Controller.js" />
+    <Content Include="src\pn\mvc\View.js" />
     <None Include="src\pn\ui\soy\pn.soy" />
   </ItemGroup>
   <ItemGroup>
@@ -97,11 +99,11 @@
     <Content Include="src\pn\dom.js" />
     <Content Include="src\pn\json.js" />
     <Content Include="src\pn\log.js" />
-    <Content Include="src\pn\model\Change.js" />
-    <Content Include="src\pn\model\ChangeEvent.js" />
-    <Content Include="src\pn\model\Collection.js" />
-    <Content Include="src\pn\model\Model.js" />
-    <Content Include="src\pn\model\ModelBase.js" />
+    <Content Include="src\pn\mvc\Change.js" />
+    <Content Include="src\pn\mvc\ChangeEvent.js" />
+    <Content Include="src\pn\mvc\Collection.js" />
+    <Content Include="src\pn\mvc\Model.js" />
+    <Content Include="src\pn\mvc\ModelBase.js" />
     <Content Include="src\pn\object.js" />
     <Content Include="src\pn\pn.js" />
     <Content Include="src\pn\slick.grid.externs.js" />
@@ -199,13 +201,13 @@
     <Content Include="src\tests\data\pn.data.LocalCache.html" />
     <Content Include="src\tests\data\pn.data.MemCache.html" />
     <Content Include="src\tests\data\pn.data.Server.html" />
-    <Content Include="src\tests\model\pn.model.Model_performance.html" />
+    <Content Include="src\tests\mvc\pn.mvc.Model_performance.html" />
     <Content Include="src\tests\pn.app.Router.html" />
     <Content Include="src\tests\pn.json.html" />
     <Content Include="src\tests\pn.json.performance.html" />
-    <Content Include="src\tests\model\pn.model.Collection.html" />
-    <Content Include="src\tests\model\pn.model.Model.html" />
-    <Content Include="src\tests\model\pn.model.ModelBase.html" />
+    <Content Include="src\tests\mvc\pn.mvc.Collection.html" />
+    <Content Include="src\tests\mvc\pn.mvc.Model.html" />
+    <Content Include="src\tests\mvc\pn.mvc.ModelBase.html" />
     <Content Include="src\tests\pn.ui.KeyShortcutMgr.html" />
     <Content Include="src\tests\pn_array.html" />
     <Content Include="src\tests\pn_assert.html" />
@@ -220,7 +222,6 @@
     <Content Include="src\tests\tablefilter\TextColumnTests.js" />
     <Content Include="src\tests\typetest.js" />
     <Content Include="tablefilter_readme.txt" />
-    <Content Include="build\testacular.conf.js" />
     <Content Include="TODO.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

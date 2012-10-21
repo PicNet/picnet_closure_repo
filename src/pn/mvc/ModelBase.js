@@ -1,17 +1,17 @@
 
-goog.provide('pn.model.ModelBase');
+goog.provide('pn.mvc.ModelBase');
 
 goog.require('pn');
 goog.require('goog.events.EventTarget');
-goog.require('pn.model.ChangeEvent');
+goog.require('pn.mvc.ChangeEvent');
 goog.require('goog.async.Delay');
-goog.require('pn.model.Change');
+goog.require('pn.mvc.Change');
 
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
  */
-pn.model.ModelBase = function() {
+pn.mvc.ModelBase = function() {
 
   /** 
    * @private
@@ -22,21 +22,21 @@ pn.model.ModelBase = function() {
 
   /** 
    * @private
-   * @type {!Array.<!pn.model.Change>}
+   * @type {!Array.<!pn.mvc.Change>}
    */
   this.changes_ = [];
 };
-goog.inherits(pn.model.ModelBase, goog.events.EventTarget);
+goog.inherits(pn.mvc.ModelBase, goog.events.EventTarget);
 
 /** @return {!Array} The changes since last time getChanges were called. */
-pn.model.ModelBase.prototype.getChanges = goog.abstractMethod;
+pn.mvc.ModelBase.prototype.getChanges = goog.abstractMethod;
 
 /**
  * @param {*} a The first item to compare.
  * @param {*} b The second item to compare.
  * @return {boolean} Wether a and b are equivalent.
  */
-pn.model.ModelBase.same = function(a, b) {
+pn.mvc.ModelBase.same = function(a, b) {
   if (a === b) return true;
   if (!goog.isDefAndNotNull(a)) { return !goog.isDefAndNotNull(b); }
   return goog.isFunction(a.equals) ? a.equals(b) : a === b;
@@ -44,13 +44,13 @@ pn.model.ModelBase.same = function(a, b) {
 
 
 /**
- * Convenience alias for pn.model.ModelBase.same
+ * Convenience alias for pn.mvc.ModelBase.same
  * @protected
  * @param {*} a The first item to compare.
  * @param {*} b The second item to compare.
  * @return {boolean} Wether a and b are equivalent.
  */
-pn.model.ModelBase.prototype.same = pn.model.ModelBase.same;
+pn.mvc.ModelBase.prototype.same = pn.mvc.ModelBase.same;
 
 /**
  * @protected
@@ -58,22 +58,22 @@ pn.model.ModelBase.prototype.same = pn.model.ModelBase.same;
  * @param {*} oldv The old value of the changed property.
  * @param {*} newv The new value of the changed property.
  */
-pn.model.ModelBase.prototype.queueChange = function(prop, oldv, newv) {
+pn.mvc.ModelBase.prototype.queueChange = function(prop, oldv, newv) {
   pn.assDef(prop);
 
-  this.changes_.push(new pn.model.Change(this, prop, oldv, newv));
+  this.changes_.push(new pn.mvc.Change(this, prop, oldv, newv));
   this.startTimer_();
 };
 
-pn.model.ModelBase.prototype.startTimer_ = function() {
+pn.mvc.ModelBase.prototype.startTimer_ = function() {
   this.delay_.start();
 };
 
 /** @protected Fires any queued changes immediatelly. */
-pn.model.ModelBase.prototype.fire = function() {
+pn.mvc.ModelBase.prototype.fire = function() {
   this.delay_.stop();
   var changes = this.changes_;
   this.changes_ = [];
 
-  if (changes.length) this.dispatchEvent(new pn.model.ChangeEvent(changes));
+  if (changes.length) this.dispatchEvent(new pn.mvc.ChangeEvent(changes));
 };

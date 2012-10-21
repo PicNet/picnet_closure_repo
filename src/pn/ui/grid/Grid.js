@@ -216,7 +216,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 /** @private */
 pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
   // No data, do not display grid. This could cause issues if we ever do need
-  // to support changing data sets i.e. 'pn.model.Collection'
+  // to support changing data sets i.e. 'pn.mvc.Collection'
   if (!this.slick_) return;
 
   this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {

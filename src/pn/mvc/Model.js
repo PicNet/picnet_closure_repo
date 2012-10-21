@@ -1,18 +1,18 @@
 
-goog.provide('pn.model.Model');
+goog.provide('pn.mvc.Model');
 
-goog.require('pn.model.ModelBase');
+goog.require('pn.mvc.ModelBase');
 
 
 
 /**
  * @constructor
- * @extends {pn.model.ModelBase}
+ * @extends {pn.mvc.ModelBase}
  * @param {Object=} opt_initialValues The optional initial existing values 
  *    of the model.  These do not trigger a change event.
  */
-pn.model.Model = function(opt_initialValues) {
-  pn.model.ModelBase.call(this);
+pn.mvc.Model = function(opt_initialValues) {
+  pn.mvc.ModelBase.call(this);
 
   /**
    * @private
@@ -20,13 +20,13 @@ pn.model.Model = function(opt_initialValues) {
    */
   this.values_ = opt_initialValues || {};  
 };
-goog.inherits(pn.model.Model, pn.model.ModelBase);
+goog.inherits(pn.mvc.Model, pn.mvc.ModelBase);
 
 /** 
  * @param {string} name The property name of the prop to retreive.
  * @return {*} The value of the specified property.
  */
-pn.model.Model.prototype.get = function(name) {
+pn.mvc.Model.prototype.get = function(name) {
   return this.values_[name];
 };
 
@@ -34,7 +34,7 @@ pn.model.Model.prototype.get = function(name) {
  * @param {string} name The name of the property to set.
  * @param {*} val The new value of the property to set.
  */
-pn.model.Model.prototype.set = function(name, val) {
+pn.mvc.Model.prototype.set = function(name, val) {
   var old = this.values_[name];  
   if (this.same(old, val)) return;  
   this.values_[name] = val;
@@ -46,7 +46,7 @@ pn.model.Model.prototype.set = function(name, val) {
  *    to set.  This immediatelly calls fire() methods to inform all observers
  *    of the changes to this model.
  */
-pn.model.Model.prototype.setAll = function(obj) {
+pn.mvc.Model.prototype.setAll = function(obj) {
   pn.assObj(obj);
 
   goog.object.forEach(obj, this.set.pnflip(), this);
