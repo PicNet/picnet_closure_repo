@@ -2,6 +2,7 @@
 goog.provide('pn.ui.grid.ColumnCtx');
 
 goog.require('goog.date.DateTime');
+goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.edit.EditUtils');
 goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.grid.ColumnRenderers');

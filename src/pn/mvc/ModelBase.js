@@ -1,11 +1,13 @@
 
 goog.provide('pn.mvc.ModelBase');
 
-goog.require('pn');
-goog.require('goog.events.EventTarget');
-goog.require('pn.mvc.ChangeEvent');
 goog.require('goog.async.Delay');
+goog.require('goog.events.EventTarget');
+goog.require('pn');
 goog.require('pn.mvc.Change');
+goog.require('pn.mvc.ChangeEvent');
+
+
 
 /**
  * @constructor
@@ -13,14 +15,14 @@ goog.require('pn.mvc.Change');
  */
 pn.mvc.ModelBase = function() {
 
-  /** 
+  /**
    * @private
    * @type {goog.async.Delay}
    */
   this.delay_ = new goog.async.Delay(this.fire.pnbind(this), 1);
   this.registerDisposable(this.delay_);
 
-  /** 
+  /**
    * @private
    * @type {!Array.<!pn.mvc.Change>}
    */
@@ -28,8 +30,10 @@ pn.mvc.ModelBase = function() {
 };
 goog.inherits(pn.mvc.ModelBase, goog.events.EventTarget);
 
+
 /** @return {!Array} The changes since last time getChanges were called. */
 pn.mvc.ModelBase.prototype.getChanges = goog.abstractMethod;
+
 
 /**
  * @param {*} a The first item to compare.
@@ -52,6 +56,7 @@ pn.mvc.ModelBase.same = function(a, b) {
  */
 pn.mvc.ModelBase.prototype.same = pn.mvc.ModelBase.same;
 
+
 /**
  * @protected
  * @param {string|number} prop The name of the property that changed.
@@ -65,9 +70,12 @@ pn.mvc.ModelBase.prototype.queueChange = function(prop, oldv, newv) {
   this.startTimer_();
 };
 
+
+/** @private */
 pn.mvc.ModelBase.prototype.startTimer_ = function() {
   this.delay_.start();
 };
+
 
 /** @protected Fires any queued changes immediatelly. */
 pn.mvc.ModelBase.prototype.fire = function() {

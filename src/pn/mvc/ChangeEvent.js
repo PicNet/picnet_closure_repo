@@ -1,13 +1,16 @@
 
 goog.provide('pn.mvc.ChangeEvent');
 goog.provide('pn.mvc.EventType');
+goog.require('pn');
+goog.require('pn.mvc.Change');
 
 
 
 /**
  * @constructor
  * @extends {goog.events.Event}
- * @param {!Array.<pn.mvc.Change>} changes The details of the changes to this model.
+ * @param {!Array.<pn.mvc.Change>} changes The details of the changes to
+ *    this model.
  */
 pn.mvc.ChangeEvent = function(changes) {
   pn.ass(changes);

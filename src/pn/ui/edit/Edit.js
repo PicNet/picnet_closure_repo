@@ -10,6 +10,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.dom');
 goog.require('pn.ui.IDirtyAware');
+goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.FieldBuilder');

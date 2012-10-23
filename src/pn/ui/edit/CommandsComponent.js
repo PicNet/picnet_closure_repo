@@ -8,6 +8,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('goog.ui.KeyboardShortcutHandler');
+goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.edit.FieldBuilder');

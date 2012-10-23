@@ -5,6 +5,7 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
+goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.edit.Edit');
 goog.require('pn.ui.grid.Grid');
 
