@@ -3,6 +3,7 @@ goog.provide('pn.ui.UiSpecsRegister');
 
 goog.require('goog.asserts');
 goog.require('goog.object');
+goog.require('pn.ui.UiSpec');
 
 
 
