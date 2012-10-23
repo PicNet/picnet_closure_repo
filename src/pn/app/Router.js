@@ -193,7 +193,7 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   var to = tokens.splice(0, 1)[0] || this.defaultRoute;
   this.log_.fine('navigateImpl path: ' + path + ' to: ' + to);
 
-  var route = this.routes_[to];
+  var route = this.routes_[to] || this.routes_['*'];
   if (!route) { throw new Error('Route [' + path + '] not supported'); }
 
   var goingBack = path === this.stack_[this.stack_.length - 2];
