@@ -182,6 +182,8 @@ pn.app.Router.prototype.setEnabled_ = function(enabled) {
  * @param {!string} path The full route path to navigate to.
  */
 pn.app.Router.prototype.navigateImpl_ = function(path) {
+  pn.ass(goog.isString(path) && path !== '*');
+
   this.log_.fine('navigateImpl_ path: ' + path);
   if (!path) {
     this.log_.fine('navigateImpl empty path going to defaultRoute');
