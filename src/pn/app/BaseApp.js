@@ -10,12 +10,6 @@ goog.require('pn.data.BaseFacade');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
-goog.require('pn.ui.KeyShortcutMgr');
-goog.require('pn.ui.LoadingPnl');
-goog.require('pn.ui.MessagePanel');
-goog.require('pn.ui.UiSpec');
-goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.ui.ViewMgr');
 goog.provide('pn.app.BaseApp');
 
 
@@ -66,9 +60,6 @@ pn.app.BaseApp = function(opt_cfg) {
   this.log = pn.log.getLogger('pn.app.BaseApp');
   this.log.info('Creating Application');
 
-  /** @type {pn.ui.UiSpecsRegister} */
-  this.specs = null;
-
   /** @type {!pn.app.Router} */
   this.router = new pn.app.Router();
   this.registerDisposable(this.router);
@@ -77,29 +68,14 @@ pn.app.BaseApp = function(opt_cfg) {
   this.cfg = new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
-  /** @type {!pn.ui.ViewMgr} */
-  this.view = new pn.ui.ViewMgr(pn.dom.getElement(this.cfg.viewContainerId));
-  this.registerDisposable(this.view);
-
-  /** @type {!pn.ui.MessagePanel} */
-  this.msg = new pn.ui.MessagePanel(pn.dom.getElement(this.cfg.messagePanelId));
-  this.registerDisposable(this.msg);
-
   var cache = new pn.data.LocalCache(this.cfg.dbver);
   var server = new pn.data.Server(this.cfg.facadeUri);
+
   /** @type {!pn.data.BaseFacade} */
   this.data = new pn.data.LazyFacade(cache, server);
   this.registerDisposable(this.data);
   this.registerDisposable(server);
   this.registerDisposable(cache);
-
-  /** @type {!pn.ui.LoadingPnl} */
-  this.loading = new pn.ui.LoadingPnl(pn.dom.getElement(this.cfg.loadPnlId));
-  this.registerDisposable(this.loading);
-
-  /** @type {!pn.ui.KeyShortcutMgr} */
-  this.keys = new pn.ui.KeyShortcutMgr();
-  this.registerDisposable(this.keys);
 
   /**
    * @private
@@ -119,20 +95,6 @@ goog.inherits(pn.app.BaseApp, goog.Disposable);
 
 
 /**
- * A template method used to get all required UiSpecs.  This method should
- *    return an object map (id/ctor pair) with types such as:
- *    {
- *      'Type1': pn.application.specs.Spec1,
- *      'Type1': pn.application.specs.Spec2
- *    {
- *
- * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
- *    application. The first route is considered the default route.
- */
-pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
-
-
-/**
  * A template method used to get all required routes.  This method should
  *    return a routes map in the format:
  *    {
@@ -144,6 +106,7 @@ pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
  * To navigate to a rounte simple call
  *    pn.app.ctx.router.navigate('path/including/args')
  *
+ * @protected
  * @return {!Object.<!Function>} The routes for this application. The first
  *    route is considered the default route.
  */
@@ -160,10 +123,23 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  *      'event-name-2': callback2
  *    {
  *
- * @return {!Object.<!Function>} The event handlers for handling
+ * @protected
+ * @return {Object.<!Function>} The event handlers for handling
  *    pn.app.ctx.pub('event-name', args) calls.
  */
-pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
+pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
+
+
+/**
+ * A template method used to determine if the user is happy to leave the
+ *    current page.  The default implementation is to always return true.
+ *    However WebApps override this to do proper dirty checking.
+ *
+ * @protected
+ * @return {boolean} Wether the user is happy to navigate away from the
+ *    current page.
+ */
+pn.app.BaseApp.prototype.acceptDirty = function() { return true; };
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE IMPLEMENTATION DETAILS
@@ -177,43 +153,25 @@ pn.app.BaseApp.prototype.getAppEventHandlers = goog.abstractMethod;
 pn.app.BaseApp.prototype.init = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
-  var sset = pn.data.Server.EventType;
-  goog.events.listen(
-      this.data, sset.LOADING, this.loading.increment, false, this.loading);
-  goog.events.listen(
-      this.data, sset.LOADED, this.loading.decrement, false, this.loading);
-
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
-  this.registerDisposable(this.specs);
-
-  var eventBusEvents = this.getDefaultAppEventHandlers_();
-  goog.object.extend(eventBusEvents, this.getAppEventHandlers());
+  var eventBusEvents = this.getDefaultAppEventHandlers();
+  var additional = this.getAppEventHandlers();
+  if (additional) goog.object.extend(eventBusEvents, additional);
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
 
   var navevent = pn.app.Router.EventType.NAVIGATING;
-  goog.events.listen(this.router, navevent, this.acceptDirty_, false, this);
+  goog.events.listen(this.router, navevent, this.acceptDirty, false, this);
 
   this.router.initialise(this.getRoutes());
 };
 
 
-/**
- * @private
- * @return {!Object} The default/generic event handlers.
- */
-pn.app.BaseApp.prototype.getDefaultAppEventHandlers_ = function() {
+/** @return {!Object} The default/generic event handlers. */
+pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
   var evs = {},
       ae = pn.app.AppEvents,
       bind = goog.bind;
-  // Message
-  evs[ae.CLEAR_MESSAGE] = bind(this.msg.clearMessage, this.msg);
-  evs[ae.SHOW_MESSAGE] = bind(this.msg.showMessage, this.msg);
-  evs[ae.SHOW_MESSAGES] = bind(this.msg.showMessages, this.msg);
-  evs[ae.SHOW_ERROR] = bind(this.msg.showError, this.msg);
-  evs[ae.SHOW_ERRORS] = bind(this.msg.showErrors, this.msg);
-  evs[ae.ENTITY_VALIDATION_ERROR] = bind(this.msg.showErrors, this.msg);
 
   // Data
   evs[ae.QUERY] = bind(this.data.query, this.data);
@@ -280,7 +238,7 @@ pn.app.BaseApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
 pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
   pn.ass(entity instanceof pn.data.Entity);
 
-  if (!this.acceptDirty_()) return;
+  if (!this.acceptDirty()) return;
 
   var data = {
     'type': entity.type,
@@ -293,16 +251,6 @@ pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
 };
 
 
-/**
- * @private
- * @return {boolean} Wether happy to loose unsaved data (or not dirty).
- */
-pn.app.BaseApp.prototype.acceptDirty_ = function() {
-  if (!this.view.isDirty()) return true;
-  return window.confirm('Any unsaved changes will be lost, continue?');
-};
-
-
 /** @override */
 pn.app.BaseApp.prototype.disposeInternal = function() {
   pn.app.BaseApp.superClass_.disposeInternal.call(this);
@@ -310,11 +258,5 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   this.log.info('Disposing Application');
 
   var navevent = pn.app.Router.EventType.NAVIGATING;
-  goog.events.unlisten(this.router, navevent, this.acceptDirty_, false, this);
-
-  var sset = pn.data.Server.EventType;
-  goog.events.unlisten(
-      this.data, sset.LOADING, this.loading.increment, false, this.loading);
-  goog.events.unlisten(
-      this.data, sset.LOADED, this.loading.decrement, false, this.loading);
+  goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
 };

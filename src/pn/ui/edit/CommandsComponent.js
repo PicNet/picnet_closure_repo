@@ -18,6 +18,7 @@ goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
+goog.require('pn.web.BaseWebApp');
 
 
 
@@ -171,8 +172,8 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
 
   this.commands_.pnforEach(function(cmd) {
     if (!cmd.shortcut) return;
-    pn.app.ctx.keys.register(
-        cmd.name, cmd.shortcut, goog.bind(this.handleShortcut_, this));
+    var ctx = /** @type {!pn.web.BaseWebApp} */ (pn.app.ctx);
+    ctx.keys.register(cmd.name, cmd.shortcut, this.handle_.pnbind(this));
   }, this);
 };
 
@@ -198,7 +199,7 @@ pn.ui.edit.CommandsComponent.prototype.getCommandTooltip_ = function(cmd) {
  * @private
  * @param {string} id The id of the shortcut command fired.
  */
-pn.ui.edit.CommandsComponent.prototype.handleShortcut_ = function(id) {
+pn.ui.edit.CommandsComponent.prototype.handle_ = function(id) {
   var command = /** @type {pn.ui.edit.cmd.Command} */ (
       this.commands_.pnfind(function(c) { return c.name === id; }));
 
@@ -239,7 +240,8 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 
+  var ctx = /** @type {!pn.web.BaseWebApp} */ (pn.app.ctx);
   this.commands_.pnforEach(function(cmd) {
-    if (cmd.shortcut) pn.app.ctx.keys.unregister(cmd.name);
+    if (cmd.shortcut) ctx.keys.unregister(cmd.name);
   }, this);
 };

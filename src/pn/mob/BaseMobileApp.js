@@ -20,7 +20,3 @@ pn.mob.BaseMobileApp = function(el, opt_cfg) {
   this.el = el;
 };
 goog.inherits(pn.mob.BaseMobileApp, pn.app.BaseApp);
-
-
-/** @override */
-pn.mob.BaseMobileApp.prototype.getUiSpecs = function() { return {}; };
