@@ -1,5 +1,9 @@
 
 - TODO: Proper Mvc see great code: https://raw.github.com/petermichaux/uMVC/master/uMVC.js
+- AppEvents needs to have WebAppEvents and MobileAppEvents.  Perhaps since we
+  now have BaseApp, BaseMobileApp and BaseWebApp the events should live in
+  the same files so we do not have to mantain multiple hierarchies.  There is
+  also a parallel hierarchy with AppConfig
 
 - Demos are all broken
 

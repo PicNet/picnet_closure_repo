@@ -73,6 +73,6 @@ pn.ui.TemplateWrapper.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
   pn.dom.addHtml(element, this.html_);
-  var parent = pn.dom.getElement(this.idOfParent_);
+  var parent = pn.dom.get(this.idOfParent_);
   this.component_.decorate(parent);
 };
