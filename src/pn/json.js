@@ -24,7 +24,7 @@ pn.json.parseJson = function(json) {
 
 
 /**
- * @param {Object} o The object to serialise to JSON.
+ * @param {*} o The object to serialise to JSON.
  * @return {string} The string (json) representation of the specified object.
  * @param {boolean=} opt_useDotNetDates If this is true then dates are
  *    serialized as standard .Net /Date(...)/ format. Otherwise the epoch
