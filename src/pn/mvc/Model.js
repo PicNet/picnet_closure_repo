@@ -19,6 +19,7 @@ pn.mvc.Model = function(opt_initialValues) {
    * @type {!Object.<*>}
    */
   this.values_ = opt_initialValues || {};
+  this.validate();
 };
 goog.inherits(pn.mvc.Model, pn.mvc.ModelBase);
 
@@ -35,11 +36,14 @@ pn.mvc.Model.prototype.get = function(name) {
 /**
  * @param {string} name The name of the property to set.
  * @param {*} val The new value of the property to set.
+ * @param {boolean=} opt_validate Wether to validate the model after the
+ *    change (default true).
  */
-pn.mvc.Model.prototype.set = function(name, val) {
+pn.mvc.Model.prototype.set = function(name, val, opt_validate) {
   var old = this.values_[name];
   if (this.same(old, val)) return;
   this.values_[name] = val;
+  if (opt_validate !== false) { this.validate(); }
   this.queueChange(name, old, val);
 };
 
@@ -52,6 +56,11 @@ pn.mvc.Model.prototype.set = function(name, val) {
 pn.mvc.Model.prototype.setAll = function(obj) {
   pn.assObj(obj);
 
-  goog.object.forEach(obj, this.set.pnflip(), this);
+  goog.object.forEach(obj, function(v, n) { this.set(n, v, false); }, this);
+  this.validate();
   this.fire();
 };
+
+
+/** @protected */
+pn.mvc.Model.prototype.validate = goog.abstractMethod;

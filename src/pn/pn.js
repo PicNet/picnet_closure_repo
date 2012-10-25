@@ -58,6 +58,29 @@ pn.assNum = function(val, opt_message, var_args)
 
 /**
  * @param {*} val The value to check for the type.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assInt = function(val) {
+  var num = val;
+  pn.assType_(goog.isNumber, arguments, 'number');
+  pn.ass(/^\d+$/.test(num), 'val %s is not an integer', num);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assPosInt = function(val) {
+  var num = val;
+  pn.assType_(goog.isNumber, arguments, 'number');
+  pn.ass(/^\d+$/.test(num), 'val %s is not an integer', num);
+  pn.ass(/** @type {number} */ (num) > 0, 'val %s is not greater than 0', num);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
  * @param {string=} opt_message Error message in case of failure.
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
@@ -182,6 +205,8 @@ pn.aargs_ = function(thiso, args) {
 String.prototype.pnsubs = function(var_args) {
   return goog.string.subs.apply(null, pn.aargs_(this, arguments));
 };
+
+// TODO: Add pnendsWith, pnstartsWith, pnreplaceAll, pntrim
 
 ////////////////////////////////////////////////////////////////////////////////
 // Array prototype enhancements
