@@ -63,4 +63,4 @@ pn.mvc.Model.prototype.setAll = function(obj) {
 
 
 /** @protected */
-pn.mvc.Model.prototype.validate = goog.abstractMethod;
+pn.mvc.Model.prototype.validate = function() {};

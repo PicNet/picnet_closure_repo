@@ -7,7 +7,6 @@ goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
-goog.require('pn.web.BaseWebApp');
 
 
 
