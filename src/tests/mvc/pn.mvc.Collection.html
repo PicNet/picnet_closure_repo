@@ -9,6 +9,8 @@ goog.require('goog.testing.jsunit');
 
 goog.require('pn.mvc.Collection');
 goog.require('pn.mvc.EventType');
+goog.require('pn.mvc.Model');
+goog.require('pn.mvc.ModelBase');
 goog.require('goog.events');
 goog.require('goog.date.DateTime');
 
@@ -39,7 +41,7 @@ var create = function(id) {
       clone: function() { return { Val : this.Val}; },
       equals: function(other) { return this.Val == other.Val; }
     },
-  });
+  });  
 };
 
 

@@ -20,7 +20,7 @@ var obj,
     changes;
 
 var setUp = function() {  
-  model = new pn.mvc.Model();  
+  model = new pn.mvc.Model();    
   fires = 0;
   changes = [];
   goog.events.listen(model, pn.mvc.EventType.CHANGE, function(e) {
@@ -126,7 +126,7 @@ var test_updates_accross_multiple_fires_are_as_expected = function() {
 };
 
 var test_created_values_are_retreiveable = function() {
-  var model = new pn.mvc.Model({'prop1': 'val1'});
+  var model = new pn.mvc.Model({'prop1': 'val1'});  
   assertEquals('val1', model.get('prop1'));
 };
 
