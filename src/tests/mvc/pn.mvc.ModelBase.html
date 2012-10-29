@@ -93,10 +93,11 @@ var test_multiple_fires_are_independent = function() {
     assertArrayEquals([ new pn.mvc.Change(mb, 'prop1', 1, 2) ], changes);
     mb.queueChange('prop1', 1, 3);
 
-    setTimeout(function() {    
-      asyncTestCase.continueTesting();
+    setTimeout(function() {          
       assertEquals(2, fires); // An additional fire but changes are only last change set
       assertArrayEquals([ new pn.mvc.Change(mb, 'prop1', 1, 3) ], changes);
+
+      asyncTestCase.continueTesting();
     }, 50);
 
   }, 50);
