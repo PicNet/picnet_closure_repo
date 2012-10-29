@@ -111,6 +111,19 @@ pn.assArr = function(val, opt_message, var_args)
 
 /**
  * @param {*} val The value to check for the type.
+ * @param {Function} ctor The expected type to do an instanceof check on the
+ *    first element.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assArrInst = function(val, ctor) {
+  pn.assArr(val);
+  pn.ass(val.length > 0, 'Empty array');
+  pn.assInst(val[0], ctor);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
  * @param {string=} opt_message Error message in case of failure.
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
@@ -587,7 +600,7 @@ Array.prototype.pnzip = function(var_args) {
  *     array is to be ordered. Should take 2 arguments to compare, and return a
  *     negative number, zero, or a positive number depending on whether the
  *     first argument is less than, equal to, or greater than the second.
- * @return {Array.<T>} A reference to self array.
+ * @return {!Array.<T>} A reference to self array.
  * @template T
  */
 Array.prototype.pnsort = function(opt_compareFn) {
@@ -602,7 +615,7 @@ Array.prototype.pnsort = function(opt_compareFn) {
  * @param {string} key The object key to sort by.
  * @param {Function=} opt_compareFn The function to use to compare key
  *     values.
- * @return {Array.<T>} A reference to self array.
+ * @return {!Array.<T>} A reference to self array.
  * @template T
  */
 Array.prototype.pnsortObjectsByKey = function(key, opt_compareFn) {
@@ -635,6 +648,24 @@ Array.prototype.pnremove = function(obj) {
 Array.prototype.pnremoveDuplicates = function(opt_rv) {
   goog.array.removeDuplicates.apply(null, pn.aargs_(this, arguments));
   return this;
+};
+
+
+/**
+ * @see goog.array.removeDuplicates
+ * @this {!Array.<T>} arr The array from which to remove duplicates.
+ * @param {string} key The object property to use as the duplicate comparer.
+ * @return {!Array.<T>} A reference to self array.
+ * @template T
+ */
+Array.prototype.pnremoveDuplicatesByKey = function(key) {
+  var added = {};
+  return this.pnfilter(function(e) {
+    var k = e[key];
+    if (k in added) return false;
+    added[k] = true;
+    return true;
+  });
 };
 
 
