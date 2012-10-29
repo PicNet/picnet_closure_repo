@@ -69,10 +69,11 @@ var test_multiple_fires = function() {
     assertArrayEquals([ new pn.mvc.Change(model, 'prop1', undefined, 'val1') ], changes);
     model.set('prop2', 'val2');
 
-    setTimeout(function() {
-      asyncTestCase.continueTesting();
+    setTimeout(function() {      
       assertEquals(2, fires); 
       assertArrayEquals([ new pn.mvc.Change(model, 'prop2', undefined, 'val2') ], changes);
+
+      asyncTestCase.continueTesting();
     }, 50);
   }, 50);
   asyncTestCase.waitForAsync();  
