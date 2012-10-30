@@ -1,8 +1,8 @@
 ﻿;
 goog.provide('pn.mvc.Controller');
 
-goog.require('goog.events.EventHandler');
 goog.require('pn');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.mvc.EventType');
 goog.require('pn.mvc.ModelBase');
 goog.require('pn.mvc.View');
@@ -11,7 +11,7 @@ goog.require('pn.mvc.View');
 
 /**
  * @constructor
- * @extends {goog.events.EventHandler}
+ * @extends {pn.app.EventHandlerTarget}
  * @param {!(Element|pn.mvc.View)} view The view for this controller.
  * @param {pn.mvc.ModelBase=} opt_model The optional model for this
  *    controller's view.
@@ -20,7 +20,7 @@ pn.mvc.Controller = function(view, opt_model) {
   pn.ass(view instanceof HTMLElement || view instanceof pn.mvc.View);
   pn.ass(!opt_model || opt_model instanceof pn.mvc.ModelBase);
 
-  goog.events.EventHandler.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private
@@ -34,7 +34,7 @@ pn.mvc.Controller = function(view, opt_model) {
    */
   this.view_ = view;
 };
-goog.inherits(pn.mvc.Controller, goog.events.EventHandler);
+goog.inherits(pn.mvc.Controller, pn.app.EventHandlerTarget);
 
 
 /** @return {!(Element|pn.mvc.View)} The controllers view. */

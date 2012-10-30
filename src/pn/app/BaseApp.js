@@ -1,6 +1,6 @@
 
-goog.require('goog.Disposable');
 goog.require('goog.debug.Logger');
+goog.require('goog.events.EventHandler');
 goog.require('goog.pubsub.PubSub');
 goog.require('pn');
 goog.require('pn.app.AppConfig');
@@ -44,10 +44,10 @@ pn.app.ctx = null;
  * @param {Object=} opt_cfg The configuration options for the
  *    application. These options will be extended on top of the default
  *    pn.app.AppConfig options.
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventHandler}
  */
 pn.app.BaseApp = function(opt_cfg) {
-  goog.Disposable.call(this);
+  goog.events.EventHandler.call(this);
   pn.ass(pn.app.ctx === null, 'Only a single instance of base app supported');
 
   // Create a globally accessible handle to the application context
@@ -87,7 +87,7 @@ pn.app.BaseApp = function(opt_cfg) {
   // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
   this.pub = goog.bind(this.bus_.pub, this.bus_);
 };
-goog.inherits(pn.app.BaseApp, goog.Disposable);
+goog.inherits(pn.app.BaseApp, goog.events.EventHandler);
 
 ////////////////////////////////////////////////////////////////////////////////
 // REQUIRED TEMPLATE METHODS
