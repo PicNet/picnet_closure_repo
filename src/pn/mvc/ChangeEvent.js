@@ -1,6 +1,7 @@
 
 goog.provide('pn.mvc.ChangeEvent');
 goog.provide('pn.mvc.EventType');
+goog.require('goog.events.Event');
 goog.require('pn');
 goog.require('pn.mvc.Change');
 
