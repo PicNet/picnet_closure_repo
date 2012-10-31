@@ -42,14 +42,6 @@ pn.app.AppConfig = function(opt_opts) {
   this.dbver = '';
 
   /**
-   * If true all client data is kept upto date live with the server. That is,
-   *    when any data change is done on the server that change is reflected
-   *    live on the client.
-   * @type {boolean}
-   */
-  this.serverSync = true;
-
-  /**
    * This is the type of the DAL type system away DalCache and is just a ctor
    *    that returns a subclass of BaseDalCache which is generated from the
    *    PicNet2.Data generators.
