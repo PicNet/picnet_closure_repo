@@ -300,8 +300,8 @@ pn.data.BaseFacade.prototype.parseServerResponse =
 
   this.log_.info('parseServerResponse response[' + response.toString() + ']');
 
-  if (response.lastUpdate > 0) this.cache.setLastUpdate(response.lastUpdate);
   if (response.updates) this.applyUpdates_(response.updates);
+  if (response.lastUpdate > 0) this.cache.setLastUpdate(response.lastUpdate);
   if (callback) callback.call(this,
       response.responseEntity || response.ajaxData || response.queryResults);
 };
