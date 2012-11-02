@@ -18,7 +18,6 @@ goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
-goog.require('pn.web.BaseWebApp');
 
 
 

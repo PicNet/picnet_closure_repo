@@ -19,10 +19,10 @@ pn.mvc.View = function(el, opt_model) {
   pn.app.EventHandlerTarget.call(this);
 
   /**
-   * @private
+   * @protected
    * @type {!Element}
    */
-  this.el_ = el;
+  this.el = el;
 
   /**
    * @private
@@ -33,20 +33,12 @@ pn.mvc.View = function(el, opt_model) {
     this.registerDisposable(this.model_);
     this.listen(this.model_, pn.mvc.EventType.CHANGE, this.refresh);
   }
-  this.decorate(this.el_);
 };
 goog.inherits(pn.mvc.View, pn.app.EventHandlerTarget);
 
 
 /** @return {pn.mvc.ModelBase} The view's model. */
 pn.mvc.View.prototype.getModel = function() { return this.model_; };
-
-
-/**
- * @protected
- * @param {!Element} el The element to decorate.
- */
-pn.mvc.View.prototype.decorate = goog.abstractMethod;
 
 
 /**
