@@ -87,6 +87,14 @@ pn.app.Router.prototype.back = function() {
 
 
 /**
+ * @return {string} return the current path.
+ */
+pn.app.Router.prototype.getCurrentToken = function() {
+  return this.history_.getToken();
+};
+
+
+/**
  * Replacing a token means that the existing browser location will be removed
  *    from the stack, both from the internal stack and the browser history
  *    stack.
