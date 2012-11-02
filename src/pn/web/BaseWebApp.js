@@ -138,7 +138,7 @@ pn.web.BaseWebApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
 
   var data = { 'type': type, 'ids': ids };
   var cb = opt_cb || function() {};
-  this.data.ajax('History/GetAuditHistory', data, cb);
+  this.data.ajax('GridOrdering/OrderGrid', data, cb);
 };
 
 

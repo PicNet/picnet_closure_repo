@@ -26,7 +26,9 @@ goog.inherits(pn.ui.grid.pipe.OrderingHandler, pn.ui.grid.pipe.GridHandler);
 pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
   var orderCol = !this.cfg.readonly &&
       this.cctxs.pnfind(function(cctx) {
-        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec; });
+        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
+      });
+
   if (!orderCol) return; // Not an odering grid
 
   this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick);
@@ -35,7 +37,7 @@ pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
 
   this.listen(this.rowOrdering_, pn.web.WebAppEvents.LIST_ORDERED, function(e) {
     var entityType = this.cctxs[0].spec.entitySpec.type;
-    pn.web.ctx.pub(e.type, entityType, e.ids);
+    pn.web.ctx.pub(e.type, entityType.type, e.ids);
   });
 
   this.fireCustomEvent('sort', {

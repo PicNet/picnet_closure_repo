@@ -365,12 +365,10 @@ pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
       this.cache.deleteEntity(update.entityType, update.id);
       break;
     case 'create':
+    case 'update':
       // undeleteEntity is basically an unverified push back into the entity
       // list so it bypasses all the createEntity checks, like ID should be 0.
       this.cache.undeleteEntity(/** @type {!pn.data.Entity} */ (update.entity));
-      break;
-    case 'update':
-      this.cache.updateEntity(/** @type {!pn.data.Entity} */ (update.entity));
       break;
     default: throw new Error('Update: ' + update + ' is not supported');
   }
