@@ -7,8 +7,8 @@ goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.cookies');
-goog.require('goog.positioning.ClientPosition');
-goog.require('goog.ui.AdvancedTooltip');
+goog.require('goog.positioning.AbsolutePosition');
+goog.require('goog.ui.Tooltip');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
@@ -164,7 +164,7 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
-   * @type {goog.ui.AdvancedTooltip}
+   * @type {goog.ui.Tooltip}
    */
   this.tooltip_ = null;
 
@@ -223,7 +223,7 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
       }));
   goog.dom.appendChild(element, parent);
 
-  this.tooltip_ = new goog.ui.AdvancedTooltip();
+  this.tooltip_ = new goog.ui.Tooltip();
 
   this.dataView_ = new Slick.Data.DataView();
   this.slick_ = new Slick.Grid(this.gridContainer_, this.dataView_,
@@ -387,15 +387,11 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   var ttShowHide = goog.bind(function(e, show) {
     var cell = this.slick_.getCellFromEvent(e);
     var spec = this.cols_[cell['cell']];
-    if (!spec.tooltip) {
-      return;
-    }
+    if (!spec.tooltip) { return; }
 
     var cellNode = this.slick_.getCellNode(cell['row'], cell['cell']);
     var pos = goog.style.getPageOffset(cellNode);
-    if (!show && this.tooltip_.isCoordinateInTooltip(pos)) {
-      return;
-    }
+    if (!show && this.tooltip_.isCoordinateInTooltip(pos)) { return; }
     var item = this.dataView_.getItem(cell['row']);
     var text = item[spec.dataColumn];
     this.showTooltip_(text, pos, show);
@@ -448,12 +444,13 @@ pn.ui.grid.Grid.prototype.sortBy_ = function(col, asc) {
  * @param {boolean} show Wether we are showing or hiding this tooltip.
  */
 pn.ui.grid.Grid.prototype.showTooltip_ = function(text, pos, show) {
-  if (!show) {
-    this.tooltip_.setVisible(false);
-    return;
-  }
+  // Must be hidden even if we are to re-show it or else it causes usability
+  // problems.
+  this.tooltip_.setVisible(false);   
+  if (!show) { return; }
   this.tooltip_.setHtml(text);
-  this.tooltip_.setPosition(new goog.positioning.ClientPosition(pos.x, pos.y));
+  var position = new goog.positioning.AbsolutePosition(pos.x, pos.y);
+  this.tooltip_.setPosition(position);
   this.tooltip_.setVisible(true);
 };
 
