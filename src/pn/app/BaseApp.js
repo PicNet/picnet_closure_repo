@@ -1,8 +1,8 @@
 
 goog.require('goog.Disposable');
 goog.require('goog.debug.Logger');
-goog.require('goog.pubsub.PubSub');
 goog.require('goog.events.EventHandler');
+goog.require('goog.pubsub.PubSub');
 goog.require('pn');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
