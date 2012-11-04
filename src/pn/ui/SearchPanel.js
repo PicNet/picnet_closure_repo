@@ -149,8 +149,31 @@ pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
   this.createFieldValueEdit_(this.searchPanel_);
   goog.dom.appendChild(element, this.searchPanel_);
   goog.dom.appendChild(element, this.toggle_);
+
+  this.applySavedFilters_();
 };
 
+/** @private */
+pn.ui.SearchPanel.prototype.applySavedFilters_ = function() {
+  var saved = goog.net.cookies.get('search-panel-filters');
+  if (!saved) return;    
+  var dict = goog.json.unsafeParse(saved);
+  if (goog.object.isEmpty(dict)) return;
+  for (var f in dict) { this.addFilterComp_(f); }
+
+  for (var key in this.filtersControls_) {
+    var input = this.filtersControls_[key][0];
+    var val = dict[key];
+    if (input.options) {
+      goog.array.forEach(input.options, function(o) {
+        if (goog.array.indexOf(val, o.value) >= 0) { o.selected = true; }
+      });
+    } else {
+      input.value = val;
+    }
+  }
+  goog.Timer.callOnce(this.doSearch_, 10, this);
+};
 
 /**
  * @private
@@ -242,10 +265,9 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
 /** @private */
 pn.ui.SearchPanel.prototype.doSearch_ = function() {
   var filters = {};
-  for (var cid in this.filtersControls_) {
+  for (var cid in this.filtersControls_) {        
     var control = this.filtersControls_[cid][0];
     var val = pn.ui.edit.FieldBuilder.getFieldValue(control);
-
     // Ensure that all parent lists select whole text field (not just part)
     if (control.options && goog.isString(val)) val = [val];
 
@@ -258,6 +280,8 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     }
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
+  var saved = goog.json.serialize(filters);
+  goog.net.cookies.set('search-panel-filters', saved);
   var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
   event.filters = filters;
   this.dispatchEvent(event);
@@ -278,9 +302,17 @@ pn.ui.SearchPanel.prototype.doClear_ = function() {
 
 /** @private */
 pn.ui.SearchPanel.prototype.filterSelected_ = function() {
-  var option = this.select_.options[this.select_.selectedIndex];
+  var option = this.select_.options[this.select_.selectedIndex];  
   var val = option.value;
-  if (!val) return;
+  if (val) this.addFilterComp_(val);  
+};
+
+/** 
+ * @private 
+ * @param {string} val The key of the spec and filter to add to the filter 
+ *    table.
+ */
+pn.ui.SearchPanel.prototype.addFilterComp_ = function(val) {  
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
   var spec = pn.ui.UiSpecsRegister.INSTANCE.get(specid);
@@ -291,6 +323,9 @@ pn.ui.SearchPanel.prototype.filterSelected_ = function() {
   if (!field) throw new Error('Could not find the specified field: ' + fieldId +
       ' in the searcheable fields of the ' + spec.id + ' spec');
   this.select_.selectedIndex = 0;
+  var option = goog.array.find(this.select_.options, function(o) {
+    return o.value == val;
+  });
   this.addFieldToTheFiltersSearch_(spec, field, option);
   goog.style.showElement(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
@@ -327,14 +362,15 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     input = pn.ui.edit.FieldBuilder.createAndAttach(
         f, dom, null, this.cache_, true);
   }
-  this.filtersControls_[f.id] = [input, remove, lbl, dom];
+  var key = spec.id + '.' + f.id;    
+  this.filtersControls_[key] = [input, remove, lbl, dom];
 
   var onremove = function() {
     goog.dom.removeNode(dom);
-    var arr = this.filtersControls_[f.id];
+    var arr = this.filtersControls_[key];
     this.eh_.unlisten(remove, goog.events.EventType.CLICK, onremove);
     goog.array.forEach(arr, goog.dispose);
-    delete this.filtersControls_[f.id];
+    delete this.filtersControls_[key];
     goog.style.showElement(option, true);
     this.doSearch_();
   };
