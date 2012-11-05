@@ -28,7 +28,6 @@ pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
       this.cctxs.pnfind(function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
       });
-
   if (!orderCol) return; // Not an odering grid
 
   this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick);

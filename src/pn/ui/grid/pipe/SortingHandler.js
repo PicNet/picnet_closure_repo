@@ -69,7 +69,6 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
 
   var col = sortData['colid'];
   var asc = sortData['asc'];
-
   if (!!opt_updateUi) this.slick.setSortColumn(col, asc);
   this.sortImpl_(col, asc);
 
@@ -87,8 +86,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
       function(cctx1) { return cctx1.id === col; });
 
   this.view.sort(function(a, b) {
-    var x = cctx.getCompareableValue(a);
-    var y = cctx.getCompareableValue(b);
+    var x = cctx.getCompareableValue(a) || cctx.getEntityValue(a);
+    var y = cctx.getCompareableValue(b) || cctx.getEntityValue(b);
     return x > y ? 1 : x < y ? -1 : 0;
   }, asc);
 };
