@@ -3,6 +3,7 @@ goog.provide('pn.ui.grid.Grid');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
+goog.require('goog.style');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
@@ -168,13 +169,9 @@ pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
  *    controls.
  */
 pn.ui.grid.Grid.prototype.decorateContainer_ = function() {
-  var height = 80 + Math.min(550, this.list_.length * 25);
-  var width = $(this.getElement()).width();
   var parent = pn.dom.addHtml(this.getElement(),
       pn.ui.soy.grid({
         specId: this.spec_.id,
-        width: width,
-        height: height,
         hasData: this.list_.length > 0}));
   return parent;
 };
@@ -187,14 +184,17 @@ pn.ui.grid.Grid.prototype.decorateContainer_ = function() {
 pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   if (!this.list_.length) return;
 
-  var gridContainer = goog.dom.getElementByClass('grid-container', parent);
+  var gc = goog.dom.getElementByClass('grid-container', parent);
+  var wh = (document.height) ? document.height : document.body.offsetHeight;
+  var ey = goog.style.getClientPosition(gc).y;
+  goog.style.setHeight(gc, (wh - ey - 80) + 'px');
+
   this.dataView_ = new pn.ui.grid.DataView();
   this.registerDisposable(this.dataView_);
 
-  var columns = this.cfg_.cCtxs.pnmap(
-      function(cctx) { return cctx.toSlick(); });
-  this.slick_ = new Slick.Grid(
-      gridContainer, this.dataView_, columns, this.cfg_.toSlick());
+  var cfg = this.cfg_;
+  var columns = cfg.cCtxs.pnmap(function(cctx) { return cctx.toSlick(); });
+  this.slick_ = new Slick.Grid(gc, this.dataView_, columns, cfg.toSlick());
 };
 
 
