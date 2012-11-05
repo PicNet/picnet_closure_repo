@@ -11,8 +11,9 @@ goog.require('goog.ui.Dialog.EventType');
  * @constructor
  * @param {!string} title The title of this dialog.
  * @param {!string} content The content of this dialog.
+ * @param {Array.<string>=} opt_buttonTexts The optional button texts.
  */
-pn.ui.YesNoDialog = function(title, content) {
+pn.ui.YesNoDialog = function(title, content, opt_buttonTexts) {
 
   /**
    * @private
@@ -25,6 +26,12 @@ pn.ui.YesNoDialog = function(title, content) {
    * @type {!string}
    */
   this.content_ = content;
+
+  /**
+   * @private
+   * @type {Array.<string>}
+   */
+  this.buttonTexts_ = opt_buttonTexts || null;
 };
 
 
@@ -38,7 +45,8 @@ pn.ui.YesNoDialog.prototype.show = function(callback) {
   dialog.setContent(this.content_);
   dialog.setTitle(this.title_);
   dialog.setModal(true);
-  dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createYesNoCancel());
+  var bs = goog.ui.Dialog.ButtonSet.createYesNoCancel();
+  dialog.setButtonSet(bs);  
 
   goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {
     dialog.dispose();
@@ -47,4 +55,9 @@ pn.ui.YesNoDialog.prototype.show = function(callback) {
   }, false, this);
 
   dialog.setVisible(true);
+
+  if (this.buttonTexts_) {
+    bs.getButton('yes').innerText = this.buttonTexts_[0];
+    bs.getButton('no').innerText = this.buttonTexts_[1];
+  } 
 };

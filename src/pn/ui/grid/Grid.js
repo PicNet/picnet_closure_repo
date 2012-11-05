@@ -429,11 +429,11 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
 /** @private */
 pn.ui.grid.Grid.prototype.setGridInitialFilterState_ = function() {  
-  var saved = goog.net.cookies.get('saved-quick-filters');
+  var saved = goog.net.cookies.get('saved-quick-filters:' + this.hash_);
   if (!saved) return;
   var tmp = goog.json.unsafeParse(saved);
   if (goog.object.isEmpty(tmp)) return;  
-  for (var cid in tmp) {
+  for (var cid in tmp) {    
     this.quickFilterControls_[cid].value = tmp[cid];
     this.quickFilters_[cid] = tmp[cid];
   }  
@@ -548,7 +548,8 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
       function() {
         qf[this['data-id']] = $.trim(
             /** @type {string} */ ($(this).val())).toLowerCase();        
-        goog.net.cookies.set('saved-quick-filters', goog.json.serialize(qf));
+        goog.net.cookies.set('saved-quick-filters:' + this.hash_, 
+            goog.json.serialize(qf));
         dv.refresh();
       });
 
