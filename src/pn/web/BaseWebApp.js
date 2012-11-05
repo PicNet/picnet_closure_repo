@@ -7,40 +7,41 @@ goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
-
-
+goog.require('pn.app.BaseApp');
+goog.require('pn.app.WebAppConfig');
 
 /**
  * @constructor
- * @extends {pn.web.BaseWebApp}
+ * @extends {pn.app.BaseApp}
  * @param {Object=} opt_cfg The configuration options for the
  *    application. These options will be extended on top of the default
  *    pn.app.AppConfig options.
  */
 pn.web.BaseWebApp = function(opt_cfg) {
-  pn.web.BaseWebApp.call(opt_cfg);
+  var cfg = new pn.app.WebAppConfig(opt_cfg);
+  pn.app.BaseApp.call(this, cfg);
 
   /** @type {pn.ui.UiSpecsRegister} */
   this.specs = null;
 
   /** @type {!pn.ui.ViewMgr} */
-  this.view = new pn.ui.ViewMgr(pn.dom.get(this.cfg.viewContainerId));
+  this.view = new pn.ui.ViewMgr(pn.dom.get(cfg.viewContainerId));
   this.registerDisposable(this.view);
 
   /** @type {!pn.ui.MessagePanel} */
-  this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
+  this.msg = new pn.ui.MessagePanel(pn.dom.get(cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
 
   /** @type {!pn.ui.LoadingPnl} */
-  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
+  this.loading = new pn.ui.LoadingPnl(pn.dom.get(cfg.loadPnlId));
   this.registerDisposable(this.loading);
 
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
   this.registerDisposable(this.keys);
 };
-goog.inherits(pn.web.BaseWebApp, pn.web.BaseWebApp);
+goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
 
 /** @override. */
@@ -85,18 +86,18 @@ pn.web.BaseWebApp.prototype.init = function() {
  * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
  *    application. The first route is considered the default route.
  */
-pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
+pn.web.BaseWebApp.prototype.getUiSpecs = goog.abstractMethod;
 
 
 /** @override */
-pn.app.BaseApp.prototype.acceptDirty = function() {
+pn.web.BaseWebApp.prototype.acceptDirty = function() {
   if (!this.view.isDirty()) return true;
   return window.confirm('Any unsaved changes will be lost, continue?');
 };
 
 
 /** @override */
-pn.app.BaseApp.prototype.disposeInternal = function() {
+pn.web.BaseWebApp.prototype.disposeInternal = function() {
   goog.base(this, 'disposeInternal');
 
   var sset = pn.data.Server.EventType,
