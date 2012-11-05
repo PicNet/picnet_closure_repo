@@ -152,6 +152,12 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
 
   /**
    * @private
+   * @type {Object.<Element>}
+   */
+  this.quickFilterControls_ = {};
+
+  /**
+   * @private
    * @type {Object}
    */
   this.sort_ = null;
@@ -418,6 +424,20 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   }
 
   if (this.cfg_.sortable) { this.setGridInitialSortState_(); }
+  this.setGridInitialFilterState_();
+};
+
+/** @private */
+pn.ui.grid.Grid.prototype.setGridInitialFilterState_ = function() {  
+  var saved = goog.net.cookies.get('saved-quick-filters');
+  if (!saved) return;
+  var tmp = goog.json.unsafeParse(saved);
+  if (goog.object.isEmpty(tmp)) return;  
+  for (var cid in tmp) {
+    this.quickFilterControls_[cid].value = tmp[cid];
+    this.quickFilters_[cid] = tmp[cid];
+  }  
+  this.dataView_.refresh();
 };
 
 /**
@@ -515,6 +535,7 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
     var val = this.quickFilters_[col.id];
     var input = pn.ui.grid.QuickFilterHelpers.createFilterInput(col, 100, val);
     input['data-id'] = col.id;
+    this.quickFilterControls_[col.id] = input;
 
     goog.dom.removeChildren(header);
     goog.dom.appendChild(header, input);
@@ -526,7 +547,8 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {
         qf[this['data-id']] = $.trim(
-            /** @type {string} */ ($(this).val())).toLowerCase();
+            /** @type {string} */ ($(this).val())).toLowerCase();        
+        goog.net.cookies.set('saved-quick-filters', goog.json.serialize(qf));
         dv.refresh();
       });
 
@@ -570,7 +592,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
  * @param {!Object} item the row data item.
  * @return {boolean} Wether the item meets the quick filters.
  */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
+pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {  
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
       var filterVal = this.quickFilters_[columnId];
