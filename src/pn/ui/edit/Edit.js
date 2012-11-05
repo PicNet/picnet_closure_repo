@@ -261,7 +261,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 
 /** @return {!Array.<string>} Any errors in the form. */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
-  var errors = [];
+  var errors = [];  
   goog.array.forEach(this.getEditableFields_(), function(f) {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
     var error;
@@ -311,11 +311,12 @@ pn.ui.edit.Edit.prototype.getFormData = function(opt_target) {
 pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
   var newEntity = !this.data_['ID'];
   return goog.array.filter(this.fields_, function(f) {
-    return f.id.indexOf('.') < 0 &&
+    var editable = f.id.indexOf('.') < 0 &&
         !f.tableType &&
         (f.showOnAdd || !newEntity) &&
         f.renderer !== pn.ui.edit.FieldRenderers.readOnlyTextField &&
         f.renderer !== pn.ui.edit.FieldRenderers.readOnlyDateField;
+    return editable;
   });
 };
 

@@ -176,3 +176,43 @@ pn.ui.edit.FieldRenderers.standardTextSearchField = function(parent) {
   goog.dom.appendChild(parent, txt);
   return txt;
 };
+
+
+/**
+ * @param {string} mappingEntity The many-to-many entity table name.
+ * @param {string} parentIdField The field in the many-to-many table that
+ *    points to the parent entity (not the admin entity).
+ * @param {string} adminEntity The admin entity table name.
+ * @param {Object} cache The cache.
+ * @return {function(*, !Object, !Element):!Element} The many to many list 
+ *    box renderer.
+ */
+pn.ui.edit.FieldRenderers.createManyToManyRenderer =
+    function(mappingEntity, parentIdField, adminEntity, cache) {
+  var renderer = function(val, entity, parent) {
+    var manyToManys = goog.array.filter(cache[mappingEntity], 
+        function(mm) { return mm[parentIdField] === entity['ID']; });
+    var adminIDs = goog.array.map(manyToManys, 
+        function(mm) { return mm[adminEntity + 'ID']; });
+
+    // Setting the value in the dataProperty of the fctx so that dirty
+    // checking handles fctxs with many to many lists.
+    entity[mappingEntity + 'Entities'] = adminIDs;
+
+    var select = goog.dom.createDom('select', {'multiple': 'multiple'});
+    goog.array.forEach(cache[adminEntity], function(ae) {
+      var text = ae[adminEntity + 'Name'];
+      var opt = goog.dom.createDom('option', {
+        'text': text,
+        'value': ae['ID'],
+        'selected': goog.array.findIndex(adminIDs, 
+            function(adminID) { return ae['ID'] === adminID; }) >= 0
+      });
+      select.options.add(opt);
+    });
+    goog.dom.appendChild(parent, select);
+    return select;
+  };
+  return renderer;
+};
+

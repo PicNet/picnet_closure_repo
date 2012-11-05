@@ -50,7 +50,8 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
     goog.array.forEach(inp.options, function(o) {
       if (o.selected) { arr.push(o.value); }
     });
-    return inp.multiple && arr.length > 1 ? arr : arr[0];
+    var val = inp.multiple || arr.length > 1 ? arr : arr[0];
+    return val;
   }
   else if (inp.type === 'checkbox') { return inp.checked; }
   else { return inp.value; }

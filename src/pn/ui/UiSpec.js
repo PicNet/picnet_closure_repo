@@ -47,13 +47,16 @@ pn.ui.UiSpec.prototype.getGridColumns = function() { return []; };
 
 /** @return {!Array.<pn.ui.edit.Field>} The search fields to display. */
 pn.ui.UiSpec.prototype.getSearchFields = function() {
-  return this.getEditFields(true);
+  return this.getEditFields(true, {});
 };
 
 
-/** @param {boolean} isNew If Add or Edit.
- * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. */
-pn.ui.UiSpec.prototype.getEditFields = function(isNew) {
+/** 
+ * @param {boolean} isNew If Add or Edit.
+ * @param {Object} cache The current context cache.
+ * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. 
+ */
+pn.ui.UiSpec.prototype.getEditFields = function(isNew, cache) {
   return []; };
 
 
