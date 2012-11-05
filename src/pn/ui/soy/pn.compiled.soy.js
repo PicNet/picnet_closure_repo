@@ -28,6 +28,6 @@ pn.ui.soy.edit = function(opt_data, opt_sb) {
  */
 pn.ui.soy.grid = function(opt_data, opt_sb) {
   var output = opt_sb || new soy.StringBuilder();
-  output.append('<div class=\'grid-parent ', soy.$$escapeHtml(opt_data.specId), '\'>', (opt_data.hasData) ? '<div class=\'grid-no-data\' style=\'display:none\'>No matches found.</div><div class=\'grid-container\' style=\'width:' + soy.$$escapeHtml(opt_data.width) + 'px; height:' + soy.$$escapeHtml(opt_data.height) + 'px;\'></div>' : '<div class=\'grid-no-data\'>No data found.</div>', '</div>');
+  output.append('<div class=\'grid-parent ', soy.$$escapeHtml(opt_data.specId), '\'>', (opt_data.hasData) ? '<div class=\'grid-no-data\' style=\'display:none\'>No matches found.</div><div class=\'grid-container\' style=\'width:100%;\'></div>' : '<div class=\'grid-no-data\'>No data found.</div>', '</div>');
   return opt_sb ? '' : output.toString();
 };

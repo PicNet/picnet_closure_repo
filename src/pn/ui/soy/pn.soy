@@ -23,15 +23,13 @@
 /**
  * The Grid.js control. 
  * @param specId The id of the UiSpec being displayed
- * @param width The numerical width (in pixels) for the grid.
- * @param height The numerical height (in pixels) for the grid.
  * @param hasData Wether the grid has any data.
  */
 {template .grid}
 <div class='grid-parent {$specId}'>  
   {if $hasData}
     <div class='grid-no-data' style='display:none'>No matches found.</div>
-    <div class='grid-container' style='width:{$width}px; height:{$height}px;'>
+    <div class='grid-container' style='width:100%;'>
     </div>
   {else}
     <div class='grid-no-data'>No data found.</div>
