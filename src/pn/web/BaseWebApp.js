@@ -1,14 +1,16 @@
 ﻿;
 goog.provide('pn.web.BaseWebApp');
 
+goog.require('pn.app.BaseApp');
+goog.require('pn.app.WebAppConfig');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
-goog.require('pn.app.BaseApp');
-goog.require('pn.app.WebAppConfig');
+
+
 
 /**
  * @constructor
