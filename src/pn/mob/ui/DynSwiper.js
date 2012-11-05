@@ -28,7 +28,7 @@ pn.mob.ui.DynSwiper = function(el, pagesLength, generator) {
    * @private
    * @type {!Object}
    */
-  this.DynSwiper_ = new window['SwipeView'](el, { 'hastyPageFlip' : true });
+  this.swiper_ = new window['SwipeView'](el, { 'hastyPageFlip' : true });
 
   /**
    * @private
@@ -42,30 +42,31 @@ pn.mob.ui.DynSwiper = function(el, pagesLength, generator) {
    */
   this.generator_ = generator;
 
-  this.DynSwiper_['updatePageCount'](pagesLength);
-  this.DynSwiper_['masterPages'][0].dataset.pageIndex = pagesLength - 1;
-  this.DynSwiper_['masterPages'][0].dataset.upcomingPageIndex =
-      this.DynSwiper_['masterPages'][0].dataset.pageIndex;
+  this.swiper_['updatePageCount'](pagesLength);
+  var mp = this.swiper_['masterPages'];
+  mp[0].dataset['pageIndex'] = pagesLength - 1;
+  mp[0].dataset['upcomingPageIndex'] = mp[0].dataset['pageIndex'];
 
   // Load initial data
   for (var i = 0; i < 3; i++) {
     var pageIndex = i == 0 ? pagesLength - 1 : i - 1;
-    this.DynSwiper_['masterPages'][i].appendChild(this.get_(pageIndex));
+    mp[i].appendChild(this.get_(pageIndex));
   }
 
-  this.DynSwiper_.onFlip(this.onFlip_.pnbind(this));
+  this.swiper_['onFlip'](this.onFlip_.pnbind(this));
 };
 goog.inherits(pn.mob.ui.DynSwiper, goog.Disposable);
 
 
 /** @private */
 pn.mob.ui.DynSwiper.prototype.onFlip_ = function() {
+  var mp = this.swiper_['masterPages'];
   for (var i = 0; i < 3; i++) {
-    var upcoming = this.DynSwiper_['masterPages'][i].dataset.upcomingPageIndex;
+    var upcoming = mp[i].dataset['upcomingPageIndex'];
 
-    if (upcoming != this.DynSwiper_['masterPages'][i].dataset.pageIndex) {
-      goog.dom.removeChildren(this.DynSwiper_['masterPages'][i]);
-      this.DynSwiper_['masterPages'][i].appendChild(this.get_(upcoming));
+    if (upcoming != mp[i].dataset['pageIndex']) {
+      goog.dom.removeChildren(mp[i]);
+      mp[i].appendChild(this.get_(upcoming));
     }
   }
 };
