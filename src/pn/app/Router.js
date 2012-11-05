@@ -79,6 +79,12 @@ pn.app.Router.prototype.initialise = function(routes) {
 };
 
 
+/** @return {string} The current history token. */
+pn.app.Router.prototype.getCurrentToken = function() {
+  return this.history_.getToken();
+};
+
+
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
   var to = this.stack_[this.stack_.length - 2] || this.defaultRoute;

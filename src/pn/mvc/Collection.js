@@ -108,6 +108,8 @@ pn.mvc.Collection.prototype.remove = function(idx) {
  * @param {!pn.mvc.ModelBase} model The model to listen to changes on.
  */
 pn.mvc.Collection.prototype.intern_ = function(model) {
+  if (!(model instanceof pn.mvc.ModelBase)) return;
+
   var eventType = pn.mvc.EventType.CHANGE;
   this.eh_.listen(model, eventType, this.childChanged_.pnbind(this));
   this.registerDisposable(model);
