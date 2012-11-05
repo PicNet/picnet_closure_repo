@@ -14,10 +14,28 @@ goog.provide('pn.dom');
  * @return {!Element} the element with the specified ID.
  */
 pn.dom.get = function(id) {
-  pn.ass(id);
+  pn.assStr(id);
 
   var e = goog.dom.getElement(id);
   if (!e) throw new Error('Could not find the DOM element with ID: ' + id);
+  return /** @type {!Element} */ (e);
+};
+
+
+/**
+ * Finds an element with the given class name.  If that element does not exist
+ *    an error is thrown.
+ *
+ * @param {string} className The element class.
+ * @return {!Element} the element with the specified class.
+ */
+pn.dom.byClass = function(className) {
+  pn.assStr(className);
+
+  var e = goog.dom.getElementByClass(className);
+  if (!e) {
+    throw new Error('Could not find the DOM element with class: ' + className);
+  }
   return /** @type {!Element} */ (e);
 };
 
