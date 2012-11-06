@@ -27,12 +27,14 @@ pn.dom.get = function(id) {
  *    an error is thrown.
  *
  * @param {string} className The element class.
+ * @param {Element=} opt_el The optional parent element to search.
  * @return {!Element} the element with the specified class.
  */
-pn.dom.byClass = function(className) {
+pn.dom.byClass = function(className, opt_el) {
   pn.assStr(className);
+  pn.ass(!opt_el || opt_el instanceof HTMLElement);
 
-  var e = goog.dom.getElementByClass(className);
+  var e = goog.dom.getElementByClass(className, opt_el);
   if (!e) {
     throw new Error('Could not find the DOM element with class: ' + className);
   }
