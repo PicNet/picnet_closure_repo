@@ -11,9 +11,10 @@ goog.require('pn.mob.ui.DynSwiper');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!Element} el The parent element for the swiper.
+ * @param {!Element} dots The element to use as the dots container.
  * @param {!Array.<!Element>} pages The pages to display in this swiper.
  */
-pn.mob.ui.Swiper = function(el, pages) {
+pn.mob.ui.Swiper = function(el, dots, pages) {
   pn.assInst(el, HTMLElement);
   pn.assArrInst(pages, HTMLElement);
 
@@ -24,7 +25,7 @@ pn.mob.ui.Swiper = function(el, pages) {
    * @private
    * @type {!Object}
    */
-  this.swiper_ = new pn.mob.ui.DynSwiper(el, pages.length, generator);
+  this.swiper_ = new pn.mob.ui.DynSwiper(el, dots, pages.length, generator);
   this.registerDisposable(this.swiper_);
 };
 goog.inherits(pn.mob.ui.Swiper, goog.Disposable);
