@@ -2,6 +2,7 @@
 goog.provide('pn.mob.ui.DynSwiper');
 
 goog.require('goog.events.EventHandler');
+goog.require('pn.mob.ui.ISwipeable');
 
 
 
@@ -13,16 +14,17 @@ goog.require('goog.events.EventHandler');
  * @param {!Element} el The parent element for the swiper.
  * @param {!Element} dots The element to use as the dots container.
  * @param {number} pagesLength The number of pages to display.
- * @param {!function(number):!Element} generator The function that takes a page
- *    index and returns the element for that page.  The swiper does cache these
- *    elements so its not neccessary to implement your own caching.
+ * @param {!pn.mob.ui.ISwipeable} swipeable The pn.mob.ui.ISwipeable that takes
+ *    a page index and returns the element for that page.  The swiper does
+ *    not cache these elements so its neccessary to implement your own caching
+ *    if required.
  */
-pn.mob.ui.DynSwiper = function(el, dots, pagesLength, generator) {
+pn.mob.ui.DynSwiper = function(el, dots, pagesLength, swipeable) {
   pn.assDef(window['SwipeView'], 'SwipeView library not found');
   pn.assInst(el, HTMLElement);
   pn.assInst(dots, HTMLElement);
   pn.assPosInt(pagesLength);
-  pn.assFun(generator);
+  pn.assObj(swipeable);
 
   goog.events.EventHandler.call(this);
 
@@ -30,13 +32,8 @@ pn.mob.ui.DynSwiper = function(el, dots, pagesLength, generator) {
    * @private
    * @type {!Object}
    */
-  this.swiper_ = new window['SwipeView'](el, { 'hastyPageFlip' : true });
+  this.swiper_ = new window['SwipeView'](el, { 'hastyPageFlip' : false });
 
-  /**
-   * @private
-   * @type {!Object.<!Element>}
-   */
-  this.cache_ = {};
 
   /**
    * @private
@@ -52,9 +49,15 @@ pn.mob.ui.DynSwiper = function(el, dots, pagesLength, generator) {
 
   /**
    * @private
-   * @type {!function(number):!Element}
+   * @type {!pn.mob.ui.ISwipeable}
    */
-  this.generator_ = generator;
+  this.swipeable_ = swipeable;
+
+  /**
+   * @private
+   * @type {number}
+   */
+  this.current_ = 0;
 
   this.init_();
 };
@@ -79,8 +82,9 @@ pn.mob.ui.DynSwiper.prototype.initSwiper_ = function() {
   // Load initial data
   for (var i = 0; i < 3; i++) {
     var pageIndex = i == 0 ? this.pagesLength_ - 1 : i - 1;
-    mp[i].appendChild(this.get_(pageIndex));
+    mp[i].appendChild(this.swipeable_.generate(pageIndex));
   }
+  this.swipeable_.showing(this.current_ = 0);
 };
 
 
@@ -122,33 +126,35 @@ pn.mob.ui.DynSwiper.prototype.goto_ = function(ev) {
 pn.mob.ui.DynSwiper.prototype.onFlip_ = function() {
   var mp = this.swiper_['masterPages'];
   for (var i = 0; i < 3; i++) {
-    var upcoming = mp[i].dataset['upcomingPageIndex'];
-
+    var upcoming = parseInt(mp[i].dataset['upcomingPageIndex'], 10);
     if (upcoming != mp[i].dataset['pageIndex']) {
       goog.dom.removeChildren(mp[i]);
-      mp[i].appendChild(this.get_(upcoming));
+      mp[i].appendChild(this.swipeable_.generate(upcoming));
     }
-    this.updateDots_();
   }
-};
 
-
-/** @private */
-pn.mob.ui.DynSwiper.prototype.updateDots_ = function() {
-  var dots = pn.toarr(this.dots_.childNodes);
-  dots.pnforEach(function(d) { d.className = ''; });
-  dots[this.swiper_['pageIndex'] + 1].className = 'selected';
+  var idx = this.swiper_['pageIndex'];
+  this.updateDots_(idx);
+  this.updateAnim_(idx);
 };
 
 
 /**
  * @private
- * @param {number} idx The index of the page to retreive.
- * @return {!Element} The cached or generated element for the specified index.
+ * @param {number} idx The index of the dot that is selected;.
  */
-pn.mob.ui.DynSwiper.prototype.get_ = function(idx) {
-  pn.assInt(idx);
+pn.mob.ui.DynSwiper.prototype.updateDots_ = function(idx) {
+  var dots = pn.toarr(this.dots_.childNodes);
+  dots.pnforEach(function(d) { d.className = ''; });
+  dots[idx + 1].className = 'selected';
+};
 
-  if (idx in this.cache_) return this.cache_[idx];
-  return this.cache_[idx] = this.generator_(idx);
+
+/**
+ * @private
+ * @param {number} idx The index of the anim that is selected;.
+ */
+pn.mob.ui.DynSwiper.prototype.updateAnim_ = function(idx) {
+  if (this.current_ === idx) { return; }
+  this.swipeable_.showing(this.current_ = idx);
 };
