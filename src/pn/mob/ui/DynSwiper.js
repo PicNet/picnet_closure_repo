@@ -32,7 +32,10 @@ pn.mob.ui.DynSwiper = function(el, dots, pagesLength, swipeable) {
    * @private
    * @type {!Object}
    */
-  this.swiper_ = new window['SwipeView'](el, { 'hastyPageFlip' : false });
+  this.swiper_ = new window['SwipeView'](el, {
+    'hastyPageFlip' : true,
+    'numberOfPages': pagesLength
+  });
 
 
   /**
@@ -74,14 +77,10 @@ pn.mob.ui.DynSwiper.prototype.init_ = function() {
 
 /** @private */
 pn.mob.ui.DynSwiper.prototype.initSwiper_ = function() {
-  this.swiper_['updatePageCount'](this.pagesLength_);
   var mp = this.swiper_['masterPages'];
-  mp[0].dataset['pageIndex'] = this.pagesLength_ - 1;
-  mp[0].dataset['upcomingPageIndex'] = mp[0].dataset['pageIndex'];
 
-  // Load initial data
   for (var i = 0; i < 3; i++) {
-    var pageIndex = i == 0 ? this.pagesLength_ - 1 : i - 1;
+    var pageIndex = i === 0 ? this.pagesLength_ - 1 : i - 1;
     mp[i].appendChild(this.swipeable_.generate(pageIndex));
   }
   this.swipeable_.showing(this.current_ = 0);
@@ -118,7 +117,9 @@ pn.mob.ui.DynSwiper.prototype.goto_ = function(ev) {
   var id = ev.target.id;
   if (id === 'prev') this.swiper_['prev']();
   else if (id === 'next') this.swiper_['next']();
-  else this.swiper_['goToPage'](parseInt(id, 10));
+  // GOTO index: Disabled as it causes lots of issues with controls that
+  // already have parents (caching issues).
+  // else this.swiper_['goToPage'](parseInt(id, 10));
 };
 
 
@@ -126,10 +127,13 @@ pn.mob.ui.DynSwiper.prototype.goto_ = function(ev) {
 pn.mob.ui.DynSwiper.prototype.onFlip_ = function() {
   var mp = this.swiper_['masterPages'];
   for (var i = 0; i < 3; i++) {
-    var upcoming = parseInt(mp[i].dataset['upcomingPageIndex'], 10);
-    if (upcoming != mp[i].dataset['pageIndex']) {
-      goog.dom.removeChildren(mp[i]);
-      mp[i].appendChild(this.swipeable_.generate(upcoming));
+    var mpdom = mp[i];
+    var idx = parseInt(mpdom.dataset['upcomingPageIndex'], 10);
+    var exp = parseInt(mpdom.dataset['pageIndex'], 10);
+    if (idx !== exp) {
+      goog.dom.removeChildren(mpdom);
+      var div = this.swipeable_.generate(idx);
+      mpdom.appendChild(div);
     }
   }
 
