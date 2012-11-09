@@ -8,6 +8,7 @@ goog.require('pn.data.LocalCache');
 goog.require('pn.data.Query');
 goog.require('pn.data.Server');
 goog.require('pn.log');
+goog.require('pn.web.WebAppEvents');
 
 
 

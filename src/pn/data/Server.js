@@ -21,12 +21,21 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
+ * @param {string} appPath The application base path.
  * @param {string} controller The controller Uri.
  */
-pn.data.Server = function(controller) {
+pn.data.Server = function(appPath, controller) {
+  pn.assStr(appPath);
   pn.assStr(controller);
 
   goog.events.EventTarget.call(this);
+
+  /**
+   * @private
+   * @const
+   * @type {string}
+   */
+  this.appPath_ = appPath;
 
   /**
    * @private
@@ -72,7 +81,7 @@ pn.data.Server.prototype.ajax =
   pn.assFun(success);
   pn.assFun(failure);
 
-  this.ajax_(pn.web.ctx.cfg.appPath + uri, data, success, failure);
+  this.ajax_(this.appPath_ + uri, data, success, failure);
 };
 
 

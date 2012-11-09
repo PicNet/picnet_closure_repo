@@ -9,6 +9,7 @@ goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
 goog.require('pn.ui.UiSpec');
+goog.require('pn.ui.UiSpecsRegister');
 goog.require('pn.ui.ViewMgr');
 goog.require('pn.web.WebAppEvents');
 
@@ -45,6 +46,10 @@ pn.web.BaseWebApp = function(opt_cfg) {
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
   this.registerDisposable(this.keys);
+
+  /** @type {!pn.ui.UiSpecsRegister} */
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.registerDisposable(this.specs);
 };
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
