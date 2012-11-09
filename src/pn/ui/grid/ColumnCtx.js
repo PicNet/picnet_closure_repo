@@ -94,7 +94,7 @@ pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
 pn.ui.grid.ColumnCtx.prototype.getColumnRenderer = function() {
   if (goog.isDef(this.spec.renderer)) return this.spec.renderer;
   if (!this.schema) return null;
-  return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
+  return pn.web.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
       (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty) ?
           pn.ui.grid.ColumnRenderers.parentColumnRenderer : null);
 };

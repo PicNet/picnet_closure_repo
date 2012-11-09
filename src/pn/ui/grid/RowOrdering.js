@@ -99,7 +99,7 @@ pn.ui.grid.RowOrdering.prototype.init = function() {
 
     self.ordering_ = false;
 
-    var event = new goog.events.Event(pn.app.AppEvents.LIST_ORDERED);
+    var event = new goog.events.Event(pn.web.WebAppEvents.LIST_ORDERED);
     event.ids = items.pnmap(function(item) { return item.id; });
     self.dispatchEvent(event);
   });

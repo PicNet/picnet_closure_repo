@@ -1,6 +1,8 @@
 ﻿;
 goog.provide('pn.ui.Dialog');
 
+goog.require('pn.web.WebAppEvents');
+
 
 
 /**
@@ -22,7 +24,8 @@ pn.ui.Dialog.prototype.enterDocument = function() {
   pn.ui.Dialog.superClass_.enterDocument.call(this);
 
   var et = goog.ui.PopupBase.EventType;
-  this.getHandler().listen(this, [et.SHOW, et.HIDE], this.onShowHide_);
+  var sel = goog.ui.Dialog.EventType.SELECT;
+  this.getHandler().listen(this, [et.SHOW, et.HIDE, sel], this.onShowHide_);
 };
 
 
@@ -33,6 +36,8 @@ pn.ui.Dialog.prototype.enterDocument = function() {
  * @param {!goog.events.Event} e The show/hide event.
  */
 pn.ui.Dialog.prototype.onShowHide_ = function(e) {
-  var showing = e.type === goog.ui.PopupBase.EventType.SHOW;
-  pn.app.ctx.keys.setAllEnabled(!showing);
+  var event = e.type === goog.ui.PopupBase.EventType.SHOW ?
+      pn.web.WebAppEvents.DALOG_SHOWN :
+      pn.web.WebAppEvents.DALOG_HIDDEN;
+  pn.web.ctx.pub(event);
 };

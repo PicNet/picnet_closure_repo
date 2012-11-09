@@ -66,7 +66,7 @@ pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
   pn.ass(cache);
   pn.ass(entity);
 
-  var edit = new pn.ui.edit.Edit(spec, entity, cache);
+  var edit = new pn.ui.edit.Edit(spec, entity, cache, pn.web.ctx.keys);
   this.showComponent(edit);
 };
 

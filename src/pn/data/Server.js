@@ -1,7 +1,9 @@
 ﻿;
 goog.provide('pn.data.Server');
+goog.provide('pn.data.Server.EventType');
 goog.provide('pn.data.Server.Response');
 goog.provide('pn.data.Server.Update');
+
 goog.require('goog.debug.Logger');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventTarget');
@@ -70,7 +72,7 @@ pn.data.Server.prototype.ajax =
   pn.assFun(success);
   pn.assFun(failure);
 
-  this.ajax_(pn.app.ctx.cfg.appPath + uri, data, success, failure);
+  this.ajax_(pn.web.ctx.cfg.appPath + uri, data, success, failure);
 };
 
 

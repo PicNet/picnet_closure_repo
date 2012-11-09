@@ -21,7 +21,7 @@ pn.demo.app1.UserSpec.prototype.getGridConfig = function(cache) {
     this.createColumn('Phone', cache),
     this.createColumn('DateOfBirth', cache)
   ];  
-  var add = new pn.ui.grid.cmd.Command('Add', pn.app.AppEvents.ENTITY_ADD);
+  var add = new pn.ui.grid.cmd.Command('Add', pn.web.WebAppEvents.ENTITY_ADD);
   return new pn.ui.grid.Config(columns, [add]);
 };
 

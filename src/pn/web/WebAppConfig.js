@@ -3,6 +3,7 @@ goog.provide('pn.app.WebAppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
+goog.require('pn.app.AppConfig');
 goog.require('pn.data.BaseDalCache');
 goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.edit.ReadOnlyFields');

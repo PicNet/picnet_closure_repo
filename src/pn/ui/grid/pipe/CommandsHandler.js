@@ -37,7 +37,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.postRender = function() {
 pn.ui.grid.pipe.CommandsHandler.prototype.onCustomEvent =
     function(eventType, opt_data) {
   if (eventType === 'select-row') {
-    var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
+    var e = new goog.events.Event(pn.web.WebAppEvents.ENTITY_SELECT, this);
     e.selected = opt_data;
     this.onCommand_(e);
   }
@@ -69,24 +69,24 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCommand_ = function(event) {
 /**
  * @private
  * @param {goog.events.Event} e The command event to publish using the
- *    pn.app.ctx.pub publishing mechanism.
+ *    pn.web.ctx.pub publishing mechanism.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
   pn.ass(e);
 
-  var ae = pn.app.AppEvents;
+  var ae = pn.web.WebAppEvents;
   switch (e.type) {
     case ae.ENTITY_SELECT:
       var id = e.selected.id;
-      pn.app.ctx.pub(e.type, this.entityType_, id);
+      pn.web.ctx.pub(e.type, this.entityType_, id);
       break;
     case ae.LIST_EXPORT:
       var cols = this.cctxs;
       var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
-      pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
+      pn.web.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
       break;
     default:
-      pn.app.ctx.pub(e.type, this.entityType_);
+      pn.web.ctx.pub(e.type, this.entityType_);
   }
 };

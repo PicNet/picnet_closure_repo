@@ -8,6 +8,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.KeyboardShortcutHandler');
 goog.require('goog.ui.KeyboardShortcutHandler');
+goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.Config');
@@ -28,11 +29,14 @@ goog.require('pn.ui.grid.Grid');
  * @param {!pn.data.Entity} entity The entity being edited.
  * @param {!pn.data.BaseDalCache} cache The entities cache to use for
  *    related entities.
+ * @param {pn.ui.KeyShortcutMgr=} opt_keys The optional keyboard shortcut
+ *    manager.
  */
-pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
-  pn.ass(spec);
-  pn.ass(entity);
-  pn.ass(cache);
+pn.ui.edit.CommandsComponent = function(spec, entity, cache, opt_keys) {
+  pn.assInst(spec, pn.ui.UiSpec);
+  pn.assInst(entity, pn.data.Entity);
+  pn.assInst(cache, pn.data.BaseDalCache);
+  pn.ass(!opt_keys || opt_keys instanceof pn.ui.KeyShortcutMgr);
 
   goog.ui.Component.call(this);
 
@@ -42,6 +46,12 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache) {
    */
   this.spec = spec;
   this.registerDisposable(this.spec);
+
+  /**
+   * @private
+   * @type {pn.ui.KeyShortcutMgr}
+   */
+  this.keys_ = opt_keys || null;
 
   /**
    * @protected
@@ -168,11 +178,10 @@ pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.enterDocument.call(this);
 
   this.commands_.pnforEach(this.doCommandEvent_, this);
-
+  if (!this.keys_) return;
   this.commands_.pnforEach(function(cmd) {
     if (!cmd.shortcut) return;
-    var ctx = /** @type {!pn.web.BaseWebApp} */ (pn.app.ctx);
-    ctx.keys.register(cmd.name, cmd.shortcut, this.handle_.pnbind(this));
+    this.keys_.register(cmd.name, cmd.shortcut, this.handle_.pnbind(this));
   }, this);
 };
 
@@ -239,8 +248,9 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 
-  var ctx = /** @type {!pn.web.BaseWebApp} */ (pn.app.ctx);
+  if (!this.keys_) return;
+
   this.commands_.pnforEach(function(cmd) {
-    if (cmd.shortcut) ctx.keys.unregister(cmd.name);
+    if (cmd.shortcut) this.keys_.unregister(cmd.name);
   }, this);
 };

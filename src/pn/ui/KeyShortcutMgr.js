@@ -39,7 +39,7 @@ pn.ui.KeyShortcutMgr = function() {
    */
   this.idShortcuts_ = {};
 
-  this.setAllEnabled(true);
+  this.enable();
 };
 goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
 
@@ -88,10 +88,23 @@ pn.ui.KeyShortcutMgr.prototype.setEnabled = function(id, enable) {
 };
 
 
-/** @param {boolean} enable Wether to enable or disable all shortcuts. */
-pn.ui.KeyShortcutMgr.prototype.setAllEnabled = function(enable) {
+/** Enables all shortcuts */
+pn.ui.KeyShortcutMgr.prototype.enable =
+    function() { this.setAllEnabled_(true); };
+
+
+/** Disables all shortcuts */
+pn.ui.KeyShortcutMgr.prototype.disable =
+    function() { this.setAllEnabled_(false); };
+
+
+/**
+ * @private
+ * @param {boolean} enabled Wether to enable or disable all shortcuts.
+ */
+pn.ui.KeyShortcutMgr.prototype.setAllEnabled_ = function(enabled) {
   var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
-  var func = goog.bind(enable ? this.eh_.listen : this.eh_.unlisten, this.eh_);
+  var func = goog.bind(enabled ? this.eh_.listen : this.eh_.unlisten, this.eh_);
   func(this.shortcuts_, eventType, this.handleShortcut_);
 };
 

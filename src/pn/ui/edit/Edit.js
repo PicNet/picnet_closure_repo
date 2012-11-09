@@ -34,13 +34,16 @@ goog.require('pn.ui.soy');
  * @param {!pn.data.Entity} entity The entity object to edit.
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
+ * @param {pn.ui.KeyShortcutMgr=} opt_keys The optional keyboard shortcut
+ *    manager.
  */
-pn.ui.edit.Edit = function(spec, entity, cache) {
-  pn.ass(spec);
-  pn.ass(entity instanceof pn.data.Entity);
-  pn.ass(cache);
+pn.ui.edit.Edit = function(spec, entity, cache, opt_keys) {
+  pn.assInst(spec, pn.ui.UiSpec);
+  pn.assInst(entity, pn.data.Entity);
+  pn.assInst(cache, pn.data.BaseDalCache);
+  pn.ass(!opt_keys || opt_keys instanceof pn.ui.KeyShortcutMgr);
 
-  pn.ui.edit.CommandsComponent.call(this, spec, entity, cache);
+  pn.ui.edit.CommandsComponent.call(this, spec, entity, cache, opt_keys);
 
   /**
    * @private
@@ -211,7 +214,7 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
 pn.ui.edit.Edit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
   if (errors.length) {
-    var et = pn.app.AppEvents.ENTITY_VALIDATION_ERROR;
+    var et = pn.web.WebAppEvents.ENTITY_VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
     event.errors = errors;
     this.publishEvent_(event);
@@ -304,16 +307,16 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
   if (!fieldSpec.tableType || fieldSpec.readonly) return;
 
   var grid = this.getControl(fctx.id);
-  var ae = pn.app.AppEvents;
+  var ae = pn.web.WebAppEvents;
   this.getHandler().listen(grid, ae.ENTITY_ADD, function() {
-    var e = new goog.events.Event(pn.app.AppEvents.CHILD_ENTITY_ADD, this);
+    var e = new goog.events.Event(ae.CHILD_ENTITY_ADD, this);
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
     e.parentField = fieldSpec.tableParentField;
     this.publishEvent_(e);
   });
   this.getHandler().listen(grid, ae.ENTITY_SELECT, function(ev) {
-    var e = new goog.events.Event(pn.app.AppEvents.ENTITY_SELECT, this);
+    var e = new goog.events.Event(ae.ENTITY_SELECT, this);
     e.entityId = ev.selected.id;
     e.parent = this.entity;
     e.entityType = fieldSpec.tableType;
@@ -325,7 +328,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
 
 /**
  * @private
- * @param {!goog.events.Event} e The event to publish using the pn.app.ctx.pub
+ * @param {!goog.events.Event} e The event to publish using the pn.web.ctx.pub
  *    mechanism.
  */
 pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
@@ -334,7 +337,7 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
     return;
   }
 
-  var ae = pn.app.AppEvents;
+  var ae = pn.web.WebAppEvents;
   var args;
   switch (e.type) {
     case ae.CHILD_ENTITY_ADD:
@@ -349,5 +352,5 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
     default:
       args = [e.type, this.spec.type, e.data];
   }
-  pn.app.ctx.pub.apply(null, args);
+  pn.web.ctx.pub.apply(null, args);
 };

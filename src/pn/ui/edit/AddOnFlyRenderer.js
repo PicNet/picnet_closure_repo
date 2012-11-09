@@ -12,27 +12,19 @@ goog.require('pn.ui.edit.ComplexRenderer');
  * @constructor
  * @extends {pn.ui.edit.ComplexRenderer}
  * @param {!pn.data.Entity} entity The entity being edited.
- * @param {string} specId The ID of the specs to display in this add on the
- *    fly control.
+ * @param {!pn.ui.UiSpec} spec The UiSpec of the entity to add on the fly.
  */
-pn.ui.edit.AddOnFlyRenderer = function(entity, specId) {
-  pn.assStr(specId);
+pn.ui.edit.AddOnFlyRenderer = function(entity, spec) {
   pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(spec, pn.ui.UiSpec);
 
   pn.ui.edit.ComplexRenderer.call(this, entity);
 
   /**
    * @private
-   * @type {string}
+   * @type {!pn.ui.UiSpec}
    */
-  this.specId_ = specId;
-
-  /**
-   * @private
-   * @type {pn.ui.UiSpec}
-   */
-  this.spec_ = pn.app.ctx.specs.get(this.specId_);
-  this.registerDisposable(this.spec_);
+  this.spec_ = spec;
 
   /**
    * @private
@@ -110,7 +102,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 /** @private */
 pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(
-      this.spec_.id, this.fctx.cache, this.getNewEntity_());
+      this.spec_, this.fctx.cache, this.getNewEntity_());
 
   var eventType = pn.ui.edit.AddOnFlyDialog.EventType.AOF_ADDED;
   this.getHandler().listenOnce(this.dialog_, eventType, this.aofAdded_);

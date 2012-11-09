@@ -183,7 +183,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
       pn.data.TypeRegister.getFieldSchema(this.entitySpec.type, this.id);
   var schemaType = schema ? schema.type : '';
   if (schemaType === 'string' && schema.length >
-      pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
+      pn.web.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
     schemaType = 'LongString';
   }
   var readonly = opt_readonly || this.readonly;
@@ -198,11 +198,11 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
         pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
   } else if (readonly) {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return pn.app.ctx.cfg.defaultReadOnlyFieldRenderers[schemaType] ||
+    return pn.web.ctx.cfg.defaultReadOnlyFieldRenderers[schemaType] ||
         pn.ui.edit.ReadOnlyFields.textField;
   } else {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return pn.app.ctx.cfg.defaultFieldRenderers[schemaType] ||
+    return pn.web.ctx.cfg.defaultFieldRenderers[schemaType] ||
         pn.ui.edit.FieldRenderers.textFieldRenderer;
   }
 };

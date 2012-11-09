@@ -17,7 +17,7 @@ goog.provide('pn.ui.grid.cmd.ExportCommand');
  * @extends {pn.ui.grid.cmd.Command}
  */
 pn.ui.grid.cmd.ExportCommand = function() {
-  pn.ui.grid.cmd.Command.call(this, 'Export', pn.app.AppEvents.LIST_EXPORT);
+  pn.ui.grid.cmd.Command.call(this, 'Export', pn.web.WebAppEvents.LIST_EXPORT);
 
   /**
    * @type {boolean}

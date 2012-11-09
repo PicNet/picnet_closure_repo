@@ -154,7 +154,7 @@ var test_disable_all_stops_all_callbacks = function() {
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount);
 
-  keys.setAllEnabled(false);
+  keys.disable();
   fire(KeyCodes.A, {shiftKey: true});
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount); // Does not increment
@@ -167,12 +167,12 @@ var test_reenable_all_restarts_all_callbacks = function() {
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount);
 
-  keys.setAllEnabled(false);
+  keys.disable();
   fire(KeyCodes.A, {shiftKey: true});
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(2, gotcount); // Does not increment
 
-  keys.setAllEnabled(true);
+  keys.enable();
   fire(KeyCodes.A, {shiftKey: true});
   fire(KeyCodes.B, {shiftKey: true});
   assertEquals(4, gotcount);

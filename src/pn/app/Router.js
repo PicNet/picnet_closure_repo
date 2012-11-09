@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.app.Router');
+goog.provide('pn.app.Router.EventType');
 
 goog.require('goog.History');
 goog.require('goog.asserts');

@@ -319,7 +319,7 @@ pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
     throw opt_ex;
   } else {
     pn.log.trace();
-    pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, error);
+    pn.app.ctx.pub(pn.web.WebAppEvents.SHOW_ERROR, error);
   }
 };
 

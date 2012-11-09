@@ -72,7 +72,8 @@ goog.inherits(pn.ui.edit.MultiSpecEdit, pn.ui.edit.CommandsComponent);
  *    render.
  */
 pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
-  var ui = new pn.ui.edit.Edit(this.specs[specid], this.entity, this.cache);
+  var ui = new pn.ui.edit.Edit(
+      this.specs[specid], this.entity, this.cache, pn.web.ctx.keys);
   ui.fireInterceptorEvents = false;
   this.registerDisposable(ui);
   this.edits.push(ui);

@@ -378,7 +378,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : list.pnfilter(
       function(c) { return c[parentField] === parentId; });
-  var spec = pn.app.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
+  var spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
   var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
   g.decorate(parent);
   return g;
