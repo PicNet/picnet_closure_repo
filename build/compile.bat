@@ -9,7 +9,7 @@ REM set CLOSURE_COMPILER=J:\dev\libs\compiler.jar
 REM set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
 
 BASE=../../../../projects/picnet_closure_repo/src/
-set BASE=../../../../ft/lib/picnet_closure_repo/src/
+set BASE=../../../../oms/resources/scripts/lib/picnet_closure_repo/src/
 
 REM U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^

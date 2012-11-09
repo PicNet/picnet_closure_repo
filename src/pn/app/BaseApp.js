@@ -1,8 +1,10 @@
 
+goog.provide('pn.app.BaseApp');
+
 goog.require('goog.debug.Logger');
 goog.require('goog.events.EventHandler');
-goog.require('goog.pubsub.PubSub');
 goog.require('goog.events.EventHandler');
+goog.require('goog.pubsub.PubSub');
 goog.require('pn');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
@@ -12,7 +14,6 @@ goog.require('pn.data.DataDownloader');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
 goog.require('pn.ui.UiSpecsRegister');
-goog.provide('pn.app.BaseApp');
 
 
 /**
