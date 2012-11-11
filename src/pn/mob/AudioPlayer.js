@@ -9,10 +9,10 @@ goog.require('pn.mob.Utils');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {string=} opt_dir The optional directory containing the audio media.
+ * @param {string} dir The optional directory containing the audio media.
  */
-pn.mob.AudioPlayer = function(opt_dir) {
-  pn.ass(!opt_dir || goog.isString(opt_dir));
+pn.mob.AudioPlayer = function(dir) {
+  pn.assStr(dir);
 
   goog.Disposable.call(this);
 
@@ -20,13 +20,13 @@ pn.mob.AudioPlayer = function(opt_dir) {
    * @private
    * @type {string}
    */
-  this.dir_ = opt_dir || '';
+  this.dir_ = dir;
 
   /**
    * @private
-   * @type {Object}
+   * @type {!Object.<!Object>}
    */
-  this.media_ = null;
+  this.medias_ = {};
 
   /**
    * @private
@@ -37,18 +37,29 @@ pn.mob.AudioPlayer = function(opt_dir) {
 goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
 
 
+/** @param {string} src The media file to preload. */
+pn.mob.AudioPlayer.prototype.preload = function(src) {
+  pn.ass(!(src in this.medias_), '%s - already loaded'.pnsubs(src));
+
+  // Preloading only supported in phonegap environment
+  if (!pn.mob.Utils.isPhonegap()) return;
+  this.medias_[src] = new window['Media'](this.getPath_(src));
+};
+
+
 /** @param {string} src The media file to play. */
 pn.mob.AudioPlayer.prototype.play = function(src) {
   pn.assStr(src);
 
-  var fullsrc = this.getPath_(src);
   if (this.html5Audio_) {
-    this.html5Audio_['src'] = fullsrc;
+    this.html5Audio_['src'] = this.getPath_(src);
     this.html5Audio_['play']();
   } else {
-    if (this.media_) this.media_['release']();
-    this.media_ = new window['Media'](fullsrc);
-    this.media_['play']();
+    var media = this.medias_[src];
+    if (!media) {
+      media = this.medias_[src] = new window['Media'](this.getPath_(src));
+    }
+    media['play']();
   }
 };
 
@@ -70,12 +81,23 @@ pn.mob.AudioPlayer.prototype.getPath_ = function(src) {
 };
 
 
-/** Stop the currently playing media. */
-pn.mob.AudioPlayer.prototype.stop = function() {
+/** @param {string} src The media file to stop. */
+pn.mob.AudioPlayer.prototype.stop = function(src) {
   if (this.html5Audio_) {
+    pn.ass(goog.string.endsWith(this.html5Audio_['src'], src));
     this.html5Audio_['stop']();
   } else {
-    this.media_['stop']();
-    delete this.media_;
+    pn.ass(src in this.medias_);
+
+    this.medias_[src]['stop']();
   }
+};
+
+
+/** @override */
+pn.mob.AudioPlayer.prototype.disposeInternal = function() {
+  for (var i in this.medias_) { this.medias_[i]['release'](); }
+  this.medias_ = {};
+
+  pn.mob.AudioPlayer.superClass_.disposeInternal.call(this);
 };
