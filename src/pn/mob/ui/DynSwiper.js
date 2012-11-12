@@ -137,9 +137,9 @@ pn.mob.ui.DynSwiper.prototype.onFlip_ = function() {
     }
   }
 
-  var idx = this.swiper_['pageIndex'];
-  this.updateDots_(idx);
-  this.updateAnim_(idx);
+  var idx2 = this.swiper_['pageIndex'];
+  this.updateDots_(idx2);
+  this.updateAnim_(idx2);
 };
 
 
@@ -161,4 +161,11 @@ pn.mob.ui.DynSwiper.prototype.updateDots_ = function(idx) {
 pn.mob.ui.DynSwiper.prototype.updateAnim_ = function(idx) {
   if (this.current_ === idx) { return; }
   this.swipeable_.showing(this.current_ = idx);
+};
+
+
+/** @override */
+pn.mob.ui.DynSwiper.prototype.disposeInternal = function() {
+  goog.base(this, 'disposeInternal');
+  this.swiper_['destroy']();
 };
