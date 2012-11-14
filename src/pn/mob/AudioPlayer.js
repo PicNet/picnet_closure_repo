@@ -24,15 +24,15 @@ pn.mob.AudioPlayer = function(dir) {
 
   /**
    * @private
-   * @type {!Object.<!Object>}
+   * @type {boolean}
    */
-  this.medias_ = {};
+  this.usePg_ = 1 === 2 && pn.mob.Utils.isPhonegap();
 
   /**
    * @private
-   * @type {!Object}
+   * @type {!Object.<!Object>}
    */
-  this.html5Audio_ = !pn.mob.Utils.isPhonegap() ? new window['Audio']() : null;
+  this.medias_ = {};
 };
 goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
 
@@ -41,9 +41,7 @@ goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
 pn.mob.AudioPlayer.prototype.preload = function(src) {
   pn.ass(!(src in this.medias_), '%s - already loaded'.pnsubs(src));
 
-  // Preloading only supported in phonegap environment
-  if (!pn.mob.Utils.isPhonegap()) return;
-  this.medias_[src] = new window['Media'](this.getPath_(src));
+  this.medias_[src] = this.createMedia_(src);
 };
 
 
@@ -51,16 +49,23 @@ pn.mob.AudioPlayer.prototype.preload = function(src) {
 pn.mob.AudioPlayer.prototype.play = function(src) {
   pn.assStr(src);
 
-  if (this.html5Audio_) {
-    this.html5Audio_['src'] = this.getPath_(src);
-    this.html5Audio_['play']();
-  } else {
-    var media = this.medias_[src];
-    if (!media) {
-      media = this.medias_[src] = new window['Media'](this.getPath_(src));
-    }
-    media['play']();
-  }
+  var media = this.medias_[src];
+  if (!media) { media = this.medias_[src] = this.createMedia_(src); }
+  media['play']();
+};
+
+
+/**
+ * @private
+ * @param {string} src The media file to preload.
+ * @return {!Object} The created media.
+ */
+pn.mob.AudioPlayer.prototype.createMedia_ = function(src) {
+  var media = this.usePg_ ?
+      new window['Media'](this.getPath_(src)) :
+      new window['Audio']();
+  if (!this.usePg_) { media['src'] = this.getPath_(src); }
+  return media;
 };
 
 
@@ -74,7 +79,8 @@ pn.mob.AudioPlayer.prototype.getPath_ = function(src) {
   pn.assStr(src);
 
   var full = this.dir_ + src;
-  if (!pn.mob.Utils.isPhonegap()) return full;
+  if (!this.usePg_) return full;
+
   var p = window.location.pathname;
   p = p.substr(0, p.length - 10);
   return p + full;
@@ -96,7 +102,9 @@ pn.mob.AudioPlayer.prototype.stop = function(src) {
 
 /** @override */
 pn.mob.AudioPlayer.prototype.disposeInternal = function() {
-  for (var i in this.medias_) { this.medias_[i]['release'](); }
+  if (this.usePg_) {
+    for (var i in this.medias_) { this.medias_[i]['release'](); }
+  }
   this.medias_ = {};
 
   pn.mob.AudioPlayer.superClass_.disposeInternal.call(this);
