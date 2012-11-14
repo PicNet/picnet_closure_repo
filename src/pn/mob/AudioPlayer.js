@@ -41,7 +41,11 @@ goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
 pn.mob.AudioPlayer.prototype.preload = function(src) {
   pn.ass(!(src in this.medias_), '%s - already loaded'.pnsubs(src));
 
-  this.medias_[src] = this.createMedia_(src);
+  var media = this.medias_[src] = this.createMedia_(src);
+  if (!this.usePg_) {
+    media['volume'] = 0;
+    media['play']();
+  }
 };
 
 
@@ -51,6 +55,7 @@ pn.mob.AudioPlayer.prototype.play = function(src) {
 
   var media = this.medias_[src];
   if (!media) { media = this.medias_[src] = this.createMedia_(src); }
+  else { media['currentTime'] = 0; }
   media['play']();
 };
 
@@ -64,7 +69,10 @@ pn.mob.AudioPlayer.prototype.createMedia_ = function(src) {
   var media = this.usePg_ ?
       new window['Media'](this.getPath_(src)) :
       new window['Audio']();
-  if (!this.usePg_) { media['src'] = this.getPath_(src); }
+  if (!this.usePg_) {
+    media['preload'] = 'auto';
+    media['src'] = this.getPath_(src);
+  }
   return media;
 };
 
