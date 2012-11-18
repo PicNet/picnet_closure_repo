@@ -58,6 +58,13 @@ pn.log.trace = function() {
 };
 
 
+/** @param {string} msg Displays a message to the console. */
+pn.log.log = function(msg) {
+  if (!window['console'] || !window['console']['log']) return;
+  window['console']['log'](msg);
+};
+
+
 /**
  * @param {string} name The name of the logger to create.
  * @param {boolean=} opt_exclusive Wether to turn off all other loggers.

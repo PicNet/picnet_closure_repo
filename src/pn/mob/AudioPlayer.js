@@ -71,6 +71,7 @@ pn.mob.AudioPlayer.prototype.createMedia_ = function(src) {
       new window['Audio']();
   if (!this.usePg_) {
     media['preload'] = 'auto';
+    media['autobuffer'] = 'true';
     media['src'] = this.getPath_(src);
   }
   return media;
