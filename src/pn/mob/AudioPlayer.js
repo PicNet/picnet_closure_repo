@@ -55,7 +55,7 @@ pn.mob.AudioPlayer.prototype.play = function(src) {
 
   var media = this.medias_[src];
   if (!media) { media = this.medias_[src] = this.createMedia_(src); }
-  else { media['currentTime'] = 0; }
+  else { try { media['currentTime'] = 0; } catch (ex) {}} // catch for tests
   media['play']();
 };
 

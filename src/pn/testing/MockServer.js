@@ -12,7 +12,7 @@ goog.require('pn.data.Server.Update');
  * @extends {pn.data.Server}
  */
 pn.testing.MockServer = function() {
-  pn.data.Server.call(this, 'controller_uri');
+  pn.data.Server.call(this, '/app/', 'controller_uri');
 
   /** @type {boolean} */
   this.nextFail = false;
