@@ -5,6 +5,7 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.functions');
 goog.require('goog.object');
+goog.require('goog.string');
 
 ////////////////////////////////////////////////////////////////////////////////
 // Misc Static Convenience Helpers
