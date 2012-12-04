@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.data.LazyFacade');
+
 goog.require('pn.data.BaseFacade');
 
 
