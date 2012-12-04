@@ -17,7 +17,7 @@ goog.require('pn.mvc.View');
  *    controller's view.
  */
 pn.mvc.Controller = function(view, opt_model) {
-  pn.ass(view instanceof HTMLElement || view instanceof pn.mvc.View);
+  pn.assInst(view, HTMLElement || view instanceof pn.mvc.View);
   pn.ass(!opt_model || opt_model instanceof pn.mvc.ModelBase);
 
   pn.app.EventHandlerTarget.call(this);

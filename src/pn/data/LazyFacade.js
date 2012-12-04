@@ -11,8 +11,8 @@ goog.require('pn.data.BaseFacade');
  * @param {!pn.data.Server} server The remote server source.
  */
 pn.data.LazyFacade = function(cache, server) {
-  pn.ass(cache instanceof pn.data.LocalCache);
-  pn.ass(server instanceof pn.data.Server);
+  pn.assInst(cache, pn.data.LocalCache);
+  pn.assInst(server, pn.data.Server);
 
   /**
    * @private

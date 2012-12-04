@@ -18,7 +18,7 @@ var server,
 
 var setUp = function() {
   events = [];
-  server = new pn.data.Server('http://localhost/PicNet2.WebFacade/Facade/');
+  server = new pn.data.Server('http://localhost/PicNet2.WebFacade/', 'Facade/');
   server.dispatchEvent = function(e) { events.push(e); };
   pn.data.TypeRegister.register('Entity1', function(raw) {
     return new pn.data.Entity('Entity1', raw['ID']);

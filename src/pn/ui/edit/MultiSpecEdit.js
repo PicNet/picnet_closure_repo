@@ -37,7 +37,7 @@ goog.require('pn.ui.grid.Grid');
  */
 pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpecId) {
   pn.ass(cache);
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(specs);
   pn.ass(mainSpecId);
 

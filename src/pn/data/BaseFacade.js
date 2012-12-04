@@ -8,6 +8,7 @@ goog.require('pn.data.LocalCache');
 goog.require('pn.data.Query');
 goog.require('pn.data.Server');
 goog.require('pn.log');
+goog.require('pn.web.WebAppEvents');
 
 
 
@@ -20,8 +21,8 @@ goog.require('pn.log');
  * @param {!pn.data.Server} server The remote server source.
  */
 pn.data.BaseFacade = function(cache, server) {
-  pn.ass(cache instanceof pn.data.LocalCache);
-  pn.ass(server instanceof pn.data.Server);
+  pn.assInst(cache, pn.data.LocalCache);
+  pn.assInst(server, pn.data.Server);
 
   goog.events.EventTarget.call(this);
 
@@ -119,7 +120,7 @@ pn.data.BaseFacade.prototype.getEntity = function(type, id) {
  *    that takes the created entity with the new ID value.
  */
 pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.id <= 0);
   pn.assFun(callback);
 
@@ -162,7 +163,7 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
  *    that takes the updated entity.
  */
 pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.id > 0);
   pn.assFun(callback);
 
@@ -196,7 +197,7 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
  * @param {function():undefined} callback The success callback.
  */
 pn.data.BaseFacade.prototype.deleteEntity = function(entity, callback) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.id > 0);
 
   this.log_.info('deleteEntity: ' + entity.type + '#' + entity.id);
@@ -296,7 +297,7 @@ pn.data.BaseFacade.prototype.parseServerResponse =
       callbackOrResponse : opt_response;
 
   pn.ass(goog.isNull(callback) || goog.isFunction(callback));
-  pn.ass(response instanceof pn.data.Server.Response);
+  pn.assInst(response, pn.data.Server.Response);
 
   this.log_.info('parseServerResponse response[' + response.toString() + ']');
 
@@ -359,7 +360,7 @@ pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
  *    with.
  */
 pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
-  pn.ass(update instanceof pn.data.Server.Update);
+  pn.assInst(update, pn.data.Server.Update);
   switch (update.type) {
     case 'delete':
       this.cache.deleteEntity(update.entityType, update.id);

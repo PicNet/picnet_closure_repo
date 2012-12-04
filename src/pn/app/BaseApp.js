@@ -13,7 +13,6 @@ goog.require('pn.data.BaseFacade');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
-goog.require('pn.ui.UiSpecsRegister');
 
 
 /**
@@ -72,17 +71,13 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.cfg);
 
   var cache = new pn.data.LocalCache(this.cfg.dbver);
-  var server = new pn.data.Server(this.cfg.facadeUri);
+  var server = new pn.data.Server(this.cfg.appPath, this.cfg.facadeUri);
 
   /** @type {!pn.data.BaseFacade} */
   this.data = new pn.data.LazyFacade(cache, server);
   this.registerDisposable(this.data);
   this.registerDisposable(server);
   this.registerDisposable(cache);
-
-  /** @type {!pn.ui.UiSpecsRegister} */
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
-  this.registerDisposable(this.specs);
 
   /**
    * @private
@@ -209,7 +204,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
  * @param {!pn.data.Entity} entity The entity to clone.
  */
 pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   if (!this.acceptDirty()) return;
 

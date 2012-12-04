@@ -60,7 +60,7 @@ pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
  * @return {*} The compareable value of this column, suitable for sorting, etc.
  */
 pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   if (this.spec.sortValueRenderer) {
     return this.spec.sortValueRenderer(this, entity);
@@ -81,7 +81,7 @@ pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
  * @return {*} The value of  this field.
  */
 pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   return entity[this.spec.dataProperty];
 };

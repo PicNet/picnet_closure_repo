@@ -49,7 +49,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCustomEvent =
  * @param {pn.ui.grid.cmd.Command} cmd The command to listen to.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.registerCommand_ = function(cmd) {
-  pn.ass(cmd instanceof pn.ui.grid.cmd.Command);
+  pn.assInst(cmd, pn.ui.grid.cmd.Command);
 
   this.listen(cmd, cmd.eventType, this.onCommand_);
 };

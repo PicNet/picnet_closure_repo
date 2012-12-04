@@ -21,12 +21,21 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
+ * @param {string} appPath The application base path.
  * @param {string} controller The controller Uri.
  */
-pn.data.Server = function(controller) {
+pn.data.Server = function(appPath, controller) {
+  pn.assStr(appPath);
   pn.assStr(controller);
 
   goog.events.EventTarget.call(this);
+
+  /**
+   * @private
+   * @const
+   * @type {string}
+   */
+  this.appPath_ = appPath;
 
   /**
    * @private
@@ -72,7 +81,7 @@ pn.data.Server.prototype.ajax =
   pn.assFun(success);
   pn.assFun(failure);
 
-  this.ajax_(pn.web.ctx.cfg.appPath + uri, data, success, failure);
+  this.ajax_(this.appPath_ + uri, data, success, failure);
 };
 
 
@@ -84,7 +93,7 @@ pn.data.Server.prototype.ajax =
  */
 pn.data.Server.prototype.createEntity =
     function(entity, success, failure) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.assFun(success);
   pn.assFun(failure);
 
@@ -102,7 +111,7 @@ pn.data.Server.prototype.createEntity =
  */
 pn.data.Server.prototype.updateEntity =
     function(entity, success, failure) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.assFun(success);
   pn.assFun(failure);
 
@@ -120,7 +129,7 @@ pn.data.Server.prototype.updateEntity =
  */
 pn.data.Server.prototype.deleteEntity =
     function(entity, success, failure) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.id > 0);
   pn.assFun(success);
   pn.assFun(failure);
@@ -218,7 +227,7 @@ pn.data.Server.prototype.getFacadeControllerAction_ = function(action) {
  * @return {{type:string, entityJson:string}}
  */
 pn.data.Server.prototype.getEntityJson_ = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   return {
     'type': entity.type,
@@ -280,7 +289,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
       rid = uri + (this.requestCount_++),
       qd = goog.uri.utils.buildQueryDataFromMap(data),
       callback = goog.bind(function(e) {
-        pn.ass(e.target instanceof goog.net.XhrIo);
+        pn.assInst(e.target, goog.net.XhrIo);
         this.reply_(e.target, start, success, failure, bg);
       }, this);
 
@@ -300,7 +309,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
  *    show loading panel).
  */
 pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
-  pn.ass(xhr instanceof goog.net.XhrIo);
+  pn.assInst(xhr, goog.net.XhrIo);
   pn.ass(goog.isNumber(start) && start > 0);
   pn.assFun(success);
   pn.assFun(failure);
@@ -327,7 +336,7 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
  */
 pn.data.Server.prototype.replyImpl_ =
     function(xhr, start, success, failure, bg) {
-  pn.ass(xhr instanceof goog.net.XhrIo);
+  pn.assInst(xhr, goog.net.XhrIo);
   pn.ass(goog.isNumber(start) && start > 0);
   pn.assFun(success);
   pn.assFun(failure);

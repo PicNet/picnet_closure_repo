@@ -41,6 +41,13 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    * @const
    * @type {string}
    */
+  this.dbver_ = dbver;
+
+  /**
+   * @private
+   * @const
+   * @type {string}
+   */
   this.STORE_PREFIX_ = (opt_cachePrefix ?
       opt_cachePrefix : '' + 'LOCAL_DATA_CACHE:');
 
@@ -62,7 +69,7 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    */
   this.transaction_ = null;
 
-  this.checkDbVer_(dbver);
+  this.checkDbVer_();
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
@@ -116,7 +123,7 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
  *    is now set to the temporary ID and the entity is 'live'.
  */
 pn.data.LocalCache.prototype.createEntity = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.type in this.cache_,
       entity.type + ' not in cache');
   pn.ass(entity.id < 0);
@@ -136,7 +143,7 @@ pn.data.LocalCache.prototype.createEntity = function(entity) {
  *    an entity that has not hit the server yet.
  */
 pn.data.LocalCache.prototype.updateEntity = function(entity, opt_tmpid) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(!goog.isDef(opt_tmpid) ||
       (goog.isNumber(opt_tmpid) && opt_tmpid < 0));
 
@@ -184,7 +191,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  * @param {!pn.data.Entity} entity The entity to undelete.
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(entity.id > 0);
 
   if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
@@ -208,7 +215,7 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
  * @return {boolean} Wether the specified type list exists in this cache.
  */
 pn.data.LocalCache.prototype.contains = function(query) {
-  pn.ass(query instanceof pn.data.Query);
+  pn.assInst(query, pn.data.Query);
   return (query.Type in this.cache_);
 };
 
@@ -219,7 +226,7 @@ pn.data.LocalCache.prototype.contains = function(query) {
  */
 pn.data.LocalCache.prototype.query = function(queries) {
   return queries.pnreduce(goog.bind(function(results, q) {
-    pn.ass(q instanceof pn.data.Query);
+    pn.assInst(q, pn.data.Query);
 
     pn.ass(q.Type in this.cache_, 'The type: ' + q.Type +
         ' does not exist in the local cache');
@@ -247,7 +254,7 @@ pn.data.LocalCache.prototype.getCachedQueries = function() {
  *    the specified type.
  */
 pn.data.LocalCache.prototype.saveQuery = function(query, list) {
-  pn.ass(query instanceof pn.data.Query);
+  pn.assInst(query, pn.data.Query);
   pn.assArr(list);
 
   var type = query.Type;
@@ -283,26 +290,20 @@ pn.data.LocalCache.prototype.getLastUpdate = function() {
 /** @param {number} lastUpdate The last updated date in millis. */
 pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
   this.lastUpdate_ = lastUpdate;
-  window['localStorage'][this.STORE_PREFIX_ + 'last'] = lastUpdate.toString();
+  window['localStorage'][this.key_('last')] = lastUpdate.toString();
 };
 
 
-/**
- * @private
- * @param {string} dbver The current db version. If this version does not
- *    match the current cached version then the entire local cache is
- *    invalidated.
- */
-pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
+/** @private */
+pn.data.LocalCache.prototype.checkDbVer_ = function() {
   var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
-  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
-  if (!dbver || dbver === exp) { return; }
+  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
+  if (!this.dbver_ || this.dbver_ === exp) { return; }
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      pnsubs(exp, dbver));
+      pnsubs(exp, this.dbver_));
 
   this.clear();
-  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
 };
 
 
@@ -311,8 +312,9 @@ pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
  */
 pn.data.LocalCache.prototype.clear = function() {
   this.lastUpdate_ = 0;
+  var empty = this.key_('');
   for (var key in window['localStorage']) {
-    if (goog.string.startsWith(key, this.STORE_PREFIX_)) {
+    if (goog.string.startsWith(key, empty)) {
       delete window['localStorage'][key];
     }
   }
@@ -321,10 +323,10 @@ pn.data.LocalCache.prototype.clear = function() {
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
-  var cachedtime = window['localStorage'][this.STORE_PREFIX_ + 'last'];
+  var cachedtime = window['localStorage'][this.key_('last')];
   this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
 
-  var queriesJson = window['localStorage'][this.STORE_PREFIX_ + 'queries'];
+  var queriesJson = window['localStorage'][this.key_('queries')];
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
     this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
@@ -334,9 +336,8 @@ pn.data.LocalCache.prototype.init_ = function() {
     }, {});
   } else { this.cachedQueries_ = {}; }
   var parse = goog.bind(function(type) {
-    return pn.json.parseJson(window['localStorage'][this.STORE_PREFIX_ + type]);
+    return pn.json.parseJson(window['localStorage'][this.key_(type)]);
   }, this);
-
   if (!queriesJson) {
     if (this.lastUpdate_ > 0) {
       var err = 'Last update time is set (%s) but the cache is empty.'.
@@ -381,7 +382,7 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list, true);
-  window['localStorage'][this.STORE_PREFIX_ + type] = json;
+  window['localStorage'][this.key_(type)] = json;
 
   var took = goog.now() - start;
   this.log_.info('Flushed "%s" took %sms.'.pnsubs(type, took));
@@ -391,5 +392,16 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 /** @private */
 pn.data.LocalCache.prototype.flushCachedQueries_ = function() {
   var json = pn.json.serialiseJson(goog.object.getKeys(this.cachedQueries_));
-  window['localStorage'][this.STORE_PREFIX_ + 'queries'] = json;
+  window['localStorage'][this.key_('queries')] = json;
+};
+
+
+/**
+ * @private
+ * @param {string} key The unapplication specific key to retreive.
+ * @return {string} The application (and version) specific version of the
+ *    specified key.
+ */
+pn.data.LocalCache.prototype.key_ = function(key) {
+  return this.STORE_PREFIX_ + this.dbver_ + ':' + key;
 };

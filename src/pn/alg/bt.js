@@ -32,7 +32,7 @@ pn.alg.bt = function(opt_keyComparer) {
  * @param {!pn.alg.btnode} node The node to add to the binary tree.
  */
 pn.alg.bt.prototype.add = function(node) {
-  pn.ass(node instanceof pn.alg.btnode);
+  pn.assInst(node, pn.alg.btnode);
 
   this.arr_[this.size_] = node;
   this.swim_(this.size_++);
@@ -72,7 +72,7 @@ pn.alg.bt.prototype.toString = function() {
  * @param {number} depth The indentation depth to add to the node string.
  */
 pn.alg.bt.prototype.appendNode_ = function(output, idx, depth) {
-  pn.ass(output instanceof goog.string.StringBuffer);
+  pn.assInst(output, goog.string.StringBuffer);
   pn.assNum(idx);
   pn.assNum(depth);
   pn.ass(idx >= 1 && idx < this.size_);
@@ -188,7 +188,7 @@ pn.alg.btnode = function(key, val) {
  * @return {boolean} Wether the this node smaller than the 'other' node.
  */
 pn.alg.btnode.prototype.less = function(other, opt_comparer) {
-  pn.ass(other instanceof pn.alg.btnode);
+  pn.assInst(other, pn.alg.btnode);
 
   if (!opt_comparer) return this.key < other.key;
   return opt_comparer(this.key, other.key) < 0;

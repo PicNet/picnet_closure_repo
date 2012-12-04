@@ -49,7 +49,7 @@ var testGetEntityReturnsEntityInCache = function() {
 };
 
 var testGetEntityDoesNotUpdateLocalStorate = function() {
-  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var key = cache.key_('EntityType');
   var json = pn.storage.get(key);
   testGetEntityReturnsEntityInCache();
   var json2 = pn.storage.get(key);
@@ -91,7 +91,7 @@ var testCreateEntityCanThenBeRetreived = function() {
 };
 
 var testCreateEntityUpdatesLocalStorage = function() {
-  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var key = cache.key_('EntityType');
   var json = pn.storage.get(key);
   testCreateEntityCanThenBeRetreived();
   var json2 = pn.storage.get(key);
@@ -134,7 +134,7 @@ var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
 };
 
 var testUpdateEntityUpdatesLocalStorage = function() {
-  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var key = cache.key_('EntityType');
   var json = pn.storage.get(key);
   testUpdateEntityCanThenBeRetreived();
   var json2 = pn.storage.get(key);
@@ -167,7 +167,7 @@ var testDeleteEntityCannotThenBeRetreived = function() {
 };
 
 var testDeleteEntityUpdatesLocalStorage = function() {
-  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var key = cache.key_('EntityType');
   var json = pn.storage.get(key);
   testDeleteEntityCannotThenBeRetreived();
   var json2 = pn.storage.get(key);
@@ -192,7 +192,7 @@ var testUndeleteEntityAllowsEntityToBeQueried = function() {
 };
 
 var testUndeleteEntityUpdatesLocalStorage = function() {
-  var key = cache.STORE_PREFIX_ + 'EntityType';
+  var key = cache.key_('EntityType');
   var json = pn.storage.get(key);
   testUndeleteEntityAllowsEntityToBeQueried();
   var json2 = pn.storage.get(key);

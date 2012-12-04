@@ -68,7 +68,7 @@ pn.ui.edit.FieldCtx.ID_COUNTER_ = 0;
  * @return {boolean} Wether this field is editable.
  */
 pn.ui.edit.FieldCtx.prototype.isEditable = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   return !this.spec.readonly && !this.spec.tableType &&
       (this.spec.showOnAdd || !pn.data.EntityUtils.isNew(entity));
@@ -123,7 +123,7 @@ pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
  * @return {*} The value of  this field.
  */
 pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   var prop = this.spec.dataProperty;
   var v = entity[prop];
@@ -149,7 +149,7 @@ pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
  * @return {*} The display value of this field.
  */
 pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   return pn.data.EntityUtils.getEntityDisplayValue(
       this.cache,
       this.spec.displayPath,
@@ -167,7 +167,7 @@ pn.ui.edit.FieldCtx.prototype.getDisplayValue = function(entity) {
  *    different than the entity value).
  */
 pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.ass(control);
 
   if (!this.isShown(control)) return false;

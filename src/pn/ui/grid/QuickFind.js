@@ -100,7 +100,7 @@ goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
  * @return {boolean} Wether the item meets the quick filters.
  */
 pn.ui.grid.QuickFind.prototype.matches = function(entity) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
 
   var row = [];
   var noMatchIdx = this.cctxs_.pnfindIndex(function(cctx) {

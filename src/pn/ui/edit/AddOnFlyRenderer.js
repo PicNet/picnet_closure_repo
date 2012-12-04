@@ -15,7 +15,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
  * @param {!pn.ui.UiSpec} spec The UiSpec of the entity to add on the fly.
  */
 pn.ui.edit.AddOnFlyRenderer = function(entity, spec) {
-  pn.ass(entity instanceof pn.data.Entity);
+  pn.assInst(entity, pn.data.Entity);
   pn.assInst(spec, pn.ui.UiSpec);
 
   pn.ui.edit.ComplexRenderer.call(this, entity);

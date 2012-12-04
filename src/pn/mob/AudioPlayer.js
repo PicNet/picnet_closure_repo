@@ -9,10 +9,10 @@ goog.require('pn.mob.Utils');
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {string=} opt_dir The optional directory containing the audio media.
+ * @param {string} dir The optional directory containing the audio media.
  */
-pn.mob.AudioPlayer = function(opt_dir) {
-  pn.ass(!opt_dir || goog.isString(opt_dir));
+pn.mob.AudioPlayer = function(dir) {
+  pn.assStr(dir);
 
   goog.Disposable.call(this);
 
@@ -20,36 +20,61 @@ pn.mob.AudioPlayer = function(opt_dir) {
    * @private
    * @type {string}
    */
-  this.dir_ = opt_dir || '';
+  this.dir_ = dir;
 
   /**
    * @private
-   * @type {Object}
+   * @type {boolean}
    */
-  this.media_ = null;
+  this.usePg_ = 1 === 2 && pn.mob.Utils.isPhonegap();
 
   /**
    * @private
-   * @type {!Object}
+   * @type {!Object.<!Object>}
    */
-  this.html5Audio_ = !pn.mob.Utils.isPhonegap() ? new window['Audio']() : null;
+  this.medias_ = {};
 };
 goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
+
+
+/** @param {string} src The media file to preload. */
+pn.mob.AudioPlayer.prototype.preload = function(src) {
+  pn.ass(!(src in this.medias_), '%s - already loaded'.pnsubs(src));
+
+  var media = this.medias_[src] = this.createMedia_(src);
+  if (!this.usePg_) {
+    media['volume'] = 0;
+    media['play']();
+  }
+};
 
 
 /** @param {string} src The media file to play. */
 pn.mob.AudioPlayer.prototype.play = function(src) {
   pn.assStr(src);
 
-  var fullsrc = this.getPath_(src);
-  if (this.html5Audio_) {
-    this.html5Audio_['src'] = fullsrc;
-    this.html5Audio_['play']();
-  } else {
-    if (this.media_) this.media_['release']();
-    this.media_ = new window['Media'](fullsrc);
-    this.media_['play']();
+  var media = this.medias_[src];
+  if (!media) { media = this.medias_[src] = this.createMedia_(src); }
+  else { try { media['currentTime'] = 0; } catch (ex) {}} // catch for tests
+  media['play']();
+};
+
+
+/**
+ * @private
+ * @param {string} src The media file to preload.
+ * @return {!Object} The created media.
+ */
+pn.mob.AudioPlayer.prototype.createMedia_ = function(src) {
+  var media = this.usePg_ ?
+      new window['Media'](this.getPath_(src)) :
+      new window['Audio']();
+  if (!this.usePg_) {
+    media['preload'] = 'auto';
+    media['autobuffer'] = 'true';
+    media['src'] = this.getPath_(src);
   }
+  return media;
 };
 
 
@@ -63,19 +88,33 @@ pn.mob.AudioPlayer.prototype.getPath_ = function(src) {
   pn.assStr(src);
 
   var full = this.dir_ + src;
-  if (!pn.mob.Utils.isPhonegap()) return full;
+  if (!this.usePg_) return full;
+
   var p = window.location.pathname;
   p = p.substr(0, p.length - 10);
   return p + full;
 };
 
 
-/** Stop the currently playing media. */
-pn.mob.AudioPlayer.prototype.stop = function() {
+/** @param {string} src The media file to stop. */
+pn.mob.AudioPlayer.prototype.stop = function(src) {
   if (this.html5Audio_) {
+    pn.ass(goog.string.endsWith(this.html5Audio_['src'], src));
     this.html5Audio_['stop']();
   } else {
-    this.media_['stop']();
-    delete this.media_;
+    pn.ass(src in this.medias_);
+
+    this.medias_[src]['stop']();
   }
+};
+
+
+/** @override */
+pn.mob.AudioPlayer.prototype.disposeInternal = function() {
+  if (this.usePg_) {
+    for (var i in this.medias_) { this.medias_[i]['release'](); }
+  }
+  this.medias_ = {};
+
+  pn.mob.AudioPlayer.superClass_.disposeInternal.call(this);
 };
