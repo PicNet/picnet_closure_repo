@@ -399,7 +399,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     var pos = goog.style.getPageOffset(cellNode);
     if (!show && this.tooltip_.isCoordinateInTooltip(pos)) { return; }
     var item = this.dataView_.getItem(cell['row']);
-    var text = item[spec.dataColumn];
+    var text = item[spec.dataColumn].replace(/\n/g, '<br/>');
     this.showTooltip_(text, pos, show);
   }, this);
   this.slick_.onMouseEnter.subscribe(function(e) { ttShowHide(e, true); });
