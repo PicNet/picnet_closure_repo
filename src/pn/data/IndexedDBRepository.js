@@ -466,7 +466,7 @@ pn.data.IndexedDBRepository.prototype.getUnsyncLists =
 pn.data.IndexedDBRepository.prototype.runRequest_ =
     function(req, callback, opt_handler, opt_onerror) {
   if (opt_onerror) {
-    req.onerror = function(e) { opt_onerror.call(opt_handler || this, e); }
+    req.onerror = function(e) { opt_onerror.call(opt_handler || this, e); };
   } else {
     req.onerror = goog.bind(function(e) {
       this.log.severe(goog.debug.expose(e));
@@ -475,7 +475,7 @@ pn.data.IndexedDBRepository.prototype.runRequest_ =
 
   req.onsuccess = function(e) {
     callback.call(opt_handler || this, e.result || req['result']);
-  }
+  };
 };
 
 

@@ -153,10 +153,11 @@ pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
   this.applySavedFilters_();
 };
 
+
 /** @private */
 pn.ui.SearchPanel.prototype.applySavedFilters_ = function() {
   var saved = goog.net.cookies.get('search-panel-filters');
-  if (!saved) return;    
+  if (!saved) return;
   var dict = goog.json.unsafeParse(saved);
   if (goog.object.isEmpty(dict)) return;
   for (var f in dict) { this.addFilterComp_(f); }
@@ -174,6 +175,7 @@ pn.ui.SearchPanel.prototype.applySavedFilters_ = function() {
   }
   goog.Timer.callOnce(this.doSearch_, 10, this);
 };
+
 
 /**
  * @private
@@ -242,7 +244,7 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
   if (!showing) {
     this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
   }
-  goog.net.cookies.set('search-panel-visible', 
+  goog.net.cookies.set('search-panel-visible',
       showing.toString(), 60 * 60 * 24 * 90);
   if (!this.resizeShow_) {
     var dur = 175;
@@ -266,7 +268,7 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
 /** @private */
 pn.ui.SearchPanel.prototype.doSearch_ = function() {
   var filters = {};
-  for (var cid in this.filtersControls_) {        
+  for (var cid in this.filtersControls_) {
     var control = this.filtersControls_[cid][0];
     var val = pn.ui.edit.FieldBuilder.getFieldValue(control);
     // Ensure that all parent lists select whole text field (not just part)
@@ -292,7 +294,7 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
 /** @private */
 pn.ui.SearchPanel.prototype.doClear_ = function() {
   goog.dom.removeChildren(this.filtersPanel_);
-  goog.object.forEach(this.filtersControls_, function(arr) {    
+  goog.object.forEach(this.filtersControls_, function(arr) {
     goog.array.forEach(arr, goog.dispose);
   }, this);
   this.filtersControls_ = {};
@@ -303,17 +305,18 @@ pn.ui.SearchPanel.prototype.doClear_ = function() {
 
 /** @private */
 pn.ui.SearchPanel.prototype.filterSelected_ = function() {
-  var option = this.select_.options[this.select_.selectedIndex];  
+  var option = this.select_.options[this.select_.selectedIndex];
   var val = option.value;
-  if (val) this.addFilterComp_(val);  
+  if (val) this.addFilterComp_(val);
 };
 
-/** 
- * @private 
- * @param {string} val The key of the spec and filter to add to the filter 
+
+/**
+ * @private
+ * @param {string} val The key of the spec and filter to add to the filter
  *    table.
  */
-pn.ui.SearchPanel.prototype.addFilterComp_ = function(val) {  
+pn.ui.SearchPanel.prototype.addFilterComp_ = function(val) {
   var specid = val.substring(0, val.indexOf('.'));
   var fieldId = val.substring(val.indexOf('.') + 1);
   var spec = pn.ui.UiSpecsRegister.INSTANCE.get(specid);
@@ -363,7 +366,7 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     input = pn.ui.edit.FieldBuilder.createAndAttach(
         f, dom, null, this.cache_, true);
   }
-  var key = spec.id + '.' + f.id;    
+  var key = spec.id + '.' + f.id;
   this.filtersControls_[key] = [input, remove, lbl, dom];
 
   var onremove = function() {
@@ -377,6 +380,7 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
   };
   this.eh_.listen(remove, goog.events.EventType.CLICK, onremove);
 };
+
 
 /** @inheritDoc */
 pn.ui.SearchPanel.prototype.disposeInternal = function() {
@@ -394,7 +398,7 @@ pn.ui.SearchPanel.prototype.disposeInternal = function() {
   goog.dispose(this.toggle_);
   goog.dispose(this.resizeShow_);
   goog.dispose(this.resizeHide_);
-  
+
   delete this.filters_;
   delete this.cache_;
   delete this.filtersControls_;

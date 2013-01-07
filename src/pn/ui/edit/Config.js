@@ -4,6 +4,7 @@ goog.provide('pn.ui.edit.Config');
 goog.require('pn.ui.edit.IInterceptor');
 
 
+
 /**
  * @constructor
  * @param {string} type The entity types of this grid.

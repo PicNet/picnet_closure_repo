@@ -46,7 +46,7 @@ pn.ui.YesNoDialog.prototype.show = function(callback) {
   dialog.setTitle(this.title_);
   dialog.setModal(true);
   var bs = goog.ui.Dialog.ButtonSet.createYesNoCancel();
-  dialog.setButtonSet(bs);  
+  dialog.setButtonSet(bs);
 
   goog.events.listen(dialog, goog.ui.Dialog.EventType.SELECT, function(e) {
     dialog.dispose();
@@ -59,5 +59,5 @@ pn.ui.YesNoDialog.prototype.show = function(callback) {
   if (this.buttonTexts_) {
     bs.getButton('yes').innerText = this.buttonTexts_[0];
     bs.getButton('no').innerText = this.buttonTexts_[1];
-  } 
+  }
 };

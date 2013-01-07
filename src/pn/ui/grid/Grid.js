@@ -2,16 +2,16 @@
 goog.provide('pn.ui.grid.Grid');
 goog.provide('pn.ui.grid.Grid.EventType');
 
-goog.require('goog.i18n.NumberFormat');
 goog.require('goog.dom');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
+goog.require('goog.i18n.NumberFormat');
 goog.require('goog.net.cookies');
 goog.require('goog.positioning.AbsolutePosition');
-goog.require('goog.ui.Tooltip');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
+goog.require('goog.ui.Tooltip');
 goog.require('pn.ui.grid.Column');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.QuickFilterHelpers');
@@ -365,11 +365,11 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.selectionHandler_ = goog.bind(this.handleSelection_, this);
     this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     goog.array.forEach(this.commands_, function(c) {
-      this.eh_.listen(c, c.eventType, function(e) { 
+      this.eh_.listen(c, c.eventType, function(e) {
         if (e.type === pn.ui.grid.Grid.EventType.CLEAR_FILTERS) {
           this.clearFilters_();
         } else {
-          this.dispatchEvent(e); 
+          this.dispatchEvent(e);
         }
       });
     }, this);
@@ -432,44 +432,48 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.setGridInitialFilterState_();
 };
 
+
 /** @private */
 pn.ui.grid.Grid.prototype.clearFilters_ = function() {
   this.quickFilters_ = {};
-  goog.net.cookies.set('saved-quick-filters:' + this.hash_, '{}', 
+  goog.net.cookies.set('saved-quick-filters:' + this.hash_, '{}',
       60 * 60 * 24 * 90);
   $(this.slick_.getHeaderRow()).find(':input').val('');
   this.dataView_.refresh();
 };
 
+
 /** @private */
-pn.ui.grid.Grid.prototype.setGridInitialFilterState_ = function() {  
+pn.ui.grid.Grid.prototype.setGridInitialFilterState_ = function() {
   var saved = goog.net.cookies.get('saved-quick-filters:' + this.hash_);
   if (!saved) return;
   var tmp = goog.json.unsafeParse(saved);
-  if (goog.object.isEmpty(tmp)) return;  
-  for (var cid in tmp) {    
+  if (goog.object.isEmpty(tmp)) return;
+  for (var cid in tmp) {
     this.quickFilterControls_[cid].value = tmp[cid];
     this.quickFilters_[cid] = tmp[cid];
-  }  
+  }
   this.dataView_.refresh();
 };
 
+
 /**
  * @private
- * @param {string} col The column ID to sort by
+ * @param {string} col The column ID to sort by.
  * @param {boolean} asc Wether to sort ascending.
  */
 pn.ui.grid.Grid.prototype.sortBy_ = function(col, asc) {
   this.sort_ = { 'colid': col, 'asc': asc };
   var col2 = goog.array.find(this.cols_, function(c) { return c.id === col; });
   var renderer = col2.renderer;
-  
+
   this.dataView_.sort(function(a, b) {
     var x = renderer ? renderer(0, 0, a[col], col2, a) : a[col],
         y = renderer ? renderer(0, 0, b[col], col2, b) : b[col];
     return (x === y ? 0 : (x > y ? 1 : -1));
-  }, asc);  
+  }, asc);
 };
+
 
 /**
  * @private
@@ -480,7 +484,7 @@ pn.ui.grid.Grid.prototype.sortBy_ = function(col, asc) {
 pn.ui.grid.Grid.prototype.showTooltip_ = function(text, pos, show) {
   // Must be hidden even if we are to re-show it or else it causes usability
   // problems.
-  this.tooltip_.setVisible(false);   
+  this.tooltip_.setVisible(false);
   if (!show) { return; }
   this.tooltip_.setHtml(text);
   var position = new goog.positioning.AbsolutePosition(pos.x, pos.y);
@@ -524,8 +528,8 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
       return c.id === field;
     });
     var val = total[field] / mult;
-    if (spec.renderer) { 
-      val = spec.renderer(-1, -1, /** @type {Object} */ (val), spec, null); 
+    if (spec.renderer) {
+      val = spec.renderer(-1, -1, /** @type {Object} */ (val), spec, null);
     } else { val = this.totalsFormatter_.format(val); }
     html.push('Total ' + spec.name + ': ' + val);
   }
@@ -555,12 +559,12 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
     goog.dom.appendChild(header, input);
   }
 
-  var that = this;      
+  var that = this;
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
-      function() {        
+      function() {
         that.quickFilters_[this['data-id']] = $.trim(
-            /** @type {string} */ ($(this).val())).toLowerCase();        
-        goog.net.cookies.set('saved-quick-filters:' + that.hash_, 
+            /** @type {string} */ ($(this).val())).toLowerCase();
+        goog.net.cookies.set('saved-quick-filters:' + that.hash_,
             goog.json.serialize(that.quickFilters_), 60 * 60 * 24 * 90);
         that.dataView_.refresh();
       });
@@ -577,7 +581,7 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c.width; }),
     'sort': this.sort_
   };
-  goog.net.cookies.set(this.hash_, 
+  goog.net.cookies.set(this.hash_,
       goog.json.serialize(data), 60 * 60 * 24 * 90);
 };
 
@@ -606,7 +610,7 @@ pn.ui.grid.Grid.prototype.resizeFiltersRow_ = function() {
  * @param {!Object} item the row data item.
  * @return {boolean} Wether the item meets the quick filters.
  */
-pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {  
+pn.ui.grid.Grid.prototype.quickFilter_ = function(item) {
   for (var columnId in this.quickFilters_) {
     if (columnId && this.quickFilters_[columnId]) {
       var filterVal = this.quickFilters_[columnId];
@@ -665,7 +669,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   goog.dispose(this.gridContainer_);
   goog.dispose(this.tooltip_);
   goog.dispose(this.totalsFormatter_);
-  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);  
+  if (this.totalsLegend_) goog.dispose(this.totalsLegend_);
   delete this.quickFilters_;
   delete this.eh_;
   delete this.slick_;

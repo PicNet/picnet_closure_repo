@@ -85,7 +85,7 @@ pn.ui.edit.ComplexRenderer.prototype.getValue = goog.abstractMethod;
  * @return {string|Array} Any error (if any) for the specified field.
  */
 pn.ui.edit.ComplexRenderer.prototype.validate = function(field, value) {
-  return ''; 
+  return '';
 };
 
 
@@ -99,7 +99,7 @@ pn.ui.edit.ComplexRenderer.prototype.createDom =
 /** @inheritDoc */
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
-  
+
   goog.dispose(this.eh);
   delete this.val;
   delete this.entity;

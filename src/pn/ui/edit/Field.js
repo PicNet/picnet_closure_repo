@@ -28,7 +28,8 @@ pn.ui.edit.Field = function(id, name) {
           !(Element|goog.ui.Component)} */
   this.renderer = null;
 
-  /** @type {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.Field, *):(string|Array)} */
+  /** @type {null|pn.ui.edit.ValidateInfo|function(pn.ui.edit.Field, *):
+      (string|Array)} */
   this.validator = null;
 
   /** @type {null|function(string, !(Element|goog.ui.Component), Object,

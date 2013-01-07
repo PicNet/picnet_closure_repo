@@ -85,7 +85,7 @@ pn.ui.edit.Edit = function(data, commands, fields, cfg, cache) {
    */
   this.log_ = pn.LogUtils.getLogger('pn.ui.edit.Edit');
 
-  this.normaliseDateOnlyFields_(data);  
+  this.normaliseDateOnlyFields_(data);
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
@@ -160,7 +160,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(element, div);
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
-  this.decorateFields_(div);  
+  this.decorateFields_(div);
 
   goog.style.showElement(div, true);
 };
@@ -230,7 +230,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 /**
  * @private
  * @param {!pn.ui.edit.Field} field The field to create a dom tree for.
- * @param {!(Element|goog.ui.Component)} input The element to attach the 
+ * @param {!(Element|goog.ui.Component)} input The element to attach the
  *    change listener to.
  */
 pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
@@ -261,7 +261,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 
 /** @return {!Array.<string>} Any errors in the form. */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
-  var errors = [];  
+  var errors = [];
   goog.array.forEach(this.getEditableFields_(), function(f) {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
     var error;

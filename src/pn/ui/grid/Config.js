@@ -6,7 +6,7 @@ goog.provide('pn.ui.grid.Config');
 /**
  * @constructor
  * @param {string} type The entity types of this grid.
- * @param {string=} opt_hashPrefix An optional string prefix to use for the 
+ * @param {string=} opt_hashPrefix An optional string prefix to use for the
  *    grid hash.
  */
 pn.ui.grid.Config = function(type, opt_hashPrefix) {

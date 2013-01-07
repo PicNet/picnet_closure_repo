@@ -51,10 +51,10 @@ pn.ui.UiSpec.prototype.getSearchFields = function() {
 };
 
 
-/** 
+/**
  * @param {boolean} isNew If Add or Edit.
  * @param {Object} cache The current context cache.
- * @return {!Array.<pn.ui.edit.Field>} The edit fields to display. 
+ * @return {!Array.<pn.ui.edit.Field>} The edit fields to display.
  */
 pn.ui.UiSpec.prototype.getEditFields = function(isNew, cache) {
   return []; };
@@ -63,7 +63,7 @@ pn.ui.UiSpec.prototype.getEditFields = function(isNew, cache) {
 /**
  * Gets a default grid config with the specified width
  * @param {number} width The width of this grid.  This cannot be generic.
- * @param {string=} opt_hashPrefix An optional string prefix to use for the 
+ * @param {string=} opt_hashPrefix An optional string prefix to use for the
  *    grid hash.
  * @return {!pn.ui.grid.Config} The grid configuration.
  */
@@ -98,7 +98,7 @@ pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
 pn.ui.UiSpec.prototype.getGridCommands = function() {
   return [
     new pn.ui.grid.Command('Add', pn.ui.grid.Grid.EventType.ADD),
-    new pn.ui.grid.Command('Clear Filters', 
+    new pn.ui.grid.Command('Clear Filters',
         pn.ui.grid.Grid.EventType.CLEAR_FILTERS),
     new pn.ui.grid.ExportCommand()
   ];

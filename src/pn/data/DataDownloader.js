@@ -3,11 +3,13 @@ goog.provide('pn.data.DataDownloader');
 
 goog.require('goog.net.IframeIo');
 
-/** 
+
+/**
  * @private
  * @type {goog.net.IframeIo}
  */
 pn.data.DataDownloader.io_ = null;
+
 
 /**
  * @param {string} url The export http GET url.
@@ -35,5 +37,5 @@ pn.data.DataDownloader.send = function(url, data, opt_cb) {
   goog.events.listenOnce(
       pn.data.DataDownloader.io_, goog.net.EventType.COMPLETE, cb);
   pn.data.DataDownloader.io_.send(url, 'POST', true, data);
-  goog.Timer.callOnce(dispose, 20000);  
+  goog.Timer.callOnce(dispose, 20000);
 };

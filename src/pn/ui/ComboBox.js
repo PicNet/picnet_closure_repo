@@ -1,9 +1,9 @@
-﻿
+﻿;
 goog.provide('pn.ui.ComboBox');
 goog.provide('pn.ui.ComboBox.EventType');
 
-goog.require('goog.ui.ComboBox');
 goog.require('goog.events.Event');
+goog.require('goog.ui.ComboBox');
 
 
 
@@ -64,24 +64,25 @@ pn.ui.ComboBox.prototype.enterDocument = function() {
   handler.listen(this, goog.events.EventType.CHANGE, this.onChanged_);
   pn.ui.ComboBox.superClass_.enterDocument.call(this);
 
-  handler.listen(this.getMenu(), 
+  handler.listen(this.getMenu(),
       goog.ui.Component.EventType.ACTION, this.fireChangeEvent_);
 };
 
 
 /** @private */
-pn.ui.ComboBox.prototype.onChanged_ = function() {  
-  if (this.ignoreChange_) return;  
+pn.ui.ComboBox.prototype.onChanged_ = function() {
+  if (this.ignoreChange_) return;
 
   var idx = this.getMenu().getHighlightedIndex();
-  if (idx < 0) {     
-    this.selectedModel_ = null; 
+  if (idx < 0) {
+    this.selectedModel_ = null;
     this.fireChangeEvent_();
   } else {
     var cbi = this.getMenu().getChildAt(idx);
     this.selectedModel_ = cbi.getModel();
-  }    
+  }
 };
+
 
 /** @private */
 pn.ui.ComboBox.prototype.fireChangeEvent_ = function() {
@@ -89,12 +90,14 @@ pn.ui.ComboBox.prototype.fireChangeEvent_ = function() {
   this.dispatchEvent(event);
 };
 
+
 /** @inheritDoc */
 pn.ui.ComboBox.prototype.disposeInternal = function() {
   pn.ui.ComboBox.superClass_.disposeInternal.call(this);
 
   delete this.selectedModel_;
 };
+
 
 /** @enum {string} */
 pn.ui.ComboBox.EventType = {

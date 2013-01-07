@@ -77,6 +77,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
   return textarea;
 };
 
+
 /**
  * @param {*} val The text to display.
  * @param {Object} entity The Entity being displayed.
@@ -84,10 +85,11 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
  * @param {boolean=} opt_search If this field is being created in search mode.
  * @return {!Element} The textarea control.
  */
-pn.ui.edit.FieldRenderers.noRenderer = 
+pn.ui.edit.FieldRenderers.noRenderer =
     function(val, entity, parent, opt_search) {
   return goog.dom.createDom('div');
 };
+
 
 /**
  * @param {*} val The text to display.
@@ -184,15 +186,15 @@ pn.ui.edit.FieldRenderers.standardTextSearchField = function(parent) {
  *    points to the parent entity (not the admin entity).
  * @param {string} adminEntity The admin entity table name.
  * @param {Object} cache The cache.
- * @return {function(*, !Object, !Element):!Element} The many to many list 
+ * @return {function(*, !Object, !Element):!Element} The many to many list
  *    box renderer.
  */
 pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     function(mappingEntity, parentIdField, adminEntity, cache) {
   var renderer = function(val, entity, parent) {
-    var manyToManys = goog.array.filter(cache[mappingEntity], 
+    var manyToManys = goog.array.filter(cache[mappingEntity],
         function(mm) { return mm[parentIdField] === entity['ID']; });
-    var adminIDs = goog.array.map(manyToManys, 
+    var adminIDs = goog.array.map(manyToManys,
         function(mm) { return mm[adminEntity + 'ID']; });
 
     // Setting the value in the dataProperty of the fctx so that dirty
@@ -205,7 +207,7 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
       var opt = goog.dom.createDom('option', {
         'text': text,
         'value': ae['ID'],
-        'selected': goog.array.findIndex(adminIDs, 
+        'selected': goog.array.findIndex(adminIDs,
             function(adminID) { return ae['ID'] === adminID; }) >= 0
       });
       select.options.add(opt);
