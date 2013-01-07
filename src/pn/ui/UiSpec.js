@@ -63,10 +63,12 @@ pn.ui.UiSpec.prototype.getEditFields = function(isNew, cache) {
 /**
  * Gets a default grid config with the specified width
  * @param {number} width The width of this grid.  This cannot be generic.
+ * @param {string=} opt_hashPrefix An optional string prefix to use for the 
+ *    grid hash.
  * @return {!pn.ui.grid.Config} The grid configuration.
  */
-pn.ui.UiSpec.prototype.getGridConfig = function(width) {
-  var cfg = new pn.ui.grid.Config(this.type);
+pn.ui.UiSpec.prototype.getGridConfig = function(width, opt_hashPrefix) {
+  var cfg = new pn.ui.grid.Config(this.type, opt_hashPrefix);
   cfg.width = width;
   return cfg;
 };

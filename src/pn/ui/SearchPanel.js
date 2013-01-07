@@ -242,7 +242,8 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
   if (!showing) {
     this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
   }
-  goog.net.cookies.set('search-panel-visible', showing.toString());
+  goog.net.cookies.set('search-panel-visible', 
+      showing.toString(), 60 * 60 * 24 * 90);
   if (!this.resizeShow_) {
     var dur = 175;
     var rh = goog.fx.dom.ResizeHeight;
@@ -281,7 +282,7 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
   var saved = goog.json.serialize(filters);
-  goog.net.cookies.set('search-panel-filters', saved);
+  goog.net.cookies.set('search-panel-filters', saved, 60 * 60 * 24 * 90);
   var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
   event.filters = filters;
   this.dispatchEvent(event);

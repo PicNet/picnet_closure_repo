@@ -49,8 +49,8 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
    * @const
    * @type {string}
    */
-  this.hash_ = /** @type {string} */ (goog.array.reduce(uniqueColIds,
-      function(acc, f) { return acc + f; }, ''));
+  this.hash_ = cfg.hashPrefix + /** @type {string} */ (goog.array.reduce(
+      uniqueColIds, function(acc, f) { return acc + f; }, ''));
 
   /**
    * @private
@@ -543,13 +543,13 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
 
   var dv = this.dataView_;
   var qf = this.quickFilters_;
-
+  var hash = this.hash_;
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
-      function() {
+      function() {        
         qf[this['data-id']] = $.trim(
             /** @type {string} */ ($(this).val())).toLowerCase();        
-        goog.net.cookies.set('saved-quick-filters:' + this.hash_, 
-            goog.json.serialize(qf));
+        goog.net.cookies.set('saved-quick-filters:' + hash, 
+            goog.json.serialize(qf), 60 * 60 * 24 * 90);
         dv.refresh();
       });
 
@@ -565,7 +565,8 @@ pn.ui.grid.Grid.prototype.saveGridState_ = function() {
     'widths': goog.array.map(columns, function(c) { return c.width; }),
     'sort': this.sort_
   };
-  goog.net.cookies.set(this.hash_, goog.json.serialize(data));
+  goog.net.cookies.set(this.hash_, 
+      goog.json.serialize(data), 60 * 60 * 24 * 90);
 };
 
 
