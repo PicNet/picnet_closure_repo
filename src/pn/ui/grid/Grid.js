@@ -41,7 +41,6 @@ pn.ui.grid.Grid = function(list, cols, commands, cfg, cache) {
       'All column IDs should be unique. Grid type: ' + cfg.type);
   goog.asserts.assert(cfg);
   goog.asserts.assert(cache);
-
   goog.ui.Component.call(this);
 
   /**
@@ -366,7 +365,13 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.selectionHandler_ = goog.bind(this.handleSelection_, this);
     this.slick_.onSelectedRowsChanged.subscribe(this.selectionHandler_);
     goog.array.forEach(this.commands_, function(c) {
-      this.eh_.listen(c, c.eventType, function(e) { this.dispatchEvent(e); });
+      this.eh_.listen(c, c.eventType, function(e) { 
+        if (e.type === pn.ui.grid.Grid.EventType.CLEAR_FILTERS) {
+          this.clearFilters_();
+        } else {
+          this.dispatchEvent(e); 
+        }
+      });
     }, this);
   }
   // Sorting
@@ -425,6 +430,15 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
 
   if (this.cfg_.sortable) { this.setGridInitialSortState_(); }
   this.setGridInitialFilterState_();
+};
+
+/** @private */
+pn.ui.grid.Grid.prototype.clearFilters_ = function() {
+  this.quickFilters_ = {};
+  goog.net.cookies.set('saved-quick-filters:' + this.hash_, '{}', 
+      60 * 60 * 24 * 90);
+  $(this.slick_.getHeaderRow()).find(':input').val('');
+  this.dataView_.refresh();
 };
 
 /** @private */
@@ -541,16 +555,14 @@ pn.ui.grid.Grid.prototype.initFiltersRow_ = function() {
     goog.dom.appendChild(header, input);
   }
 
-  var dv = this.dataView_;
-  var qf = this.quickFilters_;
-  var hash = this.hash_;
+  var that = this;      
   $(this.slick_.getHeaderRow()).delegate(':input', 'change keyup',
       function() {        
-        qf[this['data-id']] = $.trim(
+        that.quickFilters_[this['data-id']] = $.trim(
             /** @type {string} */ ($(this).val())).toLowerCase();        
-        goog.net.cookies.set('saved-quick-filters:' + hash, 
-            goog.json.serialize(qf), 60 * 60 * 24 * 90);
-        dv.refresh();
+        goog.net.cookies.set('saved-quick-filters:' + that.hash_, 
+            goog.json.serialize(that.quickFilters_), 60 * 60 * 24 * 90);
+        that.dataView_.refresh();
       });
 
   this.resizeFiltersRow_();
@@ -684,5 +696,6 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 pn.ui.grid.Grid.EventType = {
   ROW_SELECTED: 'row-selected',
   ADD: 'add',
-  EXPORT_DATA: 'export-data'
+  EXPORT_DATA: 'export-data',
+  CLEAR_FILTERS: 'clear-filters'
 };

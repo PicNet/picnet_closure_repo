@@ -98,6 +98,8 @@ pn.ui.UiSpec.prototype.getEditCommands = function(entity, opt_cache) {
 pn.ui.UiSpec.prototype.getGridCommands = function() {
   return [
     new pn.ui.grid.Command('Add', pn.ui.grid.Grid.EventType.ADD),
+    new pn.ui.grid.Command('Clear Filters', 
+        pn.ui.grid.Grid.EventType.CLEAR_FILTERS),
     new pn.ui.grid.ExportCommand()
   ];
 };
