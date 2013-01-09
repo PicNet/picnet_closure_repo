@@ -14,7 +14,7 @@ goog.provide('pn.LogUtils');
  * @const
  * @type {boolean}
  */
-pn.LogUtils.OFF_ = true;
+pn.LogUtils.OFF_ = false;
 
 
 /**

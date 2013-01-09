@@ -110,7 +110,8 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
  */
 pn.data.EntityFilter.prototype.processStep_ =
     function(property, parentType, source, isFinal) {
-  this.dbg_('processStep_: ' + goog.debug.expose(arguments));
+  this.dbg_('processStep_: property: ' + property + ' parentType: ' +
+      parentType + ' source: ' + source + ' isFinal: ' + isFinal);
 
   var type = this.getStepType_(property);
   if (type && !this.cache_[type])
@@ -119,11 +120,17 @@ pn.data.EntityFilter.prototype.processStep_ =
   var result;
   // Children Entities
   if (goog.string.endsWith(property, 'Entities')) {
-    this.dbg_('\tprocessStep_ Children Entities [' + type +
-        '] parentType [' + parentType + ']');
     result = goog.array.filter(this.cache_[type], function(e) {
-      return e[parentType + 'ID'] === source['ID'];
+      if (goog.isArray(source)) {
+        var idx = goog.array.findIndex(source,
+            function(s) { return e[parentType + 'ID'] === s['ID']; });
+        return idx >= 0;
+      } else {
+        return e[parentType + 'ID'] === source['ID'];
+      }
     }, this);
+    this.dbg_('\tprocessStep_ Children Entities [' + type +
+        ':' + result.length + '] parentType [' + parentType + ']');
   }
   // Parent Entity
   else if (!isFinal && property !== 'ID' &&
@@ -188,9 +195,11 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     this.dbg_('matchesFilter_ null entity value');
     return false;
   }
-  this.dbg_('matchesFilter_: ' + goog.debug.expose(arguments));
+  this.dbg_('matchesFilter_: entityValue:' +
+      entityValue + ' filterValue: ' + filterValue);
   var matcher = function(ev, fv, exact) {
-    this.dbg_('matchesFilter_.matcher: ' + goog.debug.expose(arguments));
+    this.dbg_('matchesFilter_.matcher: ev: ' +
+        ev + ' fv: ' + fv + ' exact: ' + exact);
     if (ev['ID']) return ev['ID'].toString() === fv;
     var evaled = ev.toString().toLowerCase();
     if (exact) return evaled === fv;
@@ -218,7 +227,8 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 pn.data.EntityFilter.prototype.singleEntityMatches_ =
     function(filterVal, entityVal, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleEntityMatches_: ' + goog.debug.expose(arguments));
+  this.dbg_('singleEntityMatches_: filterVal: ' +
+      filterVal + ' entityVal: ' + entityVal);
 
   if (goog.isArray(filterVal)) {
     return goog.array.findIndex(filterVal, function(fv) {
@@ -244,8 +254,8 @@ pn.data.EntityFilter.prototype.singleEntityMatches_ =
 pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
     function(filterVal, entityVal, exact, predicate) {
   if (!goog.isDefAndNotNull(entityVal)) return false;
-  this.dbg_('singleFilterValueMatches_: ' +
-      goog.debug.expose(arguments));
+  this.dbg_('singleFilterValueMatches_: filterVal: ' +
+      filterVal + ' entityVal: ' + entityVal + ' exact: ' + exact);
 
   if (!filterVal || filterVal === '0') return true;
   filterVal = filterVal.toLowerCase();
