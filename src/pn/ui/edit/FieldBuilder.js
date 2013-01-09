@@ -95,6 +95,13 @@ pn.ui.edit.FieldBuilder.createAndAttach =
   if (entity && !entity['ID'] && goog.isDef(field.defaultValue)) {
     elem.value = field.defaultValue;
   }
+  if (field.hintText) {
+    var label = goog.dom.getChildren(parent)[0];
+    var txt = field.hintText.replace(/\n/g, '<br />');
+    var ht = goog.dom.createDom('div', 'hint-text');
+    ht.innerHTML = txt;
+    goog.dom.appendChild(label, ht);
+  }
   return elem;
 };
 
