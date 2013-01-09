@@ -86,7 +86,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   while (true) {
     var step = steps.shift();
     if (!step) break;
-    result = this.processStep_(step, parentType, result, step.length === 0);
+    result = this.processStep_(step, parentType, result, steps.length === 0);
     this.dbg_('process step result: ' + goog.debug.expose(result));
     if (!goog.isDefAndNotNull(result)) {
       this.dbg_('returning as is null');
@@ -113,13 +113,14 @@ pn.data.EntityFilter.prototype.processStep_ =
   this.dbg_('processStep_: property: ' + property + ' parentType: ' +
       parentType + ' source: ' + source + ' isFinal: ' + isFinal);
 
-  var type = this.getStepType_(property);
-  if (type && !this.cache_[type])
-    throw new Error('Could not find ' + type + ' in the cache.');
-
-  var result;
+  var type,
+      result;
   // Children Entities
   if (goog.string.endsWith(property, 'Entities')) {
+    type = this.getStepType_(property);
+    if (type && !this.cache_[type])
+      throw new Error('Could not find ' + type + ' in the cache.');
+
     result = goog.array.filter(this.cache_[type], function(e) {
       if (goog.isArray(source)) {
         var idx = goog.array.findIndex(source,
@@ -135,6 +136,9 @@ pn.data.EntityFilter.prototype.processStep_ =
   // Parent Entity
   else if (!isFinal && property !== 'ID' &&
       goog.string.endsWith(property, 'ID')) {
+    type = this.getStepType_(property);
+    if (type && !this.cache_[type])
+      throw new Error('Could not find ' + type + ' in the cache.');
     this.dbg_('\tprocessStep_ Parent Entity type [' + type + ']');
     var getChild = goog.bind(function(sourceEntity) {
       if (!sourceEntity) return null;
