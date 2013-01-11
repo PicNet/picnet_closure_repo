@@ -262,6 +262,7 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 /** @return {!Array.<string>} Any errors in the form. */
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
+  var entity = this.getCurrentFormData();
   goog.array.forEach(this.getEditableFields_(), function(f) {
     var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
     var error;
@@ -271,7 +272,8 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
         errors = goog.array.concat(errors, error);
       }
     } else {
-      error = pn.ui.edit.FieldValidator.validateFieldValue(f, val);
+      error = pn.ui.edit.FieldValidator.validateFieldValue(
+          f, val, entity, this.cache_);
       if (error) errors.push(error);
     }
   }, this);

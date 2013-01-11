@@ -5,10 +5,12 @@ goog.provide('pn.ui.edit.FieldValidator');
 /**
  * @param {pn.ui.edit.Field} field The Field to validate.
  * @param {*} value The value of the field in the current form.
+ * @param {Object} entity The entity being validated (with all form values).
+ * @param {!Object.<Array>} cache The data cache to use for related entities.
  * @return {string} Any error (if any) for the specified field.
  */
 pn.ui.edit.FieldValidator.validateFieldValue =
-    function(field, value) {
+    function(field, value, entity, cache) {
   if (!field.validator && field.renderer &&
       typeof(field.renderer) === 'object') { // ComplexRenderer
     field.validator = goog.bind(field.renderer.validate, field.renderer);
@@ -19,7 +21,9 @@ pn.ui.edit.FieldValidator.validateFieldValue =
         goog.bind(field.validator.validateField, field.validator);
   }
   var func = /** @type {
-      function(pn.ui.edit.Field,*):string} */
+      function(pn.ui.edit.Field, *, Object, !Object.<Array>):
+          !(string|Array.<string>)} */
       (field.validator);
-  return func(field, value);
+  var err = func(field, value, entity, cache);
+  return goog.isArray(err) ? err.join('<br/>') : err;
 };
