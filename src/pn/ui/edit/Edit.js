@@ -273,7 +273,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
       }
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
-          f, val, entity, this.cache_);
+          f, val, entity, this.cache_, this.data_);
       if (error) errors.push(error);
     }
   }, this);

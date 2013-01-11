@@ -29,7 +29,8 @@ pn.ui.edit.Field = function(id, name) {
   this.renderer = null;
 
   /** @type {null|pn.ui.edit.ValidateInfo|
-      function(pn.ui.edit.Field, *, Object, !Object.<Array>):(string|Array)} */
+      function(pn.ui.edit.Field, *, Object, !Object.<Array>, Object):
+          (string|Array)} */
   this.validator = null;
 
   /** @type {null|function(string, !(Element|goog.ui.Component), Object,
