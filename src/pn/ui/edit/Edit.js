@@ -271,6 +271,11 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
       if (goog.isArrayLike(error)) {
         errors = goog.array.concat(errors, error);
       }
+      if (f.validator) {
+        error = pn.ui.edit.FieldValidator.validateFieldValue(
+            f, val, entity, this.cache_, this.data_);
+        if (error) errors.push(error);
+      }
     } else {
       error = pn.ui.edit.FieldValidator.validateFieldValue(
           f, val, entity, this.cache_, this.data_);
