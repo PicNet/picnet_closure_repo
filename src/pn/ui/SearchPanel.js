@@ -25,12 +25,21 @@ goog.require('pn.ui.grid.Grid.EventType');
  *    list.
  * @param {!Object.<Array>} cache The entities cache used for showin parental
  *    properties in the filters.
+ * @param {string} id A unique identifier for this page (to allow multiple
+ *    pages to use filters).
  */
-pn.ui.SearchPanel = function(filters, cache) {
+pn.ui.SearchPanel = function(filters, cache, id) {
   goog.asserts.assert(filters);
   goog.asserts.assert(cache);
+  goog.asserts.assert(id);
 
   goog.ui.Component.call(this);
+
+  /**
+   * @private
+   * @type {string}
+   */
+  this.uniqueId_ = id;
 
   /**
    * @private
@@ -139,7 +148,8 @@ pn.ui.SearchPanel.prototype.createDom = function() {
 pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
-  var visible = goog.net.cookies.get('search-panel-visible') !== 'false';
+  var id = 'search-panel-visible:' + this.uniqueId_;
+  var visible = goog.net.cookies.get(id) !== 'false';
   var msg = visible ? 'Hide Filters' : 'Show Filters';
   this.toggle_ = goog.dom.createDom('a', 'search-toggle', msg);
   this.searchPanel_ = goog.dom.createDom('div', 'search-panel');
@@ -156,7 +166,7 @@ pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
 
 /** @private */
 pn.ui.SearchPanel.prototype.applySavedFilters_ = function() {
-  var saved = goog.net.cookies.get('search-panel-filters');
+  var saved = goog.net.cookies.get('search-panel-filters:' + this.uniqueId_);
   if (!saved) return;
   var dict = goog.json.unsafeParse(saved);
   if (goog.object.isEmpty(dict)) return;
@@ -244,7 +254,7 @@ pn.ui.SearchPanel.prototype.toggleFiltersPanel_ = function() {
   if (!showing) {
     this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
   }
-  goog.net.cookies.set('search-panel-visible',
+  goog.net.cookies.set('search-panel-visible:' + this.uniqueId_,
       showing.toString(), 60 * 60 * 24 * 90);
   if (!this.resizeShow_) {
     var dur = 175;
@@ -284,7 +294,8 @@ pn.ui.SearchPanel.prototype.doSearch_ = function() {
     filters[cid] = goog.isString(val) ? val.toString() : val;
   }
   var saved = goog.json.serialize(filters);
-  goog.net.cookies.set('search-panel-filters', saved, 60 * 60 * 24 * 90);
+  goog.net.cookies.set('search-panel-filters:' + this.uniqueId_,
+      saved, 60 * 60 * 24 * 90);
   var event = new goog.events.Event(pn.ui.SearchPanel.SEARCH, this);
   event.filters = filters;
   this.dispatchEvent(event);
