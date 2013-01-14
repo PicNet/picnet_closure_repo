@@ -1,6 +1,7 @@
 
 HI
 ==
+- yesNoRenderers cannot save '0' as bools in data layer are not nullable
 - Use Schema to build default controls.
 - Refactor Edit.js and the whole FieldBuilders / FieldRenderers mess
 - Creater a wrapper for the {value, field, entity, cache} params which are seen
