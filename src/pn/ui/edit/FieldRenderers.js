@@ -116,6 +116,9 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(field) {
       );
   var val = field.getEntityValue();
   sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
+  sel.getValue = function() {
+    return sel.value === '0' ? null : sel.value;
+  };
   goog.dom.appendChild(field.parentComponent, sel);
   return sel;
 };
