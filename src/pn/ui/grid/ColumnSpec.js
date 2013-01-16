@@ -2,7 +2,6 @@
 goog.provide('pn.ui.grid.ColumnSpec');
 
 goog.require('pn.ui.BaseFieldSpec');
-goog.require('pn.ui.UiSpec');
 
 
 

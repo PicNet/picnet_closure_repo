@@ -5,6 +5,8 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.style');
 goog.require('pn.data.TypeRegister');
+goog.require('pn.ui.edit.FieldCtx');
+goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.grid.cmd.Command');
 goog.require('pn.ui.grid.cmd.ExportCommand');

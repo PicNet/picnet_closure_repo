@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.web.BaseWebApp');
+goog.provide('pn.web.ctx');
 
 goog.require('pn.app.BaseApp');
 goog.require('pn.app.WebAppConfig');
@@ -25,6 +26,7 @@ goog.require('pn.web.WebAppEvents');
 pn.web.BaseWebApp = function(opt_cfg) {
   pn.ass(pn.web.ctx === null, 'Only a single instance of base app supported');
 
+  /** @type {pn.web.BaseWebApp} */
   pn.web.ctx = this;
 
   var cfg = new pn.app.WebAppConfig(opt_cfg);

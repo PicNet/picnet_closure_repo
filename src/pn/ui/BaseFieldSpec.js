@@ -5,7 +5,6 @@ goog.require('goog.Disposable');
 goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('pn.data.EntityUtils');
-goog.require('pn.ui.UiSpec');
 
 
 

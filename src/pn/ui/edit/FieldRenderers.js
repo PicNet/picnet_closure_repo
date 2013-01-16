@@ -1,7 +1,5 @@
 ﻿;
 goog.require('goog.date.DateTime');
-goog.require('goog.ui.InputDatePicker');
-goog.require('goog.ui.LabelInput');
 goog.require('pn.convert');
 goog.require('pn.date');
 goog.require('pn.ui.InputDatePicker');

@@ -2,6 +2,7 @@
 goog.provide('pn.data.LazyFacade');
 
 goog.require('pn.data.BaseFacade');
+goog.require('pn.data.Query');
 
 
 

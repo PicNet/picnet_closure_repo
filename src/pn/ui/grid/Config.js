@@ -1,7 +1,6 @@
 ﻿;
 goog.provide('pn.ui.grid.Config');
 
-goog.require('pn.ui.UiSpec');
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Interceptor');
 

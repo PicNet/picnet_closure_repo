@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.edit.Config');
 
+goog.require('pn.ui.edit.CommandsComponent');
 goog.require('pn.ui.edit.cmd.BackCommand');
 goog.require('pn.ui.edit.cmd.CloneCommand');
 goog.require('pn.ui.edit.cmd.Command');
