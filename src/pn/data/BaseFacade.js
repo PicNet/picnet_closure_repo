@@ -2,7 +2,7 @@
 goog.provide('pn.data.BaseFacade');
 
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventTarget');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.data.Entity');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.PnQuery');
@@ -16,7 +16,7 @@ goog.require('pn.web.WebAppEvents');
  * An optimistic (Client assumes the server will succeed) Facade.
  *
  * @constructor
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  * @param {!pn.data.LocalCache} cache The local cache.
  * @param {!pn.data.Server} server The remote server source.
  */
@@ -24,7 +24,7 @@ pn.data.BaseFacade = function(cache, server) {
   pn.assInst(cache, pn.data.LocalCache);
   pn.assInst(server, pn.data.Server);
 
-  goog.events.EventTarget.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @protected
@@ -48,13 +48,6 @@ pn.data.BaseFacade = function(cache, server) {
 
   /**
    * @private
-   * @type {goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler();
-  this.registerDisposable(this.eh_);
-
-  /**
-   * @private
    * @type {number}
    */
   this.timerid_ = 0;
@@ -62,7 +55,7 @@ pn.data.BaseFacade = function(cache, server) {
   this.proxyServerEvents_();
   this.startUpdateInterval_();
 };
-goog.inherits(pn.data.BaseFacade, goog.events.EventTarget);
+goog.inherits(pn.data.BaseFacade, pn.app.EventHandlerTarget);
 
 ////////////////////////////////////////////////////////////////////////////////
 // PUBLIC INTERFACE
@@ -328,7 +321,7 @@ pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
 /** @private */
 pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
   goog.object.forEach(pn.data.Server.EventType, function(et) {
-    this.eh_.listen(this.server, et, this.dispatchEvent, false, this);
+    this.listen(this.server, et, this.dispatchEvent, false, this);
   }, this);
 };
 

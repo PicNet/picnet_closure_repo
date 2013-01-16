@@ -2,8 +2,8 @@
 goog.provide('pn.mvc.ModelBase');
 
 goog.require('goog.async.Delay');
-goog.require('goog.events.EventTarget');
 goog.require('pn');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.mvc.Change');
 goog.require('pn.mvc.ChangeEvent');
 
@@ -11,7 +11,7 @@ goog.require('pn.mvc.ChangeEvent');
 
 /**
  * @constructor
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  */
 pn.mvc.ModelBase = function() {
 
@@ -28,7 +28,7 @@ pn.mvc.ModelBase = function() {
    */
   this.changes_ = [];
 };
-goog.inherits(pn.mvc.ModelBase, goog.events.EventTarget);
+goog.inherits(pn.mvc.ModelBase, pn.app.EventHandlerTarget);
 
 
 /** @return {!Array} The changes since last time getChanges were called. */

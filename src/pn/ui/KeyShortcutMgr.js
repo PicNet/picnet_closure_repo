@@ -8,10 +8,10 @@ goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventHandler}
  */
 pn.ui.KeyShortcutMgr = function() {
-  goog.Disposable.call(this);
+  goog.events.EventHandler.call(this);
 
   /**
    * @private
@@ -19,13 +19,6 @@ pn.ui.KeyShortcutMgr = function() {
    */
   this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
   this.registerDisposable(this.shortcuts_);
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eh_);
 
   /**
    * @private
@@ -41,7 +34,7 @@ pn.ui.KeyShortcutMgr = function() {
 
   this.enable();
 };
-goog.inherits(pn.ui.KeyShortcutMgr, goog.Disposable);
+goog.inherits(pn.ui.KeyShortcutMgr, goog.events.EventHandler);
 
 
 /**
@@ -104,7 +97,7 @@ pn.ui.KeyShortcutMgr.prototype.disable =
  */
 pn.ui.KeyShortcutMgr.prototype.setAllEnabled_ = function(enabled) {
   var eventType = goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED;
-  var func = goog.bind(enabled ? this.eh_.listen : this.eh_.unlisten, this.eh_);
+  var func = goog.bind(enabled ? this.listen : this.unlisten, this);
   func(this.shortcuts_, eventType, this.handleShortcut_);
 };
 

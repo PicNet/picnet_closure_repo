@@ -5,15 +5,15 @@ goog.provide('pn.app.Router.EventType');
 goog.require('goog.History');
 goog.require('goog.asserts');
 goog.require('goog.events.Event');
-goog.require('goog.events.EventHandler');
 goog.require('goog.history.EventType');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.log');
 
 
 
 /**
  * @constructor
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
  * @param {(boolean|string)=} opt_invisible True to use hidden history
@@ -21,7 +21,7 @@ goog.require('pn.log');
  *    string of the hidden iframe url.
  */
 pn.app.Router = function(opt_defaultRoute, opt_invisible) {
-  goog.events.EventTarget.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private
@@ -40,13 +40,6 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
 
   /**
    * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eh_);
-
-  /**
-   * @private
    * @type {!Array}
    */
   this.stack_ = [];
@@ -60,7 +53,7 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
           opt_invisible : 'blank.htm') : '');
   this.registerDisposable(this.history_);
 };
-goog.inherits(pn.app.Router, goog.events.EventTarget);
+goog.inherits(pn.app.Router, pn.app.EventHandlerTarget);
 
 
 /**
@@ -177,10 +170,10 @@ pn.app.Router.prototype.undoLastNavigation_ = function() {
  */
 pn.app.Router.prototype.setEnabled_ = function(enabled) {
   var historyEvent = goog.history.EventType.NAVIGATE;
-  this.eh_.unlisten(this.history_, historyEvent, this.onNavigate_);
+  this.unlisten(this.history_, historyEvent, this.onNavigate_);
   if (!enabled) { return; }
 
-  this.eh_.listen(this.history_, historyEvent, this.onNavigate_);
+  this.listen(this.history_, historyEvent, this.onNavigate_);
 };
 
 

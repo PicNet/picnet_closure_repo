@@ -19,13 +19,6 @@ pn.mvc.Collection = function(opt_initial) {
 
   /**
    * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler();
-  this.registerDisposable(this.eh_);
-
-  /**
-   * @private
    * @type {!Array.<!pn.mvc.ModelBase>}
    */
   this.src_ = opt_initial || [];
@@ -111,7 +104,7 @@ pn.mvc.Collection.prototype.intern_ = function(model) {
   if (!(model instanceof pn.mvc.ModelBase)) return;
 
   var eventType = pn.mvc.EventType.CHANGE;
-  this.eh_.listen(model, eventType, this.childChanged_.pnbind(this));
+  this.listen(model, eventType, this.childChanged_.pnbind(this));
   this.registerDisposable(model);
 };
 

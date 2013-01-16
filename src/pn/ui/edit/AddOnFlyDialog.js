@@ -4,8 +4,8 @@ goog.provide('pn.ui.edit.AddOnFlyDialog.EventType');
 
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventTarget');
 goog.require('goog.ui.Dialog');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.ui.Dialog');
 goog.require('pn.ui.edit.Edit');
 
@@ -13,7 +13,7 @@ goog.require('pn.ui.edit.Edit');
 
 /**
  * @constructor
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  * @param {!pn.ui.UiSpec} spec The spec to display in this add on the fly
  *    control.
  * @param {!pn.data.BaseDalCache} cache The current context cache.
@@ -25,7 +25,7 @@ pn.ui.edit.AddOnFlyDialog = function(spec, cache, entity) {
   pn.assInst(cache, pn.data.BaseDalCache);
   pn.assInst(entity, pn.data.Entity);
 
-  goog.events.EventTarget.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private
@@ -50,15 +50,8 @@ pn.ui.edit.AddOnFlyDialog = function(spec, cache, entity) {
    * @type {pn.ui.Dialog}
    */
   this.dialog_ = null;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eh_);
 };
-goog.inherits(pn.ui.edit.AddOnFlyDialog, goog.events.EventTarget);
+goog.inherits(pn.ui.edit.AddOnFlyDialog, pn.app.EventHandlerTarget);
 
 
 /** Shows the dialog */
@@ -76,7 +69,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
 
   this.dialog_.setVisible(true);
 
-  this.eh_.listen(this.dialog_, goog.ui.Dialog.EventType.SELECT, function(e) {
+  this.listen(this.dialog_, goog.ui.Dialog.EventType.SELECT, function(e) {
     if (e.key === 'cancel') {
       // Ensure this dialog cannot be reused.
       goog.dispose(this);

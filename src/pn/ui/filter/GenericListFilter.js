@@ -1,9 +1,9 @@
 ;
-goog.require('goog.Disposable');
 goog.require('goog.Timer');
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
+goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.cookies');
 goog.require('goog.style');
@@ -18,7 +18,7 @@ goog.provide('pn.ui.filter.GenericListFilter');
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {goog.events.EventHandler}
  *
  * @param {Element} input The DOM input control that will trigger the filter.
  * @param {!Element} list The DOM list element to filter.
@@ -26,7 +26,7 @@ goog.provide('pn.ui.filter.GenericListFilter');
  *    apply to this filtering.
  */
 pn.ui.filter.GenericListFilter = function(input, list, options) {
-  goog.Disposable.call(this);
+  goog.events.EventHandler.call(this);
 
   /**
    * @protected
@@ -61,13 +61,6 @@ pn.ui.filter.GenericListFilter = function(input, list, options) {
 
   /**
    * @private
-   * @type {goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eh_);
-
-  /**
-   * @private
    * @type {!pn.ui.DelayedThrottleInputListener}
    */
   this.inputListener_ = new pn.ui.DelayedThrottleInputListener(
@@ -88,7 +81,7 @@ pn.ui.filter.GenericListFilter = function(input, list, options) {
 
   this.initialiseFilters(); // Initialise
 };
-goog.inherits(pn.ui.filter.GenericListFilter, goog.Disposable);
+goog.inherits(pn.ui.filter.GenericListFilter, goog.events.EventHandler);
 
 
 /**
@@ -134,7 +127,7 @@ pn.ui.filter.GenericListFilter.prototype.initialiseFilters = function() {
 pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     function() {
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
-  this.eh_.listen(this.inputListener_, eventtype, this.refresh);
+  this.listen(this.inputListener_, eventtype, this.refresh);
   this.filters.pnforEach(function(filter) {
     this.inputListener_.addInput(filter);
   }, this);
@@ -145,7 +138,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
         this.options['clearFiltersControls'][i] =
             this.options['clearFiltersControls'][i][0];
       }
-      this.eh_.listen(this.options['clearFiltersControls'][i],
+      this.listen(this.options['clearFiltersControls'][i],
           goog.events.EventType.CLICK, this.clearAllFilters, false, this);
     }
   }

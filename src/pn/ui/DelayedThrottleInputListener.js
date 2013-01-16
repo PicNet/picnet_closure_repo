@@ -4,8 +4,8 @@ goog.provide('pn.ui.DelayedThrottleInputListener');
 goog.require('goog.Timer');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventTarget');
 goog.require('goog.events.EventType');
+goog.require('pn.app.EventHandlerTarget');
 
 
 
@@ -13,12 +13,12 @@ goog.require('goog.events.EventType');
  * @constructor
  * @param {number} delay The delay to wait for further updates before raising
  *    a notification.
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  */
 pn.ui.DelayedThrottleInputListener = function(delay) {
   pn.assNum(delay);
 
-  goog.events.EventTarget.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private
@@ -49,15 +49,8 @@ pn.ui.DelayedThrottleInputListener = function(delay) {
    * @type {number}
    */
   this.timerId_ = 0;
-
-  /**
-   * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler(this);
-  this.registerDisposable(this.eh_);
 };
-goog.inherits(pn.ui.DelayedThrottleInputListener, goog.events.EventTarget);
+goog.inherits(pn.ui.DelayedThrottleInputListener, pn.app.EventHandlerTarget);
 
 
 /**
@@ -72,7 +65,7 @@ pn.ui.DelayedThrottleInputListener.prototype.addInput =
       goog.isString(opt_eventType));
 
   var eventType = opt_eventType || this.inferEventType_(inp);
-  this.eh_.listen(inp, eventType, this.onInputEvent_);
+  this.listen(inp, eventType, this.onInputEvent_);
 };
 
 

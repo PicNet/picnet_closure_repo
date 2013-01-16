@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.QuickFind');
 
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventTarget');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.ui.DelayedThrottleInputListener');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
@@ -13,7 +13,7 @@ goog.require('pn.ui.grid.ColumnSpec');
 
 /**
  * @constructor
- * @extends {goog.events.EventTarget}
+ * @extends {pn.app.EventHandlerTarget}
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
  * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column specs being
@@ -26,7 +26,7 @@ goog.require('pn.ui.grid.ColumnSpec');
  *    trigger a clear event that will clear all filters.
  */
 pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
-  goog.events.EventTarget.call(this);
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private
@@ -78,13 +78,6 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
 
   /**
    * @private
-   * @type {!goog.events.EventHandler}
-   */
-  this.eh_ = new goog.events.EventHandler();
-  this.registerDisposable(this.eh_);
-
-  /**
-   * @private
    * @type {!pn.ui.DelayedThrottleInputListener}
    */
   this.inputListener_ = new pn.ui.DelayedThrottleInputListener(250);
@@ -92,7 +85,7 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
 
   this.init_();
 };
-goog.inherits(pn.ui.grid.QuickFind, goog.events.EventTarget);
+goog.inherits(pn.ui.grid.QuickFind, pn.app.EventHandlerTarget);
 
 
 /**
@@ -150,7 +143,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
   }
 
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
-  this.eh_.listen(this.inputListener_, eventtype, this.refresh_.pnbind(this));
+  this.listen(this.inputListener_, eventtype, this.refresh_.pnbind(this));
   this.filterControls_.pnforEach(
       function(inp) { this.inputListener_.addInput(inp); }, this);
   if (this.quickfind_) {
@@ -159,7 +152,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
   }
   if (this.clear_) {
     var click = goog.events.EventType.CLICK;
-    this.eh_.listen(this.clear_, click, this.clearFilters_.pnbind(this));
+    this.listen(this.clear_, click, this.clearFilters_.pnbind(this));
   }
 
   this.resize();
