@@ -1,6 +1,7 @@
 ﻿;
+goog.provide('pn.data.EType');
 goog.provide('pn.data.Entity');
-goog.provide('pn.data.Entity.EntityType');
+goog.provide('pn.data.EntityCtor');
 
 goog.require('pn.data.FieldSchema');
 goog.require('pn.log');
@@ -76,13 +77,21 @@ pn.data.Entity.prototype.clone = function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 
+/** @typedef {function(new:pn.data.Entity, Object=):undefined} */
+pn.data.EntityCtor;
+
+
+/** @typedef {{fromCompressed: function(string):!pn.data.Entity}} */
+pn.data.EType;
+
+
 /**
- * @expose
  * @param {string} name The name of the field.
  * @return {pn.data.FieldSchema} The schema for the given field.
  */
 pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
 
 
-/** @typedef {function(new:pn.data.Entity, Object=):undefined} */
-pn.data.Entity.EntityType;
+/** @return {string} A compressed version of this entity. */
+pn.data.Entity.prototype.toCompressed = goog.abstractMethod;
+

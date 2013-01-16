@@ -41,7 +41,7 @@ var test_no_transaction_multi_save_query = function() {
     });
   }
   var took = goog.now() - start;
-  console.log('no transaction: %sms'.pnsubs(took));
+  console.debug('no transaction: %sms'.pnsubs(took));
 };
 
 var test_transacted_multi_save_query = function() {
@@ -54,7 +54,7 @@ var test_transacted_multi_save_query = function() {
   }
   cache.commit();
   var took = goog.now() - start;
-  console.log('transacted: %sms'.pnsubs(took));
+  console.debug('transacted: %sms'.pnsubs(took));
 };
         </script>
     </body>

@@ -107,7 +107,7 @@ var performanceTest = function(description, keys, opt_omapKey) {
         'Set: %sms\n' +
         'Get: %sms\n' +
         'Remove: %sms\n';
-  console.log(msg.pnsubs(description, len, omap_set_ms, omap_get_ms, 
+  console.debug(msg.pnsubs(description, len, omap_set_ms, omap_get_ms, 
       omap_remove_ms, ht_set_ms, ht_get_ms, ht_remove_ms)
   ); 
 };

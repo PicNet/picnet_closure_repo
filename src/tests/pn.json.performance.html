@@ -149,7 +149,7 @@ var performance = function(test, op) {
 
   var took = goog.now() - start;
   validateJson(json);
-  if (window.console) console.log('\n\n%s took: %sms\n\n'.pnsubs(test, took));
+  if (window.console) console.debug('\n\n%s took: %sms\n\n'.pnsubs(test, took));
   return took;
 };
 

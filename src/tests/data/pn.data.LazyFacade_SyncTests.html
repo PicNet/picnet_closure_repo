@@ -68,7 +68,6 @@ var test_create_in_1_can_be_updated_in_2_then_back_to_1 = function() {
   var created;
   facade1.createEntity(create(), function(created2) { created = created2; });  
   sync();  
-  console.log('created:',created);
   var cloned = goog.object.unsafeClone(created);
   cloned.newprop = 'newvalue';
 

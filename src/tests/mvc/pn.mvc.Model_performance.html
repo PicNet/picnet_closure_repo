@@ -22,7 +22,7 @@ var test_perf_of_model_creations = function() {
   for (var i = 0; i < iterations; i++) {
     new pn.mvc.Model({'1':1, '2':2, '3':2});
   }
-  console.log('model creation: %sms'.pnsubs(goog.now() - start));
+  console.debug('model creation: %sms'.pnsubs(goog.now() - start));
 };
 
 var test_perf_of_model_sets = function() {
@@ -35,7 +35,7 @@ var test_perf_of_model_sets = function() {
     models[i].set('1', i);
     models[i].fire();
   };
-  console.log('model set: %sms'.pnsubs(goog.now() - start));
+  console.debug('model set: %sms'.pnsubs(goog.now() - start));
 };
 
 var test_perf_of_model_setAlls = function() {
@@ -47,7 +47,7 @@ var test_perf_of_model_setAlls = function() {
   for (i = 0; i < iterations; i++) {
     models[i].setAll({'1': i, '2': i, '3': i});
   };
-  console.log('model setAll: %sms'.pnsubs(goog.now() - start));
+  console.debug('model setAll: %sms'.pnsubs(goog.now() - start));
 };
 
 var test_perf_of_collection_creations = function() {
@@ -61,7 +61,7 @@ var test_perf_of_collection_creations = function() {
     }
     collections.push(new pn.mvc.Collection(models));
   }
-  console.log('collection creation: %sms'.pnsubs(goog.now() - start));
+  console.debug('collection creation: %sms'.pnsubs(goog.now() - start));
 };
 
 var test_perf_of_collection_modifications = function() {
@@ -82,7 +82,7 @@ var test_perf_of_collection_modifications = function() {
     collections[i].fire();
     collections[i].get(1).setAll({'1': 100});
   }
-  console.log('collection modifications: %sms'.pnsubs(goog.now() - start));
+  console.debug('collection modifications: %sms'.pnsubs(goog.now() - start));
 };
 
 var asyncTestCase = goog.testing.AsyncTestCase.createAndInstall();

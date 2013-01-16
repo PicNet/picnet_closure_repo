@@ -360,9 +360,10 @@ pn.data.LocalCache.prototype.init_ = function() {
     }
 
     pn.assArr(rawList);
-
-    var list = pn.data.TypeRegister.parseEntities(query.Type, rawList);
-    this.cache_[query.Type] = list;
+    var type = pn.data.TypeRegister.getType(query.Type);
+    var entities = rawList.pnmap(
+        function(data) { return type.fromCompressed(data); });
+    this.cache_[query.Type] = entities;
   }
   queriesToRemove.pnforEach(function(qid) {
     delete this.cachedQueries_[qid];
@@ -380,7 +381,7 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var start = goog.now();
 
-  var list = this.cache_[type];
+  var list = this.cache_[type].pnmap(function(e) { return e.toCompressed(); });
   var json = pn.json.serialiseJson(list, true);
   this.log_.info('Adding type[%s] length[%s] json[%s] to cache'.
       pnsubs(type, list.length, json.length));

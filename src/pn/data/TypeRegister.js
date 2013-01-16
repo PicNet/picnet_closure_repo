@@ -6,14 +6,14 @@ goog.require('goog.asserts');
 
 /**
  * @private
- * @type {!Object.<pn.data.Entity.EntityType>}
+ * @type {!Object.<pn.data.EntityCtor>}
  */
 pn.data.TypeRegister.types_ = {};
 
 
 /**
  * @param {string} name The type name of the entity.
- * @param {pn.data.Entity.EntityType} ctor The entity type ctor.
+ * @param {pn.data.EntityCtor} ctor The entity type ctor.
  */
 pn.data.TypeRegister.register = function(name, ctor) {
   pn.assStr(name);
@@ -25,8 +25,18 @@ pn.data.TypeRegister.register = function(name, ctor) {
 
 /**
  * @param {string} name The type name of the entity.
- * @return {pn.data.Entity.EntityType} The registered ctor for the the
- *    specified entity type.
+ * @return {pn.data.EType} ctor The entity type ctor.
+ * @suppress {invalidCasts}
+ */
+pn.data.TypeRegister.getType = function(name) {
+  return /** @type {pn.data.EType} */ pn.data.TypeRegister.fromName(name);
+};
+
+
+/**
+ * @param {string} name The type name of the entity.
+ * @return {pn.data.EntityCtor} The registered ctor for the the specified
+ *    entity type.
  */
 pn.data.TypeRegister.fromName = function(name) {
   pn.assStr(name);
