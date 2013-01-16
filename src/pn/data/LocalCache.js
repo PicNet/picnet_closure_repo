@@ -5,7 +5,7 @@ goog.require('goog.Disposable');
 goog.require('goog.array');
 goog.require('pn.data.BaseDalCache');
 goog.require('pn.data.LinqParser');
-goog.require('pn.data.Query');
+goog.require('pn.data.PnQuery');
 goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
 goog.require('pn.log');
@@ -59,7 +59,7 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
 
   /**
    * @private
-   * @type {!Object.<!pn.data.Query>}
+   * @type {!Object.<!pn.data.PnQuery>}
    */
   this.cachedQueries_ = [];
 
@@ -211,22 +211,22 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
 
 /**
  * Wether this cache has the specified type primed.
- * @param {!pn.data.Query} query The query type to check.
+ * @param {!pn.data.PnQuery} query The query type to check.
  * @return {boolean} Wether the specified type list exists in this cache.
  */
 pn.data.LocalCache.prototype.contains = function(query) {
-  pn.assInst(query, pn.data.Query);
+  pn.assInst(query, pn.data.PnQuery);
   return (query.Type in this.cache_);
 };
 
 
 /**
- * @param {!Array.<pn.data.Query>} queries The queries to execute.
+ * @param {!Array.<pn.data.PnQuery>} queries The queries to execute.
  * @return {!Object.<!Array.<pn.data.Entity>>} The query results.
  */
 pn.data.LocalCache.prototype.query = function(queries) {
   return queries.pnreduce(goog.bind(function(results, q) {
-    pn.assInst(q, pn.data.Query);
+    pn.assInst(q, pn.data.PnQuery);
 
     pn.ass(q.Type in this.cache_, 'The type: ' + q.Type +
         ' does not exist in the local cache');
@@ -242,19 +242,19 @@ pn.data.LocalCache.prototype.query = function(queries) {
 };
 
 
-/** @return {!Array.<!pn.data.Query>} The cached queries. */
+/** @return {!Array.<!pn.data.PnQuery>} The cached queries. */
 pn.data.LocalCache.prototype.getCachedQueries = function() {
   return goog.object.getValues(this.cachedQueries_);
 };
 
 
 /**
- * @param {pn.data.Query} query The query to save.
+ * @param {pn.data.PnQuery} query The query to save.
  * @param {!Array.<pn.data.Entity>} list The list of entities to save against
  *    the specified type.
  */
 pn.data.LocalCache.prototype.saveQuery = function(query, list) {
-  pn.assInst(query, pn.data.Query);
+  pn.assInst(query, pn.data.PnQuery);
   pn.assArr(list);
 
   var type = query.Type;
@@ -330,7 +330,7 @@ pn.data.LocalCache.prototype.init_ = function() {
   if (queriesJson) {
     var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
     this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
-      var query = pn.data.Query.fromString(qstr);
+      var query = pn.data.PnQuery.fromString(qstr);
       acc[qstr] = query;
       return acc;
     }, {});
@@ -351,7 +351,7 @@ pn.data.LocalCache.prototype.init_ = function() {
   this.cache_ = {};
   var queriesToRemove = [];
   for (var qid in this.cachedQueries_) {
-    var query = pn.data.Query.fromString(qid);
+    var query = pn.data.PnQuery.fromString(qid);
 
     var rawList = parse(query.Type);
     if (!goog.isDef(rawList)) {

@@ -5,7 +5,7 @@ goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventTarget');
 goog.require('pn.data.Entity');
 goog.require('pn.data.LocalCache');
-goog.require('pn.data.Query');
+goog.require('pn.data.PnQuery');
 goog.require('pn.data.Server');
 goog.require('pn.log');
 goog.require('pn.web.WebAppEvents');
@@ -218,7 +218,7 @@ pn.data.BaseFacade.prototype.deleteEntity = function(entity, callback) {
 
 
 /**
- * @param {!Array.<(pn.data.Query|string)>} queries The queries to execute.
+ * @param {!Array.<(pn.data.PnQuery|string)>} queries The queries to execute.
  * @param {function(!Object.<!Array.<pn.data.Entity>>):undefined} callback The
  *    query results callback.  The reason this is a callback rather than a
  *    returned value is that this can be overriden. See LazyFacade for
@@ -229,8 +229,8 @@ pn.data.BaseFacade.prototype.query = function(queries, callback) {
   pn.assFun(callback);
 
   var parsed = queries.pnmap(function(q) {
-    if (q instanceof pn.data.Query) return q;
-    return new pn.data.Query(q);
+    if (q instanceof pn.data.PnQuery) return q;
+    return new pn.data.PnQuery(q);
   });
   this.queryImpl(parsed, callback);
 };
@@ -241,7 +241,7 @@ pn.data.BaseFacade.prototype.query = function(queries, callback) {
  *    content once queried.
  *
  * @protected
- * @param {!Array.<(pn.data.Query)>} queries The queries to execute.
+ * @param {!Array.<(pn.data.PnQuery)>} queries The queries to execute.
  * @param {function(!Object.<!Array.<pn.data.Entity>>):undefined} callback The
  *    query results callback.  The reason this is a callback rather than a
  *    returned value is that this can be overriden. See LazyFacade for

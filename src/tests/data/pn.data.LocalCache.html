@@ -12,7 +12,7 @@ goog.require('pn');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
-goog.require('pn.data.Query');
+goog.require('pn.data.PnQuery');
 goog.require('pn.storage');
 
 var entity,
@@ -203,11 +203,11 @@ var testUndeleteEntityUpdatesLocalStorage = function() {
 // LocalCache.contains
 ////////////////////////////////////////////////////////////////////////////////
 var testContainsReturnsFalseForInvalidType = function() {
-  assertFalse(cache.contains(new pn.data.Query('UnknownType')));
+  assertFalse(cache.contains(new pn.data.PnQuery('UnknownType')));
 };
 
 var testContainsReturnsTrueForValidType = function() {
-  assertTrue(cache.contains(new pn.data.Query('EntityType')));
+  assertTrue(cache.contains(new pn.data.PnQuery('EntityType')));
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,13 +215,13 @@ var testContainsReturnsTrueForValidType = function() {
 ////////////////////////////////////////////////////////////////////////////////
 var testUpdateEntityFailsIfTypeDoesNotExist = function() {
   try { 
-    cache.query([new pn.data.Query('UnknownType')]); 
+    cache.query([new pn.data.PnQuery('UnknownType')]); 
     assertFails('Expected failure with UnknownType');
   } catch (ex) {};
 };
 
 var testQueryWithSingleType = function() {
-  var query = new pn.data.Query('EntityType');
+  var query = new pn.data.PnQuery('EntityType');
   var lists = cache.query([query]);
   assertArrayEquals([query.toString()], goog.object.getKeys(lists));
   var entityList = lists[query.toString()];
@@ -235,8 +235,8 @@ var testQueryWithMultipleTypes = function() {
   entity2.id = -5;
   cache.createEntity(entity2);
 
-  var q1 = new pn.data.Query('EntityType'), 
-      q2 = new pn.data.Query('EntityType2');
+  var q1 = new pn.data.PnQuery('EntityType'), 
+      q2 = new pn.data.PnQuery('EntityType2');
   var lists = cache.query([q1, q2]);
   assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(lists));
   
@@ -257,7 +257,7 @@ var testQueryWithWithLinqExpressions = function() {
     createEntity('EntityType', 100)
   ];
 
-  var query = new pn.data.Query('EntityType', 'Where(e => e.id > 10)');
+  var query = new pn.data.PnQuery('EntityType', 'Where(e => e.id > 10)');
   var lists = cache.query([query]);  
   var entityList = lists[query.toString()];
 
@@ -270,8 +270,8 @@ var testQueryWith2QueriesOfSameTypeAreLoadedCorrectly = function() {
   var e2 = createEntity('EntityType', 11);
   createEntity('EntityType', 12);
 
-  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
-  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+  var q1 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 11)');
 
   var results = cache.query([ q1, q2 ]);
   assertArrayEquals([q1.toString(), q2.toString()], goog.object.getKeys(results));    
@@ -283,8 +283,8 @@ var testSavingMultipleQueriesForSameTypeAreStoredInSingleCacheEntry = function()
   var e1 = createEntity('EntityType', 10);
   var e2 = createEntity('EntityType', 11);
 
-  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
-  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+  var q1 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 11)');
 
   cache.saveQuery(q1, [e1]);
   cache.saveQuery(q2, [e2]);
@@ -300,8 +300,8 @@ var testSavingMultipleQueriesForSameTypeArePersistedIndependently = function() {
   var e1 = createEntity('EntityType', 10);
   var e2 = createEntity('EntityType', 11);
 
-  var q1 = new pn.data.Query('EntityType', 'Where(e => e.id == 10)');
-  var q2 = new pn.data.Query('EntityType', 'Where(e => e.id == 11)');
+  var q1 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 10)');
+  var q2 = new pn.data.PnQuery('EntityType', 'Where(e => e.id == 11)');
 
   cache.saveQuery(q1, [e1]);
   cache.saveQuery(q2, [e2]);

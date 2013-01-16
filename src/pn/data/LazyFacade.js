@@ -2,7 +2,7 @@
 goog.provide('pn.data.LazyFacade');
 
 goog.require('pn.data.BaseFacade');
-goog.require('pn.data.Query');
+goog.require('pn.data.PnQuery');
 
 
 
@@ -79,7 +79,7 @@ pn.data.LazyFacade.prototype.queryImpl = function(queries, callback) {
             pn.assArr(list);
 
             cached[key] = list;
-            var query = pn.data.Query.fromString(key);
+            var query = pn.data.PnQuery.fromString(key);
             this.cache.saveQuery(query, list);
           }, this);
           callback(cached);

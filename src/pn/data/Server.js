@@ -140,7 +140,7 @@ pn.data.Server.prototype.deleteEntity =
 
 
 /**
- * @param {!Array.<!pn.data.Query>} queries The queries to update.
+ * @param {!Array.<!pn.data.PnQuery>} queries The queries to update.
  * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
  *    success callback.
@@ -181,9 +181,9 @@ pn.data.Server.prototype.getAllUpdates =
 
 
 /**
- * @param {!Array.<pn.data.Query>} queries The queries to run on the
+ * @param {!Array.<pn.data.PnQuery>} queries The queries to run on the
  *    server.
- * @param {!Array.<pn.data.Query>} queriesToUpdate The queries already in the
+ * @param {!Array.<pn.data.PnQuery>} queriesToUpdate The queries already in the
  *    cache requiring an update.
  * @param {number} lastUpdate The last 'server' time the cache was updated.
  * @param {!function(!pn.data.Server.Response):undefined} success The
@@ -421,7 +421,7 @@ pn.data.Server.Response = function(raw) {
   /** @type {Object.<!Array.<pn.data.Entity>>} */
   this.queryResults = raw['QueryResults'] ?
       raw['QueryResults'].pnreduce(function(acc, qr) {
-        var query = pn.data.Query.fromString(qr['QueryId']);
+        var query = pn.data.PnQuery.fromString(qr['QueryId']);
         var results = pn.data.TypeRegister.parseEntities(query.Type,
             /** @type {!Array} */ (pn.json.parseJson(qr['ResultsJson'])));
         acc[query.toString()] = results;

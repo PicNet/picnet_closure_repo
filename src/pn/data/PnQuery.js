@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.data.Query');
+goog.provide('pn.data.PnQuery');
 
 goog.require('goog.asserts');
 goog.require('pn.json');
@@ -11,7 +11,7 @@ goog.require('pn.json');
  * @param {string} type The entity type of this query.
  * @param {string=} opt_linq The optional linq query text to filter the query.
  */
-pn.data.Query = function(type, opt_linq) {
+pn.data.PnQuery = function(type, opt_linq) {
   pn.assStr(type);
   pn.ass(!goog.isDef(opt_linq) || goog.isString(opt_linq));
 
@@ -32,7 +32,7 @@ pn.data.Query = function(type, opt_linq) {
 
 
 /** @override */
-pn.data.Query.prototype.toString = function() {
+pn.data.PnQuery.prototype.toString = function() {
   pn.assStr(this.Type);
   pn.assStr(this.Linq);
 
@@ -42,11 +42,11 @@ pn.data.Query.prototype.toString = function() {
 
 /**
  * @param {string} str A string representation of a Query object.
- * @return {!pn.data.Query} The parsed query object.
+ * @return {!pn.data.PnQuery} The parsed query object.
  */
-pn.data.Query.fromString = function(str) {
+pn.data.PnQuery.fromString = function(str) {
   pn.assStr(str);
 
   var tokens = str.split(':');
-  return new pn.data.Query(tokens[0], tokens[1]);
+  return new pn.data.PnQuery(tokens[0], tokens[1]);
 };
