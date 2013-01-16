@@ -382,6 +382,9 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var list = this.cache_[type];
   var json = pn.json.serialiseJson(list, true);
+  this.log_.info('Adding type[%s] length[%s] json[%s] to cache'.
+      pnsubs(type, list.length, json.length));
+
   window['localStorage'][this.key_(type)] = json;
 
   var took = goog.now() - start;
