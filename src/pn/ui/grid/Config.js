@@ -47,6 +47,9 @@ pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
   /** @type {boolean} */
   this.persistFilters = true;
 
+  /** @type {number} */
+  this.height = 0;
+
   /**
    * @type {null|
    *    function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)}

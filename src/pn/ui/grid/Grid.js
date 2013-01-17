@@ -185,9 +185,13 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   if (!this.list_.length) return;
 
   var gc = goog.dom.getElementByClass('grid-container', parent);
-  var wh = (document.height) ? document.height : document.body.offsetHeight;
-  var ey = goog.style.getClientPosition(gc).y;
-  goog.style.setHeight(gc, (wh - ey - 80) + 'px');
+  var height = this.cfg_.height;
+  if (!height) {
+    var wh = (document.height) ? document.height : document.body.offsetHeight;
+    var ey = goog.style.getClientPosition(gc).y;
+    height = wh - ey - 80;
+  }
+  goog.style.setHeight(gc, height + 'px');
 
   this.dataView_ = new pn.ui.grid.DataView();
   this.registerDisposable(this.dataView_);
