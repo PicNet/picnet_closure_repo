@@ -31,3 +31,11 @@ goog.inherits(pn.ui.grid.Interceptor, goog.Disposable);
  * @return {!Array.<!pn.data.Entity>} The filtered list.
  */
 pn.ui.grid.Interceptor.prototype.filterList = function(list) { return list; };
+
+
+/**
+ * Override this if you want to be change row css classes in this grid.
+ * @param {!pn.data.Entity} e The row entity.
+ * @return {string} Any additional css classes for this row.
+ */
+pn.ui.grid.Interceptor.prototype.rowCssClass = function(e) { return ''; };

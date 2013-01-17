@@ -12,13 +12,20 @@ goog.require('pn.mvc.Collection');
  * @constructor
  * @extends {Slick.Data.DataView}
  * @implements {goog.disposable.IDisposable}
+ * @param {pn.ui.grid.Interceptor} interceptor The interceptor for this grid.
  * @param {Object=} opt_options Optional slick grid DataView options.
  */
-pn.ui.grid.DataView = function(opt_options) {
+pn.ui.grid.DataView = function(interceptor, opt_options) {
   var members = Slick.Data.DataView.call(this, opt_options);
 
   // Required as Slick.Data.DataView uses ugly style crockford encapsulation.
   goog.object.extend(this, members);
+
+  /**
+   * @private
+   * @type {pn.ui.grid.Interceptor}
+   */
+  this.interceptor_ = interceptor;
 
   /**
    * @private
@@ -28,6 +35,15 @@ pn.ui.grid.DataView = function(opt_options) {
 
   /** @override */
   this.setItems = this.setItemsImpl_;
+
+  /**
+   * @private
+   * @type {Function}
+   */
+  this.origGetItemMetadata_ = this.getItemMetadata;
+
+  /** @override */
+  this.getItemMetadata = this.getItemMetadata_;
 
   /**
    * @private
@@ -60,6 +76,29 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
   }
   this.model_ = new pn.mvc.Collection(items);
   this.eh_.listen(this.model_, pn.mvc.EventType.CHANGE, this.updateGrid_);
+};
+
+
+/**
+ * @private
+ * @param {number} row The row index.
+ * @return {!Object} A map of metadata properties for this row.
+ */
+pn.ui.grid.DataView.prototype.getItemMetadata_ = function(row) {
+  pn.assNum(row);
+
+  var item = this.getItem(row),
+      ret = this.origGetItemMetadata_(row);
+
+  if (item && this.interceptor_) {
+    var additional = this.interceptor_.rowCssClass(item);
+    if (additional) {
+      ret = ret || {};
+      ret.cssClasses = (ret.cssClasses || '') + ' ' + additional;
+    }
+  }
+
+  return ret;
 };
 
 

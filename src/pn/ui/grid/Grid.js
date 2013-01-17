@@ -193,7 +193,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   }
   goog.style.setHeight(gc, height + 'px');
 
-  this.dataView_ = new pn.ui.grid.DataView();
+  this.dataView_ = new pn.ui.grid.DataView(this.interceptor_);
   this.registerDisposable(this.dataView_);
 
   var cfg = this.cfg_;

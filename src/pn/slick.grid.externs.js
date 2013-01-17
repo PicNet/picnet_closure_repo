@@ -1299,8 +1299,8 @@ Slick.Data.DataView.prototype.getItem = function(i) {};
 
 
 /**
- * @param {*} i
- * @return {*}
+ * @param {number} i
+ * @return {Object}
  */
 Slick.Data.DataView.prototype.getItemMetadata = function(i) {};
 
