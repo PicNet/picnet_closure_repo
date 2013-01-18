@@ -1293,7 +1293,7 @@ Slick.Data.DataView.prototype.getLength = function() {};
 
 /**
  * @param {*} i
- * @return {pn.data.Entity}
+ * @return {!pn.data.Entity}
  */
 Slick.Data.DataView.prototype.getItem = function(i) {};
 

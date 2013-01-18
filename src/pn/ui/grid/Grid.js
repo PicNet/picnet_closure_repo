@@ -272,8 +272,8 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   var noData = goog.dom.getElementByClass('grid-no-data', this.getElement());
   this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(noData));
 
-  this.pipeline_.setMembers(
-      this.slick_, this.dataView_, this.cfg_, this.cfg_.cCtxs);
+  this.pipeline_.setMembers(this.slick_, this.dataView_, this.cfg_,
+      this.cfg_.cCtxs, this.interceptor_);
 };
 
 

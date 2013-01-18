@@ -39,11 +39,12 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
   if (target.className.indexOf('reorder') >= 0) return;
 
   var idx = evData['rows'][0];
-  var selected = this.view.getItem(idx);
+  var entity = this.view.getItem(idx);
+  if (this.interceptor && !this.interceptor.canSelect(entity)) return;
 
-  this.fireCustomEvent('select-row', selected);
+  this.fireCustomEvent('select-row', entity);
 
   var event = new goog.events.Event(pn.ui.grid.Grid.SELECTED);
-  event.selected = selected;
+  event.selected = entity;
   this.pipeline.raiseGridEvent(event);
 };

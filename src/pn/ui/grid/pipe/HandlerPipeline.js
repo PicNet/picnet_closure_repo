@@ -41,11 +41,12 @@ pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
  * @param {pn.ui.grid.Config} cfg The grid configuration being used.
  * @param {!Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
  *    displayed.
+ * @param {pn.ui.grid.Interceptor} interceptor The grid interceptor.
  */
 pn.ui.grid.pipe.HandlerPipeline.prototype.setMembers =
-    function(slick, view, cfg, cctxs) {
+    function(slick, view, cfg, cctxs, interceptor) {
   this.handlers_.pnforEach(function(h) {
-    h.setMembers(slick, view, cfg, cctxs, this);
+    h.setMembers(slick, view, cfg, cctxs, this, interceptor);
   }, this);
 };
 

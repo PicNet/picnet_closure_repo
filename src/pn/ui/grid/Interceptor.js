@@ -39,3 +39,11 @@ pn.ui.grid.Interceptor.prototype.filterList = function(list) { return list; };
  * @return {string} Any additional css classes for this row.
  */
 pn.ui.grid.Interceptor.prototype.rowCssClass = function(e) { return ''; };
+
+
+/**
+ * Override this if you want to be change row selection behaviour per row.
+ * @param {!pn.data.Entity} e The row entity.
+ * @return {boolean} Wether the specified row entity can be selected.
+ */
+pn.ui.grid.Interceptor.prototype.canSelect = function(e) { return true; };

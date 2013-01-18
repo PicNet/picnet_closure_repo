@@ -44,6 +44,12 @@ pn.ui.grid.pipe.GridHandler = function() {
 
   /**
    * @protected
+   * @type {pn.ui.grid.Interceptor}
+   */
+  this.interceptor = null;
+
+  /**
+   * @protected
    * @type {Array.<!pn.ui.grid.ColumnCtx>}
    */
   this.cctxs = null;
@@ -66,14 +72,16 @@ goog.inherits(pn.ui.grid.pipe.GridHandler, goog.events.EventHandler);
  *    displayed.
  * @param {!pn.ui.grid.pipe.HandlerPipeline} pipeline A reference to the
  *    pipeline.
+ * @param {pn.ui.grid.Interceptor} interceptor The grid interceptor.
  */
 pn.ui.grid.pipe.GridHandler.prototype.setMembers =
-    function(slick, view, cfg, cctxs, pipeline) {
+    function(slick, view, cfg, cctxs, pipeline, interceptor) {
   this.slick = slick;
   this.view = view;
   this.cfg = cfg;
   this.cctxs = cctxs;
   this.pipeline = pipeline;
+  this.interceptor = interceptor;
 };
 
 
