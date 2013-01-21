@@ -74,20 +74,17 @@ pn.data.EntityUtils.getTargetEntity =
       next,
       ids;
 
-  if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
+  if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {  // Parent
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     type = pn.data.EntityUtils.getTypeProperty(type, step);
-    var entities = cache.get(type);
-    next = /** @type {!Array.<!Object>} */ (entities.pnfilter(
-        function(e) { return ids.pncontains(e.id); }));
-  } else if (goog.string.endsWith(step, 'Entities')) {
+    next = pn.data.EntityUtils.filterBy(cache.get(type), ids);
+  } else if (goog.string.endsWith(step, 'Entities')) { // Child
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = cache.get(type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
-      next = next.pnfilter(function(e) {
-        return ids.pncontains(e[opt_parentField]);
-      });
+      next = pn.data.EntityUtils.filterBy(cache.get(type), ids,
+          function(id, e) { return e[opt_parentField] === id; });
       opt_parentField = ''; // Only use once
     }
     if (!next) { throw new Error('Could not find: ' + type + ' in cache'); }
@@ -98,6 +95,28 @@ pn.data.EntityUtils.getTargetEntity =
   steps.shift();
   return steps.length > 0 ? pn.data.EntityUtils.getTargetEntity(
       cache, steps, type, next, opt_parentField) : next;
+};
+
+
+/**
+ * @param {!Array.<pn.data.Entity>} entities The entity list to filter.  Note:
+ *    this array MUST be ordered.  Not being asserted for performance.
+ * @param {!Array.<*>} ids The property value that we are looking for.
+ * @param {function(*, !pn.data.Entity):boolean?=} opt_evaluator an optional
+ *    evaluator that takes the current ids item and the entitiy to compare
+ *    against.
+ * @return {!Array.<pn.data.Entity>} The filtered list of entities.
+ */
+pn.data.EntityUtils.filterBy = function(entities, ids, opt_evaluator) {
+  var filtered = [];
+  for (var i = 0, len = ids.length; i < len; i++) {
+    var evaluator = opt_evaluator || function(id, e) { return e.id === id; };
+    var idx = goog.array.binarySelect(entities,
+        function(e) { return evaluator(ids[i], e); });
+    pn.ass(idx >= 0);
+    filtered.push(entities[idx]);
+  }
+  return filtered;
 };
 
 

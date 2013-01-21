@@ -28,33 +28,12 @@ pn.data.BaseDalCache = function(cache) {
   for (var key in cache) {
     var type = key.split(':')[0];
     pn.ass(!(type in this.cache_));
-    this.cache_[type] = cache[key];
+    var arr = cache[key];
+    this.cache_[type] = arr;
+
+    // Should always be ordered for performance.
+    pn.ass(goog.array.isSorted(arr));
   }
-};
-
-
-/**
- * @param {string} key The key to get from the memoized cache.
- * @return {Object} The cached value with the specified key.
- */
-pn.data.BaseDalCache.prototype.getMemoized = function(key) {
-  pn.assStr(key);
-
-  return this.memoized_[key];
-};
-
-
-/**
- * @param {string} key The key to get from the memoized cache.
- * @param {T} value The value to memoize.
- * @return {T} The value stored in the memoized cache.
- * @template T
- */
-pn.data.BaseDalCache.prototype.setMemoized = function(key, value) {
-  pn.assStr(key);
-
-  this.memoized_[key] = value;
-  return value;
 };
 
 
@@ -79,12 +58,9 @@ pn.data.BaseDalCache.prototype.get = function(type) {
 pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.assStr(type);
   pn.ass(goog.isNumber(id) && id > 0);
-  var key = type + '_' + id;
 
-  var cached = this.getMemoized(key);
-  if (cached) return /** @type {!pn.data.Entity} */ (cached);
-
-  var result = /** @type {!pn.data.Entity} */ (this.get(type).
-      pnsingle(function(e) { return e.id === id; }));
-  return this.setMemoized(key, result);
+  var arr = this.get(type);
+  var idx = goog.array.binarySelect(arr, function(e) { return e.id === id; });
+  pn.ass(idx >= 0);
+  return /** @type {!pn.data.Entity} */ (arr[idx]);
 };
