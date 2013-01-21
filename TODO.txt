@@ -6,8 +6,8 @@
   now have BaseApp, BaseMobileApp and BaseWebApp the events should live in
   the same files so we do not have to mantain multiple hierarchies.  There is
   also a parallel hierarchy with AppConfig
-
-- Demos are all broken
+- The MultiSpecEdit/LRequestEdit functionality is really convoluted.  Create
+    a Tabbed control.
 
 - Should try to remove dependency on pn.app.ctx everywhere. 
 - Should checkbox field renderers show the required '*' ? makes no sense since 
@@ -18,9 +18,3 @@
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 - Make the authentication model pluggable (Forms/Windows)
-
-- LocalCache
-  * For large lists of a single type LocalCache could be inneficcient, consider using
-      buckets for ID ranges to make the update flush operation faster.
-  * Handling lots of updates from server is innefficient, we should batch flushes to the
-      localStorage.
