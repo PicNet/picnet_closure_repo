@@ -92,6 +92,6 @@ pn.data.EType;
 pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
 
 
-/** @return {string} A compressed version of this entity. */
+/** @return {!Array.<number|string>} A compressed version of this entity. */
 pn.data.Entity.prototype.toCompressed = goog.abstractMethod;
 
