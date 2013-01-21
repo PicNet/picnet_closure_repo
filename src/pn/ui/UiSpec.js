@@ -110,6 +110,9 @@ pn.ui.UiSpec.prototype.getGridAdditionalTypes = function() { return []; };
  * @return {!pn.ui.grid.ColumnCtx} The created column.
  */
 pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
+  pn.assStr(id);
+  pn.assInst(cache, pn.data.BaseDalCache);
+
   var spec = new pn.ui.grid.ColumnSpec(id, opt_props || {}, this);
   var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
   this.registerDisposable(fctx);
@@ -124,6 +127,9 @@ pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
  * @return {!pn.ui.grid.ColumnCtx} The created column.
  */
 pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
+  pn.assStr(id);
+  pn.assInst(cache, pn.data.BaseDalCache);
+
   var spec = new pn.ui.grid.OrderingColumnSpec(id, this);
   var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
   this.registerDisposable(fctx);
@@ -139,6 +145,9 @@ pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
  * @return {!pn.ui.edit.FieldCtx} The field created.
  */
 pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
+  pn.assStr(id);
+  pn.assInst(cache, pn.data.BaseDalCache);
+
   var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, this);
   var fctx = new pn.ui.edit.FieldCtx(spec, cache);
 
