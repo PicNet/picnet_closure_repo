@@ -198,8 +198,8 @@ pn.assType_ = function(predicate, args, typeName) {
  *    the beggining of the array.
  */
 pn.aargs_ = function(thiso, args) {
-  var arr = pn.toarr(args);
-  arr.splice(0, 0, thiso);
+  var arr = [thiso];
+  for (var i = 0, len = args.length; i < len; i++) { arr.push(args[i]); }
   return arr;
 };
 
