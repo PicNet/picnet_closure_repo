@@ -35,6 +35,18 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
 
 
 /**
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
+ *    field is rendererd on.
+ * @param {boolean} enabled Wether the control is enabled.
+ */
+pn.ui.edit.EditUtils.setEnabled = function(control, enabled) {
+  pn.ass(control);
+  if (control.setEnabled) control.setEnabled(enabled);
+  else control['disabled'] = enabled ? '' : 'disabled';
+};
+
+
+/**
  * @param {!(Element|Text|goog.ui.Component)} control The element to get the
  *    parent container element for.
  * @param {string} id The id of the field whose parent we need.  This id can

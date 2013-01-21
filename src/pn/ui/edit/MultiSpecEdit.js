@@ -44,6 +44,13 @@ pn.ui.edit.MultiSpecEdit = function(entity, cache, specs, mainSpec) {
   pn.ui.edit.CommandsComponent.call(this, mainSpec, entity, cache);
 
   /**
+   * @private
+   * @type {!pn.ui.UiSpec}
+   */
+  this.mainSpec_ = mainSpec;
+  this.registerDisposable(this.mainSpec_);
+
+  /**
    * @protected
    * @type {!Object.<!pn.ui.UiSpec>}
    */
@@ -78,11 +85,11 @@ pn.ui.edit.MultiSpecEdit.prototype.decorateEdit = function(parent, specid) {
   pn.ass(!this.edits[specid], '%s has already been decorated.'.pnsubs(specid));
 
   var spec = this.specs[specid];
-  var ui = new pn.ui.edit.Edit(spec, this.entity, this.cache, pn.web.ctx.keys);
-  ui.fireInterceptorEvents = false;
-  this.registerDisposable(ui);
-  this.edits[specid] = ui;
-  ui.decorate(parent);
+  var e = new pn.ui.edit.Edit(spec, this.entity, this.cache, pn.web.ctx.keys);
+  e.fireInterceptorEvents = false;
+  this.registerDisposable(e);
+  this.edits[specid] = e;
+  e.decorate(parent);
 };
 
 
@@ -163,11 +170,17 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
     pn.object.uniqueExtend(commands, edit.getCommandButtons());
   }, this);
 
-  goog.object.forEach(this.edits, function(edit) {
-    if (!edit.cfg || !edit.cfg.interceptor) { return; }
-    var interceptor = new edit.cfg.interceptor(
+  var doInterceptor = goog.bind(function(cfg) {
+    if (!cfg || !cfg.interceptor) { return; }
+    var interceptor = new cfg.interceptor(
         this, this.entity, this.cache, controls, commands);
     this.interceptors_.push(interceptor);
     this.registerDisposable(interceptor);
   }, this);
+
+  var maincfg = this.mainSpec_.getEditConfig(this.entity, this.cache);
+  doInterceptor(maincfg);
+  goog.dispose(maincfg);
+
+  goog.object.forEach(this.edits, function(e) { doInterceptor(e.cfg); }, this);
 };
