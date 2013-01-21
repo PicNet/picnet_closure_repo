@@ -24,7 +24,6 @@ pn.ui.UiSpecsRegister = function(specs) {
    * @type {!Object.<!function(new:pn.ui.UiSpec)>}
    */
   this.map_ = specs;
-  goog.object.forEach(this.map_, this.registerDisposable, this);
 };
 goog.inherits(pn.ui.UiSpecsRegister, goog.Disposable);
 

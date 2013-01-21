@@ -65,7 +65,7 @@ pn.ui.DelayedThrottleInputListener.prototype.addInput =
       goog.isString(opt_eventType));
 
   var eventType = opt_eventType || this.inferEventType_(inp);
-  this.listen(inp, eventType, this.onInputEvent_);
+  this.listenTo(inp, eventType, this.onInputEvent_);
 };
 
 

@@ -170,10 +170,10 @@ pn.app.Router.prototype.undoLastNavigation_ = function() {
  */
 pn.app.Router.prototype.setEnabled_ = function(enabled) {
   var historyEvent = goog.history.EventType.NAVIGATE;
-  this.unlisten(this.history_, historyEvent, this.onNavigate_);
+  this.unlistenTo(this.history_, historyEvent, this.onNavigate_);
   if (!enabled) { return; }
 
-  this.listen(this.history_, historyEvent, this.onNavigate_);
+  this.listenTo(this.history_, historyEvent, this.onNavigate_);
 };
 
 

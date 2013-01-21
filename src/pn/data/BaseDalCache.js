@@ -84,6 +84,7 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   var cached = this.getMemoized(key);
   if (cached) return /** @type {!pn.data.Entity} */ (cached);
 
-  var result = this.get(type).pnsingle(function(e) { return e.id === id; });
+  var result = /** @type {!pn.data.Entity} */ (this.get(type).
+      pnsingle(function(e) { return e.id === id; }));
   return this.setMemoized(key, result);
 };

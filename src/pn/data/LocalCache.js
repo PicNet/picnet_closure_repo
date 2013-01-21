@@ -105,9 +105,8 @@ pn.data.LocalCache.prototype.getEntity = function(type, id) {
   pn.ass(type in this.cache_, type + ' not in cache');
   pn.ass(goog.isNumber(id) && id !== 0);
 
-  var en = this.cache_[type].pnsingle(
-      function(entity) { return entity.id === id; }, this);
-  return en;
+  return /** @type {!pn.data.Entity} */ (this.cache_[type].pnsingle(
+      function(entity) { return entity.id === id; }, this));  
 };
 
 

@@ -214,7 +214,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var txt = 'Select...';
   var lst = [];
 
-  var enumo = /** @type {Object.<number>} */ fctx.schema.entityType;
+  var enumo = /** @type {Object.<number>} */ (fctx.schema.entityType);
   goog.object.forEach(enumo, function(val, name) {
     if (goog.isNumber(val)) lst.push({ id: val, name: name});
   });

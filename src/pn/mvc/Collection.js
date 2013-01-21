@@ -104,7 +104,7 @@ pn.mvc.Collection.prototype.intern_ = function(model) {
   if (!(model instanceof pn.mvc.ModelBase)) return;
 
   var eventType = pn.mvc.EventType.CHANGE;
-  this.listen(model, eventType, this.childChanged_.pnbind(this));
+  this.listenTo(model, eventType, this.childChanged_.pnbind(this));
   this.registerDisposable(model);
 };
 

@@ -33,12 +33,13 @@ goog.inherits(pn.app.EventHandlerTarget, goog.events.EventTarget);
  * @return {goog.events.EventHandler} This object, allowing for chaining of
  *     calls.
  */
-pn.app.EventHandlerTarget.prototype.listen = function(src, type, opt_fn) {
+pn.app.EventHandlerTarget.prototype.listenTo = function(src, type, opt_fn) {
   return this.eh_.listen(src, type, opt_fn);
 };
 
 
 /**
+ * @protected
  * Unlistens on an event.
  * @param {goog.events.EventTarget|EventTarget} src Event source.
  * @param {string|Array.<string>} type Event type to listen for.
@@ -47,6 +48,6 @@ pn.app.EventHandlerTarget.prototype.listen = function(src, type, opt_fn) {
  * @return {goog.events.EventHandler} This object, allowing for chaining of
  *     calls.
  */
-pn.app.EventHandlerTarget.prototype.unlisten = function(src, type, opt_fn) {
+pn.app.EventHandlerTarget.prototype.unlistenTo = function(src, type, opt_fn) {
   return this.eh_.unlisten(src, type, opt_fn);
 };

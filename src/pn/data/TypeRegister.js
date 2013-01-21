@@ -29,7 +29,7 @@ pn.data.TypeRegister.register = function(name, ctor) {
  * @suppress {invalidCasts}
  */
 pn.data.TypeRegister.getType = function(name) {
-  return /** @type {pn.data.EType} */ pn.data.TypeRegister.fromName(name);
+  return /** @type {pn.data.EType} */ (pn.data.TypeRegister.fromName(name));
 };
 
 

@@ -114,11 +114,11 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
   this.beginUpdate();
   changes.pnforEach(function(details) {
     if (details.inserted) {
-      this.addItem(details.item);
+      this.addItem(details.model);
     } else if (details.removed) {
-      this.deleteItem(details.item.id);
+      this.deleteItem(details.model.id);
     } else {
-      this.updateItem(details.item.id, details.item);
+      this.updateItem(details.model.id, details.model);
     }
   }, this);
   this.endUpdate();

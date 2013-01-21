@@ -190,7 +190,7 @@ pn.assType_ = function(predicate, args, typeName) {
 
 /**
  * @private
- * @param {!Object} thiso A referece to the callers 'this' to prepend to the
+ * @param {!*} thiso A referece to the callers 'this' to prepend to the
  *    arguments object.
  * @param {!goog.array.ArrayLike} args The arguments object to prepend 'this'
  *    to.

@@ -143,7 +143,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
   }
 
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
-  this.listen(this.inputListener_, eventtype, this.refresh_.pnbind(this));
+  this.listenTo(this.inputListener_, eventtype, this.refresh_.pnbind(this));
   this.filterControls_.pnforEach(
       function(inp) { this.inputListener_.addInput(inp); }, this);
   if (this.quickfind_) {
@@ -152,7 +152,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
   }
   if (this.clear_) {
     var click = goog.events.EventType.CLICK;
-    this.listen(this.clear_, click, this.clearFilters_.pnbind(this));
+    this.listenTo(this.clear_, click, this.clearFilters_.pnbind(this));
   }
 
   this.resize();

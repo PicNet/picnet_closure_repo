@@ -321,7 +321,7 @@ pn.data.BaseFacade.prototype.handleError = function(error, opt_ex) {
 /** @private */
 pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
   goog.object.forEach(pn.data.Server.EventType, function(et) {
-    this.listen(this.server, et, this.dispatchEvent, false, this);
+    this.listenTo(this.server, et, this.dispatchEvent);
   }, this);
 };
 
@@ -349,7 +349,7 @@ pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
 
 /**
  * @private
- * @param {!pn.data.Server.Update} update The update to update the cache
+ * @param {pn.data.Server.Update} update The update to update the cache
  *    with.
  */
 pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
