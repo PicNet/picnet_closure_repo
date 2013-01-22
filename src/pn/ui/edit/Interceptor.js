@@ -80,3 +80,13 @@ pn.ui.edit.Interceptor.prototype.getControl = function(id) {
   pn.ass(this.controls_[id], 'Could not find control with ID "%s"', id);
   return this.controls_[id];
 };
+
+
+/**
+ * @param {string} id The id of the command we need.
+ * @return {!goog.ui.Button} The command button for the specified id.
+ */
+pn.ui.edit.Interceptor.prototype.getCommand = function(id) {
+  pn.ass(this.commands_[id], 'Could not find command with ID "%s"', id);
+  return this.commands_[id];
+};
