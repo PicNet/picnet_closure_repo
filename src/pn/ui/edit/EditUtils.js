@@ -47,6 +47,8 @@ pn.ui.edit.EditUtils.setEnabled = function(control, enabled) {
 
 
 /**
+ * TODO: If this works as expected remove the 'id' parameter.
+ *
  * @param {!(Element|Text|goog.ui.Component)} control The element to get the
  *    parent container element for.
  * @param {string} id The id of the field whose parent we need.  This id can
@@ -57,12 +59,5 @@ pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
   pn.ass(control, 'control is null - id: ' + id);
 
   var element = control.getElement ? control.getElement() : control;
-  var isControlId = id.indexOf('___') >= 0;
-  var domid = isControlId ? id : '___' + id.replace(/\./g, '_');
-  while (element &&
-      (isControlId ?
-          element.id !== domid : !goog.string.endsWith(element.id, domid))) {
-    element = element.parentNode;
-  }
-  return /** @type {!Element} */ (element);
+  return /** @type {!Element} */ (element.parentNode);
 };
