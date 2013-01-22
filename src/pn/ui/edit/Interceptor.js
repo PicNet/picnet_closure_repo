@@ -72,6 +72,12 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
     function() { return []; };
 
 
+/** @return {!Array.<string>} The currently registering the control IDs. */
+pn.ui.edit.Interceptor.prototype.getControlIDs = function() {
+  return goog.object.getKeys(this.controls_);
+};
+
+
 /**
  * @param {string} id The id of the control we need.
  * @return {!(Element|Text|goog.ui.Component)} The control for the specified id.
