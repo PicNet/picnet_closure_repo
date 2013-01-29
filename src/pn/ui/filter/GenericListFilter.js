@@ -94,7 +94,7 @@ pn.ui.filter.GenericListFilter.filteridx_ = 0;
 /** @param {!Element} list The list to reset. */
 pn.ui.filter.GenericListFilter.prototype.resetList = function(list) {
   goog.dispose(this.list);
-  this.listItems.pnforEach(goog.dispose);
+  goog.array.forEach(this.listItems, goog.dispose);
 
   this.list = list;
   this.initialiseControlCaches();
@@ -128,7 +128,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     function() {
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
   this.listen(this.inputListener_, eventtype, this.refresh);
-  this.filters.pnforEach(function(filter) {
+  goog.array.forEach(this.filters, function(filter) {
     this.inputListener_.addInput(filter);
   }, this);
 
@@ -158,9 +158,9 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
 
 /** Clears all filter values */
 pn.ui.filter.GenericListFilter.prototype.clearAllFilters = function() {
-  this.filters.pnforEach(this.clearFilterValue, this);
+  goog.array.forEach(this.filters, this.clearFilterValue, this);
   var additional = this.options['additionalFilterTriggers'];
-  if (additional) { additional.pnforEach(this.clearFilterValue, this); }
+  if (additional) { goog.array.forEach(additional, this.clearFilterValue, this); }
   this.refresh();
 };
 
@@ -414,7 +414,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 
         switch (state.type) {
           case 'select-one':
-            pntoarr(filter.options).pnforEach(function(o, idx) {
+            goog.array.forEach(filter.options, function(o, idx) {
               if (o.value === state.value) {
                 o.setAttribute('selected', 'selected');
                 filter.selectedIndex = idx;
@@ -442,7 +442,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 /** @private */
 pn.ui.filter.GenericListFilter.prototype.clearElementFilteredStates_ =
     function() {
-  this.listItems.pnforEach(function(r) {
+  goog.array.forEach(this.listItems, function(r) {
     r.removeAttribute('filtermatch');
   });
 };
