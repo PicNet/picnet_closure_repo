@@ -82,12 +82,19 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
  * @param {boolean} asc Wether to sort ascending.
  */
 pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
-  var cctx = this.cctxs.pnfind(
-      function(cctx1) { return cctx1.id === col; });
+  pn.assStr(col);
+  pn.assBool(asc);
 
-  this.view.sort(function(a, b) {
+  var cctx = this.cctxs.pnfind(function(cctx1) { return cctx1.id === col; });
+  pn.assInst(cctx, pn.ui.grid.ColumnCtx);
+  var comparer = function(a, b) {
     var x = cctx.getCompareableValue(a) || cctx.getEntityValue(a);
     var y = cctx.getCompareableValue(b) || cctx.getEntityValue(b);
-    return x > y ? 1 : x < y ? -1 : 0;
-  }, asc);
+    if (goog.isString(x)) {
+      return goog.string.caseInsensitiveCompare(
+          /** @type {string} */ (x),
+          /** @type {string} */ (y));
+    } else { return (x === y ? 0 : (x > y ? 1 : -1)); }
+  };
+  this.view.sort(comparer, asc);
 };
