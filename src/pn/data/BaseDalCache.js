@@ -17,18 +17,14 @@ pn.data.BaseDalCache = function(cache) {
    */
   this.cache_ = {};
 
-  /**
-   * @private
-   * @type {!Object.<!pn.data.Entity>}
-   */
-  this.memoized_ = {};
-
   // This handles LocalCache style query results that have Type:Linq
   //  map keys.
   for (var key in cache) {
     var type = key.split(':')[0];
     pn.ass(!(type in this.cache_));
     var arr = cache[key];
+    pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }),
+        'Array of type: %s is not sorted.'.pnsubs(type));
     this.cache_[type] = arr;
 
     // Should always be ordered for performance.
@@ -39,13 +35,26 @@ pn.data.BaseDalCache = function(cache) {
 
 /**
  * @param {string} type The type to retreive from the cache.
- * @return {!Array.<pn.data.Entity>} The entities of the specified type.
+ * @return {!Array.<pn.data.Entity>} A copy of the entities of the
+ *    specified type.
  */
 pn.data.BaseDalCache.prototype.get = function(type) {
+  return this.getImpl_(type).pnclone();
+};
+
+
+/**
+ * @private
+ * @param {string} type The type to retreive from the cache.
+ * @return {!Array.<pn.data.Entity>} The entities of the specified type.
+ */
+pn.data.BaseDalCache.prototype.getImpl_ = function(type) {
   pn.assStr(type);
 
   var arr = this.cache_[type];
   if (!arr) throw new Error('Type: ' + type + ' not in cache.');
+  pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }),
+      'Array of type: %s is not sorted.'.pnsubs(type));
   return arr;
 };
 
@@ -59,7 +68,7 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.assStr(type);
   pn.ass(goog.isNumber(id) && id > 0);
 
-  var arr = this.get(type);
+  var arr = this.getImpl_(type);
   var idx = goog.array.binarySelect(arr, function(e) { return id - e.id; });
   pn.ass(idx >= 0);
   return /** @type {!pn.data.Entity} */ (arr[idx]);
