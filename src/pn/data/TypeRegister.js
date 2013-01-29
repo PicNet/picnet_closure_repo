@@ -25,16 +25,6 @@ pn.data.TypeRegister.register = function(name, ctor) {
 
 /**
  * @param {string} name The type name of the entity.
- * @return {pn.data.EType} ctor The entity type ctor.
- * @suppress {invalidCasts}
- */
-pn.data.TypeRegister.getType = function(name) {
-  return /** @type {pn.data.EType} */ (pn.data.TypeRegister.fromName(name));
-};
-
-
-/**
- * @param {string} name The type name of the entity.
  * @return {pn.data.EntityCtor} The registered ctor for the the specified
  *    entity type.
  */

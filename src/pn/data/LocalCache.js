@@ -359,9 +359,9 @@ pn.data.LocalCache.prototype.init_ = function() {
     }
 
     pn.assArr(rawList);
-    var type = pn.data.TypeRegister.getType(query.Type);
+    var ctor = pn.data.TypeRegister.fromName(query.Type);
     var entities = rawList.pnmap(
-        function(data) { return type['fromCompressed'](data); });
+        function(data) { return ctor.fromCompressed(data); });
     this.cache_[query.Type] = entities;
   }
   queriesToRemove.pnforEach(function(qid) {

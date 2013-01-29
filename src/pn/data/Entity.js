@@ -1,5 +1,4 @@
 ﻿;
-goog.provide('pn.data.EType');
 goog.provide('pn.data.Entity');
 goog.provide('pn.data.EntityCtor');
 
@@ -79,10 +78,6 @@ pn.data.Entity.prototype.clone = function() {
 
 /** @typedef {function(new:pn.data.Entity, Object=):undefined} */
 pn.data.EntityCtor;
-
-
-/** @typedef {{fromCompressed: function(string):!pn.data.Entity}} */
-pn.data.EType;
 
 
 /**
