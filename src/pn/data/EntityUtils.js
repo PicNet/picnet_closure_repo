@@ -36,7 +36,7 @@ pn.data.EntityUtils.getEntityDisplayValue =
   pn.ass(target);
 
   var cacheKey = path + '_cache';
-  if (goog.isDef(target[cacheKey])) return target[cacheKey];
+  if (goog.isDef(target[cacheKey])) { return target[cacheKey]; }
 
   var entities = pn.data.EntityUtils.
       getTargetEntity(cache, path, type, target, opt_parentField);
@@ -83,8 +83,10 @@ pn.data.EntityUtils.getTargetEntity =
     next = cache.get(type);
     if (opt_parentField) {
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
+      // TODO: This filterBy is broken, this is an invalid evaluator for
+      // binarySelect (as the entities are not ordered by this field)
       next = pn.data.EntityUtils.filterBy(cache.get(type), ids,
-          function(id, e) { return e[opt_parentField] === id; });
+          function(id, e) { return id - e[opt_parentField]; });
       opt_parentField = ''; // Only use once
     }
     if (!next) { throw new Error('Could not find: ' + type + ' in cache'); }
@@ -101,8 +103,8 @@ pn.data.EntityUtils.getTargetEntity =
 /**
  * @param {!Array.<pn.data.Entity>} entities The entity list to filter.  Note:
  *    this array MUST be ordered.  Not being asserted for performance.
- * @param {!Array.<*>} ids The property value that we are looking for.
- * @param {function(*, !pn.data.Entity):boolean?=} opt_evaluator an optional
+ * @param {!Array.<number>} ids The property value that we are looking for.
+ * @param {function(number, !pn.data.Entity):number?=} opt_evaluator an optional
  *    evaluator that takes the current ids item and the entitiy to compare
  *    against.
  * @return {!Array.<pn.data.Entity>} The filtered list of entities.
@@ -110,10 +112,12 @@ pn.data.EntityUtils.getTargetEntity =
 pn.data.EntityUtils.filterBy = function(entities, ids, opt_evaluator) {
   var filtered = [];
   for (var i = 0, len = ids.length; i < len; i++) {
-    var evaluator = opt_evaluator || function(id, e) { return e.id === id; };
+    var id = ids[i];
+    if (id <= 0) continue;
+
+    var evaluator = opt_evaluator || function(id2, e) { return id2 - e.id; };
     var idx = goog.array.binarySelect(entities,
         function(e) { return evaluator(ids[i], e); });
-    pn.ass(idx >= 0);
     filtered.push(entities[idx]);
   }
   return filtered;
