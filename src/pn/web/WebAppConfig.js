@@ -36,6 +36,9 @@ pn.app.WebAppConfig = function(opt_opts) {
   /** @type {string} */
   this.loadPnlId = 'loading-panel';
 
+  /** @type {boolean} */
+  this.enableImpersonation = false;
+
   /** @type {!Object} */
   this.defaultFieldRenderers = {
 

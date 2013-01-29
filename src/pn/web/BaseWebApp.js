@@ -87,12 +87,29 @@ pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
 
 /** @override. */
 pn.web.BaseWebApp.prototype.init = function() {
+  if (this.cfg.enableImpersonation) { this.enableAjaxImpersonisation_(); }
+
   var sset = pn.data.Server.EventType,
       lp = this.loading;
   goog.events.listen(this.data, sset.LOADING, lp.increment, false, lp);
   goog.events.listen(this.data, sset.LOADED, lp.decrement, false, lp);
 
   goog.base(this, 'init');
+};
+
+
+/**
+ * Impersonation Hack.  Makes all ajax requests impersonate the specified user.
+ * @private
+ * @suppress {visibility}
+ */
+pn.web.BaseWebApp.prototype.enableAjaxImpersonisation_ = function() {
+  var origajax = this.data.server.ajax_.pnbind(this.data.server);
+  this.data.server.ajax_ = function() {
+    var impersonate = document.location.href.split('?')[1];
+    if (impersonate) arguments[0] += '?' + impersonate;
+    origajax.apply(null, arguments);
+  };
 };
 
 
