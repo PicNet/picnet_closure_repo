@@ -99,7 +99,6 @@ pn.ui.FileUpload.prototype.decorateInternal = function(element) {
         'enctype': 'multipart/form-data', 'method': 'POST', 'action' :
             this.serverAction_}, this.fileInput_));
   this.uploadform_.encoding = 'multipart/form-data'; // For IE
-  this.registerDisposable(this.uploadform_);
 
   goog.dom.appendChild(element, this.uploadform_);
 };
@@ -143,7 +142,8 @@ pn.ui.FileUpload.prototype.doUpload_ = function() {
  */
 pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
   this.formFields_ = [];
-  this.uploadform_.childNodes.pnforEach(function(c) {
+  var children = pn.toarr(this.uploadform_.childNodes);
+  children.pnforEach(function(c) {
     if (c.getAttribute('type') === 'file') return;
     goog.dom.removeNode(c);
     goog.dispose(c);

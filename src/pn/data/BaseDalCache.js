@@ -69,7 +69,8 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.ass(goog.isNumber(id) && id > 0);
 
   var arr = this.getImpl_(type);
+  pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }));
   var idx = goog.array.binarySelect(arr, function(e) { return id - e.id; });
-  pn.ass(idx >= 0);
+  pn.ass(idx >= 0, 'Could not find entity of type :%s id: %s'.pnsubs(type, id));
   return /** @type {!pn.data.Entity} */ (arr[idx]);
 };
