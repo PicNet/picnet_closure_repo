@@ -96,9 +96,11 @@ pn.ui.InputDatePicker.prototype.getInput = function() {
 
 /** @override */
 pn.ui.InputDatePicker.prototype.decorateInternal = function(element) {
-  this.setElementInternal(element);
+  var e = goog.dom.createDom('div');
+  goog.dom.appendChild(element, e);
+  this.setElementInternal(e);
 
-  this.fieldLabelInput_.render(element);
+  this.fieldLabelInput_.render(e);
 
   this.idp_.getDatePicker().setShowWeekNum(false);
   this.idp_.decorate(this.fieldLabelInput_.getElement());

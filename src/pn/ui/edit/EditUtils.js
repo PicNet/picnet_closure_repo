@@ -30,7 +30,7 @@ pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
       'Could not find a component for field: ' + id);
 
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
-  if (parent) goog.style.showElement(parent, visible);
+  if (parent) { goog.style.showElement(parent, visible); }
 };
 
 
@@ -57,7 +57,6 @@ pn.ui.edit.EditUtils.setEnabled = function(control, enabled) {
  */
 pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
   pn.ass(control, 'control is null - id: ' + id);
-
   var element = control.getElement ? control.getElement() : control;
   return /** @type {!Element} */ (element.parentNode);
 };
