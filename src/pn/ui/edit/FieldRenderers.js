@@ -131,6 +131,8 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
       );
   var val = fctx.getEntityValue(entity);
   sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
+  sel.getValue =
+      function() { return sel.value === '0' ? null : sel.value === 'true'; };
   goog.dom.appendChild(parent, sel);
   return sel;
 };
