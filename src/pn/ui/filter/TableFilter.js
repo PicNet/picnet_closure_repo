@@ -191,6 +191,7 @@ pn.ui.filter.TableFilter.prototype.getFilterDom_ = function(colIdx, header) {
       'title': this.options['filterToolTipMessage']
     });
     case 'ddl': return this.getSelectFilter_(colIdx);
+    case 'ddm': return this.getSelectFilter_(colIdx, {'multiple':'multiple'});
     default: throw 'filter-type: ' + filterType + ' is not supported';
   }
 };
@@ -201,16 +202,18 @@ pn.ui.filter.TableFilter.prototype.getFilterDom_ = function(colIdx, header) {
  * @param {number} colIdx The column index to create a SELECT filter for.
  * @return {!Element} The created SELECT DOM element.
  */
-pn.ui.filter.TableFilter.prototype.getSelectFilter_ = function(colIdx) {
-  var select = goog.dom.createDom('select', {
-    'id': this.getListId() + '_filter_' + colIdx,
-    'class': 'filter'
-  }, goog.dom.createDom('option', {}, this.options['selectOptionLabel']));
+pn.ui.filter.TableFilter.prototype.getSelectFilter_ = function(colIdx, attributes) {
+  if (!attributes) {
+    attributes = {};
+  }
+  attributes['id'] = this.getListId() + '_filter_' + colIdx;
+  attributes['class'] = 'filter';
+  var select = goog.dom.createDom('select', attributes, goog.dom.createDom('option', {}, this.options['selectOptionLabel']));
   var cells = this.listItems.pnmap(function(r) {
     return r.cells[colIdx];
   });
   var values = [];
-  cells.pnforEach(function(td) {
+  goog.array.forEach(cells, function(td) {
     var txt = goog.string.trim(goog.dom.getTextContent(td));
     if (!txt || txt === '&nbsp;' || values.pnindexOf(txt) >= 0) {
       return;
@@ -219,7 +222,7 @@ pn.ui.filter.TableFilter.prototype.getSelectFilter_ = function(colIdx) {
   });
   values.sort();
 
-  values.pnforEach(function(txt) {
+  goog.array.forEach(values, function(txt) {
     goog.dom.appendChild(select, goog.dom.createDom('option', {
       'value': txt.replace('"', '&quot;')
     }, txt));

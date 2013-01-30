@@ -94,7 +94,7 @@ pn.ui.filter.GenericListFilter.filteridx_ = 0;
 /** @param {!Element} list The list to reset. */
 pn.ui.filter.GenericListFilter.prototype.resetList = function(list) {
   goog.dispose(this.list);
-  this.listItems.pnforEach(goog.dispose);
+  goog.array.forEach(this.listItems, goog.dispose);
 
   this.list = list;
   this.initialiseControlCaches();
@@ -128,7 +128,7 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
     function() {
   var eventtype = pn.ui.DelayedThrottleInputListener.CHANGED;
   this.listen(this.inputListener_, eventtype, this.refresh);
-  this.filters.pnforEach(function(filter) {
+  goog.array.forEach(this.filters, function(filter) {
     this.inputListener_.addInput(filter);
   }, this);
 
@@ -158,18 +158,19 @@ pn.ui.filter.GenericListFilter.prototype.registerListenersOnFilters_ =
 
 /** Clears all filter values */
 pn.ui.filter.GenericListFilter.prototype.clearAllFilters = function() {
-  this.filters.pnforEach(this.clearFilterValue, this);
+  goog.array.forEach(this.filters, this.clearFilterValue, this);
   var additional = this.options['additionalFilterTriggers'];
-  if (additional) { additional.pnforEach(this.clearFilterValue, this); }
+  if (additional) { goog.array.forEach(additional, this.clearFilterValue, this); }
   this.refresh();
 };
 
 
 /** @param {!Element} f The filter DOM element to clear. */
 pn.ui.filter.GenericListFilter.prototype.clearFilterValue = function(f) {
-  var type = f.options ? 'select-one' : f.getAttribute('type');
+  var type = f.options ? (f.hasAttribute('multiple') ? 'select-many' : 'select-one') : f.getAttribute('type');
   switch (type) {
     case 'select-one':
+    case 'select-many':
       f.selectedIndex = 0;
       break;
     case 'text':
@@ -200,7 +201,15 @@ pn.ui.filter.GenericListFilter.prototype.loadFiltersFromCookie_ = function() {
     for (var i = 0; i < filterState.length; i++) {
       var s = filterState[i].split(',');
       var idx = parseInt(s[1], 10);
-      var fs = new pn.ui.filter.FilterState(s[0], s[3], idx, s[2]);
+      var value = [];
+      if (s[2] == 'select-many') {
+          for (var j=3, k=s.length ; j<k ; j++) {
+              value.push(s[j]);
+          }
+      } else {
+          value = s[3];
+      }
+      var fs = new pn.ui.filter.FilterState(s[0], value, idx, s[2]);
       states.push(fs);
     }
   }
@@ -285,7 +294,7 @@ pn.ui.filter.GenericListFilter.prototype.getFilterStates = function() {
  */
 pn.ui.filter.GenericListFilter.prototype.getFilterStateForFilter =
     function(filter) {
-  var type = filter.options ? 'select-one' : filter.getAttribute('type');
+  var type = filter.options ? (filter.hasAttribute('multiple') ? 'select-many' : 'select-one') : filter.getAttribute('type');
   var value;
   switch (type) {
     case 'text':
@@ -294,6 +303,17 @@ pn.ui.filter.GenericListFilter.prototype.getFilterStateForFilter =
     case 'select-one':
       value = filter.selectedIndex === 0 ?
           null : filter.options[filter.selectedIndex].value;
+      break;
+    case 'select-many':
+      value = [];
+      for (var i=1, k=filter.options.length ; i<k ; i++) {
+          if (filter.options[i].selected) {
+              value.push(filter.options[i].value);
+          }
+      }
+      if (!value.length) {
+          value = null;
+      }
       break;
     case 'checkbox':
       value = filter.checked;
@@ -414,10 +434,18 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 
         switch (state.type) {
           case 'select-one':
-            pntoarr(filter.options).pnforEach(function(o, idx) {
+            goog.array.forEach(filter.options, function(o, idx) {
               if (o.value === state.value) {
                 o.setAttribute('selected', 'selected');
                 filter.selectedIndex = idx;
+              } else o.removeAttribute('selected');
+            });
+            break;
+          case 'select-many':
+            goog.array.forEach(filter.options, function(o, idx) {
+              if (goog.array.indexOf(state.value, o.value) > -1) {
+                o.setAttribute('selected', 'selected');
+                //filter.selectedIndex = idx;
               } else o.removeAttribute('selected');
             });
             break;
@@ -442,7 +470,7 @@ pn.ui.filter.GenericListFilter.prototype.applyFilterStatesImpl_ =
 /** @private */
 pn.ui.filter.GenericListFilter.prototype.clearElementFilteredStates_ =
     function() {
-  this.listItems.pnforEach(function(r) {
+  goog.array.forEach(this.listItems, function(r) {
     r.removeAttribute('filtermatch');
   });
 };
@@ -478,6 +506,14 @@ pn.ui.filter.GenericListFilter.prototype.getNormalisedSearchTokensForState_ =
   switch (state.type) {
     case 'select-one':
       return [goog.string.unescapeEntities(state.value)];
+    case 'select-many':
+      var r = state.value;
+      if (r.length > 1) {
+          for (var i=0, k=r.length; i<k; i++) {
+            r.push('or');
+          }
+      }
+      return r;
     case 'text':
       return this.search_.parseSearchTokens(state.value);
     case 'checkbox':
@@ -513,7 +549,7 @@ pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
     function(state, item, textTokens, opt_txt) {
   pn.ass(!goog.isDef(opt_txt) || goog.isArray(opt_txt));
 
-  var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
+  var exact = goog.isDefAndNotNull(state) && (state.type === 'select-one' || state.type === 'select-many');
   var txt = opt_txt || [goog.string.trim(goog.dom.getTextContent(item))];
   var matches = this.doesTextContainText(txt, textTokens, exact);
   return matches && this.checkMatchingElementCallback_(state, item, textTokens);
