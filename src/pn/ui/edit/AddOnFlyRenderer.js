@@ -22,6 +22,12 @@ pn.ui.edit.AddOnFlyRenderer = function(entity, spec) {
 
   /**
    * @private
+   * @type {!pn.data.Entity}
+   */
+  this.entity_ = entity;
+
+  /**
+   * @private
    * @type {!pn.ui.UiSpec}
    */
   this.spec_ = spec;
@@ -95,7 +101,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
   this.getHandler().listen(this.add_, EventType.CLICK, this.addOnFly_);
   this.getHandler().listen(this.select_, EventType.CHANGE, this.fireChanged_);
   this.refresh(
-      /** @type {number} */ (this.fctx.getEntityValue(this.entity)));
+      /** @type {number} */ (this.fctx.getEntityValue(this.entity_)));
 };
 
 

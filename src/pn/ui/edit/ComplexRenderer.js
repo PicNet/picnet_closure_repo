@@ -8,11 +8,8 @@ goog.require('goog.ui.Component');
 /**
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!pn.data.Entity} entity The entity being edited.
  */
-pn.ui.edit.ComplexRenderer = function(entity) {
-  pn.ass(entity);
-
+pn.ui.edit.ComplexRenderer = function() {
   goog.ui.Component.call(this);
 
   /**
@@ -21,12 +18,6 @@ pn.ui.edit.ComplexRenderer = function(entity) {
    * @type {pn.ui.edit.FieldCtx}
    */
   this.fctx = null;
-
-  /**
-   * @protected
-   * @type {!pn.data.Entity}
-   */
-  this.entity = entity;
 
   /** @type {boolean} */
   this.showLabel = true;
