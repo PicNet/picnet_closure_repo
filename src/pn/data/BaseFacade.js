@@ -349,8 +349,7 @@ pn.data.BaseFacade.prototype.applyUpdates_ = function(updates) {
 
 /**
  * @private
- * @param {pn.data.Server.Update} update The update to update the cache
- *    with.
+ * @param {pn.data.Server.Update} update The update to update the cache with.
  */
 pn.data.BaseFacade.prototype.applyUpdate_ = function(update) {
   pn.assInst(update, pn.data.Server.Update);

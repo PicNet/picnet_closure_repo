@@ -1,4 +1,5 @@
 
+- Server side should abstract the JSON/DEJSON of entities, etc
 - Move all ui elements to mob/ui or web/ui
 - The pn.app.ctx and pn.web.ctx are horrible
 - TODO: Proper Mvc see great code: https://raw.github.com/petermichaux/uMVC/master/uMVC.js
