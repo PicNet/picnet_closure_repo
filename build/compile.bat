@@ -16,7 +16,7 @@ java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^
   --shouldGenerateJsdoc ^
   --shouldProvideRequireSoyNamespaces ^
   --outputPathFormat src\pn\ui\soy\{INPUT_FILE_NAME_NO_EXT}.compiled.soy.js ^
-  src\pn\ui\soy\pn.soy && ^
+  src\pn\ui\soy\*.soy && ^
 c:\Python27\python.exe ^
   %CLOSURE_LIBRARY%closure\bin\build\depswriter.py ^
   --root_with_prefix="src\ %BASE%" ^
