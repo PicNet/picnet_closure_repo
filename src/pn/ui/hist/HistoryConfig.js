@@ -9,15 +9,15 @@ goog.require('pn.ui.edit.soy.history');
  * @constructor
  * @extends {goog.Disposable}
  * @param {!pn.ui.UiSpec} spec The entity spec being shown.
- * @param {!pn.lrs.dal.DalCache} cache The current context cache.
- * @param {!Array.<!pn.lrs.dal.ChangeLogEntry>} changes The changes (audit
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
+ * @param {!Array.<!pn.data.Entity>} changes The changes (audit
  *    entries) to display.
  */
 pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
   goog.Disposable.call(this);
 
   pn.assInst(spec, pn.ui.UiSpec);
-  pn.assInst(cache, pn.lrs.dal.DalCache);
+  pn.assInst(cache, pn.data.BaseDalCache);
   pn.assArr(changes);
 
   /**
@@ -29,13 +29,13 @@ pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
 
   /**
    * @const
-   * @type {!pn.lrs.dal.DalCache}
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache = cache;
 
   /**
    * @const
-   * @type {!Array.<!pn.lrs.dal.ChangeLogEntry>}
+   * @type {!Array.<!pn.data.Entity>}
    */
   this.changes = changes;
 

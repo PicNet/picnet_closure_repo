@@ -85,9 +85,9 @@ pn.ui.hist.HistoryViewer.prototype.enterDocument = function() {
  * @param {goog.events.Event} e The event from the grid.
  */
 pn.ui.hist.HistoryViewer.prototype.showAuditEntry_ = function(e) {
-  var change = /** @type {pn.lrs.dal.ChangeLogEntry} */ (e.selected);
+  var change = /** @type {pn.data.Entity} */ (e.selected);
 
-  var data = { 'id1': change.id, 'id2': change.PrevChangeLogEntryPK };
+  var data = { 'id1': change.id, 'id2': change['PrevChangeLogEntryPK'] };
   var callback = goog.bind(this.showDiffBetween_, this);
   pn.app.ctx.data.ajax('History/GetHistoryDescriptions', data, callback);
 };
