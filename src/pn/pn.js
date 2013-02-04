@@ -64,7 +64,7 @@ pn.assNum = function(val, opt_message, var_args)
 pn.assInt = function(val) {
   var num = val;
   pn.assType_(goog.isNumber, arguments, 'number');
-  pn.ass(/^\d+$/.test(num), 'val %s is not an integer', num);
+  pn.ass(/^-?\d+$/.test(num), 'val %s is not an integer', num);
 };
 
 
