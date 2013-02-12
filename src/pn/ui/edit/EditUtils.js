@@ -28,7 +28,6 @@ pn.ui.edit.EditUtils.isShown = function(control, id) {
 pn.ui.edit.EditUtils.showElement = function(control, id, visible) {
   pn.ass(control,
       'Could not find a component for field: ' + id);
-
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
   if (parent) { goog.style.showElement(parent, visible); }
 };

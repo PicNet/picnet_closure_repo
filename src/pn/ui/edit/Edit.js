@@ -148,10 +148,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     var parentComp = templateParent || fieldset;
 
     if ((newEntity && !fctx.spec.showOnAdd) ||
-            (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) {
-      pn.ui.edit.EditUtils.showElement(parentComp, fctx.controlId, false);
-      return;
-    }
+            (!fctx.spec.showOnReadOnly && fctx.spec.readonly)) { return; }
 
     if (!templateParent) {
       goog.dom.appendChild(fieldset, parentComp = fb.getFieldContainer(fctx));

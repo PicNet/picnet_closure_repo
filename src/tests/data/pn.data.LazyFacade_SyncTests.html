@@ -34,8 +34,8 @@ var setUp = function() {
   facade1 = new pn.data.LazyFacade(cache1, server);        
   facade2 = new pn.data.LazyFacade(cache2, server);          
   
-  facade1.query([new pn.data.Query(type)], function() {});
-  facade2.query([new pn.data.Query(type)], function() {});
+  facade1.query([new pn.data.PnQuery(type)], function() {});
+  facade2.query([new pn.data.PnQuery(type)], function() {});
 
   pn.data.TypeRegister.parseEntity = function(type, raw) {
     var entity = new pn.data.Entity(type, raw.ID);
@@ -86,7 +86,7 @@ var create = function() {
 };
 
 var query = function(facade) {
-  var q = new pn.data.Query(type);
+  var q = new pn.data.PnQuery(type);
   var list;
   facade.query([q], function(results) { list = results[q.toString()]; });
   return list;
