@@ -360,8 +360,11 @@ pn.data.LocalCache.prototype.init_ = function() {
 
     pn.assArr(rawList);
     var ctor = pn.data.TypeRegister.fromName(query.Type);
-    var entities = rawList.pnmap(
-        function(data) { return ctor.fromCompressed(data); });
+    var entities = rawList.pnmap(function(data) {
+      var e = new ctor();
+      e.fromCompressed(data);
+      return e;
+    });
     this.cache_[query.Type] = entities;
   }
   queriesToRemove.pnforEach(function(qid) {

@@ -14,6 +14,7 @@ goog.require('pn.mvc.ChangeEvent');
  * @extends {pn.app.EventHandlerTarget}
  */
 pn.mvc.ModelBase = function() {
+  pn.app.EventHandlerTarget.call(this);
 
   /**
    * @private

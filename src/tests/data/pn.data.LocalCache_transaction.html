@@ -12,7 +12,7 @@ goog.require('pn');
 goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
-goog.require('pn.data.Query');
+goog.require('pn.data.PnQuery');
 goog.require('pn.storage');
 
 var cache,
@@ -37,7 +37,7 @@ var test_no_transaction_multi_save_query = function() {
   var start = goog.now();
   for (var i = 0; i < 5; i++) {    
     ['1', '2', '3'].pnforEach(function(t) {
-      cache.saveQuery(new pn.data.Query(t), arr);
+      cache.saveQuery(new pn.data.PnQuery(t), arr);
     });
   }
   var took = goog.now() - start;
@@ -49,7 +49,7 @@ var test_transacted_multi_save_query = function() {
   cache.begin();
   for (var i = 0; i < 5; i++) {
     ['1', '2', '3'].pnforEach(function(t) {
-      cache.saveQuery(new pn.data.Query(t), arr);
+      cache.saveQuery(new pn.data.PnQuery(t), arr);
     });
   }
   cache.commit();

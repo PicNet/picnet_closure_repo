@@ -1,5 +1,7 @@
 
 - Server side should abstract the JSON/DEJSON of entities, etc
+- Why is ID lowercase? Causes issues between server/client as there needs to 
+    be conversions at all transfer points
 - Move all ui elements to mob/ui or web/ui
 - The pn.app.ctx and pn.web.ctx are horrible
 - TODO: Proper Mvc see great code: https://raw.github.com/petermichaux/uMVC/master/uMVC.js

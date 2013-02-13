@@ -88,5 +88,32 @@ pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
 
 
 /** @return {!Array.<number|string>} A compressed version of this entity. */
-pn.data.Entity.prototype.toCompressed = goog.abstractMethod;
+pn.data.Entity.prototype.toCompressed = function() {
+  var arr = [];
+  goog.object.forEach(this, function(a, b) {
+    if (goog.isFunction(a) || b === 'type') return;
+    if (a instanceof goog.date.Date ||
+        a instanceof goog.date.DateTime ||
+        a instanceof Date) { a = '||DATE||' + a.getTime(); }
+    arr.push(a);
+  });
+  return arr;
+};
 
+
+/** @param {!Array.<string|number>} arr The compressed data array. */
+pn.data.Entity.prototype.fromCompressed = function(arr) {
+  pn.assArr(arr);
+  var keys = [];
+  goog.object.forEach(this, function(a, b) {
+    if (goog.isFunction(a) || b === 'type') return;
+    keys.push(b);
+  });
+  arr.pnforEach(function(v, idx) {
+    var key = keys[idx];
+    if (v && goog.isString(v) && goog.string.startsWith(v, '||DATE||')) {
+      v = pn.date.fromMillis(parseInt(v.substring(8), 10));
+    }
+    this[key] = v;
+  }, this);
+};

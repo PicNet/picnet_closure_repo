@@ -1,17 +1,10 @@
-set CLOSURE_LIBRARY=U:\shared\lib\closure-library\
-set CLOSURE_TEMPLATES=U:\shared\lib\closure-templates\
-set CLOSURE_COMPILER=U:\shared\lib\picnetcompiler.jar
+set CLOSURE_LIBRARY=J:\dev\shared\lib\closure-library\
+set CLOSURE_TEMPLATES=J:\dev\shared\lib\closure-templates\
+set CLOSURE_COMPILER=J:\dev\shared\lib\picnetcompiler.jar
 set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
+set BASE=../../../../lrs/resources/scripts/lib/picnet_closure_repo/src/
 
-REM set CLOSURE_LIBRARY=J:\dev\libs\closure-library\
-REM set CLOSURE_TEMPLATES=J:\dev\libs\closure-templates\
-REM set CLOSURE_COMPILER=J:\dev\libs\compiler.jar
-REM set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
-
-REM set BASE=../../../../projects/picnet_closure_repo/src/
-set BASE=../../../../ft/lib/picnet_closure_repo/src/
-
-REM U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
+U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^
   --shouldGenerateJsdoc ^
   --shouldProvideRequireSoyNamespaces ^
