@@ -69,7 +69,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
 
   this.dialog_.setVisible(true);
 
-  this.listen(this.dialog_, goog.ui.Dialog.EventType.SELECT, function(e) {
+  this.listenTo(this.dialog_, goog.ui.Dialog.EventType.SELECT, function(e) {
     if (e.key === 'cancel') {
       // Ensure this dialog cannot be reused.
       goog.dispose(this);
@@ -77,7 +77,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
     }
     if (this.validate_(edit)) { this.doAdd_(edit, this.spec_.type); }
     return false;
-  }, false, this);
+  });
 };
 
 

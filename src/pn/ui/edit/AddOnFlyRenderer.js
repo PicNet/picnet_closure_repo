@@ -18,7 +18,7 @@ pn.ui.edit.AddOnFlyRenderer = function(entity, spec) {
   pn.assInst(entity, pn.data.Entity);
   pn.assInst(spec, pn.ui.UiSpec);
 
-  pn.ui.edit.ComplexRenderer.call(this, entity);
+  pn.ui.edit.ComplexRenderer.call(this);
 
   /**
    * @private
