@@ -155,22 +155,26 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
  */
 pn.ui.FileUpload.prototype.onComplete_ = function() {
   this.fileInput_.disabled = false;
-  var complete = goog.net.EventType.COMPLETE;
-  this.getHandler().unlisten(this.io_, complete, this.onComplete_);
+  var complete = goog.net.EventType.COMPLETE,
+      io = this.io_,
+      et = pn.ui.FileUpload.EventType,
+      event = null;
+  this.getHandler().unlisten(io, complete, this.onComplete_);
 
-  var et = this.io_.isSuccess() ?
-      pn.ui.FileUpload.EventType.UPLOAD_COMPLETE :
-      pn.ui.FileUpload.EventType.UPLOAD_ERROR;
+  if (!io.isSuccess()) {
+    event = new goog.events.Event(et.UPLOAD_ERROR, this);
+    event.data = io.getLastError();
+  } else {
+    event = new goog.events.Event(et.UPLOAD_COMPLETE, this);
+    var str = /** @type {string} */ (io.getResponseHtml()),
+        r = /** @type {pn.data.Server.RawResponse} */ (pn.json.parseJson(str)),
+        response = new pn.data.Server.Response(r);
+    pn.app.ctx.data.parseServerResponse(response);
+    event.data = response.ajaxData;
+  }
 
-  var event = new goog.events.Event(et, this);
-  event.io = this.io_;
-  event.data = this.io_.isSuccess() ?
-      this.io_.getResponseHtml() :
-      this.io_.getLastError();
-
-  goog.dispose(this.io_);
+  goog.dispose(io);
   this.formFields_ = [];
-
   this.dispatchEvent(event);
 };
 
@@ -179,5 +183,5 @@ pn.ui.FileUpload.prototype.onComplete_ = function() {
 pn.ui.FileUpload.EventType = {
   UPLOAD_START: 'upload-start',
   UPLOAD_COMPLETE: 'upload-complete',
-  UPLOAD_ERROR: 'upload-error'  
+  UPLOAD_ERROR: 'upload-error'
 };

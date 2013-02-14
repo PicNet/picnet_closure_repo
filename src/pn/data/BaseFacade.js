@@ -274,7 +274,6 @@ pn.data.BaseFacade.prototype.sync = function() {
 
 
 /**
- * @protected
  * @param {!(function((pn.data.Entity|Object|string)=):undefined|
  *    pn.data.Server.Response)} callbackOrResponse The success callback or
  *    the response object.
