@@ -28,8 +28,7 @@ var setUp = function() {
 
   var cache1 = new pn.data.LocalCache(goog.now().toString(), '1');
   var cache2 = new pn.data.LocalCache(goog.now().toString(), '2');
-  cache1.clear();
-  cache2.clear();
+  window.localStorage.clear();
   var server = new pn.testing.MockServer(); // Only 1 Server!!!
   facade1 = new pn.data.LazyFacade(cache1, server);        
   facade2 = new pn.data.LazyFacade(cache2, server);          
@@ -46,8 +45,7 @@ var setUp = function() {
 };
 
 var tearDown = function() { 
-  facade1.cache.clear();
-  facade2.cache.clear();
+  window.localStorage.clear();
 };
 
 var test_created_in_1_can_be_queried_in_2 = function() {    

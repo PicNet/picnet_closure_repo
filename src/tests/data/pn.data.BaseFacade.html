@@ -26,7 +26,7 @@ var setUp = function() {
   server = new pn.testing.MockServer();
   cache = new pn.data.LocalCache('1', 'pn.data.BaseFacade.html');
   facade = new pn.data.BaseFacade(cache, server);      
-  cache.clear();
+  window.localStorage.clear();
   cache.cache_['EntityType'] = [];  
   
   pn.data.TypeRegister.parseEntity = function(type, raw) {
@@ -37,7 +37,7 @@ var setUp = function() {
   };
 };
 
-var tearDown = function() { cache.clear(); };
+var tearDown = function() { window.localStorage.clear(); };
 
 ////////////////////////////////////////////////////////////////////////////////
 // BaseFacade.getEntity

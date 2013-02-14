@@ -301,22 +301,7 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
       pnsubs(exp, this.dbver_));
-
-  this.clear();
-};
-
-
-/**
- * Clears the local cache.
- */
-pn.data.LocalCache.prototype.clear = function() {
-  this.lastUpdate_ = 0;
-  var empty = this.key_('');
-  for (var key in window['localStorage']) {
-    if (goog.string.startsWith(key, empty)) {
-      delete window['localStorage'][key];
-    }
-  }
+  window.localStorage.clear();
 };
 
 

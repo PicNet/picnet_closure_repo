@@ -21,8 +21,8 @@ var cache,
 
 var setUp = function() {
   pn.data.TypeRegister.parseEntities = function(type, list) { return list; };
-  cache = new pn.data.LocalCache(goog.now(), 'pn.data.LocalCache_transaction');
-  cache.clear();
+  window.localStorage.clear();
+  cache = new pn.data.LocalCache(goog.now(), 'pn.data.LocalCache_transaction');  
   arr = new Array(iterations);
   for (var i = 0; i < iterations; i++) { arr[i] = create(i+1); }  
 };

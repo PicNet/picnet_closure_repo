@@ -29,8 +29,8 @@ var setUp = function() {
   pn.data.LazyFacade.prototype.sync = function() {};
   pn.data.LocalCache.prototype.init_ = function() {};
 
-  cache = new pn.data.LocalCache(goog.now().toString(), '1');
-  cache.clear();
+  window.localStorage.clear();
+  cache = new pn.data.LocalCache(goog.now().toString(), '1');  
   cache.cache_['EntityType'] = [];
   server = new pn.testing.MockServer();
   facade = new pn.data.LazyFacade(cache, server);    
