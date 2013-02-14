@@ -44,7 +44,7 @@ var test_multiple_changes_are_only_fired_once = function() {
       new pn.mvc.Change(mb, 'prop2', 2, 3),
       new pn.mvc.Change(mb, 'prop3', 3, 4)
     ], changes);
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();
 };
 
@@ -56,7 +56,7 @@ var test_explicit_fire_clears_any_queued_changes = function() {
   setTimeout(function() {
     asyncTestCase.continueTesting(); // No additional fires dispatched
     assertEquals(1, fires); 
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();
 };
 
@@ -98,8 +98,8 @@ var test_multiple_fires_are_independent = function() {
       assertArrayEquals([ new pn.mvc.Change(mb, 'prop1', 1, 3) ], changes);
 
       asyncTestCase.continueTesting();
-    }, 50);
-  }, 50);
+    }, 5);
+  }, 5);
   asyncTestCase.waitForAsync();
 };
 

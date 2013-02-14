@@ -11,6 +11,7 @@ goog.require('pn');
 goog.require('pn.alg.hashtable');
     </script>
     <script>
+var iterations = 1000;
 var test_simple_get_and_set_operations = function() {
   var ht = new pn.alg.hashtable();
   ht.set(1, {value:1});
@@ -55,7 +56,7 @@ var test_performance_for_object_keys = function() {
 
 var getKeys = function(strategy) {
   var keys = [],  
-      len = 100000;
+      len = iterations;
   for (var i = 0; i < len; i++) {    
     keys.push(strategy(i));
   }
@@ -67,7 +68,7 @@ var performanceTest = function(description, keys, opt_omapKey) {
       omap = {},
       i,
       start,
-      len = 100000,
+      len = iterations,
       omapkey = opt_omapKey || function(k) { return k; };
 
   for (i = 0; i < len; i++) {

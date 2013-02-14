@@ -15,7 +15,7 @@
     <script>
 goog.require('goog.testing.jsunit');
 
-var iterations = 10000;
+var iterations = 100;
 
 var test_perf_of_model_creations = function() {
   var start = goog.now();
@@ -56,7 +56,7 @@ var test_perf_of_collection_creations = function() {
 
   for (var i = 0; i < 10; i++) {
     var models = [];
-    for (var j = 0; j < 1000; j++) {
+    for (var j = 0; j < iterations / 10; j++) {
       models.push(new pn.mvc.Model({'1':1, '2':2, '3':2}));
     }
     collections.push(new pn.mvc.Collection(models));
@@ -70,7 +70,7 @@ var test_perf_of_collection_modifications = function() {
   
   for (var i = 0; i < 10; i++) {
     var models = [];
-    for (var j = 0; j < 1000; j++) {
+    for (var j = 0; j < iterations / 10; j++) {
       models.push(new pn.mvc.Model({'1':1, '2':2, '3':2}));
     }
     collections.push(new pn.mvc.Collection(models));

@@ -40,7 +40,7 @@ var test_single_set_fires_a_single_time = function () {
     assertArrayEquals([
       new pn.mvc.Change(model, 'prop', undefined, 'val')
     ], changes);
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
@@ -57,7 +57,7 @@ var test_multiple_sets_fires_a_single_time = function () {
       new pn.mvc.Change(model, 'prop2', undefined, 'val2'),
       new pn.mvc.Change(model, 'prop3', undefined, 'val3')
     ], changes);
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
@@ -74,8 +74,8 @@ var test_multiple_fires = function() {
       assertArrayEquals([ new pn.mvc.Change(model, 'prop2', undefined, 'val2') ], changes);
 
       asyncTestCase.continueTesting();
-    }, 50);
-  }, 50);
+    }, 5);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
@@ -90,7 +90,7 @@ var test_get_and_set_all_work_as_expected = function() {
     // Vals still the same
     assertEquals('val1', model.get('prop1'));
     assertEquals(undefined, model.get('prop2'));
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
@@ -105,7 +105,7 @@ var test_updates_in_a_batch_are_all_reported_bundling_is_not_supported = functio
       new pn.mvc.Change(model, 'prop1', undefined, 'val1'),
       new pn.mvc.Change(model, 'prop1', 'val1', 'val2')
     ], changes);
-  }, 50);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
@@ -121,8 +121,8 @@ var test_updates_accross_multiple_fires_are_as_expected = function() {
       asyncTestCase.continueTesting();
       assertEquals(2, fires); 
       assertArrayEquals([ new pn.mvc.Change(model, 'prop1', 'val1', 'val2') ], changes);
-    }, 50);
-  }, 50);
+    }, 5);
+  }, 5);
   asyncTestCase.waitForAsync();  
 };
 
