@@ -33,7 +33,7 @@ pn.ui.edit.FieldBuilder.getFieldContainer = function(fctx) {
  * @param {Element|Text|goog.ui.Component} inp The input field.
  * @param {Object=} opt_target The optional 'entity' target to inject values
  *    into if required.
- * @return {string} The value in the specified field.
+ * @return {string|boolean} The value in the specified field.
  */
 pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
   pn.ass(inp);

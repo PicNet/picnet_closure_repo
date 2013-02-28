@@ -339,7 +339,6 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
         goog.isDef(selValue) ? selValue :
             select.getValue() ? select.getValue() :
                 opt_noneId ? opt_noneId : 0;
-
     arr.pnforEach(function(e) {
       var opts = {'value': e.id};
       if (e.id === selected) { opts['selected'] = 'selected'; }
