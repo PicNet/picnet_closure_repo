@@ -1,0 +1,43 @@
+﻿<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+    <script src="../../pn/slick.grid.externs.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+goog.require('goog.object');
+
+goog.require('pn');
+goog.require('pn.ui.edit.state.State');
+goog.require('pn.ui.edit.state.Provider');
+
+var state;
+var setUp = function() {
+  var provider = new pn.ui.edit.state.Provider({});
+  state = new pn.ui.edit.state.State(['id1', 'id2', 'id3'], provider);
+};
+
+var test_default_values = function() {
+  assertFalse(state.isReadOnly('id1'));
+  assertTrue(state.isEnabled('id1'));
+  assertTrue(state.isVisible('id1'));
+};
+
+var test_changes_are_recorded = function() {
+  state.setVisible('id2', false);
+  assertTrue(state.isVisible('id3'));
+  assertFalse(state.isVisible('id2'));
+};
+
+var test_only_differences_are_reported = function() {
+  state.fire_ = function() {};
+  state.setVisible('id2', false);
+  var diff = state.diff_();
+  assertArrayEquals(['id2'], goog.object.getKeys(diff));
+};
+    </script>    
+  </body>
+</html>

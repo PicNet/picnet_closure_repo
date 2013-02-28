@@ -46,7 +46,7 @@ pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
     });
     return inp.multiple && arr.length > 1 ? arr : arr[0];
   }
-  else if (inp.type === 'checkbox') { return inp.checked; }
+  else if (inp.type === 'checkbox') { return !!inp.checked; }
   else { return inp.value; }
 };
 

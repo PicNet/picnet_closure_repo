@@ -46,6 +46,22 @@ pn.ui.edit.EditUtils.setEnabled = function(control, enabled) {
 
 
 /**
+ * @param {!(Element|Text|goog.ui.Component)} control The control that this
+ *    field is rendererd on.
+ * @param {string} id The id of the field being queried.
+ * @param {boolean} required Wether this field is required.
+ */
+pn.ui.edit.EditUtils.setRequired = function(control, id, required) {
+  pn.ass(control,
+      'Could not find a component for field: ' + id);
+  var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
+  if (!parent) { return; }
+  if (required) { goog.dom.classes.add(parent, 'required'); }
+  else { goog.dom.classes.remove(parent, 'required'); }
+};
+
+
+/**
  * TODO: If this works as expected remove the 'id' parameter.
  *
  * @param {!(Element|Text|goog.ui.Component)} control The element to get the

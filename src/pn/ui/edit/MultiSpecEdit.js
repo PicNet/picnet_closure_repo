@@ -104,12 +104,6 @@ pn.ui.edit.MultiSpecEdit.prototype.isValidForm = function() {
 
 
 /** @override */
-pn.ui.edit.MultiSpecEdit.prototype.updateRequiredClasses = function() {
-  goog.object.forEach(this.edits, function(c) { c.updateRequiredClasses(); });
-};
-
-
-/** @override */
 pn.ui.edit.MultiSpecEdit.prototype.getFormErrors = function() {
   var errors = [];
   goog.object.forEach(this.edits, function(edit) {
@@ -159,21 +153,21 @@ pn.ui.edit.MultiSpecEdit.prototype.createDom = function() {
 pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   pn.ui.edit.MultiSpecEdit.superClass_.enterDocument.call(this);
 
-  var controls = {};
-  var commands = this.getCommandButtons();
+  var ctls = this.getControls_(),
+      btns = this.getButtons_(),
+      ids = goog.object.getKeys(ctls),
+      provider = new pn.ui.edit.state.Provider(ctls),
+      state = new pn.ui.edit.state.State(ids, provider);
 
-  goog.object.forEach(this.edits, function(edit) {
-    edit.getFieldContexs().pnforEach(function(fctx) {
-      if (fctx.id in controls) return;
-      controls[fctx.id] = edit.getControl(fctx.id);
-    });
-    pn.object.uniqueExtend(commands, edit.getCommandButtons());
-  }, this);
+  var updater = new pn.ui.edit.state.Updater(state, ctls);
+  this.registerDisposable(updater);
 
   var doInterceptor = goog.bind(function(cfg) {
     if (!cfg || !cfg.interceptor) { return; }
-    var interceptor = new cfg.interceptor(
-        this, this.entity, this.cache, controls, commands);
+    var e = this.entity,
+        c = this.cache,
+        interceptor = new cfg.interceptor(this, e, c, state, btns);
+
     this.interceptors_.push(interceptor);
     this.registerDisposable(interceptor);
   }, this);
@@ -183,4 +177,33 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
   goog.dispose(maincfg);
 
   goog.object.forEach(this.edits, function(e) { doInterceptor(e.cfg); }, this);
+};
+
+
+/**
+ * @private
+ * @return {!Object} The controls on all children Edit.js.
+ */
+pn.ui.edit.MultiSpecEdit.prototype.getControls_ = function() {
+  var ctls = {};
+  goog.object.forEach(this.edits, function(edit) {
+    edit.getFieldContexs().pnforEach(function(fctx) {
+      if (fctx.id in ctls) return;
+      ctls[fctx.id] = edit.getControl(fctx.id);
+    });
+  }, this);
+  return ctls;
+};
+
+
+/**
+ * @private
+ * @return {!Object} The buttons on all children Edit.js.
+ */
+pn.ui.edit.MultiSpecEdit.prototype.getButtons_ = function() {
+  var btns = this.getCommandButtons();
+  goog.object.forEach(this.edits, function(edit) {
+    pn.object.uniqueExtend(btns, edit.getCommandButtons());
+  });
+  return btns;
 };

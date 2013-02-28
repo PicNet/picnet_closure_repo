@@ -91,14 +91,6 @@ pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
 
 /**
  * @protected
- * Adds or removes a 'required' class to all required fields.
- */
-pn.ui.edit.CommandsComponent.prototype.updateRequiredClasses =
-    goog.abstractMethod;
-
-
-/**
- * @protected
  * @param {pn.ui.edit.cmd.Command} command The command to fire.
  * @param {Object} data The current form data.
  */

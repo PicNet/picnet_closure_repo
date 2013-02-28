@@ -2,6 +2,7 @@
 goog.provide('pn.ui.edit.Config');
 
 goog.require('pn.ui.edit.CommandsComponent');
+goog.require('pn.ui.edit.InterceptorCtor');
 goog.require('pn.ui.edit.cmd.BackCommand');
 goog.require('pn.ui.edit.cmd.CloneCommand');
 goog.require('pn.ui.edit.cmd.Command');
@@ -21,10 +22,7 @@ goog.require('pn.ui.edit.cmd.SaveCommand');
  *    commands are used.
  * @param {function(?):string=} opt_template The optional template to render
  *    this edit control.
- * @param {function(new:pn.ui.edit.Interceptor,!pn.ui.edit.CommandsComponent,
- *    !pn.data.Entity,!pn.data.BaseDalCache,
- *    !Object.<Element|Text|goog.ui.Component>,
- *    !Object.<goog.ui.Button>)=} opt_interceptor The optional interceptor
+ * @param {pn.ui.edit.InterceptorCtor=} opt_interceptor The optional interceptor
  *    constructor pointer used to receive and intercept lifecycle events.
  */
 pn.ui.edit.Config =
@@ -42,9 +40,7 @@ pn.ui.edit.Config =
   /** @type {null|function(?):string} */
   this.template = opt_template || null;
 
-  /** @type {null|function(new:pn.ui.edit.Interceptor,
-   *    !pn.ui.edit.CommandsComponent,!pn.data.Entity,!pn.data.BaseDalCache,
-   *    !Object.<Element|Text|goog.ui.Component>,!Object.<goog.ui.Button>)} */
+  /** @type {?pn.ui.edit.InterceptorCtor} */
   this.interceptor = opt_interceptor || null;
 
   /** @type {boolean} */

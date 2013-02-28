@@ -1,7 +1,15 @@
 ﻿;
 goog.provide('pn.ui.edit.Interceptor');
+goog.provide('pn.ui.edit.InterceptorCtor');
 
 goog.require('goog.events.EventHandler');
+
+
+/** @typedef {function(new:pn.ui.edit.Interceptor,
+*     !pn.ui.edit.CommandsComponent,
+ *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.State,
+ *    !Object.<goog.ui.Button>)} */
+pn.ui.edit.InterceptorCtor;
 
 
 
@@ -12,12 +20,18 @@ goog.require('goog.events.EventHandler');
  *    currently being shown.
  * @param {!pn.data.Entity} entity The entity that was just decorated.
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
- * @param {!Object.<Element|Text|goog.ui.Component>} controls The controls map
- *    for this UI.
+ * @param {!pn.ui.edit.state.State} state The state of the fields in this
+ *    interceptor.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor =
-    function(component, entity, cache, controls, commands) {
+    function(component, entity, cache, state, commands) {
+  pn.assInst(component, pn.ui.edit.CommandsComponent);
+  pn.assInst(entity, pn.data.Entity);
+  pn.assInst(cache, pn.data.BaseDalCache);
+  pn.assInst(state, pn.ui.edit.state.State);
+  pn.assObj(commands);
+
   goog.Disposable.call(this);
 
   /**
@@ -28,27 +42,25 @@ pn.ui.edit.Interceptor =
 
   /**
    * @protected
-   * @type {!pn.data.Entity} The entity being edited.
+   * @type {!pn.data.Entity}
    */
   this.entity = entity;
 
   /**
    * @protected
-   * @type {!pn.data.BaseDalCache} The cache with all related entities.
+   * @type {!pn.data.BaseDalCache}
    */
   this.cache = cache;
 
   /**
-   * @private
-   * @type {!Object.<!(Element|Text|goog.ui.Component)>} The controls map
-   *  for this UI.  The first item is the control for the field.  The second is
-   *  the parent.
+   * @protected
+   * @type {!pn.ui.edit.state.State}
    */
-  this.controls_ = controls;
+  this.state = state;
 
   /**
    * @private
-   * @type {!Object.<!goog.ui.Button>} The commands map in the UI.
+   * @type {!Object.<!goog.ui.Button>}
    */
   this.commands_ = commands;
 
@@ -70,22 +82,6 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  */
 pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
     function() { return []; };
-
-
-/** @return {!Array.<string>} The currently registering the control IDs. */
-pn.ui.edit.Interceptor.prototype.getControlIDs = function() {
-  return goog.object.getKeys(this.controls_);
-};
-
-
-/**
- * @param {string} id The id of the control we need.
- * @return {!(Element|Text|goog.ui.Component)} The control for the specified id.
- */
-pn.ui.edit.Interceptor.prototype.getControl = function(id) {
-  pn.ass(this.controls_[id], 'Could not find control with ID "%s"', id);
-  return this.controls_[id];
-};
 
 
 /**

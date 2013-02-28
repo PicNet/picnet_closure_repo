@@ -18,6 +18,9 @@ goog.require('pn.ui.edit.FieldCtx');
 goog.require('pn.ui.edit.FieldValidator');
 goog.require('pn.ui.edit.Interceptor');
 goog.require('pn.ui.edit.cmd.Command');
+goog.require('pn.ui.edit.state.Provider');
+goog.require('pn.ui.edit.state.State');
+goog.require('pn.ui.edit.state.Updater');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.Grid');
@@ -73,8 +76,7 @@ goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 pn.ui.edit.Edit.prototype.isDirty = function() {
   this.log_.fine('isDirty: ' + this.spec.id);
   var dirty = this.getEditableFields_().pnfindIndex(function(fctx) {
-    var ctl = this.getControl(fctx.id);
-    return fctx.isDirty(this.entity, ctl);
+    return fctx.isDirty(this.entity, this.getControl(fctx.id));
   }, this) >= 0;
   this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
   return dirty;
@@ -127,7 +129,6 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
 
   this.decorateFields_(div);
-  this.updateRequiredClasses();
 };
 
 
@@ -187,23 +188,6 @@ pn.ui.edit.Edit.prototype.autoFocus_ = function() {
   goog.Timer.callOnce(function() {
     try { this.controls_[toFocus.id].focus(); } catch (ex) {}
   }, 1, this);
-};
-
-
-/** @override */
-pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
-  this.cfg.fCtxs.pnforEach(function(fctx) {
-    var ctl = this.controls_[fctx.id];
-    if (!ctl) return;
-    var parent = pn.ui.edit.EditUtils.getFieldParent(ctl, fctx.controlId);
-    if (!parent) return;
-
-    if (fctx.isRequired()) {
-      goog.dom.classes.add(parent, 'required');
-    } else {
-      goog.dom.classes.remove(parent, 'required');
-    }
-  }, this);
 };
 
 
@@ -285,12 +269,27 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 /** @override */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
+
+  var ids = goog.object.getKeys(this.controls_),
+      provider = new pn.ui.edit.state.Provider(this.controls_),
+      state = new pn.ui.edit.state.State(ids, provider);
+
+  this.cfg.fCtxs.pnforEach(function(fctx) {
+    if (fctx.isRequired()) state.setRequired(fctx.id, true);
+    if (fctx.spec.readonly) state.setReadOnly(fctx.id, true);
+  }, this);
+
+  var updater = new pn.ui.edit.state.Updater(state, this.controls_);
+  this.registerDisposable(updater);
+
   this.cfg.fCtxs.pnforEach(this.enterDocumentOnChildrenField_, this);
 
   if (!this.fireInterceptorEvents || !this.cfg.interceptor) return;
 
-  this.interceptor_ = new this.cfg.interceptor(
-      this, this.entity, this.cache, this.controls_, this.getCommandButtons());
+  var e = this.entity,
+      c = this.cache,
+      btns = this.getCommandButtons();
+  this.interceptor_ = new this.cfg.interceptor(this, e, c, state, btns);
   this.registerDisposable(this.interceptor_);
 };
 
