@@ -176,8 +176,9 @@ pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
  */
 pn.ui.edit.ReadOnlyFields.createDiv_ = function(text, value, parent) {
   var div = goog.dom.createDom('div', 'field');
-  div.innerHTML = text;
-  div.value = value;
+  div.setValue = function(val, opt_text) { div.innerHTML = opt_text || val; };
+  div.getValue = function() { return value; };
+  div.setValue(value, text);
   goog.dom.appendChild(parent, div);
   return div;
 };

@@ -35,7 +35,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.id = spec.id;
 
   /** @type {!string} */
-  this.controlId = (++pn.ui.edit.FieldCtx.ID_COUNTER_) + '___' +
+  this.controlId = '_ctl_' + (++pn.ui.edit.FieldCtx.ID_COUNTER_) + '_' +
       spec.id.replace(/\./g, '_');
 
   /** @type {!pn.ui.UiSpec} */
