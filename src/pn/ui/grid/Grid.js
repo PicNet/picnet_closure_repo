@@ -183,7 +183,6 @@ pn.ui.grid.Grid.prototype.decorateContainer_ = function() {
  */
 pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   if (!this.list_.length) return;
-
   var gc = goog.dom.getElementByClass('grid-container', parent);
   var height = this.cfg_.height;
   if (!height) {
