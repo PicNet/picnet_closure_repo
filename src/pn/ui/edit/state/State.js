@@ -21,12 +21,6 @@ pn.ui.edit.state.State = function(ids, provider) {
 
   /**
    * @const
-   * @type {!Array.<string>}
-   */
-  this.ids = ids.pnclone();
-
-  /**
-   * @const
    * @private
    * @type {!pn.ui.edit.state.Provider}
    */
@@ -83,6 +77,12 @@ pn.ui.edit.state.State.CHANGED = 'fields-state-changed';
 ////////////////////////////////////////////////////////////////////////////////
 // READONLY
 ////////////////////////////////////////////////////////////////////////////////
+
+
+/** @return {!Array.<string>} The ids in this state manager. */
+pn.ui.edit.state.State.prototype.getIds = function() {
+  return goog.object.getKeys(this.fields_);
+};
 
 
 /**
@@ -200,6 +200,9 @@ pn.ui.edit.state.State.prototype.getValue = function(id) {
  * @param {*} value The value of the specified field to set.
  */
 pn.ui.edit.state.State.prototype.setValue = function(id, value) {
+  pn.assStr(id);
+  pn.assObj(this.field_(id), 'Could not find field: ' + id);
+
   this.provider_.setValue(id, value);
   this.fire_();
 };
@@ -211,7 +214,7 @@ pn.ui.edit.state.State.prototype.setValue = function(id, value) {
  */
 pn.ui.edit.state.State.prototype.getControl = function(id) {
   pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
+  pn.assObj(this.field_(id), 'Could not find field: ' + id);
 
   return this.provider_.getControl(id);
 };
