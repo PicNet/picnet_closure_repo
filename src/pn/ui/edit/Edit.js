@@ -289,7 +289,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   var e = this.entity,
       c = this.cache,
       btns = this.getCommandButtons();
-  this.interceptor_ = new this.cfg.interceptor(this, e, c, state, btns);
+  this.interceptor_ = new this.cfg.interceptor(e, c, state, btns);
   this.registerDisposable(this.interceptor_);
 };
 

@@ -15,8 +15,6 @@ goog.require('pn.ui.edit.state.Provider');
  */
 pn.ui.edit.state.State = function(ids, provider) {
   pn.assArr(ids, 'ids should be an array of strings');
-  pn.ass(ids.length, 'At least one field is required');
-  pn.assStr(ids[0], 'String IDs required');
   pn.assInst(provider, pn.ui.edit.state.Provider);
 
   goog.events.EventTarget.call(this);
@@ -41,13 +39,8 @@ pn.ui.edit.state.State = function(ids, provider) {
   this.fields_ = {};
   ids.pnforEach(function(id) {
     pn.ass(!this.fields_[id], 'Fields map already contains the field: ' + id);
-    this.fields_[id] = {
-      required: false,
-      readonly: false,
-      enabled: true,
-      visible: true,
-      value: null
-    };
+    this.fields_[id] = /** @type {pn.ui.edit.state.State.Field} */ (
+        goog.object.unsafeClone(pn.ui.edit.state.State.FieldDefault_));
   }, this);
 
   /**
@@ -71,6 +64,19 @@ goog.inherits(pn.ui.edit.state.State, goog.events.EventTarget);
 pn.ui.edit.state.State.Field;
 
 
+/**
+ * @private
+ * @type {pn.ui.edit.state.State.Field}
+ */
+pn.ui.edit.state.State.FieldDefault_ = {
+  required: false,
+  readonly: false,
+  enabled: true,
+  visible: true,
+  value: null
+};
+
+
 /** @type {string} The event fired on change */
 pn.ui.edit.state.State.CHANGED = 'fields-state-changed';
 
@@ -84,9 +90,7 @@ pn.ui.edit.state.State.CHANGED = 'fields-state-changed';
  * @return {boolean} Wether the specified field is readonly.
  */
 pn.ui.edit.state.State.prototype.isReadOnly = function(id) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-  return this.fields_[id].readonly;
+  return this.field_(id).readonly;
 };
 
 
@@ -95,10 +99,8 @@ pn.ui.edit.state.State.prototype.isReadOnly = function(id) {
  * @param {boolean} value The readonly state of the field.
  */
 pn.ui.edit.state.State.prototype.setReadOnly = function(id, value) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
   pn.assBool(value);
-  this.fields_[id].readonly = value;
+  this.field_(id).readonly = value;
 
   this.fire_();
 };
@@ -114,9 +116,7 @@ pn.ui.edit.state.State.prototype.setReadOnly = function(id, value) {
  * @return {boolean} Wether the specified field is required.
  */
 pn.ui.edit.state.State.prototype.isRequired = function(id) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-  return this.fields_[id].required;
+  return this.field_(id).required;
 };
 
 
@@ -125,10 +125,8 @@ pn.ui.edit.state.State.prototype.isRequired = function(id) {
  * @param {boolean} value The required state of the field.
  */
 pn.ui.edit.state.State.prototype.setRequired = function(id, value) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
   pn.assBool(value);
-  this.fields_[id].required = value;
+  this.field_(id).required = value;
 
   this.fire_();
 };
@@ -143,9 +141,7 @@ pn.ui.edit.state.State.prototype.setRequired = function(id, value) {
  * @return {boolean} Wether the specified field is enabled.
  */
 pn.ui.edit.state.State.prototype.isEnabled = function(id) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-  return this.fields_[id].enabled;
+  return this.field_(id).enabled;
 };
 
 
@@ -154,10 +150,8 @@ pn.ui.edit.state.State.prototype.isEnabled = function(id) {
  * @param {boolean} value The enabled state of the field.
  */
 pn.ui.edit.state.State.prototype.setEnabled = function(id, value) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
   pn.assBool(value);
-  this.fields_[id].enabled = value;
+  this.field_(id).enabled = value;
 
   this.fire_();
 };
@@ -172,9 +166,7 @@ pn.ui.edit.state.State.prototype.setEnabled = function(id, value) {
  * @return {boolean} Wether the specified field is visible.
  */
 pn.ui.edit.state.State.prototype.isVisible = function(id) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-  return this.fields_[id].visible;
+  return this.field_(id).visible;
 };
 
 
@@ -183,10 +175,8 @@ pn.ui.edit.state.State.prototype.isVisible = function(id) {
  * @param {boolean} value The visible state of the field.
  */
 pn.ui.edit.state.State.prototype.setVisible = function(id, value) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
   pn.assBool(value);
-  this.fields_[id].visible = value;
+  this.field_(id).visible = value;
 
   this.fire_();
 };
@@ -201,9 +191,6 @@ pn.ui.edit.state.State.prototype.setVisible = function(id, value) {
  * @return {*} The value of the specified field.
  */
 pn.ui.edit.state.State.prototype.getValue = function(id) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-
   return this.provider_.getValue(id);
 };
 
@@ -213,9 +200,6 @@ pn.ui.edit.state.State.prototype.getValue = function(id) {
  * @param {*} value The value of the specified field to set.
  */
 pn.ui.edit.state.State.prototype.setValue = function(id, value) {
-  pn.assStr(id);
-  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
-
   this.provider_.setValue(id, value);
   this.fire_();
 };
@@ -236,6 +220,18 @@ pn.ui.edit.state.State.prototype.getControl = function(id) {
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE HELPERS
 ////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * @private
+ * @param {string} id The ID of the field.
+ * @return {!pn.ui.edit.state.State.Field} The field specified.
+ */
+pn.ui.edit.state.State.prototype.field_ = function(id) {
+  pn.assStr(id);
+  pn.assObj(this.fields_[id], 'Could not find field: ' + id);
+  return this.fields_[id];
+};
 
 
 /** @private */

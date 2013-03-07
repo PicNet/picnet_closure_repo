@@ -16,6 +16,7 @@ goog.require('pn.mvc.Collection');
  * @param {Object=} opt_options Optional slick grid DataView options.
  */
 pn.ui.grid.DataView = function(interceptor, opt_options) {
+  if (!window.Slick) return;
   var members = Slick.Data.DataView.call(this, opt_options);
 
   // Required as Slick.Data.DataView uses ugly style crockford encapsulation.
@@ -57,7 +58,8 @@ pn.ui.grid.DataView = function(interceptor, opt_options) {
    */
   this.eh_ = new goog.events.EventHandler(this);
 };
-goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
+if (window.Slick)
+  goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 
 
 /**

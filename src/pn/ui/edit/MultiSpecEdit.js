@@ -166,7 +166,7 @@ pn.ui.edit.MultiSpecEdit.prototype.enterDocument = function() {
     if (!cfg || !cfg.interceptor) { return; }
     var e = this.entity,
         c = this.cache,
-        interceptor = new cfg.interceptor(this, e, c, state, btns);
+        interceptor = new cfg.interceptor(e, c, state, btns);
 
     this.interceptors_.push(interceptor);
     this.registerDisposable(interceptor);

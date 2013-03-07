@@ -3,10 +3,10 @@ goog.provide('pn.ui.edit.Interceptor');
 goog.provide('pn.ui.edit.InterceptorCtor');
 
 goog.require('goog.events.EventHandler');
+goog.require('pn.data.Entity');
 
 
 /** @typedef {function(new:pn.ui.edit.Interceptor,
-*     !pn.ui.edit.CommandsComponent,
  *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.State,
  *    !Object.<goog.ui.Button>)} */
 pn.ui.edit.InterceptorCtor;
@@ -16,29 +16,19 @@ pn.ui.edit.InterceptorCtor;
 /**
  * @constructor
  * @extends {goog.Disposable}
- * @param {!pn.ui.edit.CommandsComponent} component The Edit/MultiEdit
- *    currently being shown.
  * @param {!pn.data.Entity} entity The entity that was just decorated.
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
  * @param {!pn.ui.edit.state.State} state The state of the fields in this
  *    interceptor.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
-pn.ui.edit.Interceptor =
-    function(component, entity, cache, state, commands) {
-  pn.assInst(component, pn.ui.edit.CommandsComponent);
+pn.ui.edit.Interceptor = function(entity, cache, state, commands) {
   pn.assInst(entity, pn.data.Entity);
   pn.assInst(cache, pn.data.BaseDalCache);
   pn.assInst(state, pn.ui.edit.state.State);
   pn.assObj(commands);
 
   goog.Disposable.call(this);
-
-  /**
-   * @protected
-   * @type {pn.ui.edit.CommandsComponent}
-   */
-  this.component = component;
 
   /**
    * @protected

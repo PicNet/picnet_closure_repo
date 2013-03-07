@@ -33,6 +33,8 @@ pn.ui.edit.state.Provider = function(controls) {
  * @return {*} The value of the specified field.
  */
 pn.ui.edit.state.Provider.prototype.getValue = function(id) {
+  pn.assStr(id);
+
   return pn.ui.edit.FieldBuilder.getFieldValue(this.getControl(id));
 };
 
@@ -42,6 +44,8 @@ pn.ui.edit.state.Provider.prototype.getValue = function(id) {
  * @param {*} value The value of the specified field to set.
  */
 pn.ui.edit.state.Provider.prototype.setValue = function(id, value) {
+  pn.assStr(id);
+
   var ctl = this.getControl(id);
   if (ctl.setValue) ctl.setValue(value);
   else ctl.value = value;
