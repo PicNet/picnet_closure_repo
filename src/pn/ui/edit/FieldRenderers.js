@@ -121,6 +121,43 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
  * @param {!Element} parent The parent to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
+ * @param {Array.<string>?=} opt_labels The true false labels
+ *    (default 'Yes' / 'No').
+ * @return {!Element} The checkbox control.
+ */
+pn.ui.edit.FieldRenderers.boolRadioRenderer =
+    function(fctx, parent, entity, opt_labels) {
+  var cd = goog.dom.createDom,
+      idt = fctx.id + 't',
+      idf = fctx.id + 'f',
+      optst = {'type': 'radio', 'id': idt, 'name': fctx.id, 'value': 'true'},
+      optsf = {'type': 'radio', 'id': idf, 'name': fctx.id, 'value': 'false'},
+      inpt = cd('input', optst),
+      inpf = cd('input', optsf),
+      lblt = opt_labels ? opt_labels[0] : 'Yes',
+      lblf = opt_labels ? opt_labels[1] : 'No',
+      container = cd('div', 'radiogroup',
+          inpt, cd('label', {'for': idt}, lblt),
+          inpf, cd('label', {'for': idt}, lblf)
+      );
+  container.setValue = function(b) {
+    pn.assBool(b);
+
+    var ctl = b ? inpt : inpf;
+    ctl.checked = 'checked';
+  };
+  container.getValue = function() { return !!inpt.checked; };
+  container.setValue(fctx.getEntityValue(entity) === true);
+
+  goog.dom.appendChild(parent, container);
+  return container;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!pn.data.Entity} entity The entity being edited.
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
