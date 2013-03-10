@@ -57,7 +57,8 @@ pn.ui.grid.DataView = function(interceptor, opt_options) {
    */
   this.eh_ = new goog.events.EventHandler(this);
 };
-goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
+if (window['Slick'])
+  goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 
 
 /**
