@@ -179,12 +179,20 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
  */
 pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
   var schema = this.id.indexOf('.') >= 0 ? null :
-      pn.data.TypeRegister.getFieldSchema(this.entitySpec.type, this.id);
-  var schemaType = schema ? schema.type : '';
-  if (schemaType === 'string' && schema.length >
-      pn.web.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold) {
-    schemaType = 'LongString';
-  }
+      pn.data.TypeRegister.getFieldSchema(this.entitySpec.type, this.id),
+      tatl = 0,
+      st = schema ? schema.type : '',
+      drofr = {},
+      dfr = {};
+  // In tests pn.web.ctx.cfg is usually not defined and also not important for
+  // most tests.
+  try {
+    tatl = pn.web.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold;
+    drofr = pn.web.ctx.cfg.defaultReadOnlyFieldRenderers;
+    dfr = pn.web.ctx.cfg.defaultFieldRenderers;
+  } catch (e) {}
+
+  if (st === 'string' && tatl && schema.length > tatl) { st = 'LongString'; }
   var readonly = opt_readonly || this.readonly;
   if (pn.data.EntityUtils.isParentProperty(this.dataProperty) &&
       !this.tableType) {
@@ -197,12 +205,10 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
         pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
   } else if (readonly) {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return pn.web.ctx.cfg.defaultReadOnlyFieldRenderers[schemaType] ||
-        pn.ui.edit.ReadOnlyFields.textField;
+    return drofr[st] || pn.ui.edit.ReadOnlyFields.textField;
   } else {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return pn.web.ctx.cfg.defaultFieldRenderers[schemaType] ||
-        pn.ui.edit.FieldRenderers.textFieldRenderer;
+    return dfr[st] || pn.ui.edit.FieldRenderers.textFieldRenderer;
   }
 };
 
