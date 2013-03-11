@@ -50,6 +50,7 @@ pn.ui.TabComposer.prototype.decorateInternal = function(element) {
 
   var wrapper = goog.dom.createDom('div', { 'id': this.idpfx_ + '-wrapper' }),
       div = goog.dom.createDom('div', { 'id': this.idpfx_ });
+
   div.innerHTML = this.template_;
 
   goog.dom.appendChild(wrapper, div);
@@ -73,7 +74,7 @@ pn.ui.TabComposer.prototype.enterDocument = function() {
 
   var et = goog.ui.Component.EventType;
   this.getHandler().listen(this.tabs_, et.SELECT, this.tabSelected_);
-  this.tabSelected_();
+  goog.Timer.callOnce(this.tabSelected_, 1, this);
 };
 
 
@@ -85,11 +86,11 @@ pn.ui.TabComposer.prototype.getTabIds = function() {
 
 /** @private */
 pn.ui.TabComposer.prototype.tabSelected_ = function() {
-  var selid = this.tabs_.getSelectedTab().getId() ||
-      pn.lrs.ui.specs.LRequest.TABS[0];
+  var selid = this.tabs_.getSelectedTab().getId() || this.getTabIds()[0];
   goog.net.cookies.set(this.idpfx_ + '-tabid', selid, -1);
 
   goog.array.forEach(this.getTabIds(), function(id) {
-    goog.style.showElement(pn.dom.get('content-' + id), id === selid);
+    var dom = pn.dom.get('content-' + id);
+    goog.style.showElement(dom, id === selid);
   });
 };
