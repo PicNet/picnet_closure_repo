@@ -119,12 +119,10 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
   var title = this.cfg.titleStrategy ?
-      this.cfg.titleStrategy(this.spec, this.entity, this.cache) : '';
-
-
-  var template = this.cfg.template || pn.ui.soy.edit;
-  var opts = { specId: this.spec.id, title: title };
-  var div = pn.dom.addHtml(element, template(opts));
+      this.cfg.titleStrategy(this.spec, this.entity, this.cache) : '',
+      template = this.cfg.template || pn.ui.soy.edit,
+      opts = { specId: this.spec.id, title: title },
+      div = pn.dom.addHtml(element, template(opts));
 
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
 
