@@ -122,7 +122,7 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
  * @param {!Element} parent The parent to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
  * @param {Array.<string>?=} opt_labels The true false labels
- *    (default 'Yes' / 'No').
+ *    (default 'No', 'Yes' [ORDER MATTERS]).
  * @return {!Element} The checkbox control.
  */
 pn.ui.edit.FieldRenderers.boolRadioRenderer =
@@ -134,8 +134,8 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer =
       optsf = {'type': 'radio', 'id': idf, 'name': fctx.id, 'value': 'false'},
       inpt = cd('input', optst),
       inpf = cd('input', optsf),
-      lblt = opt_labels ? opt_labels[0] : 'Yes',
-      lblf = opt_labels ? opt_labels[1] : 'No',
+      lblt = opt_labels ? opt_labels[0] : 'No',
+      lblf = opt_labels ? opt_labels[1] : 'Yes',
       container = cd('div', 'radiogroup',
           inpt, cd('label', {'for': idt}, lblt),
           inpf, cd('label', {'for': idt}, lblf)
