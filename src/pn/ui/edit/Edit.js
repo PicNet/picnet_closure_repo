@@ -270,15 +270,15 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 
   var ids = goog.object.getKeys(this.controls_),
       provider = new pn.ui.edit.state.Provider(this.controls_),
-      state = new pn.ui.edit.state.State(ids, provider);
+      state = new pn.ui.edit.state.State(ids, provider),
+      updater = new pn.ui.edit.state.Updater(state, this.controls_);
+  this.registerDisposable(updater);
 
   this.cfg.fCtxs.pnforEach(function(fctx) {
     if (fctx.isRequired()) state.setRequired(fctx.id, true);
     if (fctx.spec.readonly) state.setReadOnly(fctx.id, true);
   }, this);
 
-  var updater = new pn.ui.edit.state.Updater(state, this.controls_);
-  this.registerDisposable(updater);
 
   this.cfg.fCtxs.pnforEach(this.enterDocumentOnChildrenField_, this);
 

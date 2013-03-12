@@ -55,7 +55,11 @@ pn.ui.edit.EditUtils.setRequired = function(control, id, required) {
   pn.ass(control,
       'Could not find a component for field: ' + id);
   var parent = pn.ui.edit.EditUtils.getFieldParent(control, id);
-  if (!parent) { return; }
+  if (!parent) {
+    var msg = 'EditUtils.setRequired could not find parent of "%s"'.pnsubs(id);
+    pn.log.log(msg);
+    return;
+  }
   if (required) { goog.dom.classes.add(parent, 'required'); }
   else { goog.dom.classes.remove(parent, 'required'); }
 };
