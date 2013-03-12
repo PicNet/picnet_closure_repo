@@ -124,6 +124,8 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
       opts = { specId: this.spec.id, title: title },
       div = pn.dom.addHtml(element, template(opts));
 
+  // Expecting a 'main-group-area' div to contain all edit contents.
+  div = pn.dom.get('main-group-area');
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
 
   this.decorateFields_(div);
