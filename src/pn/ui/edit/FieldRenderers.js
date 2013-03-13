@@ -148,6 +148,9 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer =
   };
   container.getValue = function() { return !!inpt.checked; };
   container.setValue(fctx.getEntityValue(entity) === true);
+  container.setEnabled = function(enabled) {
+    inpf['disabled'] = inpt['disabled'] = (enabled ? '' : 'disabled');
+  };
 
   goog.dom.appendChild(parent, container);
   return container;
