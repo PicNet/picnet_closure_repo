@@ -74,8 +74,12 @@ pn.ui.edit.FieldCtx.prototype.isEditable = function(entity) {
 /** @return {boolean} Wether this field is required. */
 pn.ui.edit.FieldCtx.prototype.isRequired = function() {
   if (this.spec.readonly) return false;
-  return (this.spec.validator && this.spec.validator.required) ||
-      (this.schema != null && !this.schema.allowNull);
+  if (this.spec.validator && this.spec.validator.required) return true;
+  if (this.schema != null && !this.schema.allowNull) {
+    // No need to show required '*' for bools as they are either false or true.
+    if (this.schema.type !== 'boolean') { return true; }
+  }
+  return false;
 };
 
 
