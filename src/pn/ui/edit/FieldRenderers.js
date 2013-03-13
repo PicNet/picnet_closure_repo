@@ -134,11 +134,11 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer =
       optsf = {'type': 'radio', 'id': idf, 'name': fctx.id, 'value': 'false'},
       inpt = cd('input', optst),
       inpf = cd('input', optsf),
-      lblt = opt_labels ? opt_labels[0] : 'No',
-      lblf = opt_labels ? opt_labels[1] : 'Yes',
+      lblf = opt_labels ? opt_labels[0] : 'No',
+      lblt = opt_labels ? opt_labels[1] : 'Yes',
       container = cd('div', 'radiogroup',
-          inpt, cd('label', {'for': idt}, lblt),
-          inpf, cd('label', {'for': idt}, lblf)
+          inpf, cd('label', {'for': idt}, lblf),
+          inpt, cd('label', {'for': idt}, lblt)
       );
   container.setValue = function(b) {
     pn.assBool(b);
