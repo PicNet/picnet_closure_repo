@@ -185,8 +185,9 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   if (!this.list_.length) return;
   var gc = goog.dom.getElementByClass('grid-container', parent);
   var height = this.cfg_.height;
+
   if (!height) {
-    var wh = (document.height) ? document.height : document.body.offsetHeight;
+    var wh = goog.dom.getDocumentHeight();
     var ey = goog.style.getClientPosition(gc).y;
     height = wh - ey - 80;
   }
