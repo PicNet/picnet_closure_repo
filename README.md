@@ -11,6 +11,8 @@ To view a demo of some of the utilities in the picnet closure repo please visit:
 ## PicNet Table Filter Readme  ##
 View the [Readme] (https://github.com/PicNet/picnet_closure_repo/blob/master/tablefilter_readme.txt) of Table Filter
 
+## Find Out More ##
+Visit our [software development blog] (http://www.picnet.com.au/blogs/guido/), we are always working on new projects. Or view our full [software development services] (http://www.picnet.com.au/software-development.html) to find out if we can help you. 
 
 
 
