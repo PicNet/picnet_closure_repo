@@ -6,9 +6,12 @@ goog.provide('pn.ui.edit.FieldValidator');
  * @param {!pn.ui.edit.FieldCtx} fctx The field context to validate.
  * @param {!(Element|Text|goog.ui.Component)} control The control for this
  *    field.
+ * @param {boolean} forceRequired Make field required regardless of validator
+ *    and schema state.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
+pn.ui.edit.FieldValidator.validateFieldValue =
+    function(fctx, control, forceRequired) {
   var isDBField = function() {
     return !goog.string.startsWith(fctx.id, '_') &&
         !goog.string.endsWith(fctx.spec.dataProperty, 'Entities');
@@ -16,9 +19,11 @@ pn.ui.edit.FieldValidator.validateFieldValue = function(fctx, control) {
   var arraytise = pn.ui.edit.FieldValidator.arraytise_;
   var renderer = fctx.spec.renderer;
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
-    return arraytise(renderer.validate(), []);
+    return arraytise(renderer.validate(forceRequired), []);
   }
-  var errors = isDBField() ? fctx.getValidationErrors(control) : [];
+  var errors = isDBField() ?
+      fctx.getValidationErrors(control, forceRequired) :
+      [];
   // Always return schema issues before checking other errors as other
   // validations may conflic or duplicate these errors.
   if (errors.length || !fctx.spec.validator) { return errors; }

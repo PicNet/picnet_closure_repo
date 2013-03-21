@@ -55,5 +55,5 @@ pn.ui.edit.state.Updater.prototype.updateField_ = function(fstate, id) {
   pn.ui.edit.EditUtils.showElement(ctl, id, fstate.visible);
   pn.ui.edit.EditUtils.setEnabled(ctl, fstate.enabled);
   pn.ui.edit.EditUtils.setRequired(ctl, id, fstate.required);
-  // TODO: ReadOnly
+  // TODO: setReadOnly
 };

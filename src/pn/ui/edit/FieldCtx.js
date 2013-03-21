@@ -72,7 +72,7 @@ pn.ui.edit.FieldCtx.prototype.isEditable = function(entity) {
 
 
 /** @return {boolean} Wether this field is required. */
-pn.ui.edit.FieldCtx.prototype.isRequired = function() {
+pn.ui.edit.FieldCtx.prototype.isDefaultRequired = function() {
   if (this.spec.readonly) return false;
   if (this.spec.validator && this.spec.validator.required) return true;
   if (this.schema != null && !this.schema.allowNull) {
@@ -196,13 +196,16 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
 /**
  * @param {!(Element|Text|goog.ui.Component)} control The control for this
  *    field.
+ * @param {boolean} forceRequired Make field required regardless of validator
+ *    and schema state.
  * @return {!Array.<string>} An error list of all validation errors (empty if
  *    no errors found).
  */
-pn.ui.edit.FieldCtx.prototype.validate = function(control) {
+pn.ui.edit.FieldCtx.prototype.validate = function(control, forceRequired) {
   // TODO: Its messy that this calls FieldValidator who calls
   // this.getValidationErrors below.
-  var errs = pn.ui.edit.FieldValidator.validateFieldValue(this, control);
+  var errs = pn.ui.edit.FieldValidator.validateFieldValue(
+      this, control, forceRequired);
   if (errs.length) {
     var val = this.getControlValue(control);
     this.log_.info('Field: ' + this.id + ' val: ' + val + ' error: ' + errs);
@@ -214,11 +217,14 @@ pn.ui.edit.FieldCtx.prototype.validate = function(control) {
 /**
  * @param {!(Element|Text|goog.ui.Component)} control The control for this
  *    field.
+ * @param {boolean} forceRequired Make field required regardless of validator
+ *    and schema state.
  * @return {!Array.<string>} Any errors (if any) for the specified field.
  */
-pn.ui.edit.FieldCtx.prototype.getValidationErrors = function(control) {
+pn.ui.edit.FieldCtx.prototype.getValidationErrors =
+    function(control, forceRequired) {
   var validator = new pn.ui.edit.ValidateInfo();
-  validator.required = !this.schema.allowNull;
+  validator.required = !!forceRequired || !this.schema.allowNull;
   if (this.length) { validator.maxLength = this.schema.length; }
   if (this.schema.type === 'number') { validator.isNumber = true; }
   var error = validator.validateField(this, control);

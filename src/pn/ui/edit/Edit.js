@@ -68,6 +68,12 @@ pn.ui.edit.Edit = function(spec, entity, cache, opt_keys) {
    * @type {!Object.<!(Element|Text|goog.ui.Component)>}
    */
   this.controls_ = {};
+
+  /**
+   * @private
+   * @type {pn.ui.edit.state.State}
+   */
+  this.state_ = null;
 };
 goog.inherits(pn.ui.edit.Edit, pn.ui.edit.CommandsComponent);
 
@@ -166,28 +172,6 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     }
     this.controls_[fctx.id] = inp;
   }, this);
-  this.autoFocus_();
-};
-
-
-/** @private */
-pn.ui.edit.Edit.prototype.autoFocus_ = function() {
-  if (!this.cfg.autoFocus) return;
-
-  var toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
-    var input = this.controls_[fctx.id];
-    return input && input.focus && !fctx.spec.readonly && fctx.isRequired();
-  }, this);
-
-  if (!toFocus) toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
-    var input = this.controls_[fctx.id];
-    return input && input.focus && !fctx.spec.readonly;
-  }, this);
-
-  if (!toFocus) { return; }
-  goog.Timer.callOnce(function() {
-    try { this.controls_[toFocus.id].focus(); } catch (ex) {}
-  }, 1, this);
 };
 
 
@@ -209,9 +193,10 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   this.getEditableFields_().pnforEach(function(fctx) {
-    var ctl = this.getControl(fctx.id);
+    var ctl = this.getControl(fctx.id),
+        forceRequired = this.state_.isRequired(fctx.id);
     if (!fctx.isShown(ctl)) return;
-    errors = errors.pnconcat(fctx.validate(ctl));
+    errors = errors.pnconcat(fctx.validate(ctl, forceRequired));
   }, this);
   if (this.fireInterceptorEvents && this.interceptor_) {
     var errors2 = this.interceptor_.getCustomValidationErrors();
@@ -271,14 +256,14 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
   var ids = goog.object.getKeys(this.controls_),
-      provider = new pn.ui.edit.state.Provider(this.controls_),
-      state = new pn.ui.edit.state.State(ids, provider),
-      updater = new pn.ui.edit.state.Updater(state, this.controls_);
+      provider = new pn.ui.edit.state.Provider(this.controls_);
+  this.state_ = new pn.ui.edit.state.State(ids, provider);
+  var updater = new pn.ui.edit.state.Updater(this.state_, this.controls_);
   this.registerDisposable(updater);
 
   this.cfg.fCtxs.pnforEach(function(fctx) {
-    if (fctx.isRequired()) state.setRequired(fctx.id, true);
-    if (fctx.spec.readonly) state.setReadOnly(fctx.id, true);
+    if (fctx.isDefaultRequired()) this.state_.setRequired(fctx.id, true);
+    if (fctx.spec.readonly) this.state_.setReadOnly(fctx.id, true);
   }, this);
 
 
@@ -289,8 +274,32 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   var e = this.entity,
       c = this.cache,
       btns = this.getCommandButtons();
-  this.interceptor_ = new this.cfg.interceptor(e, c, state, btns);
+  this.interceptor_ = new this.cfg.interceptor(e, c, this.state_, btns);
   this.registerDisposable(this.interceptor_);
+
+  this.autoFocus_();
+};
+
+
+/** @private */
+pn.ui.edit.Edit.prototype.autoFocus_ = function() {
+  if (!this.cfg.autoFocus) return;
+
+  var toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
+    var input = this.controls_[fctx.id],
+        required = this.state_.isRequired(fctx.id);
+    return input && input.focus && !fctx.spec.readonly && required;
+  }, this);
+
+  if (!toFocus) toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
+    var input = this.controls_[fctx.id];
+    return input && input.focus && !fctx.spec.readonly;
+  }, this);
+
+  if (!toFocus) { return; }
+  goog.Timer.callOnce(function() {
+    try { this.controls_[toFocus.id].focus(); } catch (ex) {}
+  }, 1, this);
 };
 
 
