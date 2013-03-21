@@ -43,6 +43,13 @@ pn.ui.edit.ComplexRenderer.prototype.validate = function(required) {
 };
 
 
+/**
+ * Optional
+ * @param {boolean} enabled Wether this control is enabled.
+ */
+pn.ui.edit.ComplexRenderer.prototype.setEnabled = function(enabled) {};
+
+
 /** @override */
 pn.ui.edit.ComplexRenderer.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
