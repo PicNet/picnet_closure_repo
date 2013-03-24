@@ -127,7 +127,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   var title = this.cfg.titleStrategy ?
       this.cfg.titleStrategy(this.spec, this.entity, this.cache) : '',
       template = this.cfg.template || pn.ui.soy.edit,
-      opts = { specId: this.spec.id, title: title },
+      opts = { id: this.spec.id, title: title },
       div = pn.dom.addHtml(element, template(opts));
 
   // Expecting a 'main-group-area' div to contain all edit contents.

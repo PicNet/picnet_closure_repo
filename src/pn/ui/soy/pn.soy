@@ -3,11 +3,11 @@
 
 /**
  * The Edit.js control.
- * @param specId The id of the UiSpec being displayed
+ * @param id The id of the edit control being displayed
  * @param title The title (if any) to display in the page
  */
 {template .edit}
-<div class='details-container {$specId}'>
+<div class='details-container {$id}'>
   {if $title}
     <div class='edit-head'>
       <div class='edit-title'>{$title}</div>
@@ -23,11 +23,11 @@
 
 /**
  * The Grid.js control. 
- * @param specId The id of the UiSpec being displayed
+ * @param id The id of the grid being displayed
  * @param hasData Wether the grid has any data.
  */
 {template .grid}
-<div class='grid-parent {$specId}'>  
+<div class='grid-parent {$id}'>  
   {if $hasData}
     <div class='grid-no-data' style='display:none'>No matches found.</div>
     <div class='grid-container' style='width:100%;'>

@@ -37,31 +37,24 @@ goog.require('pn.ui.soy');
  *
  * @constructor
  * @extends {goog.ui.Component}
- * @param {!pn.ui.UiSpec} spec The specs for the entities in
- *    this grid.
+ * @param {!pn.ui.grid.Config} cfg The grid configuration.
  * @param {!Array.<!pn.data.Entity>} list The entities to display.
  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
  *    entities.
  */
-pn.ui.grid.Grid = function(spec, list, cache) {
-  pn.ass(spec);
-  pn.ass(list);
-  pn.ass(cache);
+pn.ui.grid.Grid = function(cfg, list, cache) {
+  pn.assInst(cfg, pn.ui.grid.Config);
+  pn.assArr(list);
+  if (cache) pn.assInst(cache, pn.data.BaseDalCache);
 
   goog.ui.Component.call(this);
 
   /**
    * @private
-   * @type {!pn.ui.UiSpec}
+   * @const
+   * @type {!pn.ui.grid.Config}
    */
-  this.spec_ = spec;
-  this.registerDisposable(this.spec_);
-
-  /**
-   * @private
-   * @type {pn.ui.grid.Config}
-   */
-  this.cfg_ = this.spec_.getGridConfig(cache);
+  this.cfg_ = cfg;
   this.registerDisposable(this.cfg_);
 
   /**
@@ -170,9 +163,7 @@ pn.ui.grid.Grid.prototype.decorateCommands_ = function() {
  */
 pn.ui.grid.Grid.prototype.decorateContainer_ = function() {
   var parent = pn.dom.addHtml(this.getElement(),
-      pn.ui.soy.grid({
-        specId: this.spec_.id,
-        hasData: this.list_.length > 0}));
+      pn.ui.soy.grid({ id: this.cfg_.id, hasData: this.list_.length > 0}));
   return parent;
 };
 
@@ -250,7 +241,7 @@ pn.ui.grid.Grid.prototype.renderGrid_ = function() {
   if (!this.dataView_) return;
 
   this.dataView_.beginUpdate();
-  this.dataView_.setItems(this.list_, 'id');
+  this.dataView_.setItems(this.list_, this.cfg_.rowid);
   this.dataView_.endUpdate();
 };
 
@@ -271,7 +262,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
   this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_));
-  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.spec_.type));
+  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.cfg_.id));
   var noData = goog.dom.getElementByClass('grid-no-data', this.getElement());
   this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(noData));
 

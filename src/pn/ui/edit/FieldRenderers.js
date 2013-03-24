@@ -408,17 +408,19 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   pn.ass(fctx.spec.tableType);
   pn.ass(entity.id != 0);
 
-  var parentId = entity.id;
-
-  var parentField = fctx.spec.tableParentField;
-  var list = fctx.cache.get(/** @type {string} */ (fctx.spec.tableType));
+  var parentId = entity.id,
+      parentField = fctx.spec.tableParentField,
+      list = fctx.cache.get(/** @type {string} */ (fctx.spec.tableType));
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
+
   var data = !parentId ? [] : list.pnfilter(
-      function(c) { return c[parentField] === parentId; });
-  var spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec));
-  var g = new pn.ui.grid.Grid(spec, data, fctx.cache);
+      function(c) { return c[parentField] === parentId; }),
+      spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec)),
+      cfg = spec.getGridConfig(fctx.cache),
+      g = new pn.ui.grid.Grid(cfg, data, fctx.cache);
+
   g.decorate(parent);
   return g;
 };

@@ -9,25 +9,31 @@ goog.require('pn.ui.grid.Interceptor');
 /**
  * @constructor
  * @extends {goog.Disposable}
+ * @param {string} id The grid ID, this will be used when the grid generates
+ *    events and to store grid user settings in localStorage.
  * @param {!Array.<pn.ui.grid.ColumnCtx>} cCtxs The specification of all the
  *    columns to display in this grid.
- * @param {!Array.<pn.ui.grid.cmd.Command>} commands All the commands
+ * @param {Array.<pn.ui.grid.cmd.Command>=} opt_commands All the commands
  *    supported by this grid.
  * @param {function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)=}
  *    opt_interceptor An optional interceptor ctor to use to modify the
  *    internal workings of the grid.
  */
-pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
-  pn.ass(cCtxs.length > 0);
-  pn.ass(commands);
+pn.ui.grid.Config = function(id, cCtxs, opt_commands, opt_interceptor) {
+  pn.assStr(id);
+  pn.assArrInst(cCtxs, pn.ui.grid.ColumnCtx);
+  if (opt_commands) pn.assArrInst(opt_commands, pn.ui.grid.cmd.Command);
 
   goog.Disposable.call(this);
+
+  /** @type {string} */
+  this.id = id;
 
   /** @type {!Array.<pn.ui.grid.ColumnCtx>} */
   this.cCtxs = cCtxs;
 
   /** @type {!Array.<pn.ui.grid.cmd.Command>} */
-  this.commands = commands;
+  this.commands = opt_commands || [];
 
   /** @type {boolean} */
   this.readonly = false;
@@ -49,6 +55,9 @@ pn.ui.grid.Config = function(cCtxs, commands, opt_interceptor) {
 
   /** @type {number} */
   this.height = 0;
+
+  /** @type {string} The object field to use as the identifier of the row. */
+  this.rowid = 'id';
 
   /**
    * @type {null|
