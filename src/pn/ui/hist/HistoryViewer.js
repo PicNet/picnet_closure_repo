@@ -59,12 +59,14 @@ pn.ui.hist.HistoryViewer.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   element.innerHTML = this.cfg_.getTemplate();
 
-  var gridContainer = pn.dom.get('audit-log-grid');
+  var gridContainer = pn.dom.get('audit-log-grid'),
+      spec = pn.app.ctx.specs.get('ChangeLogEntry'),
+      gcfg = spec.getGridConfig(this.cfg_.cache);
 
-  var spec = pn.app.ctx.specs.get('ChangeLogEntry');
-
-  this.grid_ = new pn.ui.grid.Grid(spec, this.cfg_.changes, this.cfg_.cache);
+  this.grid_ = new pn.ui.grid.Grid(gcfg, this.cfg_.changes, this.cfg_.cache);
   this.grid_.decorate(gridContainer);
+
+  goog.dispose(spec);
   this.registerDisposable(this.grid_);
 };
 

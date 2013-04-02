@@ -420,6 +420,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
       spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec)),
       cfg = spec.getGridConfig(fctx.cache),
       g = new pn.ui.grid.Grid(cfg, data, fctx.cache);
+  goog.dispose(spec);
 
   g.decorate(parent);
   return g;

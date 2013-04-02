@@ -103,8 +103,8 @@ pn.ui.srch.SearchGrid.prototype.decorateInternal = function(element) {
   goog.dom.appendChild(parentDiv, rightDiv);
 
   this.decorateSeachPanel_(leftDiv);
-
-  this.grid_ = new pn.ui.grid.Grid(this.spec_, this.list_, this.cache_);
+  var cfg = this.spec_.getGridConfig(this.cache_);
+  this.grid_ = new pn.ui.grid.Grid(cfg, this.list_, this.cache_);
   this.registerDisposable(this.grid_);
   this.grid_.decorate(rightDiv);
 };
