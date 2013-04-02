@@ -138,13 +138,13 @@ goog.inherits(pn.ui.SearchPanel, goog.ui.Component);
 pn.ui.SearchPanel.SEARCH = 'search';
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.SearchPanel.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.SearchPanel.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
 
@@ -236,7 +236,7 @@ pn.ui.SearchPanel.prototype.createFieldValueEdit_ = function(parent) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.SearchPanel.prototype.enterDocument = function() {
   pn.ui.SearchPanel.superClass_.enterDocument.call(this);
 
@@ -393,7 +393,7 @@ pn.ui.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.SearchPanel.prototype.disposeInternal = function() {
   pn.ui.SearchPanel.superClass_.disposeInternal.call(this);
 

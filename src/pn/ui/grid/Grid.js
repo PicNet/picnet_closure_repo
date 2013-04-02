@@ -199,13 +199,13 @@ pn.ui.grid.Grid.prototype.filterImpl_ = function(item) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
   goog.asserts.assert(this.cfg_.width);
 
@@ -355,7 +355,7 @@ pn.ui.grid.Grid.prototype.getTargetEntity_ = function(steps, id) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.enterDocument = function() {
   pn.ui.grid.Grid.superClass_.enterDocument.call(this);
 
@@ -538,7 +538,7 @@ pn.ui.grid.Grid.prototype.updateTotals_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.exitDocument = function() {
   pn.ui.grid.Grid.superClass_.exitDocument.call(this);
   this.eh_.removeAll();
@@ -651,7 +651,7 @@ pn.ui.grid.Grid.prototype.handleSelection_ = function(ev, evData) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 

@@ -146,7 +146,7 @@ pn.data.InMemoryRepository.prototype.updateListWithItem_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.InMemoryRepository.prototype.disposeInternal = function() {
   pn.data.InMemoryRepository.superClass_.disposeInternal.call(this);
 

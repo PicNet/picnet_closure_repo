@@ -23,13 +23,13 @@ goog.inherits(pn.data.LocalStorageRepository,
     pn.data.AbstractRepository);
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.isSupported = function() {
   return true;
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.isInitialised =
     function(callback, opt_handler) {
   // LocalStorage does not need to be pre-initialised
@@ -37,7 +37,7 @@ pn.data.LocalStorageRepository.prototype.isInitialised =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.init =
     function(types, callback, opt_handler) {
   this.types = types;
@@ -45,7 +45,7 @@ pn.data.LocalStorageRepository.prototype.init =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.getList =
     function(type, callback, opt_handler) {
   var json = window['localStorage'][type];
@@ -57,7 +57,7 @@ pn.data.LocalStorageRepository.prototype.getList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.getLists =
     function(typeprefix, callback, opt_handler) {
   if (typeprefix === 'UnsavedEntities' || typeprefix === 'DeletedIDs') {
@@ -77,7 +77,7 @@ pn.data.LocalStorageRepository.prototype.getLists =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.getUnsyncLists =
     function(typename, callback, opt_handler) {
   var dict = {};
@@ -91,7 +91,7 @@ pn.data.LocalStorageRepository.prototype.getUnsyncLists =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.deleteList =
     function(type, callback, opt_handler) {
   window['localStorage']['removeItem'](type);
@@ -99,7 +99,7 @@ pn.data.LocalStorageRepository.prototype.deleteList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.saveList =
     function(type, list, callback, opt_handler) {
   this.getList(type, function(arr) {
@@ -112,7 +112,7 @@ pn.data.LocalStorageRepository.prototype.saveList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.getItem =
     function(type, id, callback, opt_handler) {
   this.getList(type, function(list) {
@@ -123,7 +123,7 @@ pn.data.LocalStorageRepository.prototype.getItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.deleteItem =
     function(type, id, callback, opt_handler) {
   this.getList(type, function(arr) {
@@ -144,7 +144,7 @@ pn.data.LocalStorageRepository.prototype.deleteItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.deleteItems =
     function(type, ids, callback, opt_handler) {
   this.getList(type, function(arr) {
@@ -163,14 +163,14 @@ pn.data.LocalStorageRepository.prototype.deleteItems =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
   this.saveList(type, [item], callback, opt_handler);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.clearEntireDatabase =
     function(callback, opt_handler) {
   window['localStorage']['clear']();
@@ -178,7 +178,7 @@ pn.data.LocalStorageRepository.prototype.clearEntireDatabase =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.LocalStorageRepository.prototype.disposeInternal = function() {
   pn.data.LocalStorageRepository.superClass_.disposeInternal.call(this);
 

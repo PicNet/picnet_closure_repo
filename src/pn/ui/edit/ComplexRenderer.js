@@ -89,14 +89,14 @@ pn.ui.edit.ComplexRenderer.prototype.validate = function(field, value) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.ComplexRenderer.prototype.createDom =
     function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.ComplexRenderer.prototype.disposeInternal = function() {
   pn.ui.edit.ComplexRenderer.superClass_.disposeInternal.call(this);
 

@@ -122,14 +122,14 @@ pn.ui.DateRangePicker.prototype.setFirstWeekday = function(wday) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.DateRangePicker.prototype.createDom = function() {
   pn.ui.DateRangePicker.superClass_.createDom.call(this);
   this.getElement().className = goog.getCssName('picnet-daterangepicker');
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.DateRangePicker.prototype.enterDocument = function() {
   pn.ui.DateRangePicker.superClass_.enterDocument.call(this);
 
@@ -217,7 +217,7 @@ pn.ui.DateRangePicker.prototype.showHideFromToLabels_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.DateRangePicker.prototype.disposeInternal = function() {
   pn.ui.DateRangePicker.superClass_.disposeInternal.call(this);
   if (this.popup_) {
@@ -232,7 +232,7 @@ pn.ui.DateRangePicker.prototype.disposeInternal = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.DateRangePicker.prototype.canDecorate = function(element) {
   return false;
 };

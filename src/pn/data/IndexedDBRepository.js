@@ -42,7 +42,7 @@ pn.data.IndexedDBRepository.prototype.db_;
 pn.data.IndexedDBRepository.prototype.osNames_;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.isSupported = function() {
   return pn.data.IndexedDBRepository.isSupported();
 };
@@ -56,14 +56,14 @@ pn.data.IndexedDBRepository.isSupported = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.isInitialised =
     function(callback, opt_handler) {
   callback.call(opt_handler || this, goog.isDefAndNotNull(this.db_));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.init =
     function(types, callback, opt_handler) {
 
@@ -139,7 +139,7 @@ pn.data.IndexedDBRepository.prototype.getTransaction_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.getList =
     function(type, callback, opt_handler) {
   this.getListImpl_(this.getObjectStore_(type, false), callback, opt_handler);
@@ -171,7 +171,7 @@ pn.data.IndexedDBRepository.prototype.getListImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.getLists =
     function(typeprefix, callback, opt_handler) {
   if (typeprefix === 'UnsavedEntities' || typeprefix === 'DeletedIDs') {
@@ -227,7 +227,7 @@ pn.data.IndexedDBRepository.prototype.getListsImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.deleteList =
     function(type, callback, opt_handler) {
   if (type === 'UnsavedEntities') {
@@ -304,7 +304,7 @@ pn.data.IndexedDBRepository.prototype.removeLocalUnsavedItems_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.saveList =
     function(type, list, callback, opt_handler) {
   list = goog.array.clone(list);
@@ -333,7 +333,7 @@ pn.data.IndexedDBRepository.prototype.saveListImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.deleteItem =
     function(type, id, callback, opt_handler) {
   var os = this.getObjectStore_(type, true);
@@ -346,7 +346,7 @@ pn.data.IndexedDBRepository.prototype.deleteItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.deleteItems =
     function(type, ids, callback, opt_handler) {
   if (ids.length === 0) {return callback.call(opt_handler || this, true); }
@@ -378,7 +378,7 @@ pn.data.IndexedDBRepository.prototype.deleteItemsImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.getItem =
     function(type, id, callback, opt_handler) {
   this.runRequest_(this.getObjectStore_(type, false).get(id), function(result) {
@@ -387,7 +387,7 @@ pn.data.IndexedDBRepository.prototype.getItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.saveItem =
     function(type, item, callback, opt_handler) {
   if (typeof(item) === 'number') {
@@ -402,7 +402,7 @@ pn.data.IndexedDBRepository.prototype.saveItem =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.clearEntireDatabase =
     function(callback, opt_handler) {
   this.deleteListsImpl_(goog.array.clone(this.osNames_),
@@ -428,7 +428,7 @@ pn.data.IndexedDBRepository.prototype.deleteListsImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.getUnsyncLists =
     function(typename, callback, opt_handler) {
   var dict = {};
@@ -479,7 +479,7 @@ pn.data.IndexedDBRepository.prototype.runRequest_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.IndexedDBRepository.prototype.disposeInternal = function() {
   pn.data.IndexedDBRepository.superClass_.disposeInternal.call(this);
 

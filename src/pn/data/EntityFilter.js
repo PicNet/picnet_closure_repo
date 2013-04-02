@@ -276,7 +276,7 @@ pn.data.EntityFilter.prototype.dbg_ = function(message) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.EntityFilter.prototype.disposeInternal = function() {
   pn.data.EntityFilter.superClass_.disposeInternal.call(this);
 

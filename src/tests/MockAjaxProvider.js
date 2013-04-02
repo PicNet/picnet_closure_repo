@@ -21,7 +21,7 @@ pn.MockAjaxProvider = function(types) {
 }
 
 
-/** @inheritDoc */
+/** @override */
 pn.MockAjaxProvider.prototype.makeAjaxRequest = function(method, data, callback, offlineCallback, handler) {
   this.log.fine('MockAjaxProvider.makeAjaxRequest: ' + method);
   switch (method) {

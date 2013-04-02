@@ -387,19 +387,19 @@ pn.data.DataManager.prototype.updateEntireInMemoryStore =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.getEntities = function(type) {
   return this.memory_.getEntities(type);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.getEntity = function(type, id) {
   return this.memory_.getEntity(type, id);
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.saveEntity =
     function(type, data, callback, opt_handler) {
   if (this.onPreSave && !this.onPreSave(type, data)) return;
@@ -438,7 +438,7 @@ pn.data.DataManager.prototype.saveEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.deleteEntity =
     function(type, id, callback, opt_handler) {
   this.remote_.deleteEntity(type, id, function(results) {
@@ -469,7 +469,7 @@ pn.data.DataManager.prototype.deleteEntity =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.deleteEntities =
     function(type, ids, callback, opt_handler) {
   if (!ids || ids.length === 0) {
@@ -514,7 +514,7 @@ pn.data.DataManager.prototype.deleteEntities =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.saveEntities =
     function(data, callback, opt_handler) {
   for (var type in data) {
@@ -613,7 +613,7 @@ pn.data.DataManager.prototype.postSave_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.DataManager.prototype.disposeInternal = function() {
   pn.data.DataManager.superClass_.disposeInternal.call(this);
 

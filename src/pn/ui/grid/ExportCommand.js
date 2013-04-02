@@ -40,13 +40,13 @@ pn.ui.grid.ExportCommand = function() {
 goog.inherits(pn.ui.grid.ExportCommand, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.select_ = goog.dom.createDom('select', 'export-select',
@@ -60,7 +60,7 @@ pn.ui.grid.ExportCommand.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
   this.eh_.listen(this.select_, goog.events.EventType.CHANGE, function() {
     var exportFormat = this.select_.value;
@@ -73,13 +73,13 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.exitDocument = function() {
   this.eh_.removeAll();
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.ExportCommand.prototype.disposeInternal = function() {
   goog.dispose(this.select_);
   goog.dispose(this.eh_);

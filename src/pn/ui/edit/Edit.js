@@ -142,13 +142,13 @@ pn.ui.edit.Edit.prototype.resetDirty = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   var opts = {
@@ -245,7 +245,7 @@ pn.ui.edit.Edit.prototype.attachOnChangeListenerIfRequired_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.isValidForm = function() {
   var errors = this.getFormErrors();
   if (errors.length) {
@@ -286,7 +286,7 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
   goog.object.extend(current, this.data_);
@@ -328,7 +328,7 @@ pn.ui.edit.Edit.prototype.getEditableFields_ = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
   var event = new goog.events.Event(command.eventType, this);
   event.data = data;
@@ -336,14 +336,14 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
-  if (this.cfg_.interceptor) this.cfg_.interceptor.init(this.data_);
+  if (this.cfg_.interceptor) this.cfg_.interceptor.init();
   // Hack to handle other Timer.callOnce hack in BaseMaterialRenderer:270
   goog.Timer.callOnce(this.resetDirty, 2, this);
 };
@@ -379,7 +379,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(field) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.Edit.prototype.disposeInternal = function() {
   pn.ui.edit.Edit.superClass_.disposeInternal.call(this);
 

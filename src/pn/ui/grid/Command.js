@@ -53,13 +53,13 @@ pn.ui.grid.Command = function(name, eventType) {
 goog.inherits(pn.ui.grid.Command, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.commandElement_ = new goog.ui.Button(this.name_);
@@ -69,7 +69,7 @@ pn.ui.grid.Command.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.enterDocument = function() {
   this.eh_.listen(this.commandElement_, goog.ui.Component.EventType.ACTION,
       function() {
@@ -79,13 +79,13 @@ pn.ui.grid.Command.prototype.enterDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.exitDocument = function() {
   this.eh_.removeAll();
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.grid.Command.prototype.disposeInternal = function() {
   goog.dispose(this.commandElement_);
   this.eh_.removeAll();

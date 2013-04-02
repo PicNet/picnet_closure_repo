@@ -35,14 +35,14 @@ pn.data.GearsRepository.GOOGLE_GEARS_SUPPORT_URL =
 pn.data.GearsRepository.prototype.db_;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.isSupported = function() {
   return typeof (google) !== 'undefined' &&
       typeof (google.gears) !== 'undefined';
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.db = function() {
   if (this.db_) { return this.db_; }
   this.db_ = google.gears.factory.create('beta.database');
@@ -51,7 +51,7 @@ pn.data.GearsRepository.prototype.db = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.init =
     function(types, callback, opt_handler) {
   var start = goog.now();
@@ -76,7 +76,7 @@ pn.data.GearsRepository.prototype.init =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.saveList =
     function(type, list, callback, opt_handler) {
   var typepos = type.indexOf('|');
@@ -97,7 +97,7 @@ pn.data.GearsRepository.prototype.saveList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.clearEntireDatabase =
     function(callback, opt_handler) {
   this.db().execute('BEGIN');
@@ -111,7 +111,7 @@ pn.data.GearsRepository.prototype.clearEntireDatabase =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.execute =
     function(sql, args, successCallback, failCallback, opt_handler) {
   var list = [];
@@ -205,7 +205,7 @@ pn.data.GearsRepository.setUpGreasFactory = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.GearsRepository.prototype.disposeInternal = function() {
   pn.data.GearsRepository.superClass_.disposeInternal.call(this);
 

@@ -54,7 +54,7 @@ pn.ui.UiSpecsRegister.prototype.all = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.UiSpecsRegister.prototype.disposeInternal = function() {
   pn.ui.UiSpecsRegister.superClass_.disposeInternal.call(this);
 

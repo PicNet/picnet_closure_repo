@@ -51,7 +51,7 @@ pn.ui.edit.CommandsComponent = function(commands) {
 goog.inherits(pn.ui.edit.CommandsComponent, goog.ui.Component);
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.CommandsComponent.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
@@ -71,7 +71,7 @@ pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.CommandsComponent.prototype.decorateInternal = function(element) {
   goog.asserts.assert(element);
 
@@ -113,7 +113,7 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.CommandsComponent.prototype.enterDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.enterDocument.call(this);
 
@@ -166,7 +166,7 @@ pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
 pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.CommandsComponent.prototype.exitDocument = function() {
   pn.ui.edit.CommandsComponent.superClass_.exitDocument.call(this);
 
@@ -174,7 +174,7 @@ pn.ui.edit.CommandsComponent.prototype.exitDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.ui.edit.CommandsComponent.prototype.disposeInternal = function() {
   pn.ui.edit.CommandsComponent.superClass_.disposeInternal.call(this);
 

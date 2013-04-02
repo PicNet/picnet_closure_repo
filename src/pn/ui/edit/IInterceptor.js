@@ -9,8 +9,9 @@ goog.provide('pn.ui.edit.IInterceptor');
 pn.ui.edit.IInterceptor = function() {};
 
 
-/**
- * Called when the Edit component is fully initialsed.
- * @param {!Object} entity The entity being edited.
- */
-pn.ui.edit.IInterceptor.prototype.init = function(entity) {};
+/** Called when the Edit component is fully initialsed. */
+pn.ui.edit.IInterceptor.prototype.init = function() {};
+
+
+/** @return {!Array.<string>} Any errors. */
+pn.ui.edit.IInterceptor.prototype.validate = function() {};

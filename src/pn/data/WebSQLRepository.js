@@ -41,19 +41,19 @@ pn.data.WebSQLRepository.isSupported = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.isSupported =
     pn.data.WebSQLRepository.isSupported;
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.db = function() {
   return this.db_ || (this.db_ =
       window.openDatabase(this.databaseName, '1', this.databaseName, 10485760));
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.init =
     function(types, callback, opt_handler) {
   var start = goog.now();
@@ -83,7 +83,7 @@ pn.data.WebSQLRepository.prototype.init =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.saveList =
     function(type, list, callback, opt_handler) {
   var typepos = type.indexOf('|');
@@ -104,7 +104,7 @@ pn.data.WebSQLRepository.prototype.saveList =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.clearEntireDatabase =
     function(callback, opt_handler) {
   this.db().transaction(goog.bind(function(t) {
@@ -119,7 +119,7 @@ pn.data.WebSQLRepository.prototype.clearEntireDatabase =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.execute =
     function(sql, args, successCallback, failCallback, opt_handler) {
   if (this.transaction_) {
@@ -166,7 +166,7 @@ pn.data.WebSQLRepository.prototype.executeImpl_ =
 };
 
 
-/** @inheritDoc */
+/** @override */
 pn.data.WebSQLRepository.prototype.disposeInternal = function() {
   pn.data.WebSQLRepository.superClass_.disposeInternal.call(this);
 
