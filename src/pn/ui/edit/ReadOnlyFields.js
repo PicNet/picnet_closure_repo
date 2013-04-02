@@ -176,7 +176,9 @@ pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
  */
 pn.ui.edit.ReadOnlyFields.createDiv_ = function(text, value, parent) {
   var div = goog.dom.createDom('div', 'field');
-  div.setValue = function(val, opt_text) { div.innerHTML = opt_text || val; };
+  div.setValue = function(val, opt_text) {
+    div.innerHTML = goog.isDefAndNotNull(opt_text) ? opt_text : val;
+  };
   div.getValue = function() { return value; };
   div.setValue(value, text);
   goog.dom.appendChild(parent, div);
@@ -196,7 +198,7 @@ pn.ui.edit.ReadOnlyFields.getTextForFieldType_ = function(type, value) {
 
   var ft = pn.ui.edit.ReadOnlyFields.FieldType_;
   switch (type) {
-    case ft.DEFAULT: return value.toString();
+    case ft.DEFAULT: return goog.isDefAndNotNull(value) ? value.toString() : '';
     case ft.ITEM_LIST:
       if (!value) { return '<ul class="empty"><li>No items found.</li></ul>'; }
       var items = value.split(', ');
