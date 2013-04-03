@@ -2,7 +2,7 @@ set CLOSURE_LIBRARY=J:\dev\shared\lib\closure-library\
 set CLOSURE_TEMPLATES=J:\dev\shared\lib\closure-templates\
 set CLOSURE_COMPILER=J:\dev\shared\lib\picnetcompiler.jar
 set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
-set BASE=../../../../lrs/resources/scripts/lib/picnet_closure_repo/src/
+set BASE=../../../../dtt/resources/scripts/lib/picnet_closure_repo/src/
 
 U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^

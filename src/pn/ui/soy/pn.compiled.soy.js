@@ -14,7 +14,7 @@ goog.require('soydata');
  * @notypecheck
  */
 pn.ui.soy.edit = function(opt_data, opt_ignored) {
-  return '<div class=\'details-container ' + soy.$$escapeHtml(opt_data.specId) + '\'>' + ((opt_data.title) ? '<div class=\'edit-head\'><div class=\'edit-title\'>' + soy.$$escapeHtml(opt_data.title) + '</div><div class=\'commands-container\'></div></div>' : '<div class=\'commands-container\'></div>') + '<div id=\'main-group-area\'></div></div>';
+  return '<div class=\'details-container ' + soy.$$escapeHtml(opt_data.id) + '\'>' + ((opt_data.title) ? '<div class=\'edit-head\'><div class=\'edit-title\'>' + soy.$$escapeHtml(opt_data.title) + '</div><div class=\'commands-container\'></div></div>' : '<div class=\'commands-container\'></div>') + '<div id=\'main-group-area\'></div></div>';
 };
 
 
@@ -25,5 +25,5 @@ pn.ui.soy.edit = function(opt_data, opt_ignored) {
  * @notypecheck
  */
 pn.ui.soy.grid = function(opt_data, opt_ignored) {
-  return '<div class=\'grid-parent ' + soy.$$escapeHtml(opt_data.specId) + '\'>' + ((opt_data.hasData) ? '<div class=\'grid-no-data\' style=\'display:none\'>No matches found.</div><div class=\'grid-container\' style=\'width:100%;\'></div>' : '<div class=\'grid-no-data\'>No data found.</div>') + '</div>';
+  return '<div class=\'grid-parent ' + soy.$$escapeHtml(opt_data.id) + '\'>' + ((opt_data.hasData) ? '<div class=\'grid-no-data\' style=\'display:none\'>No matches found.</div><div class=\'grid-container\' style=\'width:100%;\'></div>' : '<div class=\'grid-no-data\'>No data found.</div>') + '</div>';
 };
