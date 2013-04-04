@@ -437,6 +437,30 @@ Array.prototype.pnsingle = function(f, opt_obj) {
  * @see goog.array.filter
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
+ * @param {?function(this:S, T, number, ?):boolean} f The function to call for
+ *     every element. This function
+ *     takes 3 arguments (the element, the index and the array) and must
+ *     return a Boolean. If the return value is true the element is added to the
+ *     result array. If it is false the element is not included.
+ * @param {S=} opt_obj The object to be used as the value of 'this'
+ *     within f.
+ * @return {!T} The only matching element or an error is thrown if nore than 1.
+ * @template T,S
+ */
+Array.prototype.pnsingleOrNull = function(f, opt_obj) {
+  var arr = this;
+  if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
+  if (arr.length > 1) {
+    throw new Error('Expected single match got: ' + arr.length);
+  }
+  return arr.length === 0 ? null : arr[0];
+};
+
+
+/**
+ * @see goog.array.filter
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
  * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to call
  *     for every element. This function
  *     takes 3 arguments (the element, the index and the array) and must

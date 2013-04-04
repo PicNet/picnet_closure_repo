@@ -352,7 +352,7 @@ pn.data.Server.prototype.replyImpl_ =
     if (response.error) {
       failure(response.error);
     } else {
-      success(response);
+      goog.Timer.callOnce(function() { success(response); });
     }
   }
 
