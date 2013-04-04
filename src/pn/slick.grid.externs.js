@@ -6,7 +6,11 @@
 /** namespace */
 var Slick = {};
 
+/** namespace */
+Slick.Editors = {};
 
+/** @param {!Object} args */
+Slick.Editors.Integer = function(args) {};
 
 /**
  * @constructor

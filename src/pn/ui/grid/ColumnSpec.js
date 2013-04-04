@@ -81,12 +81,23 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   this.sortValueRenderer = undefined;
 
   /**
+   * An optional editor for this field.  This uses functions in the format of
+   *    the ones specified in the Slick.Editors namespace (slick.editors.js)
+   *
+   * @type {undefined|function(!Object):undefined}
+   */
+  this.editor = undefined;
+
+  /**
    * Wether this column should show in the totals legend at the bottom of the
    *    grid.
    *
    * @type {boolean}
    */
   this.total = false;
+
+  /** @type {!Object} Any additional properties to pass to slick grid column. */
+  this.additionalProperties = {};
 
   this.extend(props);
 };
@@ -145,7 +156,8 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
     'headerCssClass': this.headerCssClass,
     'cssClass': this.cssClass,
     'behavior': this.behavior,
-    'source': this.displayPath
+    'source': this.displayPath,
+    'editor': this.editor
   });
   col.id = this.id;
   col.dataColumn = this.dataProperty;
@@ -161,6 +173,10 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   col.cssClass = this.cssClass;
   col.behavior = this.behavior;
   col.source = this.displayPath;
+  col.editor = this.editor;
+
+  goog.object.extend(col, this.additionalProperties);
+
   return col;
 };
 
