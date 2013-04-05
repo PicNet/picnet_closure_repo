@@ -19,6 +19,7 @@ pn.web.WebAppEvents = {
   ENTITY_ADD: 'entity-add',
   CHILD_ENTITY_ADD: 'child-entity-add',
   ENTITY_VALIDATION_ERROR: 'entity-validation-error',
+  GRID_EDIT_CHANGED: 'grid-edit-changed',
 
   // DIALOG
   DALOG_SHOWN: 'dialog-shown',

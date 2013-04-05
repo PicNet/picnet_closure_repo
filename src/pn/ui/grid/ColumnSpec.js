@@ -89,6 +89,14 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   this.editor = undefined;
 
   /**
+   * An optional validator for this field.  NOTE: This is only required if the
+   *    field has an editor.
+   *
+   * @type {undefined|function(*):{valid:boolean,msg:string}}
+   */
+  this.validator = undefined;
+
+  /**
    * Wether this column should show in the totals legend at the bottom of the
    *    grid.
    *
@@ -157,7 +165,8 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
     'cssClass': this.cssClass,
     'behavior': this.behavior,
     'source': this.displayPath,
-    'editor': this.editor
+    'editor': this.editor,
+    'validator': this.validator
   });
   col.id = this.id;
   col.dataColumn = this.dataProperty;
@@ -174,9 +183,9 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
   col.behavior = this.behavior;
   col.source = this.displayPath;
   col.editor = this.editor;
+  col.validator = this.validator;
 
   goog.object.extend(col, this.additionalProperties);
-
   return col;
 };
 
