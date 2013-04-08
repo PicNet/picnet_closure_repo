@@ -76,7 +76,7 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
 
 /**
  * @param {string} id The id of the command we need.
- * @return {!goog.ui.Button} The command button for the specified id.
+ * @return {!(goog.ui.Button|Element)} The command button for the specified id.
  */
 pn.ui.edit.Interceptor.prototype.getCommand = function(id) {
   pn.ass(this.commands_[id], 'Could not find command with ID "%s"', id);
