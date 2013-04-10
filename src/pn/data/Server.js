@@ -21,21 +21,12 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
- * @param {string} appPath The application base path.
  * @param {string} controller The controller Uri.
  */
-pn.data.Server = function(appPath, controller) {
-  pn.assStr(appPath);
+pn.data.Server = function(controller) {
   pn.assStr(controller);
 
   goog.events.EventTarget.call(this);
-
-  /**
-   * @private
-   * @const
-   * @type {string}
-   */
-  this.appPath_ = appPath;
 
   /**
    * @private
@@ -81,7 +72,7 @@ pn.data.Server.prototype.ajax =
   pn.assFun(success);
   pn.assFun(failure);
 
-  this.ajax_(this.appPath_ + uri, data, success, failure);
+  this.ajax_(uri, data, success, failure);
 };
 
 
@@ -217,7 +208,7 @@ pn.data.Server.prototype.getFacadeControllerAction_ = function(action) {
   pn.assStr(this.controller_);
   pn.assStr(action);
 
-  return this.controller_ + action;
+  return this.controller_ + '/' + action;
 };
 
 

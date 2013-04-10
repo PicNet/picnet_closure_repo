@@ -22,6 +22,12 @@ pn.app.AppConfig = function(opt_opts) {
   goog.Disposable.call(this);
 
   /**
+   * This is any extension required for mvc controllers on the server.
+   * @type {string}
+   */
+  this.mvcext = '';
+
+  /**
    * This application root path.  All requests should be relative to this.
    * @type {string}
    */
@@ -57,5 +63,22 @@ pn.app.AppConfig = function(opt_opts) {
   this.memCacheExpireMins = 15;
 
   if (opt_opts) goog.object.extend(this, opt_opts);
+  if (goog.string.endsWith(this.appPath, '/'))
+    this.appPath = this.appPath.substring(0, this.appPath.length - 1);
+
+  this.facadeUri = this.touri(this.facadeUri);
 };
 goog.inherits(pn.app.AppConfig, goog.Disposable);
+
+
+/**
+ * @param {string} controller The name of the controller.
+ * @param {string=} opt_action The name of the action.
+ * @return {string} The complete uri to the controller and action.
+ */
+pn.app.AppConfig.prototype.touri = function(controller, opt_action) {
+  pn.assStr(controller);
+  var uri = this.appPath + '/' + controller + this.mvcext;
+  if (opt_action) uri += '/' + opt_action;
+  return uri;
+};

@@ -29,20 +29,21 @@ pn.web.BaseWebApp = function(opt_cfg) {
   /** @type {pn.web.BaseWebApp} */
   pn.web.ctx = this;
 
-  var cfg = new pn.app.WebAppConfig(opt_cfg);
-  pn.app.BaseApp.call(this, cfg);
+  this.cfg = new pn.app.WebAppConfig(opt_cfg);
+
+  pn.app.BaseApp.call(this);
 
   /** @type {!pn.ui.ViewMgr} */
-  this.view = new pn.ui.ViewMgr(pn.dom.get(cfg.viewContainerId));
+  this.view = new pn.ui.ViewMgr(pn.dom.get(this.cfg.viewContainerId));
   this.registerDisposable(this.view);
 
   /** @type {!pn.ui.MessagePanel} */
-  this.msg = new pn.ui.MessagePanel(pn.dom.get(cfg.messagePanelId));
+  this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
 
   /** @type {!pn.ui.LoadingPnl} */
-  this.loading = new pn.ui.LoadingPnl(pn.dom.get(cfg.loadPnlId));
+  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
   this.registerDisposable(this.loading);
 
   /** @type {!pn.ui.KeyShortcutMgr} */
@@ -145,7 +146,7 @@ pn.web.BaseWebApp.prototype.acceptDirty = function() {
  */
 pn.web.BaseWebApp.prototype.listExport_ = function(type, format, data) {
   var ed = {'exportType': format, 'exportData': pn.json.serialiseJson(data)};
-  var uri = this.cfg.appPath + 'ExportData/ExportData';
+  var uri = this.cfg.touri('ExportData', 'ExportData');
   pn.data.DataDownloader.send(uri, ed);
 };
 

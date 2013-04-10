@@ -67,11 +67,11 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.router);
 
   /** @type {!pn.app.AppConfig} */
-  this.cfg = new pn.app.AppConfig(opt_cfg);
+  this.cfg = this.cfg || new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
   var cache = new pn.data.LocalCache(this.cfg.dbver);
-  var server = new pn.data.Server(this.cfg.appPath, this.cfg.facadeUri);
+  var server = new pn.data.Server(this.cfg.facadeUri);
 
   /** @type {!pn.data.BaseFacade} */
   this.data = new pn.data.LazyFacade(cache, server);
