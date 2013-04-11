@@ -11,8 +11,9 @@ goog.require('pn.ui.edit.FieldBuilder');
  * @constructor
  * @param {!Object.<!(Element|Text|goog.ui.Component)>} controls The UI
  *    controls.
+ * @param {!Object.<!pn.ui.edit.FieldCtx>} fctxs The field contextes.
  */
-pn.ui.edit.state.Provider = function(controls) {
+pn.ui.edit.state.Provider = function(controls, fctxs) {
   pn.assObj(controls);
 
   /**
@@ -21,6 +22,13 @@ pn.ui.edit.state.Provider = function(controls) {
    * @type {!Object.<!(Element|Text|goog.ui.Component)>}
    */
   this.controls_ = controls;
+
+  /**
+   * @const
+   * @private
+   * @type {!Object.<!pn.ui.edit.FieldCtx>}
+   */
+  this.fctxs_ = fctxs;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,4 +68,15 @@ pn.ui.edit.state.Provider.prototype.getControl = function(id) {
   pn.assObj(this.controls_[id], 'Could not find control with ID "%s"', id);
 
   return this.controls_[id];
+};
+
+
+/**
+ * @param {string} id The id of the control we need.
+ * @return {!pn.ui.edit.FieldCtx} The field context for the specified id.
+ */
+pn.ui.edit.state.Provider.prototype.getCtx = function(id) {
+  pn.assObj(this.fctxs_[id], 'Could not find field context with ID "%s"', id);
+
+  return this.fctxs_[id];
 };

@@ -255,14 +255,20 @@ pn.ui.edit.Edit.prototype.fireCommandEvent = function(command, data) {
 pn.ui.edit.Edit.prototype.enterDocument = function() {
   pn.ui.edit.Edit.superClass_.enterDocument.call(this);
 
-  var ids = goog.object.getKeys(this.controls_),
-      provider = new pn.ui.edit.state.Provider(this.controls_);
+  var fctxs = {};
+  this.cfg.fCtxs.pnforEach(function(fctx) { fctxs[fctx.id] = fctx; });
+
+  var ids = goog.object.getKeys(this.controls_),      
+      provider = new pn.ui.edit.state.Provider(this.controls_, fctxs);
   this.state_ = new pn.ui.edit.state.State(ids, provider);
   var updater = new pn.ui.edit.state.Updater(this.state_, this.controls_);
   this.registerDisposable(updater);
 
+  var newEntity = pn.data.EntityUtils.isNew(this.entity);
   this.cfg.fCtxs.pnforEach(function(fctx) {
-    if (fctx.isDefaultRequired()) this.state_.setRequired(fctx.id, true);
+    if (newEntity && !fctx.spec.showOnAdd) return;
+
+    if (fctx.isDefaultRequired()) this.state_.setRequired(fctx.id, true);    
     if (fctx.spec.readonly) this.state_.setReadOnly(fctx.id, true);
   }, this);
 
@@ -284,12 +290,13 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 /** @private */
 pn.ui.edit.Edit.prototype.autoFocus_ = function() {
   if (!this.cfg.autoFocus) return;
-
-  var toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
-    var input = this.controls_[fctx.id],
-        required = this.state_.isRequired(fctx.id);
-    return input && input.focus && !fctx.spec.readonly && required;
-  }, this);
+  var newEntity = pn.data.EntityUtils.isNew(this.entity),
+      toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
+        if (newEntity && !fctx.spec.showOnAdd) return false;
+        var input = this.controls_[fctx.id],
+            required = this.state_.isRequired(fctx.id);
+        return input && input.focus && !fctx.spec.readonly && required;
+      }, this);
 
   if (!toFocus) toFocus = this.cfg.fCtxs.pnfind(function(fctx) {
     var input = this.controls_[fctx.id];

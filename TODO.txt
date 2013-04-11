@@ -1,4 +1,5 @@
 
+- Move Intercepto commands contractor arg to the Provider.js
 - Server side should abstract the JSON/DEJSON of entities, etc
 - Why is ID lowercase? Causes issues between server/client as there needs to 
     be conversions at all transfer points
