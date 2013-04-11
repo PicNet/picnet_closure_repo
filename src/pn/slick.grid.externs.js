@@ -1120,7 +1120,7 @@ Slick.Grid.prototype.destroy = function() {};
 
 
 /**
- * @return {*}
+ * @return {{commitCurrentEdit:function():undefined}}
  */
 Slick.Grid.prototype.getEditorLock = function() {};
 
