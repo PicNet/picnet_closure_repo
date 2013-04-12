@@ -53,6 +53,12 @@ pn.web.BaseWebApp = function(opt_cfg) {
   /** @type {!pn.ui.UiSpecsRegister} */
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
   this.registerDisposable(this.specs);
+
+  /**
+   * @private
+   * @type {boolean}
+   */
+  this.impersonationEnabled_ = false;
 };
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
@@ -105,12 +111,29 @@ pn.web.BaseWebApp.prototype.init = function() {
  * @suppress {visibility}
  */
 pn.web.BaseWebApp.prototype.enableAjaxImpersonisation_ = function() {
+  this.impersonationEnabled_ = true;
   var origajax = this.data.server.ajax_.pnbind(this.data.server);
   this.data.server.ajax_ = function() {
     var impersonate = document.location.href.split('?')[1];
     if (impersonate) arguments[0] += '?' + impersonate;
     origajax.apply(null, arguments);
   };
+};
+
+
+/**
+ * @param {string} username The username of the user to impersonate if
+ *    impersonation is enabled.
+ */
+pn.web.BaseWebApp.prototype.impersonate = function(username) {
+  pn.assStr(username);
+
+  if (!this.impersonationEnabled_)
+    throw new Error('Impersonation is not enabled');
+
+  window.localStorage.clear();
+  var uri = pn.app.ctx.cfg.appPath + '?impersonate=' + username;
+  document.location.href = uri;
 };
 
 
@@ -161,9 +184,10 @@ pn.web.BaseWebApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
   pn.assStr(type);
   pn.assArr(ids);
 
-  var data = { 'type': type, 'ids': ids };
-  var cb = opt_cb || function() {};
-  this.data.ajax('GridOrdering/OrderGrid', data, cb);
+  var data = { 'type': type, 'ids': ids },
+      cb = opt_cb || goog.nullFunction,
+      uri = this.cfg.touri('GridOrdering', 'OrderGrid');
+  this.data.ajax(uri, data, cb);
 };
 
 

@@ -210,7 +210,8 @@ pn.ui.edit.state.State.prototype.setValue = function(id, value) {
 
 /**
  * @param {string} id The ID of the field.
- * @return {*} The value of the specified field.
+ * @return {!(Element|Text|goog.ui.Component)} The control representing the
+ *    specified field.
  */
 pn.ui.edit.state.State.prototype.getControl = function(id) {
   pn.assStr(id);
@@ -219,6 +220,17 @@ pn.ui.edit.state.State.prototype.getControl = function(id) {
   return this.provider_.getControl(id);
 };
 
+
+/**
+ * @param {string} id The ID of the field.
+ * @return {!pn.ui.edit.FieldCtx} The field context for the specified field.
+ */
+pn.ui.edit.state.State.prototype.getCtx = function(id) {
+  pn.assStr(id);
+  pn.assObj(this.field_(id), 'Could not find field: ' + id);
+
+  return this.provider_.getCtx(id);
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE HELPERS

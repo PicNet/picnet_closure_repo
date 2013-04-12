@@ -208,11 +208,11 @@ pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
 
   if (!this.acceptDirty()) return;
 
-  var data = {
-    'type': entity.type,
-    'entityJson': pn.json.serialiseJson(entity)
-  };
-  this.data.ajax('CloneEntity/CloneEntity', data, function(cloned) {
+  var json = pn.json.serialiseJson(entity),
+      data = { 'type': entity.type, 'entityJson': json },
+      uri = this.cfg.touri('CloneEntity', 'CloneEntity');
+
+  this.data.ajax(uri, data, function(cloned) {
     cloned = pn.data.TypeRegister.parseEntity(entity.type, cloned);
     pn.app.ctx.pub(pn.app.AppEvents.ENTITY_CLONED, entity.type, cloned);
   });
