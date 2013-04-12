@@ -191,7 +191,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.assInst(entity, pn.data.Entity);
-  pn.ass(entity.id > 0);
+  pn.ass(entity.id > 0, 'Entity %s does not have an ID'.pnsubs(entity.type));
 
   if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
   var entities = this.cache_[entity.type];
