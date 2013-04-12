@@ -210,7 +210,7 @@ pn.ui.edit.state.State.prototype.setValue = function(id, value) {
 
 /**
  * @param {string} id The ID of the field.
- * @return {!(Element|Text|goog.ui.Component)} The control representing the 
+ * @return {!(Element|Text|goog.ui.Component)} The control representing the
  *    specified field.
  */
 pn.ui.edit.state.State.prototype.getControl = function(id) {
@@ -219,6 +219,7 @@ pn.ui.edit.state.State.prototype.getControl = function(id) {
 
   return this.provider_.getControl(id);
 };
+
 
 /**
  * @param {string} id The ID of the field.

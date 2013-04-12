@@ -89,9 +89,10 @@ pn.ui.hist.HistoryViewer.prototype.enterDocument = function() {
 pn.ui.hist.HistoryViewer.prototype.showAuditEntry_ = function(e) {
   var change = /** @type {pn.data.Entity} */ (e.selected);
 
-  var data = { 'id1': change.id, 'id2': change['PrevChangeLogEntryPK'] };
-  var callback = goog.bind(this.showDiffBetween_, this);
-  pn.app.ctx.data.ajax('History/GetHistoryDescriptions', data, callback);
+  var data = { 'id1': change.id, 'id2': change['PrevChangeLogEntryPK'] },
+      callback = goog.bind(this.showDiffBetween_, this),
+      uri = pn.app.ctx.cfg.touri('History', 'GetHistoryDescriptions');
+  pn.app.ctx.data.ajax(uri, data, callback);
 };
 
 

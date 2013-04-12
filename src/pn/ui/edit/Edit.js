@@ -258,7 +258,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   var fctxs = {};
   this.cfg.fCtxs.pnforEach(function(fctx) { fctxs[fctx.id] = fctx; });
 
-  var ids = goog.object.getKeys(this.controls_),      
+  var ids = goog.object.getKeys(this.controls_),
       provider = new pn.ui.edit.state.Provider(this.controls_, fctxs);
   this.state_ = new pn.ui.edit.state.State(ids, provider);
   var updater = new pn.ui.edit.state.Updater(this.state_, this.controls_);
@@ -268,7 +268,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   this.cfg.fCtxs.pnforEach(function(fctx) {
     if (newEntity && !fctx.spec.showOnAdd) return;
 
-    if (fctx.isDefaultRequired()) this.state_.setRequired(fctx.id, true);    
+    if (fctx.isDefaultRequired()) this.state_.setRequired(fctx.id, true);
     if (fctx.spec.readonly) this.state_.setReadOnly(fctx.id, true);
   }, this);
 
