@@ -1,4 +1,5 @@
-
+- It would be really nice if we could share the ApplicationSettings between 
+  client and server given an attribute on the xml node.
 - Server side should abstract the JSON/DEJSON of entities, etc
 - Why is ID lowercase? Causes issues between server/client as there needs to 
     be conversions at all transfer points
