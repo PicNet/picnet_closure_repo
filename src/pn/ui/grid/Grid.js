@@ -120,7 +120,7 @@ pn.ui.grid.Grid.prototype.fireCustomPipelineEvent =
 };
 
 
-/** @return {!Slick.Grid} The instance of slick grid being used by this grid. */
+/** @return {Slick.Grid} The instance of slick grid being used by this grid. */
 pn.ui.grid.Grid.prototype.getSlick = function() { return this.slick_; };
 
 ///////////////////////////////////////////////////////////////////////////////

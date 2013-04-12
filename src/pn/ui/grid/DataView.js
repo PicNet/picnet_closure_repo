@@ -90,7 +90,6 @@ pn.ui.grid.DataView.prototype.getItemMetadata_ = function(row) {
 
   var item = this.getItem(row),
       ret = this.origGetItemMetadata_(row);
-
   if (item && this.interceptor_) {
     var additional = this.interceptor_.rowCssClass(item);
     if (additional) {
