@@ -127,6 +127,7 @@ pn.web.BaseWebApp.prototype.enableAjaxImpersonisation_ = function() {
  */
 pn.web.BaseWebApp.prototype.impersonate = function(username) {
   pn.assStr(username);
+  if (!username) return;
 
   if (!this.impersonationEnabled_)
     throw new Error('Impersonation is not enabled');

@@ -38,9 +38,10 @@ pn.ui.grid.editors.SelectEditor = function(args) {
 
 /** @private */
 pn.ui.grid.editors.SelectEditor.prototype.init_ = function() {
-  var values = ['yes', 'no'];
+  // Emptuy option for usability
+  var values = ['', 'yes', 'no'];
   if (this.args_['column']['options']) {
-    values = this.args_['column']['options'].split(',');
+    values = [''].pnconcat(this.args_['column']['options'].split(','));
   }
   var str = '';
   values.pnforEach(function(v) {
@@ -73,7 +74,7 @@ pn.ui.grid.editors.SelectEditor.prototype.focus = function() {
 pn.ui.grid.editors.SelectEditor.prototype.loadValue = function(item) {
   pn.assObj(item);
 
-  this.defaultv_ = item[this.args_['column']['field']];
+  this.defaultv_ = item[this.args_['column']['field']] || '';
   this.ctl_.val(this.defaultv_);
 };
 
