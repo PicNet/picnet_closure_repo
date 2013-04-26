@@ -317,6 +317,9 @@ pn.ui.edit.FieldRenderers.entityParentListField =
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
 
   if (opt_filter) list = opt_filter(entity, list);
+  else list = list.pnfilter(
+      function(e) { return !goog.isDef(e.IsActive) || !!e.IsActive; });
+
   pn.data.EntityUtils.orderEntities(entityType, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';

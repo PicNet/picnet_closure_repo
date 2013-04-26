@@ -186,7 +186,8 @@ pn.ui.filter.GenericListFilter.prototype.clearFilterValue = function(f) {
 
 /** @protected */
 pn.ui.filter.GenericListFilter.prototype.initialiseControlCaches = function() {
-  this.listItems = /** @type {!Array.<!Element>} */ (this.list.childNodes);
+  this.listItems =
+      /** @type {!Array.<!Element>} */ (pn.toarr(this.list.childNodes));
 };
 
 
