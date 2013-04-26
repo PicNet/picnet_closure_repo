@@ -51,7 +51,7 @@ pn.ui.grid.editors.SelectEditor.prototype.init_ = function() {
       pnsubs(str));
   this.ctl_.appendTo(this.args_['container']);
   this.ctl_.focus();
-  this.ctl_.change(this.args_['grid'].getEditorLock().commitCurrentEdit);
+  this.ctl_.change(this.args_['grid'].getEditorLock()['commitCurrentEdit']);
 };
 
 

@@ -94,7 +94,7 @@ pn.ui.grid.DataView.prototype.getItemMetadata_ = function(row) {
     var additional = this.interceptor_.rowCssClass(item);
     if (additional) {
       ret = ret || {};
-      ret.cssClasses = (ret.cssClasses || '') + ' ' + additional;
+      ret['cssClasses'] = (ret['cssClasses'] || '') + ' ' + additional;
     }
   }
 
