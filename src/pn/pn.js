@@ -294,7 +294,7 @@ Array.prototype.pnmapMany = function(f, opt_obj) {
 
 /**
  * @see goog.array.forEach
- * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ * @this {Array.<T>} arr Array or array
  *     like object over which to iterate.
  * @param {?function(this: S, T, number, ?): ?} f The function to call for every
  *     element.
@@ -304,10 +304,13 @@ Array.prototype.pnmapMany = function(f, opt_obj) {
  *     have been deleted or which have never been assigned values.
  * @param {S=} opt_obj The object to be used as the value of 'this'
  *     within f.
+ * @return {!Array.<T>} The current array for chaining
+ *    convenience.
  * @template T,S
  */
 Array.prototype.pnforEach = function(f, opt_obj) {
   goog.array.forEach.apply(null, pn.aargs_(this, arguments));
+  return this;
 };
 
 
