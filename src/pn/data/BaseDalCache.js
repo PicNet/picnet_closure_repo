@@ -74,3 +74,16 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.ass(idx >= 0, 'Could not find entity of type :%s id: %s'.pnsubs(type, id));
   return /** @type {!pn.data.Entity} */ (arr[idx]);
 };
+
+
+/**
+ * @param {!pn.data.BaseDalCache} source The source cache to add to this cache.
+ *    NOTE: This will replace any elements in the source array.
+ */
+pn.data.BaseDalCache.prototype.extend = function(source) {
+  pn.assInst(source, pn.data.BaseDalCache);
+
+  for (var type in source.cache_) {
+    this.cache_[type] = source.cache_[type];
+  }
+};
