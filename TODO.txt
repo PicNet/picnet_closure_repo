@@ -23,3 +23,4 @@
 - Sould ServerSource really offer a .ajax method for 
   arbitary ajax calls?  Should the ajax calls be generic at all?
 - Make the authentication model pluggable (Forms/Windows)
+- Clean up email sending code.  Do we need EmailSender, and IEmail???
