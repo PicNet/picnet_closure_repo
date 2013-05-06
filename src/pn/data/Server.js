@@ -10,7 +10,6 @@ goog.require('goog.events.EventTarget');
 goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
-goog.require('pn.data.DataDownloader');
 goog.require('pn.data.IDataSource');
 goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
