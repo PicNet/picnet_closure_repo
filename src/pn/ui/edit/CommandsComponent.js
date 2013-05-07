@@ -146,7 +146,8 @@ pn.ui.edit.CommandsComponent.prototype.decorateCommands_ = function(parent) {
     var className = c.name.toLowerCase();
     var tooltip = this.getCommandTooltip_(c);
     var button = goog.dom.createDom('button',
-        {'class': 'goog-button ' + className, 'id': c.name, 'title': tooltip});
+        {'class': 'goog-button ' + className, 'id': c.name, 'title': tooltip},
+        c.name);
     goog.dom.appendChild(parent, button);
     this.commandButtons_[c.name] = button;
   }, this);

@@ -417,15 +417,18 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   if (!list) list = fctx.cache.get(goog.string.remove(fctx.id, 'Entities'));
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-
   var data = !parentId ? [] : list.pnfilter(
       function(c) { return c[parentField] === parentId; }),
       spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec)),
       cfg = spec.getGridConfig(fctx.cache),
       g = new pn.ui.grid.Grid(cfg, data, fctx.cache);
   goog.dispose(spec);
-
-  g.decorate(parent);
+  var container = goog.dom.createDom('div', {
+    'class': 'child-grid-container',
+    'style': 'width:%spx'.pnsubs($(parent).width())
+  });
+  goog.dom.appendChild(parent, container);
+  g.decorate(container);
   return g;
 };
 
