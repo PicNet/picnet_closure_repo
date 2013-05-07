@@ -73,7 +73,7 @@ pn.ui.edit.ReadOnlyFields.enumField = function(fctx, parent, entity) {
   var val = /** @type {number} */ (fctx.getEntityValue(entity));
   var enumo = /** @type {!Object.<number>} */ (fctx.schema.entityType);
   var name = pn.data.EntityUtils.getEnumName(enumo, val);
-  return pn.ui.edit.ReadOnlyFields.createDiv_(name, val, parent);
+  return pn.ui.edit.ReadOnlyFields.createDiv(name, val, parent);
 };
 
 
@@ -163,18 +163,17 @@ pn.ui.edit.ReadOnlyFields.field_ = function(fctx, type, parent, entity) {
       fctx.getEntityValue(entity);
 
   var text = pn.ui.edit.ReadOnlyFields.getTextForFieldType_(type, val);
-  return pn.ui.edit.ReadOnlyFields.createDiv_(text, val, parent);
+  return pn.ui.edit.ReadOnlyFields.createDiv(text, val, parent);
 };
 
 
 /**
- * @private
  * @param {string} text The text to show in this div.
  * @param {*} value The value to set in this div.
  * @param {!Element} parent The parent to attach this control to.
  * @return {!Element} The readonly text field control.
  */
-pn.ui.edit.ReadOnlyFields.createDiv_ = function(text, value, parent) {
+pn.ui.edit.ReadOnlyFields.createDiv = function(text, value, parent) {
   var div = goog.dom.createDom('div', 'field');
   div.setValue = function(val, opt_text) {
     div.innerHTML = goog.isDefAndNotNull(opt_text) ? opt_text : val;
