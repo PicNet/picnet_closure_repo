@@ -56,6 +56,9 @@ pn.ui.grid.Config = function(id, cCtxs, opt_commands, opt_interceptor) {
   /** @type {number} */
   this.height = 0;
 
+  /** @type {number|undefined} */
+  this.rowHeight = undefined;
+
   /** @type {string} The object field to use as the identifier of the row. */
   this.rowid = 'id';
 
@@ -119,7 +122,8 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'multiSelect': this.multiSelect,
     'editable': this.editable,
     'showHeaderRow': this.enableQuickFilters,
-    'syncColumnCellResize': this.syncColumnCellResize
+    'syncColumnCellResize': this.syncColumnCellResize,
+    'rowHeight': this.rowHeight
   });
   cfg.enableColumnReorder = this.enableColumnReorder;
   cfg.forceFitColumns = this.forceFitColumns;
