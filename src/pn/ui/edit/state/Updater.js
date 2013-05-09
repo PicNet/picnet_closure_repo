@@ -9,12 +9,12 @@ goog.require('goog.events.EventHandler');
 /**
  * @constructor
  * @extends {goog.events.EventHandler}
- * @param {pn.ui.edit.state.State} state The state model.
+ * @param {pn.ui.edit.state.FState} state The state model.
  * @param {!Object.<!(Element|Text|goog.ui.Component)>} controls The UI
  *    controls.
  */
 pn.ui.edit.state.Updater = function(state, controls) {
-  pn.assInst(state, pn.ui.edit.state.State);
+  pn.assInst(state, pn.ui.edit.state.FState);
   pn.assObj(controls);
 
   /**
@@ -24,7 +24,7 @@ pn.ui.edit.state.Updater = function(state, controls) {
   this.controls_ = controls;
 
   goog.events.EventHandler.call(this);
-  this.listen(state, pn.ui.edit.state.State.CHANGED, this.changed_);
+  this.listen(state, pn.ui.edit.state.FState.CHANGED, this.changed_);
 };
 goog.inherits(pn.ui.edit.state.Updater, goog.events.EventHandler);
 
@@ -41,7 +41,7 @@ pn.ui.edit.state.Updater.prototype.changed_ = function(e) {
 
 /**
  * @private
- * @param {pn.ui.edit.state.State.Field} fstate The state of the field.
+ * @param {pn.ui.edit.state.FState.Field} fstate The state of the field.
  * @param {string} id The id of the field.
  */
 pn.ui.edit.state.Updater.prototype.updateField_ = function(fstate, id) {

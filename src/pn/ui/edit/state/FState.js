@@ -1,5 +1,5 @@
 ﻿;
-goog.provide('pn.ui.edit.state.State');
+goog.provide('pn.ui.edit.state.FState');
 
 goog.require('goog.events.Event');
 goog.require('goog.events.EventTarget');
@@ -13,7 +13,7 @@ goog.require('pn.ui.edit.state.Provider');
  * @param {!Array.<string>} ids The field ids in this Edit control.
  * @param {!pn.ui.edit.state.Provider} provider The control value evaluator.
  */
-pn.ui.edit.state.State = function(ids, provider) {
+pn.ui.edit.state.FState = function(ids, provider) {
   pn.assArr(ids, 'ids should be an array of strings');
   pn.assInst(provider, pn.ui.edit.state.Provider);
 
@@ -28,23 +28,23 @@ pn.ui.edit.state.State = function(ids, provider) {
 
   /**
    * @private
-   * @type {!Object.<pn.ui.edit.state.State.Field>}
+   * @type {!Object.<pn.ui.edit.state.FState.Field>}
    */
   this.fields_ = {};
   ids.pnforEach(function(id) {
     pn.ass(!this.fields_[id], 'Fields map already contains the field: ' + id);
-    this.fields_[id] = /** @type {pn.ui.edit.state.State.Field} */ (
-        goog.object.unsafeClone(pn.ui.edit.state.State.FieldDefault_));
+    this.fields_[id] = /** @type {pn.ui.edit.state.FState.Field} */ (
+        goog.object.unsafeClone(pn.ui.edit.state.FState.FieldDefault_));
   }, this);
 
   /**
    * @private
-   * @type {!Object.<pn.ui.edit.state.State.Field>}
+   * @type {!Object.<pn.ui.edit.state.FState.Field>}
    */
-  this.last_ = /** @type {!Object.<pn.ui.edit.state.State.Field>} */ (
+  this.last_ = /** @type {!Object.<pn.ui.edit.state.FState.Field>} */ (
       goog.object.unsafeClone(this.fields_));
 };
-goog.inherits(pn.ui.edit.state.State, goog.events.EventTarget);
+goog.inherits(pn.ui.edit.state.FState, goog.events.EventTarget);
 
 
 /**
@@ -55,14 +55,14 @@ goog.inherits(pn.ui.edit.state.State, goog.events.EventTarget);
  *    visible: boolean,
  *    value: *
  * }} */
-pn.ui.edit.state.State.Field;
+pn.ui.edit.state.FState.Field;
 
 
 /**
  * @private
- * @type {pn.ui.edit.state.State.Field}
+ * @type {pn.ui.edit.state.FState.Field}
  */
-pn.ui.edit.state.State.FieldDefault_ = {
+pn.ui.edit.state.FState.FieldDefault_ = {
   required: false,
   readonly: false,
   enabled: true,
@@ -72,7 +72,7 @@ pn.ui.edit.state.State.FieldDefault_ = {
 
 
 /** @type {string} The event fired on change */
-pn.ui.edit.state.State.CHANGED = 'fields-state-changed';
+pn.ui.edit.state.FState.CHANGED = 'fields-state-changed';
 
 ////////////////////////////////////////////////////////////////////////////////
 // READONLY
@@ -80,7 +80,7 @@ pn.ui.edit.state.State.CHANGED = 'fields-state-changed';
 
 
 /** @return {!Array.<string>} The ids in this state manager. */
-pn.ui.edit.state.State.prototype.getIds = function() {
+pn.ui.edit.state.FState.prototype.getIds = function() {
   return goog.object.getKeys(this.fields_);
 };
 
@@ -89,7 +89,7 @@ pn.ui.edit.state.State.prototype.getIds = function() {
  * @param {string} id The ID of the field.
  * @return {boolean} Wether the specified field is readonly.
  */
-pn.ui.edit.state.State.prototype.isReadOnly = function(id) {
+pn.ui.edit.state.FState.prototype.isReadOnly = function(id) {
   return this.field_(id).readonly;
 };
 
@@ -98,7 +98,7 @@ pn.ui.edit.state.State.prototype.isReadOnly = function(id) {
  * @param {string} id The ID of the field.
  * @param {boolean} value The readonly state of the field.
  */
-pn.ui.edit.state.State.prototype.setReadOnly = function(id, value) {
+pn.ui.edit.state.FState.prototype.setReadOnly = function(id, value) {
   pn.assBool(value);
   this.field_(id).readonly = value;
 
@@ -115,7 +115,7 @@ pn.ui.edit.state.State.prototype.setReadOnly = function(id, value) {
  * @param {string} id The ID of the field.
  * @return {boolean} Wether the specified field is required.
  */
-pn.ui.edit.state.State.prototype.isRequired = function(id) {
+pn.ui.edit.state.FState.prototype.isRequired = function(id) {
   return this.field_(id).required;
 };
 
@@ -124,7 +124,7 @@ pn.ui.edit.state.State.prototype.isRequired = function(id) {
  * @param {string} id The ID of the field.
  * @param {boolean} value The required state of the field.
  */
-pn.ui.edit.state.State.prototype.setRequired = function(id, value) {
+pn.ui.edit.state.FState.prototype.setRequired = function(id, value) {
   pn.assBool(value);
   this.field_(id).required = value;
 
@@ -140,7 +140,7 @@ pn.ui.edit.state.State.prototype.setRequired = function(id, value) {
  * @param {string} id The ID of the field.
  * @return {boolean} Wether the specified field is enabled.
  */
-pn.ui.edit.state.State.prototype.isEnabled = function(id) {
+pn.ui.edit.state.FState.prototype.isEnabled = function(id) {
   return this.field_(id).enabled;
 };
 
@@ -149,7 +149,7 @@ pn.ui.edit.state.State.prototype.isEnabled = function(id) {
  * @param {string} id The ID of the field.
  * @param {boolean} value The enabled state of the field.
  */
-pn.ui.edit.state.State.prototype.setEnabled = function(id, value) {
+pn.ui.edit.state.FState.prototype.setEnabled = function(id, value) {
   pn.assBool(value);
   this.field_(id).enabled = value;
 
@@ -165,7 +165,7 @@ pn.ui.edit.state.State.prototype.setEnabled = function(id, value) {
  * @param {string} id The ID of the field.
  * @return {boolean} Wether the specified field is visible.
  */
-pn.ui.edit.state.State.prototype.isVisible = function(id) {
+pn.ui.edit.state.FState.prototype.isVisible = function(id) {
   return this.field_(id).visible;
 };
 
@@ -174,7 +174,7 @@ pn.ui.edit.state.State.prototype.isVisible = function(id) {
  * @param {string} id The ID of the field.
  * @param {boolean} value The visible state of the field.
  */
-pn.ui.edit.state.State.prototype.setVisible = function(id, value) {
+pn.ui.edit.state.FState.prototype.setVisible = function(id, value) {
   pn.assBool(value);
   this.field_(id).visible = value;
 
@@ -190,7 +190,7 @@ pn.ui.edit.state.State.prototype.setVisible = function(id, value) {
  * @param {string} id The ID of the field.
  * @return {*} The value of the specified field.
  */
-pn.ui.edit.state.State.prototype.getValue = function(id) {
+pn.ui.edit.state.FState.prototype.getValue = function(id) {
   return this.provider_.getValue(id);
 };
 
@@ -199,7 +199,7 @@ pn.ui.edit.state.State.prototype.getValue = function(id) {
  * @param {string} id The ID of the field.
  * @param {*} value The value of the specified field to set.
  */
-pn.ui.edit.state.State.prototype.setValue = function(id, value) {
+pn.ui.edit.state.FState.prototype.setValue = function(id, value) {
   pn.assStr(id);
   pn.assObj(this.field_(id), 'Could not find field: ' + id);
 
@@ -213,7 +213,7 @@ pn.ui.edit.state.State.prototype.setValue = function(id, value) {
  * @return {!(Element|Text|goog.ui.Component)} The control representing the
  *    specified field.
  */
-pn.ui.edit.state.State.prototype.getControl = function(id) {
+pn.ui.edit.state.FState.prototype.getControl = function(id) {
   pn.assStr(id);
   pn.assObj(this.field_(id), 'Could not find field: ' + id);
 
@@ -225,7 +225,7 @@ pn.ui.edit.state.State.prototype.getControl = function(id) {
  * @param {string} id The ID of the field.
  * @return {!pn.ui.edit.FieldCtx} The field context for the specified field.
  */
-pn.ui.edit.state.State.prototype.getCtx = function(id) {
+pn.ui.edit.state.FState.prototype.getCtx = function(id) {
   pn.assStr(id);
   pn.assObj(this.field_(id), 'Could not find field: ' + id);
 
@@ -240,9 +240,9 @@ pn.ui.edit.state.State.prototype.getCtx = function(id) {
 /**
  * @private
  * @param {string} id The ID of the field.
- * @return {!pn.ui.edit.state.State.Field} The field specified.
+ * @return {!pn.ui.edit.state.FState.Field} The field specified.
  */
-pn.ui.edit.state.State.prototype.field_ = function(id) {
+pn.ui.edit.state.FState.prototype.field_ = function(id) {
   pn.assStr(id);
   pn.assObj(this.fields_[id], 'Could not find field: ' + id);
   return this.fields_[id];
@@ -250,12 +250,12 @@ pn.ui.edit.state.State.prototype.field_ = function(id) {
 
 
 /** @private */
-pn.ui.edit.state.State.prototype.fire_ = function() {
+pn.ui.edit.state.FState.prototype.fire_ = function() {
   var changes = this.diff_();
   if (!changes) return;
-  var event = new goog.events.Event(pn.ui.edit.state.State.CHANGED);
+  var event = new goog.events.Event(pn.ui.edit.state.FState.CHANGED);
   event.changes = changes;
-  this.last_ = /** @type {!Object.<pn.ui.edit.state.State.Field>} */ (
+  this.last_ = /** @type {!Object.<pn.ui.edit.state.FState.Field>} */ (
       goog.object.unsafeClone(this.fields_));
   this.dispatchEvent(event);
 };
@@ -263,10 +263,10 @@ pn.ui.edit.state.State.prototype.fire_ = function() {
 
 /**
  * @private
- * @return {Object.<pn.ui.edit.state.State.Field>}
+ * @return {Object.<pn.ui.edit.state.FState.Field>}
  *    Any changes since last fire.  Null if no changes.
  */
-pn.ui.edit.state.State.prototype.diff_ = function() {
+pn.ui.edit.state.FState.prototype.diff_ = function() {
   var diff = null;
   goog.object.forEach(this.fields_, function(v, id) {
     var old = this.last_[id];

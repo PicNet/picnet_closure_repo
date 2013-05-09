@@ -7,7 +7,7 @@ goog.require('pn.data.Entity');
 
 
 /** @typedef {function(new:pn.ui.edit.Interceptor,
- *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.State,
+ *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.FState,
  *    !Object.<goog.ui.Button>)} */
 pn.ui.edit.InterceptorCtor;
 
@@ -18,14 +18,14 @@ pn.ui.edit.InterceptorCtor;
  * @extends {goog.Disposable}
  * @param {!pn.data.Entity} entity The entity that was just decorated.
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
- * @param {!pn.ui.edit.state.State} state The state of the fields in this
+ * @param {!pn.ui.edit.state.FState} state The state of the fields in this
  *    interceptor.
  * @param {!Object.<goog.ui.Button>} commands The command elements.
  */
 pn.ui.edit.Interceptor = function(entity, cache, state, commands) {
   pn.assInst(entity, pn.data.Entity);
   pn.assInst(cache, pn.data.BaseDalCache);
-  pn.assInst(state, pn.ui.edit.state.State);
+  pn.assInst(state, pn.ui.edit.state.FState);
   pn.assObj(commands);
 
   goog.Disposable.call(this);
@@ -44,7 +44,7 @@ pn.ui.edit.Interceptor = function(entity, cache, state, commands) {
 
   /**
    * @protected
-   * @type {!pn.ui.edit.state.State}
+   * @type {!pn.ui.edit.state.FState}
    */
   this.state = state;
 
