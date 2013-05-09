@@ -26,7 +26,7 @@ pn.storage.set = function(id, value) {
 
   var ls = window['localStorage'];
   if (ls) ls[id] = value;
-  else goog.net.cookies.set(id, value);
+  else goog.net.cookies.set(id, value, 999999);
 };
 
 
