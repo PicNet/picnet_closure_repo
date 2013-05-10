@@ -274,11 +274,11 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 
 
   this.cfg.fCtxs.pnforEach(this.enterDocumentOnChildrenField_, this);
-  
+
   this.autoFocus_();
-  
+
   if (!this.fireInterceptorEvents || !this.cfg.interceptor) return;
- 
+
   var e = this.entity,
       c = this.cache,
       btns = this.getCommandButtons();
