@@ -10,7 +10,6 @@ goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BaseFacade');
-goog.require('pn.data.DataDownloader');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
 

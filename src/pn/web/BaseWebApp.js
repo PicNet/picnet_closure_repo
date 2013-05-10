@@ -4,6 +4,7 @@ goog.provide('pn.web.ctx');
 
 goog.require('pn.app.BaseApp');
 goog.require('pn.app.WebAppConfig');
+goog.require('pn.data.DataDownloader');
 goog.require('pn.data.Server');
 goog.require('pn.data.Server.EventType');
 goog.require('pn.ui.KeyShortcutMgr');

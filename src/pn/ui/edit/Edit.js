@@ -18,8 +18,8 @@ goog.require('pn.ui.edit.FieldCtx');
 goog.require('pn.ui.edit.FieldValidator');
 goog.require('pn.ui.edit.Interceptor');
 goog.require('pn.ui.edit.cmd.Command');
+goog.require('pn.ui.edit.state.FState');
 goog.require('pn.ui.edit.state.Provider');
-goog.require('pn.ui.edit.state.State');
 goog.require('pn.ui.edit.state.Updater');
 goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.Config');
@@ -71,7 +71,7 @@ pn.ui.edit.Edit = function(spec, entity, cache, opt_keys) {
 
   /**
    * @private
-   * @type {pn.ui.edit.state.State}
+   * @type {pn.ui.edit.state.FState}
    */
   this.state_ = null;
 };
@@ -260,7 +260,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 
   var ids = goog.object.getKeys(this.controls_),
       provider = new pn.ui.edit.state.Provider(this.controls_, fctxs);
-  this.state_ = new pn.ui.edit.state.State(ids, provider);
+  this.state_ = new pn.ui.edit.state.FState(ids, provider);
   var updater = new pn.ui.edit.state.Updater(this.state_, this.controls_);
   this.registerDisposable(updater);
 

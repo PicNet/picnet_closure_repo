@@ -17,13 +17,13 @@ goog.require('goog.testing.jsunit');
 goog.require('goog.object');
 
 goog.require('pn');
-goog.require('pn.ui.edit.state.State');
+goog.require('pn.ui.edit.state.FState');
 goog.require('pn.ui.edit.state.Provider');
 
 var state;
 var setUp = function() {
   var provider = new pn.ui.edit.state.Provider({});
-  state = new pn.ui.edit.state.State(['id1', 'id2', 'id3'], provider);
+  state = new pn.ui.edit.state.FState(['id1', 'id2', 'id3'], provider);
 };
 
 var test_default_values = function() {
@@ -53,7 +53,7 @@ var test_changes_do_not_change_old_changes = function() {
 };
 
 var test_event_changes_are_properly_described = function() {  
-  var s = goog.object.unsafeClone(pn.ui.edit.state.State.FieldDefault_);
+  var s = goog.object.unsafeClone(pn.ui.edit.state.FState.FieldDefault_);
   state.dispatchEvent = function(e) {    
     assertArrayEquals(
         goog.object.getValues({ 'id2': s }), 
