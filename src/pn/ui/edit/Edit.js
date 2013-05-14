@@ -131,7 +131,7 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
       div = pn.dom.addHtml(element, template(opts));
 
   // Expecting a 'main-group-area' div to contain all edit contents.
-  div = pn.dom.get('main-group-area');
+  div = pn.dom.byClass('main-group-area', element);
   pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
 
   this.decorateFields_(div);
@@ -275,6 +275,8 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
 
   this.cfg.fCtxs.pnforEach(this.enterDocumentOnChildrenField_, this);
 
+  this.autoFocus_();
+
   if (!this.fireInterceptorEvents || !this.cfg.interceptor) return;
 
   var e = this.entity,
@@ -282,8 +284,6 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
       btns = this.getCommandButtons();
   this.interceptor_ = new this.cfg.interceptor(e, c, this.state_, btns);
   this.registerDisposable(this.interceptor_);
-
-  this.autoFocus_();
 };
 
 

@@ -1,6 +1,10 @@
-set CLOSURE_LIBRARY=J:\dev\shared\lib\closure-library\
-set CLOSURE_TEMPLATES=J:\dev\shared\lib\closure-templates\
-set CLOSURE_COMPILER=J:\dev\shared\lib\picnetcompiler.jar
+set DRIVE=%cd:~0,3%
+set CLOSURE_LIBRARY=%DRIVE%dev\shared\lib\closure-library\
+
+set CLOSURE_TEMPLATES=%DRIVE%dev\shared\lib\closure-templates\
+
+set CLOSURE_COMPILER=%DRIVE%dev\shared\lib\picnetcompiler.jar
+
 set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
 set BASE=../../../../dtt/resources/scripts/lib/picnet_closure_repo/src/
 
