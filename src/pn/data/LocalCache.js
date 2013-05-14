@@ -69,6 +69,9 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    */
   this.transaction_ = null;
 
+  // TODO: For now LocalCache is dissabled as it causes too many issues.
+  this.clear_();
+
   this.checkDbVer_();
   this.init_();
 };
@@ -300,9 +303,22 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
 
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
       pnsubs(exp, this.dbver_));
-  window.localStorage.clear();
 
-  window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
+  this.clear_();
+  window.localStorage[this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
+};
+
+
+/** @private */
+pn.data.LocalCache.prototype.clear_ = function() {
+  var ls = window.localStorage,
+      len = ls.length;
+
+  for (var i = 0; i < len; i++) {
+    var key = ls.key(i) || '';
+    if (key && goog.string.startsWith(key, this.STORE_PREFIX_))
+      ls.removeItem(key);
+  }
 };
 
 
