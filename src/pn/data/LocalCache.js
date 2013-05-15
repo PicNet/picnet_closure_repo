@@ -304,7 +304,7 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
   this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
       pnsubs(exp, this.dbver_));
 
-  this.clear_();
+  if (exp) this.clear_();
   window.localStorage[this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
 };
 
