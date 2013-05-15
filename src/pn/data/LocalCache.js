@@ -340,12 +340,9 @@ pn.data.LocalCache.prototype.init_ = function() {
   var parse = goog.bind(function(type) {
     return pn.json.parseJson(window['localStorage'][this.key_(type)]);
   }, this);
+
   if (!queriesJson) {
-    if (this.lastUpdate_ > 0) {
-      var err = 'Last update time is set (%s) but the cache is empty.'.
-          pnsubs(this.lastUpdate_);
-      throw new Error(err);
-    }
+    this.lastUpdate_ = 0;
     this.cache_ = {};
     return;
   }
