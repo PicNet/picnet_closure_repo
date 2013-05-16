@@ -1,3 +1,8 @@
+IF "%1"=="" (
+  ECHO You musts pecify the web application name of the application as the only parameter to compile.bat
+  GOTO:EOF
+)
+
 set DRIVE=%cd:~0,3%
 set CLOSURE_LIBRARY=%DRIVE%dev\shared\lib\closure-library\
 
@@ -6,7 +11,7 @@ set CLOSURE_TEMPLATES=%DRIVE%dev\shared\lib\closure-templates\
 set CLOSURE_COMPILER=%DRIVE%dev\shared\lib\picnetcompiler.jar
 
 set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
-set BASE=../../../../lrs/resources/scripts/lib/picnet_closure_repo/src/
+set BASE=../../../../%1/resources/scripts/lib/picnet_closure_repo/src/
 
 U:\shared\tools\misc_utils\MergeClosureTestFiles.exe src\tests\  && ^
 java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^
