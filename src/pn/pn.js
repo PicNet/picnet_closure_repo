@@ -366,14 +366,17 @@ Array.prototype.pncount = function(f, opt_obj) {
  *     the value of the current array element, the current array index, and the
  *     array itself)
  *     function(previousValue, currentValue, index, array).
- * @param {?} val The initial value to pass into the function on the first call.
+ * @param {?=} opt_val The initial value to pass into the function on the
+ *    first call.  This defaults to 0 if not specified.
  * @param {S=} opt_obj  The object to be used as the value of 'this'
  *     within f.
  * @return {R} Result of evaluating f repeatedly across the values of the array.
  * @template T,S,R
  */
-Array.prototype.pnreduce = function(f, val, opt_obj) {
-  return goog.array.reduce.apply(null, pn.aargs_(this, arguments));
+Array.prototype.pnreduce = function(f, opt_val, opt_obj) {
+  var args = pn.aargs_(this, arguments);
+  if (args.length === 2) args.push(0); // Default to 0 for val.
+  return goog.array.reduce.apply(null, args);
 };
 
 
