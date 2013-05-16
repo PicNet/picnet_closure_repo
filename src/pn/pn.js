@@ -735,6 +735,88 @@ Array.prototype.pnreverse = function() {
   return arr;
 };
 
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {number} n The number of items to skip.
+ * @return {!Array.<T>} The new array with skipped items.
+ * @template T,S
+ */
+Array.prototype.pnskip = function(n) {
+  return this.pnfilter(function(e, idx) { return idx >= n; });
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {number} n The number of items to take.
+ * @return {!Array.<T>} The new array with n items.
+ * @template T,S
+ */
+Array.prototype.pntake = function(n) {
+  return this.pnfilter(function(e, idx) { return idx < n; });
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {function(T,number):string} key A function that takes the array item
+ *    and index and returns the key for this map.
+ * @param {function(T,number):*=} opt_value A function that takes the array item
+ *    and index and returns the value for this map (if null the item is used).
+ * @return {!Object.<T>} The new map.
+ * @template T,S
+ */
+Array.prototype.pntoMap = function(key, opt_value) {
+  var map = {};
+  this.pnreduce(function(acc, item, idx) {
+    map[key(item, idx)] = opt_value ? opt_value(item, idx) : item;
+  });
+  return map;
+};
+
+
+/**
+ * Returns an array consisting of the given value repeated N times.
+ *
+ * @param {*} value The value to repeat.
+ * @param {number} n The repeat count.
+ * @return {!Array} An array with the repeated value.
+ */
+pn.repeat = function(value, n) {
+  pn.assDef(value);
+  pn.assNum(n);
+
+  return goog.array.repeat(value, n);
+};
+
+
+/**
+ * Returns an array consisting of the given value repeated N times.
+ *
+ * @param {number} start The starting item in the range.
+ * @param {number} stop The last item in the range.
+ * @param {number=} opt_step The step size.
+ * @return {!Array} An array with the specified range.
+ */
+pn.range = function(start, stop, opt_step) {
+  pn.assNum(start);
+  pn.assNum(stop);
+
+  var step = opt_step || (start > stop ? -1 : 1);
+  if (step > 0) pn.ass(stop > start);
+  else pn.ass(stop < start);
+
+  var result = [];
+  for (var i = start; step > 0 ? i <= stop : i >= stop; i += step) {
+    result.push(i);
+  }
+  return result;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Function prototype enhancements
 ////////////////////////////////////////////////////////////////////////////////

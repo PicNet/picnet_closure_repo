@@ -109,6 +109,38 @@ var test_pnreverse = function() {
   assertArrayEquals([3, 2, 1], arr.pnreverse());
   assertArrayEquals([1, 2, 3], arr); // Not modified
 };
+
+var test_pn_skip = function() {
+  var arr = [1, 2, 3, 4, 5];
+  assertArrayEquals([2, 3, 4, 5], arr.pnskip(1));
+  assertArrayEquals([4, 5], arr.pnskip(3));
+};
+
+var test_pn_take = function() {
+  var arr = [1, 2, 3, 4, 5];
+  assertArrayEquals([1], arr.pntake(1));
+  assertArrayEquals([1, 2, 3], arr.pntake(3));
+};
+
+var test_pn_repeat = function() {
+  assertArrayEquals([1, 1], pn.repeat(1, 2));
+  assertArrayEquals([true, true, true], pn.repeat(true, 3));
+};
+
+var test_pn_range = function() {
+  assertArrayEquals([1, 2, 3, 4, 5], pn.range(1, 5));
+  assertArrayEquals([3, 5], pn.range(3, 6, 2));
+  assertArrayEquals([6, 5, 4, 3], pn.range(6, 3));
+  assertArrayEquals([6, 4], pn.range(6, 3, -2));
+};
+
+var test_pn_toMap = function() {
+  var exp = {'key1': 100, 'key2': 200};
+  assertObjectEquals(exp, [10, 20].pntoMap(
+      function(i) { return 'key' + (i / 10); }, 
+      function(i) { return i * 10; }));
+};
+
     </script>    
   </body>
 </html>
