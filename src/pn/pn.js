@@ -366,14 +366,17 @@ Array.prototype.pncount = function(f, opt_obj) {
  *     the value of the current array element, the current array index, and the
  *     array itself)
  *     function(previousValue, currentValue, index, array).
- * @param {?} val The initial value to pass into the function on the first call.
+ * @param {?=} opt_val The initial value to pass into the function on the
+ *    first call.  This defaults to 0 if not specified.
  * @param {S=} opt_obj  The object to be used as the value of 'this'
  *     within f.
  * @return {R} Result of evaluating f repeatedly across the values of the array.
  * @template T,S,R
  */
-Array.prototype.pnreduce = function(f, val, opt_obj) {
-  return goog.array.reduce.apply(null, pn.aargs_(this, arguments));
+Array.prototype.pnreduce = function(f, opt_val, opt_obj) {
+  var args = pn.aargs_(this, arguments);
+  if (args.length === 2) args.push(0); // Default to 0 for val.
+  return goog.array.reduce.apply(null, args);
 };
 
 
@@ -730,6 +733,88 @@ Array.prototype.pnreverse = function() {
   var arr = this.slice();
   arr.reverse();
   return arr;
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {number} n The number of items to skip.
+ * @return {!Array.<T>} The new array with skipped items.
+ * @template T,S
+ */
+Array.prototype.pnskip = function(n) {
+  return this.pnfilter(function(e, idx) { return idx >= n; });
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {number} n The number of items to take.
+ * @return {!Array.<T>} The new array with n items.
+ * @template T,S
+ */
+Array.prototype.pntake = function(n) {
+  return this.pnfilter(function(e, idx) { return idx < n; });
+};
+
+
+/**
+ * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
+ *     like object over which to iterate.
+ * @param {function(T,number):string} key A function that takes the array item
+ *    and index and returns the key for this map.
+ * @param {function(T,number):*=} opt_value A function that takes the array item
+ *    and index and returns the value for this map (if null the item is used).
+ * @return {!Object.<T>} The new map.
+ * @template T,S
+ */
+Array.prototype.pntoMap = function(key, opt_value) {
+  var map = {};
+  this.pnreduce(function(acc, item, idx) {
+    map[key(item, idx)] = opt_value ? opt_value(item, idx) : item;
+  });
+  return map;
+};
+
+
+/**
+ * Returns an array consisting of the given value repeated N times.
+ *
+ * @param {*} value The value to repeat.
+ * @param {number} n The repeat count.
+ * @return {!Array} An array with the repeated value.
+ */
+pn.repeat = function(value, n) {
+  pn.assDef(value);
+  pn.assNum(n);
+
+  return goog.array.repeat(value, n);
+};
+
+
+/**
+ * Returns an array consisting of the given value repeated N times.
+ *
+ * @param {number} start The starting item in the range.
+ * @param {number} stop The last item in the range.
+ * @param {number=} opt_step The step size.
+ * @return {!Array} An array with the specified range.
+ */
+pn.range = function(start, stop, opt_step) {
+  pn.assNum(start);
+  pn.assNum(stop);
+
+  var step = opt_step || (start > stop ? -1 : 1);
+  if (step > 0) pn.ass(stop > start);
+  else pn.ass(stop < start);
+
+  var result = [];
+  for (var i = start; step > 0 ? i <= stop : i >= stop; i += step) {
+    result.push(i);
+  }
+  return result;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

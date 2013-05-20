@@ -147,7 +147,9 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer =
     ctl.checked = 'checked';
   };
   container.getValue = function() { return !!inpt.checked; };
-  container.setValue(fctx.getEntityValue(entity) === true);
+  if (goog.isDef(fctx.getEntityValue(entity))) {
+    container.setValue(fctx.getEntityValue(entity) === true);
+  }
   container.setEnabled = function(enabled) {
     inpf['disabled'] = inpt['disabled'] = (enabled ? '' : 'disabled');
   };

@@ -62,7 +62,7 @@ pn.ui.TabComposer.prototype.decorateInternal = function(element) {
   var tabidx = 0;
   if (tabid) {
     var ids = this.tabs_.getChildIds();
-    tabidx = ids.pnindexOf(function(id) { return id === tabid; });
+    tabidx = ids.pnfindIndex(function(id) { return id === tabid; });
   }
   this.tabs_.setSelectedTabIndex(Math.max(0, tabidx));
 };
