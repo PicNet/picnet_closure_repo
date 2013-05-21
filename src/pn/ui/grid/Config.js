@@ -123,7 +123,8 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'editable': this.editable,
     'showHeaderRow': this.enableQuickFilters,
     'syncColumnCellResize': this.syncColumnCellResize,
-    'rowHeight': this.rowHeight
+    'rowHeight': this.rowHeight,
+    'autoEdit': false
   });
   cfg.enableColumnReorder = this.enableColumnReorder;
   cfg.forceFitColumns = this.forceFitColumns;
