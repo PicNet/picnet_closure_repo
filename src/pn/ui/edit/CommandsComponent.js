@@ -77,21 +77,30 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache, opt_keys) {
 goog.inherits(pn.ui.edit.CommandsComponent, goog.ui.Component);
 
 
-/** @return {!Array.<string>} Any errors in the form. */
+/**
+ * @param {pn.ui.edit.cmd.Command} c The command being fired.
+ * @return {!Array.<string>} Any errors in the form.
+ */
 pn.ui.edit.CommandsComponent.prototype.getFormErrors = goog.abstractMethod;
 
 
-/** @return {boolean} If this form is valid. */
+/**
+ * @param {pn.ui.edit.cmd.Command} c The command being fired.
+ * @return {boolean} If this form is valid.
+ */
 pn.ui.edit.CommandsComponent.prototype.isValidForm = goog.abstractMethod;
 
 
-/** @return {!Object} The current form data (Read from input controls). */
+/**
+ * @param {pn.ui.edit.cmd.Command} c The command being fired.
+ * @return {!Object} The current form data (Read from input controls).
+ */
 pn.ui.edit.CommandsComponent.prototype.getCurrentFormData = goog.abstractMethod;
 
 
 /**
  * @protected
- * @param {pn.ui.edit.cmd.Command} command The command to fire.
+ * @param {pn.ui.edit.cmd.Command} c The command to fire.
  * @param {Object} data The current form data.
  */
 pn.ui.edit.CommandsComponent.prototype.fireCommandEvent = goog.abstractMethod;
@@ -193,34 +202,33 @@ pn.ui.edit.CommandsComponent.prototype.handle_ = function(id) {
       this.commands_.pnfind(function(c) { return c.name === id; }));
 
   if (!this.shouldFireCommandEvent(command)) { return; }
-  this.fireCommandEvent(command, this.getCurrentFormData());
+  this.fireCommandEvent(command, this.getCurrentFormData(command));
 };
 
 
 /**
  * @private
- * @param {pn.ui.edit.cmd.Command} command The command to attach events to.
+ * @param {pn.ui.edit.cmd.Command} c The command to attach events to.
  */
-pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(command) {
-  var button = this.commandButtons_[command.name];
+pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(c) {
+  var button = this.commandButtons_[c.name];
   this.getHandler().listen(button, goog.events.EventType.CLICK, function() {
-    if (!this.shouldFireCommandEvent(command)) { return; }
-    this.fireCommandEvent(command, this.getCurrentFormData());
+    if (!this.shouldFireCommandEvent(c)) { return; }
+    this.fireCommandEvent(c, this.getCurrentFormData());
   });
 };
 
 
 /**
  * @protected
- * @param {pn.ui.edit.cmd.Command} command The command to determine
+ * @param {pn.ui.edit.cmd.Command} c The command to determine
  *    wether to fire or not.
  * @return {boolean} Whether to fire Command Event.
  */
-pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent =
-    function(command) {
-  if (command.preclick && !command.preclick(this.getCurrentFormData())) {
+pn.ui.edit.CommandsComponent.prototype.shouldFireCommandEvent = function(c) {
+  if (c.preclick && !c.preclick(this.getCurrentFormData(c))) {
     return false;
-  } if (command.validate && !this.isValidForm()) { return false; }
+  } if (c.validate && !this.isValidForm(c)) { return false; }
   return true;
 };
 

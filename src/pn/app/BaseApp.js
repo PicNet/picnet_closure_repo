@@ -85,8 +85,15 @@ pn.app.BaseApp = function(opt_cfg) {
   this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
   this.registerDisposable(this.bus_);
 
-  // Convenience delegates.  Now you can publish by - pn.app.ctx.pub('event');
+  // Convenience delegates.
+  /**
+   * @param {string} topic Topic to publish to.
+   * @param {...*} args Arguments that are applied to each sub function.
+   */
   this.pub = goog.bind(this.bus_.pub, this.bus_);
+
+  /** @return {string} The current topic being submitted. */
+  this.topic = goog.bind(this.bus_.topic, this.bus_);
 };
 goog.inherits(pn.app.BaseApp, goog.events.EventHandler);
 

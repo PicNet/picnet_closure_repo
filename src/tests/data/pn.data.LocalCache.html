@@ -26,6 +26,7 @@ var entity,
 
 var setUp = function() {  
   // Reset cache
+  pn.data.LocalCache.OFF_ = false;
   cache = new pn.data.LocalCache(goog.now(), 'pn.data.LocalCache.html'); 
   cache.cache_['EntityType'] = [];
   entity = new pn.data.Entity('EntityType', 0);

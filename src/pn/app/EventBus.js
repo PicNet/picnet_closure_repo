@@ -33,6 +33,12 @@ pn.app.EventBus = function(async) {
    */
   this.pubsub_ = new goog.pubsub.PubSub();
   this.registerDisposable(this.pubsub_);
+
+  /**
+   * @private
+   * @type {string}
+   */
+  this.topic_ = '';
 };
 goog.inherits(pn.app.EventBus, goog.Disposable);
 
@@ -46,7 +52,7 @@ pn.app.EventBus.prototype.pub = function(topic, args) {
   pn.ass(this.pubsub_.getCount(topic) > 0,
       'No subscribers found [' + topic + ']');
 
-  var msg = topic;
+  var msg = this.topic_ = topic;
   if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;
   this.log_.fine(msg);
 
@@ -72,3 +78,7 @@ pn.app.EventBus.prototype.sub = function(topic, callback, opt_handler) {
     this.pubsub_.subscribe(topic, cb);
   }
 };
+
+
+/** @return {string} The current topic being submitted. */
+pn.app.EventBus.prototype.topic = function() { return this.topic_; };
