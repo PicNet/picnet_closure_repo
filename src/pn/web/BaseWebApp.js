@@ -27,6 +27,11 @@ goog.require('pn.web.WebAppEvents');
 pn.web.BaseWebApp = function(opt_cfg) {
   pn.ass(pn.web.ctx === null, 'Only a single instance of base app supported');
 
+  if (!goog.string.endsWith(document.location.pathname, '/')) {
+    document.location.pathname += '/';
+    return;
+  }
+
   /** @type {pn.web.BaseWebApp} */
   pn.web.ctx = this;
 
