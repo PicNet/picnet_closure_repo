@@ -763,17 +763,22 @@ Array.prototype.pntake = function(n) {
 /**
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {function(T,number):string} key A function that takes the array item
- *    and index and returns the key for this map.
+ * @param {function(T,number):string=} opt_key An optional function that
+ *    takes the array item and index and returns the key for this map. If this
+ *    is not specified its assumed that the value at the array is the key
+ *    (must be a string).
  * @param {function(T,number):*=} opt_value A function that takes the array item
  *    and index and returns the value for this map (if null the item is used).
  * @return {!Object.<T>} The new map.
  * @template T,S
  */
-Array.prototype.pntoMap = function(key, opt_value) {
+Array.prototype.pntoMap = function(opt_key, opt_value) {
   var map = {};
   this.pnreduce(function(acc, item, idx) {
-    map[key(item, idx)] = opt_value ? opt_value(item, idx) : item;
+    var id = opt_key ? opt_key(item, idx) : item;
+    pn.assStr(id, 'Expected a string id: %s', id);
+    pn.ass(map[id] === undefined, 'Map already contains key %s', id);
+    map[id] = opt_value ? opt_value(item, idx) : item;
   });
   return map;
 };
