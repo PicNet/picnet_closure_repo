@@ -134,7 +134,8 @@ pn.web.BaseWebApp.prototype.impersonate = function(username) {
     throw new Error('Impersonation is not enabled');
 
   window.localStorage.clear();
-  var uri = pn.app.ctx.cfg.appPath + '?impersonate=' + username;
+  var uri = pn.app.ctx.cfg.appPath + '/?impersonate=' +
+      username.replace(/ /g, '%20');
   document.location.href = uri;
 };
 
