@@ -146,7 +146,11 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer =
     var ctl = b ? inpt : inpf;
     ctl.checked = 'checked';
   };
-  container.getValue = function() { return !!inpt.checked; };
+  container.getValue = function() {
+    if (inpt.checked) return true;
+    if (inpf.checked) return false;
+    return undefined;
+  };
   if (goog.isDef(fctx.getEntityValue(entity))) {
     container.setValue(fctx.getEntityValue(entity) === true);
   }
