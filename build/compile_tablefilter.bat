@@ -1,7 +1,8 @@
+set DRIVE=%cd:~0,3%
 set PYTHON27_EXEC=C:\Python27\python.exe
-set CLOSURE_LIBRARY=U:\shared\lib\closure-library\
-set CLOSURE_TEMPLATES=U:\shared\lib\closure-templates\
-set CLOSURE_COMPILER=U:\shared\lib\compiler.jar
+set CLOSURE_LIBRARY=%DRIVE%dev\shared\lib\closure-library\
+set CLOSURE_TEMPLATES=%DRIVE%dev\shared\lib\closure-templates\
+set CLOSURE_COMPILER=%DRIVE%dev\shared\lib\compiler.jar
 
 %PYTHON27_EXEC% ^
   %CLOSURE_LIBRARY%closure\bin\build\closurebuilder.py ^
@@ -9,7 +10,7 @@ set CLOSURE_COMPILER=U:\shared\lib\compiler.jar
   --namespace="pn.ui.filter.jQueryPlugin" ^
   --root=%CLOSURE_LIBRARY% ^
   --root=%CLOSURE_TEMPLATES% ^
-  --root=src\ ^
+  --root=..\src\ ^
   --output_mode=compiled ^
   --compiler_jar=%CLOSURE_COMPILER% ^
   --compiler_flags="--debug=true" ^
