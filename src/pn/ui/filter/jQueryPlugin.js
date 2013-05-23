@@ -37,7 +37,7 @@ if (jq) { (function(jq) {
   };
 
   jq['fn']['tableFilter'] = function(options) {
-    var tmp = this.pnforEach(function(t) {
+    var tmp = pn.toarr(this).pnforEach(function(t) {
       if (undefined === jq(t).data('tableFilter') ||
           jq(t).data('tableFilter') === null) {
         var plugin = new jq.tableFilter(t, options);
@@ -48,7 +48,7 @@ if (jq) { (function(jq) {
   };
 
   jq['fn']['tableFilterApplyFilterValues'] = function() {
-    var tmp = this.pnforEach(function(t) {
+    var tmp = pn.toarr(this).pnforEach(function(t) {
       if (undefined !== jq(t).data('tableFilter') &&
           jq(t).data('tableFilter') !== null) {
         var plugin = jq(t).data('tableFilter');
@@ -59,7 +59,7 @@ if (jq) { (function(jq) {
   };
 
   jq['fn']['tableFilterRefresh'] = function() {
-    var tmp = this.pnforEach(function(t) {
+    var tmp = pn.toarr(this).pnforEach(function(t) {
       if (undefined !== jq(t).data('tableFilter') &&
           jq(t).data('tableFilter') !== null) {
         var plugin = jq(t).data('tableFilter');
@@ -70,7 +70,7 @@ if (jq) { (function(jq) {
   };
 
   jq['fn']['tableFilterClearFilters'] = function() {
-    var tmp = this.pnforEach(function(t) {
+    var tmp = pn.toarr(this).pnforEach(function(t) {
       if (undefined !== jq(t).data('tableFilter') &&
           jq(t).data('tableFilter') !== null) {
         var plugin = jq(t).data('tableFilter');
