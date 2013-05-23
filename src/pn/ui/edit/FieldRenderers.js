@@ -436,7 +436,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   goog.dispose(spec);
   var container = goog.dom.createDom('div', {
     'class': 'child-grid-container',
-    'style': 'width:%spx'.pnsubs($(parent).width())
+    'style': 'width:' + $(parent).width() + 'px'
   });
   goog.dom.appendChild(parent, container);
   g.decorate(container);

@@ -24,7 +24,7 @@ pn.data.BaseDalCache = function(cache) {
     pn.ass(!(type in this.cache_));
     var arr = cache[key];
     pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }),
-        'Array of type: %s is not sorted.'.pnsubs(type));
+        'Array of type: ' + type + ' is not sorted.');
     this.cache_[type] = arr;
 
     // Should always be ordered for performance.
@@ -53,13 +53,18 @@ pn.data.BaseDalCache.prototype.getImpl_ = function(type) {
 
   var arr = this.cache_[type];
   if (!arr) throw new Error('Type: ' + type + ' not in cache.');
-  pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }),
-      'Array of type: %s is not sorted.'.pnsubs(type));
+  pn.ass(goog.array.isSorted(arr,
+      function(a, b) { return a.id - b.id; }),
+      'Array of type: ' + type + ' is not sorted.');
   return arr;
 };
 
 
 /**
+ * This is a very CPU intensive part of the system.  And the assertions
+ *    below add a lot of time to processing.  However, they are only done
+ *    in debug more so leaving in.
+ *
  * @param {string} type The type to retreive from the cache.
  * @param {number} id The ID of the entity of the specified type to retreive.
  * @return {!pn.data.Entity} The entities of the specified type.
@@ -70,8 +75,10 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
 
   var arr = this.getImpl_(type);
   pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }));
+
   var idx = goog.array.binarySelect(arr, function(e) { return id - e.id; });
-  pn.ass(idx >= 0, 'Could not find entity of type :%s id: %s'.pnsubs(type, id));
+  pn.ass(idx >= 0, 'Could not find entity of type ' + type + ' id: ' + id);
+
   return /** @type {!pn.data.Entity} */ (arr[idx]);
 };
 

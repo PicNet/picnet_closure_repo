@@ -39,7 +39,7 @@ goog.inherits(pn.mob.AudioPlayer, goog.Disposable);
 
 /** @param {string} src The media file to preload. */
 pn.mob.AudioPlayer.prototype.preload = function(src) {
-  pn.ass(!(src in this.medias_), '%s - already loaded'.pnsubs(src));
+  pn.ass(!(src in this.medias_), src + ' - already loaded');
 
   var media = this.medias_[src] = this.createMedia_(src);
   if (!this.usePg_) {

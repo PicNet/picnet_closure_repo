@@ -47,8 +47,8 @@ pn.ui.grid.editors.SelectEditor.prototype.init_ = function() {
   values.pnforEach(function(v) {
     str += "<OPTION value='" + v + "'>" + v + '</OPTION>';
   });
-  this.ctl_ = $("<SELECT tabIndex='0' class='editor-select'>%s</SELECT>".
-      pnsubs(str));
+  this.ctl_ = $("<SELECT tabIndex='0' class='editor-select'>" +
+      str + '</SELECT>');
   this.ctl_.appendTo(this.args_['container']);
   this.ctl_.focus();
   this.ctl_.change(this.args_['grid'].getEditorLock()['commitCurrentEdit']);

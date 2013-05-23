@@ -200,7 +200,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.assInst(entity, pn.data.Entity);
-  pn.ass(entity.id > 0, 'Entity %s does not have an ID'.pnsubs(entity.type));
+  pn.ass(entity.id > 0, 'Entity ' + entity.type + ' does not have an ID');
 
   if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
   var entities = this.cache_[entity.type];
@@ -310,8 +310,8 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
   var exp = window.localStorage[this.STORE_PREFIX_ + 'dbver'];
   if (!this.dbver_ || this.dbver_ === exp) { return; }
 
-  this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      pnsubs(exp, this.dbver_));
+  this.log_.info('Clearing the LocalCache. Version mismatch [' +
+      exp + '] != [' + this.dbver_ + ']');
 
   if (exp) this.clear_();
   window.localStorage[this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
@@ -398,13 +398,13 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var list = this.cache_[type].pnmap(function(e) { return e.toCompressed(); });
   var json = pn.json.serialiseJson(list, true);
-  this.log_.info('Adding type[%s] length[%s] json[%s] to cache'.
-      pnsubs(type, list.length, json.length));
+  this.log_.info('Adding type[' + type + '] length[' +
+      list.length + '] json[' + json.length + '] to cache');
 
   window.localStorage[this.key_(type)] = json;
 
   var took = goog.now() - start;
-  this.log_.info('Flushed "%s" took %sms.'.pnsubs(type, took));
+  this.log_.info('Flushed "' + type + '" took ' + took + 'ms.');
 };
 
 
