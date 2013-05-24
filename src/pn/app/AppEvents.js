@@ -5,6 +5,8 @@ goog.provide('pn.app.AppEvents');
 /** @enum {string} */
 pn.app.AppEvents = {
 
+  SHOW_DEBUG_MESSAGE: 'show-debug-message',
+
   // EDIT COMMANDS
   ENTITY_SAVE: 'entity-save',
   ENTITY_CLONE: 'entity-clone',

@@ -200,8 +200,18 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
     this.data.deleteEntity(entity, cb);
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
-
+  evs[ae.SHOW_DEBUG_MESSAGE] = this.showDebugMessage;
   return evs;
+};
+
+
+/**
+ * @protected
+ * @param {string} msg The server debug message to alert the user to.
+ *  This can be overriden if alerts are not appropriate.
+ */
+pn.app.BaseApp.prototype.showDebugMessage = function(msg) {
+  window.alert(msg);
 };
 
 
