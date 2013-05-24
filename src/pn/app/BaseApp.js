@@ -211,6 +211,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
  *  This can be overriden if alerts are not appropriate.
  */
 pn.app.BaseApp.prototype.showDebugMessage = function(msg) {
+  pn.log.info(msg);
   window.alert(msg);
 };
 
