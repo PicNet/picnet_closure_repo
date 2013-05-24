@@ -203,8 +203,14 @@ pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   var idx = entities.pnfindIndex(function(e2) {
     return e2.id === entity.id;
   });
-  if (idx < 0) idx = entities.length;
-  entities[idx] = entity;
+
+  if (idx < 0) {
+    goog.array.binaryInsert(entities, entity, function(a, b) {
+      return goog.array.defaultCompare(a.id, b.id);
+    });
+  } else {
+    entities[idx] = entity;
+  }
 
   if (this.transaction_) this.transaction_.push(entity.type);
   else this.flush_(entity.type);
