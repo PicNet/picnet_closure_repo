@@ -64,6 +64,16 @@ pn.ui.InputDatePicker = function(opt_dtf, opt_dtp, opt_label) {
 goog.inherits(pn.ui.InputDatePicker, goog.ui.Component);
 
 
+/**
+ * @param {boolean} enabled Wether this control is enabled or not.
+ */
+pn.ui.InputDatePicker.prototype.setEnabled = function(enabled) {
+  pn.assBool(enabled);
+
+  this.fieldLabelInput_.setEnabled(enabled);
+};
+
+
 /** @param {goog.date.DateTime?} date The date to set in the control. */
 pn.ui.InputDatePicker.prototype.setDate = function(date) {
   this.idp_.setDate(date);
