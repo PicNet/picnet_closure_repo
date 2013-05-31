@@ -119,47 +119,20 @@ pn.ui.edit.FieldRenderers.boolRenderer = function(fctx, parent, entity) {
 
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
- * @param {!Element} parent The parent to attach this control to.
- * @param {!pn.data.Entity} entity The entity being edited.
- * @param {Array.<string>?=} opt_labels The true false labels
- *    (default 'No', 'Yes' [ORDER MATTERS]).
+ * @param {!Element} p The parent to attach this control to.
+ * @param {!pn.data.Entity} en The entity being edited.
+ * @param {Array.<string>?=} opt_lbls The true false labels (default 'No',
+ *    'Yes' [ORDER MATTERS]).
  * @return {!Element} The checkbox control.
  */
-pn.ui.edit.FieldRenderers.boolRadioRenderer =
-    function(fctx, parent, entity, opt_labels) {
-  var cd = goog.dom.createDom,
-      idt = fctx.id + 't',
-      idf = fctx.id + 'f',
-      optst = {'type': 'radio', 'id': idt, 'name': fctx.id, 'value': 'true'},
-      optsf = {'type': 'radio', 'id': idf, 'name': fctx.id, 'value': 'false'},
-      inpt = cd('input', optst),
-      inpf = cd('input', optsf),
-      lblf = opt_labels ? opt_labels[0] : 'No',
-      lblt = opt_labels ? opt_labels[1] : 'Yes',
-      container = cd('div', 'radiogroup',
-          inpf, cd('label', {'for': idt}, lblf),
-          inpt, cd('label', {'for': idt}, lblt)
-      );
-  container.setValue = function(b) {
-    pn.assBool(b);
-
-    var ctl = b ? inpt : inpf;
-    ctl.checked = 'checked';
-  };
-  container.getValue = function() {
-    if (inpt.checked) return true;
-    if (inpf.checked) return false;
-    return undefined;
-  };
-  if (goog.isDef(fctx.getEntityValue(entity))) {
-    container.setValue(fctx.getEntityValue(entity) === true);
-  }
-  container.setEnabled = function(enabled) {
-    inpf['disabled'] = inpt['disabled'] = (enabled ? '' : 'disabled');
-  };
-
-  goog.dom.appendChild(parent, container);
-  return container;
+pn.ui.edit.FieldRenderers.boolRadioRenderer = function(fctx, p, en, opt_lbls) {
+  var lst = [
+    {id: fctx.id, name: opt_lbls ? opt_lbls[0] : 'No', value: false},
+    {id: fctx.id, name: opt_lbls ? opt_lbls[1] : 'Yes', value: true}
+  ],
+      selected = fctx.getEntityValue(en) === true;
+  return pn.ui.edit.FieldRenderers.createRadioGroup_(lst, p, selected,
+      function(s) { return s === 'true'; });
 };
 
 
@@ -209,12 +182,17 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
   var value = fctx.spec.additionalProperties.clearOnLoad ?
       '' : (fctx.getEntityValue(entity) || '');
+
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
     'value': value
   });
-  goog.dom.appendChild(parent, textarea);
+  textarea.setValue = function(val) {
+    // This hack is needed because IEs display null when null is passed in.
+    this.value = val || '';
+  };
+  goog.dom.append(parent, textarea);
   return textarea;
 };
 
@@ -264,7 +242,12 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
 
   var enumo = /** @type {Object.<number>} */ (fctx.schema.entityType);
   goog.object.forEach(enumo, function(val, name) {
-    if (goog.isNumber(val)) lst.push({ id: val, name: name});
+    if (goog.isNumber(val)) {
+      lst.push({
+        id: val,
+        name: name.replace(/_/g, ' ')
+      });
+    }
   });
   lst.pnsortObjectsByKey('name');
 
@@ -278,6 +261,28 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   };
   goog.dom.appendChild(parent, select);
   return select;
+};
+
+
+/**
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {!pn.data.Entity} entity The entity being edited.
+ * @return {!Element} The select control.
+ */
+pn.ui.edit.FieldRenderers.enumRadioRenderer = function(fctx, parent, entity) {
+  var lst = [],
+      enumo = /** @type {Object.<number>} */ (fctx.schema.entityType);
+  goog.object.forEach(enumo, function(val, name) {
+    if (goog.isNumber(val)) lst.push({
+      id: fctx.id,
+      value: val,
+      name: name.replace(/_/g, ' ')
+    });
+  });
+  var selected = /** @type {number} */ (fctx.getEntityValue(entity));
+  return pn.ui.edit.FieldRenderers.createRadioGroup_(lst, parent, selected,
+      function(s) { return parseInt(s, 10); });
 };
 
 
@@ -347,66 +352,6 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       fctx, selTxt, list, current);
   goog.dom.appendChild(parent, select);
-  return select;
-};
-
-
-/**
- * @private
- * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
- * @param {string} selectTxt The message to display in the first element of the
- *    list.
- * @param {!Array.<{ID:number, Name: string}>} list The list of entities
- *    (requires an ID and Name field).
- * @param {number} selValue The selected value in the 'ID' field.
- * @param {number=} opt_noneId The ID to give to the 'Select...' entry.
- * @return {!Element} The select box.
- */
-pn.ui.edit.FieldRenderers.createDropDownList_ =
-    function(fctx, selectTxt, list, selValue, opt_noneId) {
-  pn.ass(!selectTxt || goog.isString(selectTxt));
-  pn.assArr(list);
-  pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
-      'Not supported: ' + selValue);
-  pn.ass(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),
-      'Not supported: ' + opt_noneId);
-
-  var select = goog.dom.createDom('select');
-
-  // TODO: This shoudl really be another class that delegates to a HtmlSelect
-
-  /** @return {number} The selected ID. */
-  select.getValue = function() { return parseInt(select.value, 10); };
-
-  /** @param {number=} opt_selectedid The optional selected id. */
-  select.refresh = function(opt_selectedid) {
-    goog.dom.removeChildren(select);
-    if (selectTxt) {
-      goog.dom.appendChild(select, goog.dom.createDom('option',
-          {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
-          selectTxt));
-    }
-    var arr = fctx.spec.additionalProperties.list ?
-        fctx.spec.additionalProperties.list() : list;
-
-    var selected = opt_selectedid ? opt_selectedid :
-        goog.isDef(selValue) ? selValue :
-            select.getValue() ? select.getValue() :
-                opt_noneId ? opt_noneId : 0;
-    arr.pnforEach(function(e) {
-      var opts = {'value': e.id};
-      if (e.id === selected) { opts['selected'] = 'selected'; }
-
-      var txt = e.name ? e.name.toString() : '';
-      pn.ass(txt !== undefined);
-
-      if (txt) {
-        var option = goog.dom.createDom('option', opts, txt);
-        goog.dom.appendChild(select, option);
-      }
-    });
-  };
-  select.refresh();
   return select;
 };
 
@@ -505,4 +450,122 @@ pn.ui.edit.FieldRenderers.createFilteredEntityParentList =
     return defaultImpl(fctx, parent, entity, filter);
   };
   return renderer;
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {string} selectTxt The message to display in the first element of the
+ *    list.
+ * @param {!Array.<{ID:number, Name: string}>} list The list of entities
+ *    (requires an ID and Name field).
+ * @param {number} selValue The selected value in the 'ID' field.
+ * @param {number=} opt_noneId The ID to give to the 'Select...' entry.
+ * @return {!Element} The select box.
+ */
+pn.ui.edit.FieldRenderers.createDropDownList_ =
+    function(fctx, selectTxt, list, selValue, opt_noneId) {
+  pn.ass(!selectTxt || goog.isString(selectTxt));
+  pn.assArr(list);
+  pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
+      'Not supported: ' + selValue);
+  pn.ass(!goog.isDef(opt_noneId) || goog.isNumber(opt_noneId),
+      'Not supported: ' + opt_noneId);
+
+  var select = goog.dom.createDom('select');
+
+  // TODO: This shoudl really be another class that delegates to a HtmlSelect
+
+  /** @return {number} The selected ID. */
+  select.getValue = function() { return parseInt(select.value, 10); };
+
+  /** @param {number=} opt_selectedid The optional selected id. */
+  select.refresh = function(opt_selectedid) {
+    goog.dom.removeChildren(select);
+    if (selectTxt) {
+      goog.dom.appendChild(select, goog.dom.createDom('option',
+          {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
+          selectTxt));
+    }
+    var arr = fctx.spec.additionalProperties.list ?
+        fctx.spec.additionalProperties.list() : list;
+
+    var selected = opt_selectedid ? opt_selectedid :
+        goog.isDef(selValue) ? selValue :
+            select.getValue() ? select.getValue() :
+                opt_noneId ? opt_noneId : 0;
+    arr.pnforEach(function(e) {
+      var opts = {'value': e.id};
+      if (e.id === selected) { opts['selected'] = 'selected'; }
+
+      var txt = e.name ? e.name.toString() : '';
+      pn.ass(txt !== undefined);
+
+      if (txt) {
+        var option = goog.dom.createDom('option', opts, txt);
+        goog.dom.appendChild(select, option);
+      }
+    });
+  };
+  select.refresh();
+  return select;
+};
+
+
+/**
+ * @private
+ * @param {!Array.<{id:*,name:string,value:*}>} lst The list of options.
+ * @param {!Element} parent The parent to attach this control to.
+ * @param {*} selected The selected item;.
+ * @param {function(*):*=} opt_valParser A parser to turn the string value of
+ *    the radio control into a more appropriate type.
+ * @return {!Element} The radio group container control.
+ */
+pn.ui.edit.FieldRenderers.createRadioGroup_ =
+    function(lst, parent, selected, opt_valParser) {
+  pn.assArr(lst);
+  pn.assObj(parent);
+
+  var container = pn.dom.create('div', 'radiogroup'),
+      inputs = [];
+
+  lst.pnforEach(function(opt, i) {
+    pn.assStr(opt.name);
+    pn.assDef(opt.id);
+    pn.assDef(opt.value);
+
+    var input = pn.dom.create('input', {
+      'type': 'radio',
+      'id': opt.id + '_' + i,
+      'name': opt.id,
+      'value': opt.value
+    }),
+        label = pn.dom.create('label', { 'for': opt.id }, opt.name);
+    inputs.push(input);
+    goog.dom.appendChild(container, input);
+    goog.dom.appendChild(container, label);
+  });
+
+  container.setValue = function(val) {
+    var vals = val.toString();
+    inputs.
+        pnfind(function(inp) { return inp.value === vals; }).
+        checked = 'checked';
+  };
+  container.getValue = function() {
+    var inp = inputs.pnfind(function(inp2) { return !!inp2.checked; });
+    return !!inp ?
+        (opt_valParser ? opt_valParser(inp.value) : inp.value) :
+        undefined;
+  };
+  if (goog.isDef(selected)) { container.setValue(selected); }
+  container.setEnabled = function(enabled) {
+    inputs.pnforEach(function(inp) {
+      inp['disabled'] = (enabled ? '' : 'disabled');
+    });
+  };
+
+  goog.dom.appendChild(parent, container);
+  return container;
 };
