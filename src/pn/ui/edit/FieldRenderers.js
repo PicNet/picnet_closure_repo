@@ -326,15 +326,16 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   var entityType = /** @type {string} */ (cascading ?
       fctx.spec.tableType :
       pn.data.EntityUtils.getTypeProperty(
-          fctx.spec.entitySpec.type, fctx.spec.dataProperty));
+          fctx.spec.entitySpec.type, fctx.spec.dataProperty)),
+      current = /** @type {number} */ (fctx.getEntityValue(entity));
 
   var list = fctx.cache.get(entityType);
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
-
+  list = list.pnfilter(function(e) {
+    return e.id === current || !goog.isDef(e.IsActive) || !!e.IsActive;
+  });
   if (opt_filter) list = opt_filter(entity, list);
-  else list = list.pnfilter(
-      function(e) { return !goog.isDef(e.IsActive) || !!e.IsActive; });
 
   pn.data.EntityUtils.orderEntities(entityType, list);
 
@@ -348,7 +349,6 @@ pn.ui.edit.FieldRenderers.entityParentListField =
           fctx.cache, namePath, fctx.spec.entitySpec.type, e)
     };
   });
-  var current = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       fctx, selTxt, list, current);
   goog.dom.appendChild(parent, select);
