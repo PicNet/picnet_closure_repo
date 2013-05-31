@@ -190,7 +190,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
   });
   textarea.setValue = function(val) {
     // This hack is needed because IEs display null when null is passed in.
-    this.value = val || '';
+    textarea.value = val || '';
   };
   goog.dom.append(parent, textarea);
   return textarea;
