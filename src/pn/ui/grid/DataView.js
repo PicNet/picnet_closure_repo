@@ -82,12 +82,10 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
 
 /**
  * @private
- * @param {number} row The row index.
+ * @param {number|string} row The row index.
  * @return {!Object} A map of metadata properties for this row.
  */
 pn.ui.grid.DataView.prototype.getItemMetadata_ = function(row) {
-  pn.assNum(row);
-
   var item = this.getItem(row),
       ret = this.origGetItemMetadata_(row);
   if (item && this.interceptor_) {
