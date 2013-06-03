@@ -274,7 +274,7 @@ pn.data.BaseFacade.prototype.sync = function() {
 
 
 /**
- * @param {!(function((pn.data.Entity|Object|string)=):undefined|
+ * @param {!(function((pn.data.Entity|Object|string|number)=):undefined|
  *    pn.data.Server.Response)} callbackOrResponse The success callback or
  *    the response object.
  * @param {pn.data.Server.Response=} opt_response The optional response
@@ -285,18 +285,22 @@ pn.data.BaseFacade.prototype.parseServerResponse =
     function(callbackOrResponse, opt_response) {
   var callback = callbackOrResponse instanceof pn.data.Server.Response ?
       null : callbackOrResponse;
-  var response = callbackOrResponse instanceof pn.data.Server.Response ?
+  var r = callbackOrResponse instanceof pn.data.Server.Response ?
       callbackOrResponse : opt_response;
 
   pn.ass(goog.isNull(callback) || goog.isFunction(callback));
-  pn.assInst(response, pn.data.Server.Response);
+  pn.assInst(r, pn.data.Server.Response);
 
-  this.log_.info('parseServerResponse response[' + response.toString() + ']');
+  this.log_.info('parseServerResponse response[' + r.toString() + ']');
 
-  if (response.updates) this.applyUpdates_(response.updates);
-  if (response.lastUpdate > 0) this.cache.setLastUpdate(response.lastUpdate);
-  if (callback) callback.call(this,
-      response.responseEntity || response.ajaxData || response.queryResults);
+  if (r.updates) this.applyUpdates_(r.updates);
+  if (r.lastUpdate > 0) this.cache.setLastUpdate(r.lastUpdate);
+  if (callback) {
+    var cbarg = !!r.responseEntity ? r.responseEntity :
+        goog.isDef(r.ajaxData) ? r.ajaxData :
+        r.queryResults;
+    callback.call(this, cbarg);
+  }
 };
 
 

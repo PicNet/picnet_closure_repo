@@ -407,8 +407,8 @@ pn.data.Server.Response = function(raw) {
           /** @type {!Object} */ (pn.json.parseJson(raw['ResponseEntity']))) :
       null;
 
-  /** @type {Object|string} */
-  this.ajaxData = raw['AjaxResponse'] ?
+  /** @type {Object|string|number} */
+  this.ajaxData = goog.isDef(raw['AjaxResponse']) ?
       pn.json.parseJson(raw['AjaxResponse']) : null;
 
   /** @type {string} */
@@ -435,6 +435,7 @@ pn.data.Server.Response = function(raw) {
   pn.ass(
       this.ajaxData === null ||
       goog.isObject(this.ajaxData) ||
+      goog.isNumber(this.ajaxData) ||
       goog.isString(this.ajaxData));
   pn.ass(
       goog.isString(this.error) ||
