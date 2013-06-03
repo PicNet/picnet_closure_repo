@@ -297,7 +297,7 @@ pn.data.BaseFacade.prototype.parseServerResponse =
   if (r.lastUpdate > 0) this.cache.setLastUpdate(r.lastUpdate);
   if (callback) {
     var cbarg = !!r.responseEntity ? r.responseEntity :
-        goog.isDef(r.ajaxData) ? r.ajaxData :
+        goog.isDefAndNotNull(r.ajaxData) ? r.ajaxData :
         r.queryResults;
     callback.call(this, cbarg);
   }
