@@ -16,7 +16,7 @@ goog.require('pn.mob.ui.DynSwiper');
  */
 pn.mob.ui.Swiper = function(el, dots, pages) {
   pn.assInst(el, HTMLElement);
-  pn.assArrInst(pages, HTMLElement);
+  pn.assArr(pages);
 
   goog.Disposable.call(this);
 

@@ -94,12 +94,11 @@ var run = function(pass, fail, opt_expFailMsg) {
     fail('Expected test to pass but actually failed.', e);    
   };
 
-  try { fail(); }
-  catch (e) {
-    var msg = e.message;
-    if (opt_expFailMsg) { assertEquals('Assertion failed: ' + opt_expFailMsg, msg); }
-    else assertTrue(msg === 'Assertion failed');
-  };
+  try { 
+    fail(); 
+    assertFail('Expected a failure but test passed');
+  }
+  catch (e) {};
 };
     </script>    
   </body>

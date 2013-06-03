@@ -30,12 +30,8 @@ pn.ui.edit.state.FState = function(ids, provider) {
    * @private
    * @type {!Object.<pn.ui.edit.state.FState.Field>}
    */
-  this.fields_ = {};
-  ids.pnforEach(function(id) {
-    pn.ass(!this.fields_[id], 'Fields map already contains the field: ' + id);
-    this.fields_[id] = /** @type {pn.ui.edit.state.FState.Field} */ (
-        goog.object.unsafeClone(pn.ui.edit.state.FState.FieldDefault_));
-  }, this);
+  this.fields_ = ids.pntoMap(undefined,
+      pn.ui.edit.state.FState.FieldDefault_.clone);
 
   /**
    * @private
@@ -67,7 +63,17 @@ pn.ui.edit.state.FState.FieldDefault_ = {
   readonly: false,
   enabled: true,
   visible: true,
-  value: null
+  value: null,
+  /** @return {!pn.ui.edit.state.FState.Field} A clone of the defaults. */
+  clone: function() {
+    return {
+      required: false,
+      readonly: false,
+      enabled: true,
+      visible: true,
+      value: null
+    };
+  }
 };
 
 

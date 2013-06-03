@@ -67,11 +67,13 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
 /**
  * Override this method to do custom validation checking.  These errors are
  *    in addition to the standard field based error checking done by Edit.js.
+ * @param {pn.ui.edit.cmd.Command} c The command being fired.
  * @return {!Array} An array of any errors found in the form in addition to
  *    the standard error checks done by Edit.js.
  */
-pn.ui.edit.Interceptor.prototype.getCustomValidationErrors =
-    function() { return []; };
+pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function(c) {
+  return [];
+};
 
 
 /**

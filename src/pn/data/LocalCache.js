@@ -21,7 +21,7 @@ goog.require('pn.log');
  */
 pn.data.LocalCache = function(dbver, opt_cachePrefix) {
   goog.Disposable.call(this);
-  if (!window['localStorage'])
+  if (!window.localStorage)
     throw new Error('The current browser is not supported');
 
   /**
@@ -69,13 +69,19 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
    */
   this.transaction_ = null;
 
-  // TODO: For now LocalCache is dissabled as it causes too many issues.
-  this.clear_();
-
   this.checkDbVer_();
   this.init_();
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
+
+
+/**
+ * Disables the local cache.
+ * @private
+ * @const
+ * @type {boolean}
+ */
+pn.data.LocalCache.OFF_ = true;
 
 
 /** Begins a transaction */
@@ -194,7 +200,7 @@ pn.data.LocalCache.prototype.deleteEntity = function(type, id) {
  */
 pn.data.LocalCache.prototype.undeleteEntity = function(entity) {
   pn.assInst(entity, pn.data.Entity);
-  pn.ass(entity.id > 0, 'Entity %s does not have an ID'.pnsubs(entity.type));
+  pn.ass(entity.id > 0, 'Entity ' + entity.type + ' does not have an ID');
 
   if (!(entity.type in this.cache_)) this.cache_[entity.type] = [];
   var entities = this.cache_[entity.type];
@@ -298,17 +304,20 @@ pn.data.LocalCache.prototype.getLastUpdate = function() {
 /** @param {number} lastUpdate The last updated date in millis. */
 pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
   this.lastUpdate_ = lastUpdate;
-  window['localStorage'][this.key_('last')] = lastUpdate.toString();
+  if (!pn.data.LocalCache.OFF_)
+    window.localStorage[this.key_('last')] = lastUpdate.toString();
 };
 
 
 /** @private */
 pn.data.LocalCache.prototype.checkDbVer_ = function() {
-  var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
+  if (pn.data.LocalCache.OFF_) return;
+
+  var exp = window.localStorage[this.STORE_PREFIX_ + 'dbver'];
   if (!this.dbver_ || this.dbver_ === exp) { return; }
 
-  this.log_.info('Clearing the LocalCache. Version mismatch [%s] != [%s]'.
-      pnsubs(exp, this.dbver_));
+  this.log_.info('Clearing the LocalCache. Version mismatch [' +
+      exp + '] != [' + this.dbver_ + ']');
 
   if (exp) this.clear_();
   window.localStorage[this.STORE_PREFIX_ + 'dbver'] = this.dbver_;
@@ -317,6 +326,8 @@ pn.data.LocalCache.prototype.checkDbVer_ = function() {
 
 /** @private */
 pn.data.LocalCache.prototype.clear_ = function() {
+  if (pn.data.LocalCache.OFF_) return;
+
   var ls = window.localStorage,
       len = ls.length;
   try {
@@ -331,27 +342,28 @@ pn.data.LocalCache.prototype.clear_ = function() {
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
-  var cachedtime = window['localStorage'][this.key_('last')];
-  this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
-
-  var queriesJson = window['localStorage'][this.key_('queries')];
-  if (queriesJson) {
-    var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
-    this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
-      var query = pn.data.PnQuery.fromString(qstr);
-      acc[qstr] = query;
-      return acc;
-    }, {});
-  } else { this.cachedQueries_ = {}; }
-  var parse = goog.bind(function(type) {
-    return pn.json.parseJson(window['localStorage'][this.key_(type)]);
-  }, this);
-
-  if (!queriesJson) {
+  var queriesJson;
+  if (pn.data.LocalCache.OFF_ ||
+      !(queriesJson = window.localStorage[this.key_('queries')])) {
+    this.cachedQueries_ = {};
     this.lastUpdate_ = 0;
     this.cache_ = {};
     return;
   }
+
+  var cachedtime = window.localStorage[this.key_('last')];
+  this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
+
+  var arr = /** @type {!Array.<string>} */ (pn.json.parseJson(queriesJson));
+  this.cachedQueries_ = arr.pnreduce(function(acc, qstr) {
+    var query = pn.data.PnQuery.fromString(qstr);
+    acc[qstr] = query;
+    return acc;
+  }, {});
+
+  var parse = goog.bind(function(type) {
+    return pn.json.parseJson(window.localStorage[this.key_(type)]);
+  }, this);
 
   this.cache_ = {};
   var queriesToRemove = [];
@@ -384,6 +396,7 @@ pn.data.LocalCache.prototype.init_ = function() {
  * @param {string} type The type (cache key) to flush to disk.
  */
 pn.data.LocalCache.prototype.flush_ = function(type) {
+  if (pn.data.LocalCache.OFF_) return;
   pn.assStr(type);
   pn.ass(type in this.cache_, type + ' not in cache');
 
@@ -391,20 +404,20 @@ pn.data.LocalCache.prototype.flush_ = function(type) {
 
   var list = this.cache_[type].pnmap(function(e) { return e.toCompressed(); });
   var json = pn.json.serialiseJson(list, true);
-  this.log_.info('Adding type[%s] length[%s] json[%s] to cache'.
-      pnsubs(type, list.length, json.length));
+  this.log_.info('Adding type[' + type + '] length[' +
+      list.length + '] json[' + json.length + '] to cache');
 
-  window['localStorage'][this.key_(type)] = json;
+  window.localStorage[this.key_(type)] = json;
 
   var took = goog.now() - start;
-  this.log_.info('Flushed "%s" took %sms.'.pnsubs(type, took));
+  this.log_.info('Flushed "' + type + '" took ' + took + 'ms.');
 };
 
 
 /** @private */
 pn.data.LocalCache.prototype.flushCachedQueries_ = function() {
   var json = pn.json.serialiseJson(goog.object.getKeys(this.cachedQueries_));
-  window['localStorage'][this.key_('queries')] = json;
+  window.localStorage[this.key_('queries')] = json;
 };
 
 

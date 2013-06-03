@@ -43,40 +43,8 @@ pn.ass = function(condition, opt_message, var_args) {
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assStr = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isString, arguments, 'string'); };
-
-
-/**
- * @param {*} val The value to check for the type.
- * @param {string=} opt_message Error message in case of failure.
- * @param {...*} var_args The items to substitute into the failure message.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assNum = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isNumber, arguments, 'number'); };
-
-
-/**
- * @param {*} val The value to check for the type.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assInt = function(val) {
-  var num = val;
-  pn.assType_(goog.isNumber, arguments, 'number');
-  pn.ass(/^-?\d+$/.test(num), 'val %s is not an integer', num);
-};
-
-
-/**
- * @param {*} val The value to check for the type.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assPosInt = function(val) {
-  var num = val;
-  pn.assType_(goog.isNumber, arguments, 'number');
-  pn.ass(/^\d+$/.test(num), 'val %s is not an integer', num);
-  pn.ass(/** @type {number} */ (num) > 0, 'val %s is not greater than 0', num);
+pn.assStr = function(val, opt_message, var_args) {
+  goog.asserts.assertString.apply(null, arguments);
 };
 
 
@@ -86,40 +54,8 @@ pn.assPosInt = function(val) {
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assBool = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isBoolean, arguments, 'boolean'); };
-
-
-/**
- * @param {*} val The value to check for the type.
- * @param {string=} opt_message Error message in case of failure.
- * @param {...*} var_args The items to substitute into the failure message.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assObj = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isObject, arguments, 'object'); };
-
-
-/**
- * @param {*} val The value to check for the type.
- * @param {string=} opt_message Error message in case of failure.
- * @param {...*} var_args The items to substitute into the failure message.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assArr = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isArray, arguments, 'array'); };
-
-
-/**
- * @param {*} val The value to check for the type.
- * @param {Function} ctor The expected type to do an instanceof check on the
- *    first element.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assArrInst = function(val, ctor) {
-  pn.assArr(val);
-  pn.ass(val.length > 0, 'Empty array');
-  pn.assInst(val[0], ctor);
+pn.assNum = function(val, opt_message, var_args) {
+  goog.asserts.assertNumber.apply(null, arguments);
 };
 
 
@@ -129,8 +65,9 @@ pn.assArrInst = function(val, ctor) {
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assFun = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isFunction, arguments, 'function'); };
+pn.assBool = function(val, opt_message, var_args) {
+  goog.asserts.assertBoolean.apply(null, arguments);
+};
 
 
 /**
@@ -139,8 +76,9 @@ pn.assFun = function(val, opt_message, var_args)
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assDefAndNotNull = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isDefAndNotNull, arguments, 'defined and not null'); };
+pn.assObj = function(val, opt_message, var_args) {
+  goog.asserts.assertObject.apply(null, arguments);
+};
 
 
 /**
@@ -149,8 +87,42 @@ pn.assDefAndNotNull = function(val, opt_message, var_args)
  * @param {...*} var_args The items to substitute into the failure message.
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
-pn.assDef = function(val, opt_message, var_args) 
-    { pn.assType_(goog.isDef, arguments, 'defined'); };
+pn.assArr = function(val, opt_message, var_args) {
+  goog.asserts.assertArray.apply(null, arguments);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assFun = function(val, opt_message, var_args) {
+  goog.asserts.assertFunction.apply(null, arguments);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assDefAndNotNull = function(val, opt_message, var_args) {
+  goog.asserts.assert(goog.isDefAndNotNull(val), opt_message, var_args);
+};
+
+
+/**
+ * @param {*} val The value to check for the type.
+ * @param {string=} opt_message Error message in case of failure.
+ * @param {...*} var_args The items to substitute into the failure message.
+ * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
+ */
+pn.assDef = function(val, opt_message, var_args) {
+  goog.asserts.assert(goog.isDef(val), opt_message, var_args);
+};
 
 
 /**
@@ -161,30 +133,7 @@ pn.assDef = function(val, opt_message, var_args)
  * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
  */
 pn.assInst = function(val, ctor, opt_message, var_args) {
-  pn.ass(val instanceof ctor, opt_message || 'Not expected type');
-};
-
-
-/**
- * @private
- * @param {function(*):boolean} predicate The actual function that checks the
- *    given value for matching type.
- * @param {!goog.array.ArrayLike} args The arguments passed to the original
- *    function.  These arguments should be (val, opt_message, var_args).
- * @param {string} typeName The type expected, this will be used for the
- *    default message if no other message is specified.
- * @throws {goog.asserts.AssertionError} When the condition evaluates to false.
- */
-pn.assType_ = function(predicate, args, typeName) {
-  if (args.length === 0) args = [undefined];
-  var target = args[0];
-  var success = predicate(target);
-  args[0] = success;
-  if (!success && args.length === 1) {
-    args = pn.toarr(args);
-    args.push('Expected %s but was %s'.pnsubs(typeName, goog.typeOf(target)));
-  }
-  pn.ass.apply(null, args);
+  goog.asserts.assert(val instanceof ctor, opt_message, var_args);
 };
 
 
@@ -763,17 +712,22 @@ Array.prototype.pntake = function(n) {
 /**
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {function(T,number):string} key A function that takes the array item
- *    and index and returns the key for this map.
+ * @param {function(T,number):string=} opt_key An optional function that
+ *    takes the array item and index and returns the key for this map. If this
+ *    is not specified its assumed that the value at the array is the key
+ *    (must be a string).
  * @param {function(T,number):*=} opt_value A function that takes the array item
  *    and index and returns the value for this map (if null the item is used).
  * @return {!Object.<T>} The new map.
  * @template T,S
  */
-Array.prototype.pntoMap = function(key, opt_value) {
+Array.prototype.pntoMap = function(opt_key, opt_value) {
   var map = {};
   this.pnreduce(function(acc, item, idx) {
-    map[key(item, idx)] = opt_value ? opt_value(item, idx) : item;
+    var id = opt_key ? opt_key(item, idx) : item;
+    pn.assStr(id, 'Expected a string id: %s', id);
+    pn.ass(map[id] === undefined, 'Map already contains key %s', id);
+    map[id] = opt_value ? opt_value(item, idx) : item;
   });
   return map;
 };

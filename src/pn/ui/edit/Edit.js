@@ -176,8 +176,8 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 
 
 /** @override */
-pn.ui.edit.Edit.prototype.isValidForm = function() {
-  var errors = this.getFormErrors();
+pn.ui.edit.Edit.prototype.isValidForm = function(c) {
+  var errors = this.getFormErrors(c);
   if (errors.length) {
     var et = pn.web.WebAppEvents.ENTITY_VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
@@ -190,18 +190,18 @@ pn.ui.edit.Edit.prototype.isValidForm = function() {
 
 
 /** @override */
-pn.ui.edit.Edit.prototype.getFormErrors = function() {
+pn.ui.edit.Edit.prototype.getFormErrors = function(c) {
   var errors = [];
+  if (this.fireInterceptorEvents && this.interceptor_) {
+    var errors2 = this.interceptor_.getCustomValidationErrors(c);
+    errors = errors.pnconcat(errors2);
+  }
   this.getEditableFields_().pnforEach(function(fctx) {
     var ctl = this.getControl(fctx.id),
         forceRequired = this.state_.isRequired(fctx.id);
     if (!fctx.isShown(ctl)) return;
     errors = errors.pnconcat(fctx.validate(ctl, forceRequired));
   }, this);
-  if (this.fireInterceptorEvents && this.interceptor_) {
-    var errors2 = this.interceptor_.getCustomValidationErrors();
-    errors = errors.pnconcat(errors2);
-  }
   return errors;
 };
 

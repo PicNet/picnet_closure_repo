@@ -33,23 +33,27 @@ pn.app.EventBus = function(async) {
    */
   this.pubsub_ = new goog.pubsub.PubSub();
   this.registerDisposable(this.pubsub_);
+
+  /**
+   * @private
+   * @type {string}
+   */
+  this.topic_ = '';
 };
 goog.inherits(pn.app.EventBus, goog.Disposable);
 
 
 /**
  * @param {string} topic Topic to publish to.
- * @param {...*} var_args Arguments that are applied to each
- *    subscription function.
+ * @param {...*} args Arguments that are applied to each subscription function.
  */
-pn.app.EventBus.prototype.pub = function(topic, var_args) {
+pn.app.EventBus.prototype.pub = function(topic, args) {
   pn.ass(topic);
   pn.ass(this.pubsub_.getCount(topic) > 0,
       'No subscribers found [' + topic + ']');
 
-  var msg = topic;
-  if (var_args && typeof(var_args) === 'string' && var_args.length < 20)
-    msg += ' ' + var_args;
+  var msg = this.topic_ = topic;
+  if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;
   this.log_.fine(msg);
 
   this.pubsub_.publish.apply(this.pubsub_, arguments);
@@ -74,3 +78,7 @@ pn.app.EventBus.prototype.sub = function(topic, callback, opt_handler) {
     this.pubsub_.subscribe(topic, cb);
   }
 };
+
+
+/** @return {string} The current topic being submitted. */
+pn.app.EventBus.prototype.topic = function() { return this.topic_; };

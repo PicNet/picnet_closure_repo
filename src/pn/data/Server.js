@@ -339,6 +339,12 @@ pn.data.Server.prototype.replyImpl_ =
     var raw = /** @type {pn.data.Server.RawResponse} */ (
         pn.json.parseJson(resp));
     var response = new pn.data.Server.Response(raw);
+
+    if (response.debugMessage) {
+      var sdb = pn.app.AppEvents.SHOW_DEBUG_MESSAGE;
+      pn.app.ctx.pub(sdb, response.debugMessage);
+    }
+
     if (response.error) {
       failure(response.error);
     } else {
@@ -408,6 +414,9 @@ pn.data.Server.Response = function(raw) {
   /** @type {string} */
   this.error = raw['Error'] || '';
 
+  /** @type {string} */
+  this.debugMessage = raw['DebugMessage'] || '';
+
   /** @type {Object.<!Array.<pn.data.Entity>>} */
   this.queryResults = raw['QueryResults'] ?
       raw['QueryResults'].pnreduce(function(acc, qr) {
@@ -437,16 +446,15 @@ pn.data.Server.Response = function(raw) {
 
 /** @override */
 pn.data.Server.Response.prototype.toString = function() {
-  return 'updates[%s] last[%s] resEntity[%s] ajax[%s] error[%s] queries[%s]'.
-      pnsubs(
-      this.updates ? this.updates.length : 'n/a',
-      this.lastUpdate,
-      this.responseEntity ? this.responseEntity.type +
-      '#' + this.responseEntity.id : 'n/a',
-      this.ajaxData ? 'yes' : 'n/a',
-      this.error ? this.error : 'n/a',
-      this.queryResults ? goog.object.getCount(this.queryResults) : 'n/a'
-      );
+  return 'updates[' + (this.updates ? this.updates.length : 'n/a') +
+      '] last[' + this.lastUpdate +
+      '] resEntity[' + (this.responseEntity ?
+          this.responseEntity.type + '#' + this.responseEntity.id : 'n/a') +
+      '] ajax[' + (this.ajaxData ? 'yes' : 'n/a') +
+      '] error[' + (this.error ? this.error : 'n/a') +
+      '] debugMessage[' + (this.debugMessage ? this.debugMessage : 'n/a') +
+      '] queries[' + (this.queryResults ?
+          goog.object.getCount(this.queryResults) : 'n/a') + ']';
 };
 
 

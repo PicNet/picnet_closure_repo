@@ -23,6 +23,30 @@ pn.dom.get = function(id) {
 
 
 /**
+ * Alias to goog.dom.createDom
+ *
+ * Returns a dom node with a set of attributes.  This function accepts varargs
+ * for subsequent nodes to be added.  Subsequent nodes will be added to the
+ * first node as childNodes.
+ *
+ * So:
+ * <code>createDom('div', null, createDom('p'), createDom('p'));</code>
+ * would return a div with two child paragraphs
+ *
+ * @param {string} tagName Tag to create.
+ * @param {(Object|Array.<string>|string)=} opt_attributes If object, then a map
+ *     of name-value pairs for attributes. If a string, then this is the
+ *     className of the new element. If an array, the elements will be joined
+ *     together as the className of the new element.
+ * @param {...(Object|string|Array|NodeList)} var_args Further DOM nodes or
+ *     strings for text nodes. If one of the var_args is an array or NodeList,i
+ *     its elements will be added as childNodes instead.
+ * @return {!Element} Reference to a DOM node.
+ */
+pn.dom.create = goog.dom.createDom;
+
+
+/**
  * Finds an element with the given class name.  If that element does not exist
  *    an error is thrown.
  *

@@ -51,7 +51,7 @@ pn.data.Entity.prototype.equals = function(other) {
           v1 === v2;
     }
     if (!eq) {
-      var msg = 'Entity not equal - field: %s 1: %s 2: %s'.pnsubs(key, v1, v2);
+      var msg = 'Entity not equal - field: ' + key + ' 1: ' + v1 + ' 2: ' + v2;
       pn.log.info(msg);
     }
     return !eq;

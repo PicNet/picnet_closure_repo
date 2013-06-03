@@ -21,8 +21,8 @@ goog.require('pn.ui.grid.Interceptor');
  */
 pn.ui.grid.Config = function(id, cCtxs, opt_commands, opt_interceptor) {
   pn.assStr(id);
-  pn.assArrInst(cCtxs, pn.ui.grid.ColumnCtx);
-  if (opt_commands) pn.assArrInst(opt_commands, pn.ui.grid.cmd.Command);
+  pn.assArr(cCtxs);
+  if (opt_commands) pn.assArr(opt_commands);
 
   goog.Disposable.call(this);
 
@@ -123,7 +123,8 @@ pn.ui.grid.Config.prototype.toSlick = function() {
     'editable': this.editable,
     'showHeaderRow': this.enableQuickFilters,
     'syncColumnCellResize': this.syncColumnCellResize,
-    'rowHeight': this.rowHeight
+    'rowHeight': this.rowHeight,
+    'autoEdit': false
   });
   cfg.enableColumnReorder = this.enableColumnReorder;
   cfg.forceFitColumns = this.forceFitColumns;
