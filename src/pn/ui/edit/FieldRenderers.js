@@ -130,7 +130,7 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer = function(fctx, p, en, opt_lbls) {
     {id: fctx.id, name: opt_lbls ? opt_lbls[0] : 'No', value: false},
     {id: fctx.id, name: opt_lbls ? opt_lbls[1] : 'Yes', value: true}
   ],
-      selected = fctx.getEntityValue(en) === true;
+      selected = fctx.getEntityValue(en);
   return pn.ui.edit.FieldRenderers.createRadioGroup_(lst, p, selected,
       function(s) { return s === 'true'; });
 };
