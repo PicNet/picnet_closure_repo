@@ -267,7 +267,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
   this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
   this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_));
-  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.cfg_.id));
+  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.cfg_.type));
   this.pipeline_.add(new pn.ui.grid.pipe.EditHandler());
   var noData = goog.dom.getElementByClass('grid-no-data', this.getElement());
   this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(noData));
