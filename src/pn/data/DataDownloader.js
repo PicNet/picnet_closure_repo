@@ -11,6 +11,7 @@ goog.require('goog.net.IframeIo');
  * @param {function(string):undefined=} opt_cb The oncomplete callback with
  *    the response html as the argument.
  * @param {number=} opt_timeout An optional timeout for the request.
+ * @suppress {accessControls}
  */
 pn.data.DataDownloader.send = function(url, data, opt_cb, opt_timeout) {
   pn.ass(url);
@@ -20,7 +21,11 @@ pn.data.DataDownloader.send = function(url, data, opt_cb, opt_timeout) {
     opt_cb = undefined;
   };
 
+  // HACK: See below for description.
+  var frames = goog.net.IframeIo.instances_;
+  goog.object.forEach(frames, goog.dispose);
   var io = new goog.net.IframeIo();
+
   goog.events.listen(io, goog.net.EventType.READY, io.dispose, false, io);
   goog.events.listen(io, goog.net.EventType.COMPLETE, cb);
   io.send(url, 'POST', true, data);
@@ -28,7 +33,6 @@ pn.data.DataDownloader.send = function(url, data, opt_cb, opt_timeout) {
   // This hack is required as downloading files with IframeIo does not
   // work (response is ended and the internal form is not disposed).
   // See report:
-  /** @suppress {accessControls} */
   goog.Timer.callOnce(function() {
     goog.dispose(io);
     cb(null);
