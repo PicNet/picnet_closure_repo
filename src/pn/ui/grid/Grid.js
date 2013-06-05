@@ -78,7 +78,7 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @const
    * @type {string}
    */
-  this.gridId_ = this.cfg_.cCtxs.pnreduce(
+  this.gridId_ = this.cfg_.id + '_' + this.cfg_.cCtxs.pnreduce(
       function(acc, f) { return acc + f.id; }, '');
 
   /**
