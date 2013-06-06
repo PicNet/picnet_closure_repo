@@ -182,7 +182,7 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
   var value = fctx.spec.additionalProperties.clearOnLoad ?
       '' : (fctx.getEntityValue(entity) || '');
-
+  if (fctx.spec.additionalProperties.clearOnLoad) { entity[fctx.id] = ''; }
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
