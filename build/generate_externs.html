@@ -1,8 +1,8 @@
 <html><body>
-Script Uri: <input id='script_uri' type='text' value='http://code.jquery.com/jquery-latest.js' style='width:400;'></input>
+Script Uri: <input id='script_uri' type='text' value='http://code.jquery.com/jquery-latest.js' style='width:400px;'>
 <a id='load' href='#'>Load Script</a>
 <br/>
-Object to extern: <input id='object_to_extern' type='text' value='jQuery' style='width:400;'></input>
+Object to extern: <input id='object_to_extern' type='text' value='jQuery' style='width:400px;'>
 <a id='go' href='#'>Go!</a>
 <br/>
 <textarea id='console' rows='1000' cols='100'></textarea>
@@ -30,7 +30,7 @@ function init() {
   }, 500);
 };
 
-function loadScript(e) { 
+function loadScript() { 
   var uri = $('#script_uri').val();  
   localStorage['script_uri'] = uri;
   if (!uri) {
