@@ -261,6 +261,8 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   var ids = goog.object.getKeys(this.controls_),
       provider = new pn.ui.edit.state.Provider(this.controls_, fctxs);
   this.state_ = new pn.ui.edit.state.FState(ids, provider);
+  this.registerDisposable(this.state_);
+
   var updater = new pn.ui.edit.state.Updater(this.state_, this.controls_);
   this.registerDisposable(updater);
 

@@ -245,7 +245,7 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure, opt_bg) {
   var bg = goog.isDef(opt_bg) ? opt_bg : false;
   try { this.ajaxImpl_(uri, data, success, failure, bg); }
   catch (ex) {
-    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    var error = /** @type {!Error} */ (goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
     failure(ex.message);
   }
@@ -307,7 +307,7 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
 
   try { this.replyImpl_(xhr, start, success, failure, bg); }
   catch (ex) {
-    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    var error = /** @type {!Error} */ (goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
     failure(ex.message);
   }

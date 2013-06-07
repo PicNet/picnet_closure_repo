@@ -41,6 +41,7 @@ pn.ui.filter.SelectFilter = function(select, input) {
    * @type {!pn.ui.DelayedThrottleInputListener}
    */
   this.listener_ = new pn.ui.DelayedThrottleInputListener(100);
+  this.registerDisposable(this.listener_);
 
 
   this.init_();

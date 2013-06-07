@@ -16,8 +16,8 @@ goog.provide('pn.ui.edit.FieldRenderers');
 pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
   var val = fctx.getEntityValue(entity);
   var dt = null;
-  if (val instanceof Number) {
-    dt = pn.date.fromMillis(/** @type {number} */ (val));
+  if (goog.isNumber(val)) {
+    dt = pn.date.fromMillis(val);
   } else if (val instanceof goog.date.DateTime) {
     dt = val;
   } else if (val instanceof Date) {

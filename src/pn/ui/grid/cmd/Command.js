@@ -80,6 +80,8 @@ pn.ui.grid.cmd.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   if (!this.hasExplicitElem_) {
     this.commandElement_ = new goog.ui.Button(this.name_);
+    this.registerDisposable(this.commandElement_);
+
     this.commandElement_.setTooltip(this.tooltip_);
     this.commandElement_.enableClassName(
         goog.string.removeAll(this.name_.toLowerCase(), ''), true);

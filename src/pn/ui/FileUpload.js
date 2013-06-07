@@ -181,6 +181,13 @@ pn.ui.FileUpload.prototype.onComplete_ = function() {
 };
 
 
+/** @private */
+pn.ui.FileUpload.prototype.disposeInternal_ = function() {
+  pn.ui.FileUpload.superClass_.disposeInternal_.call(this);
+  goog.dispose(this.io_);
+};
+
+
 /** @enum {string} */
 pn.ui.FileUpload.EventType = {
   UPLOAD_START: 'upload-start',

@@ -3,7 +3,6 @@ goog.provide('pn.ui.edit.CommandsComponent');
 
 goog.require('goog.dom');
 goog.require('goog.events.Event');
-goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.edit.cmd.Command');
@@ -112,7 +111,7 @@ pn.ui.edit.CommandsComponent.prototype.createDom = function() {
 };
 
 
-/** @return {!Object.<goog.ui.Button>} The command buttons. */
+/** @return {!Object.<!Element>} The command buttons. */
 pn.ui.edit.CommandsComponent.prototype.getCommandButtons = function() {
   return this.commandButtons_;
 };

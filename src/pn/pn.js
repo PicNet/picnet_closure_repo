@@ -718,8 +718,8 @@ Array.prototype.pntake = function(n) {
  *    (must be a string).
  * @param {function(T,number):*=} opt_value A function that takes the array item
  *    and index and returns the value for this map (if null the item is used).
- * @return {!Object.<T>} The new map.
- * @template T,S
+ * @return {!Object.<*>} The new map.
+ * @template T
  */
 Array.prototype.pntoMap = function(opt_key, opt_value) {
   var map = {};
