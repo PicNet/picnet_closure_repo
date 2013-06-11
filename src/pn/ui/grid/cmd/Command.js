@@ -86,10 +86,6 @@ pn.ui.grid.cmd.Command.prototype.decorateInternal = function(element) {
     this.commandElement_.enableClassName(
         goog.string.removeAll(this.name_.toLowerCase(), ''), true);
   }
-  if (this.commandElement_ instanceof goog.Disposable) {
-    this.registerDisposable(/** @type {goog.Disposable} */ (
-        this.commandElement_));
-  }
 
   if (this.commandElement_.render) this.commandElement_.render(element);
   else goog.dom.appendChild(element, /** @type {!Element} */ (

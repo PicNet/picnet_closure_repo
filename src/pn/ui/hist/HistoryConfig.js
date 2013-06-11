@@ -25,7 +25,6 @@ pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /**
    * @const

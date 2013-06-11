@@ -31,14 +31,12 @@ pn.ui.srch.SearchGrid = function(spec, list, cache) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec_ = spec;
-  this.registerDisposable(this.spec_);
 
   /**
    * @private
    * @type {!pn.ui.srch.Config}
    */
   this.cfg_ = spec.getSearchConfig(cache);
-  this.registerDisposable(this.cfg_);
 
   /**
    * @private

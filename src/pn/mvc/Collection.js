@@ -105,7 +105,6 @@ pn.mvc.Collection.prototype.intern_ = function(model) {
 
   var eventType = pn.mvc.EventType.CHANGE;
   this.listenTo(model, eventType, this.childChanged_.pnbind(this));
-  this.registerDisposable(model);
 };
 
 

@@ -150,8 +150,9 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
       );
   var val = fctx.getEntityValue(entity);
   sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
-  sel.getValue =
-      function() { return sel.value === '0' ? null : sel.value === 'true'; };
+  sel.getValue = function() {
+    return sel.value === '0' ? null : sel.value === 'true';
+  };
   goog.dom.appendChild(parent, sel);
   return sel;
 };
@@ -254,9 +255,9 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       fctx, txt, lst, selected, -1);
-  var origgetv = select.getValue;
+  select.origgetv = select.getValue;
   select.getValue = function() {
-    var v = origgetv();
+    var v = select.origgetv();
     return v === -1 ? undefined : v;
   };
   goog.dom.appendChild(parent, select);

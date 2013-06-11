@@ -45,7 +45,6 @@ pn.ui.TemplateWrapper = function(html, idOfParent, component) {
    * @type {!goog.ui.Component}
    */
   this.component_ = component;
-  this.registerDisposable(component);
 };
 goog.inherits(pn.ui.TemplateWrapper, goog.ui.Component);
 

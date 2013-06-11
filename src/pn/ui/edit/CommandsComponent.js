@@ -32,7 +32,6 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache, opt_keys) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /**
    * @private
@@ -57,7 +56,6 @@ pn.ui.edit.CommandsComponent = function(spec, entity, cache, opt_keys) {
    * @type {!pn.ui.edit.Config}
    */
   this.cfg = spec.getEditConfig(entity, cache);
-  this.registerDisposable(this.cfg);
 
   /**
    * @private

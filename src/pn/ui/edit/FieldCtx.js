@@ -26,7 +26,6 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
 
   /** @type {!pn.ui.edit.FieldSpec} */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
@@ -253,4 +252,14 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     }
   }
   return val;
+};
+
+
+/** @override */
+pn.ui.edit.FieldCtx.prototype.disposeInternal = function() {
+  pn.ui.edit.FieldCtx.superClass_.disposeInternal.call(this);
+
+  delete this.spec;
+  delete this.cache;
+  delete this.entitySpec;
 };

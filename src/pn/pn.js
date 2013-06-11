@@ -19,6 +19,19 @@ goog.require('goog.string');
  */
 pn.toarr = function(args) { return goog.array.clone(args); };
 
+
+/**
+ * @param {T} d The disposable object to dispose when ctx is
+ *    disposed.
+ * @param {!goog.Disposable} ctx The context to use when disposing d.
+ * @return {T} The registered disposable.
+ * @template T
+ */
+pn.disp = function(d, ctx) {
+  ctx.registerDisposable(d);
+  return d;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Assertion Helpers
 ////////////////////////////////////////////////////////////////////////////////

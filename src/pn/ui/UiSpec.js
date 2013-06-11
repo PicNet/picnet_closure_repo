@@ -114,6 +114,7 @@ pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
   pn.assInst(cache, pn.data.BaseDalCache);
 
   var spec = new pn.ui.grid.ColumnSpec(id, opt_props || {}, this);
+  this.registerDisposable(spec);
   var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
   this.registerDisposable(fctx);
 
@@ -131,6 +132,7 @@ pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
   pn.assInst(cache, pn.data.BaseDalCache);
 
   var spec = new pn.ui.grid.OrderingColumnSpec(id, this);
+  this.registerDisposable(spec);
   var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
   this.registerDisposable(fctx);
 
@@ -149,14 +151,14 @@ pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
   pn.assInst(cache, pn.data.BaseDalCache);
 
   var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, this);
+  this.registerDisposable(spec);
   var fctx = new pn.ui.edit.FieldCtx(spec, cache);
+  this.registerDisposable(fctx);
 
   // HACK: This is not nice, but complex renderers do really need the fctx.
   if (spec.renderer instanceof pn.ui.edit.ComplexRenderer) {
     spec.renderer.fctx = fctx;
   }
-
-  this.registerDisposable(fctx);
 
   return fctx;
 };

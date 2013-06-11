@@ -23,7 +23,6 @@ pn.ui.hist.HistoryViewer = function(cfg) {
    * @type {!pn.ui.hist.HistoryConfig}
    */
   this.cfg_ = cfg;
-  this.registerDisposable(this.cfg_);
 
   /**
    * @private

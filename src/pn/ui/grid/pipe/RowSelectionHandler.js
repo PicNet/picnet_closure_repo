@@ -44,6 +44,7 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
 
   this.fireCustomEvent('select-row', entity);
 
+  if (!this.pipeline) return;
   var event = new goog.events.Event(pn.ui.grid.Grid.SELECTED);
   event.selected = entity;
   this.pipeline.raiseGridEvent(event);

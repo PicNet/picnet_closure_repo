@@ -36,7 +36,6 @@ pn.data.EntityFilter = function(cache, spec) {
    * @type {!pn.ui.srch.Config}
    */
   this.cfg_ = this.spec_.getSearchConfig(cache);
-  this.registerDisposable(this.cfg_);
 
   /**
    * @private

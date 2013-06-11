@@ -129,6 +129,7 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
 pn.ui.grid.DataView.prototype.dispose = function() {
   goog.dispose(this.model_);
   goog.dispose(this.eh_);
+  delete this.interceptor_;
 };
 
 

@@ -140,13 +140,3 @@ pn.ui.grid.Config.prototype.toSlick = function() {
   cfg.syncColumnCellResize = this.syncColumnCellResize;
   return cfg;
 };
-
-
-/** @override */
-pn.ui.grid.Config.prototype.disposeInternal = function() {
-  pn.ui.grid.Config.superClass_.disposeInternal.call(this);
-
-  this.commands.pnforEach(goog.dispose);
-
-  delete this.commands;
-};

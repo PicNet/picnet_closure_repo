@@ -31,6 +31,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
   pn.web.ctx = this;
 
   this.cfg = new pn.app.WebAppConfig(opt_cfg);
+  this.registerDisposable(this.cfg);
 
   pn.app.BaseApp.call(this);
 
