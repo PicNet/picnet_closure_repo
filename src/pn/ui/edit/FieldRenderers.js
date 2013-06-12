@@ -481,6 +481,10 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
   /** @return {number} The selected ID. */
   select.getValue = function() { return parseInt(select.value, 10); };
 
+  if (fctx.spec.additionalProperties.list) {
+    list = fctx.spec.additionalProperties.list();
+  }
+
   /** @param {number=} opt_selectedid The optional selected id. */
   select.refresh = function(opt_selectedid) {
     goog.dom.removeChildren(select);
@@ -489,14 +493,12 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
           {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
           selectTxt));
     }
-    var arr = fctx.spec.additionalProperties.list ?
-        fctx.spec.additionalProperties.list() : list;
 
     var selected = opt_selectedid ? opt_selectedid :
         goog.isDef(selValue) ? selValue :
             select.getValue() ? select.getValue() :
                 opt_noneId ? opt_noneId : 0;
-    arr.pnforEach(function(e) {
+    list.pnforEach(function(e) {
       var opts = {'value': e.id};
       if (e.id === selected) { opts['selected'] = 'selected'; }
 

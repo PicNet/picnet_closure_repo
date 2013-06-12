@@ -106,4 +106,5 @@ pn.ui.grid.ColumnCtx.prototype.disposeInternal = function() {
   delete this.spec;
   delete this.cache;
   delete this.entitySpec;
+  delete this.schema;
 };
