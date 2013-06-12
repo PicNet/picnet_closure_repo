@@ -1153,6 +1153,9 @@ Slick.Data.DataView.prototype.beginUpdate = function() {};
  */
 Slick.Data.DataView.prototype.endUpdate = function(hints) {};
 
+/** */
+Slick.Data.DataView.prototype.destroy = function() {};
+
 
 /**
  * @param {*} args

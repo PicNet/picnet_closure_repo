@@ -128,3 +128,12 @@ pn.ui.grid.pipe.FilteringHandler.prototype.filter_ = function(filter) {
   this.view.refresh();
   this.slick.render();
 };
+
+
+/** @override */
+pn.ui.grid.pipe.FilteringHandler.prototype.disposeInternal = function() {
+  this.view.setFilter(null);
+
+  pn.ui.grid.pipe.FilteringHandler.superClass_.disposeInternal.call(this);
+  delete this.quickFind_;
+};

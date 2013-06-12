@@ -237,6 +237,8 @@ pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
   this.slick_.onColumnsResized.subscribe(goog.bind(function() {
     this.fireCustomPipelineEvent('resize');
   }, this));
+
+  $(window).bind('resize', this.slick_.resizeCanvas);
 };
 
 
@@ -285,6 +287,7 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
   if (this.slick_) {
+    $(window).unbind('resize', this.slick_.resizeCanvas);
     this.dataView_.dispose();
     goog.object.forEach(this.slick_, function(f) {
       if (f instanceof Slick.Event) { f['unsubscribeAll'](); }
@@ -294,6 +297,8 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
     });
     this.slick_.getColumns().pnforEach(function(c) { delete c['formatter']; });
     this.slick_.destroy();
+    delete this.slick_;
+    delete this.dataView_;
   }
 };
 
