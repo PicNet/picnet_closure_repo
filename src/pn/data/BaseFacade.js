@@ -63,6 +63,15 @@ goog.inherits(pn.data.BaseFacade, pn.app.EventHandlerTarget);
 
 
 /**
+ * DISSABLED AS ITS CAUSING ISSUES.
+ * @private
+ * @const
+ * @type {boolean}
+ */
+pn.data.BaseFacade.SYNC_ = false;
+
+
+/**
  * Makes an arbitrary ajax call to the server.  The results are then
  *    inspected for entities and appropriate caches updated.
  *
@@ -265,6 +274,8 @@ pn.data.BaseFacade.prototype.getLastUpdate = function() {
 
 /** @protected */
 pn.data.BaseFacade.prototype.sync = function() {
+  if (!pn.data.BaseFacade.SYNC_) return;
+
   this.log_.info('sync: ' + this.getLastUpdate());
 
   this.server.getAllUpdates(this.getLastUpdate(),
@@ -331,6 +342,7 @@ pn.data.BaseFacade.prototype.proxyServerEvents_ = function() {
 
 /** @private */
 pn.data.BaseFacade.prototype.startUpdateInterval_ = function() {
+  if (!pn.data.BaseFacade.SYNC_) return;
   this.timerid_ = setInterval(goog.bind(this.sync, this), 20000);
   goog.Timer.callOnce(this.sync, 1, this);
 };
