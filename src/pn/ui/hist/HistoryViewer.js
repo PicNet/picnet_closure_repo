@@ -153,7 +153,7 @@ pn.ui.hist.HistoryViewer.prototype.getEntityDiff_ = function(left, right) {
     diff[fctx.id] = [l, r];
     this.fieldSpecs_[fctx.id] = fctx;
   }, this);
-  this.cfg_.getFields().pnforEach(addDiff);
+  this.cfg_.fields.pnforEach(addDiff);
   return diff;
 };
 
