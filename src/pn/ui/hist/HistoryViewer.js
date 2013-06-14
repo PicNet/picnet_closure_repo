@@ -65,7 +65,7 @@ pn.ui.hist.HistoryViewer.prototype.decorateInternal = function(element) {
   this.grid_ = new pn.ui.grid.Grid(gcfg, this.cfg_.changes, this.cfg_.cache);
   this.grid_.decorate(gridContainer);
 
-  goog.dispose(spec);
+  this.registerDisposable(spec);
   this.registerDisposable(this.grid_);
 };
 
