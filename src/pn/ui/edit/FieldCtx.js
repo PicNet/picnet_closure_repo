@@ -169,7 +169,7 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
   pn.assInst(entity, pn.data.Entity);
   pn.ass(control);
 
-  if (!this.isShown(control)) return false;
+  if (!this.isShown(control) || this.spec.ignoreDirty) return false;
 
   var orig = this.getEntityValue(entity);
   var curr = this.getControlValue(control);

@@ -62,6 +62,13 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
   this.showOnAdd = true;
 
   /**
+   * This field will not be checked for dirty states if this is true.
+   *
+   * @type {boolean}
+   */
+  this.ignoreDirty = false;
+
+  /**
    * Wether this field is readonly.  If specifying a renderer this value is
    *    ignored.
    *
