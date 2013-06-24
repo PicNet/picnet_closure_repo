@@ -39,7 +39,6 @@ pn.ui.filter.GenericListFilter = function(input, list, options) {
    * @type {!pn.ui.filter.GenericListFilterOptions}
    */
   this.options = options;
-  this.registerDisposable(this.options);
 
   /**
    * @private

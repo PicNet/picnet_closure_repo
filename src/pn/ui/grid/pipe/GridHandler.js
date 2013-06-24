@@ -118,3 +118,16 @@ pn.ui.grid.pipe.GridHandler.prototype.fireCustomEvent =
 
   this.pipeline.fireCustomEvent(eventType, opt_data);
 };
+
+
+/** @override */
+pn.ui.grid.pipe.GridHandler.prototype.disposeInternal = function() {
+  pn.ui.grid.pipe.GridHandler.superClass_.disposeInternal.call(this);
+
+  delete this.slick;
+  delete this.view;
+  delete this.cfg;
+  delete this.cctxs;
+  delete this.pipeline;
+  delete this.interceptor;
+};

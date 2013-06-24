@@ -23,7 +23,6 @@ pn.ui.hist.HistoryViewer = function(cfg) {
    * @type {!pn.ui.hist.HistoryConfig}
    */
   this.cfg_ = cfg;
-  this.registerDisposable(this.cfg_);
 
   /**
    * @private
@@ -66,7 +65,7 @@ pn.ui.hist.HistoryViewer.prototype.decorateInternal = function(element) {
   this.grid_ = new pn.ui.grid.Grid(gcfg, this.cfg_.changes, this.cfg_.cache);
   this.grid_.decorate(gridContainer);
 
-  goog.dispose(spec);
+  this.registerDisposable(spec);
   this.registerDisposable(this.grid_);
 };
 
@@ -154,7 +153,7 @@ pn.ui.hist.HistoryViewer.prototype.getEntityDiff_ = function(left, right) {
     diff[fctx.id] = [l, r];
     this.fieldSpecs_[fctx.id] = fctx;
   }, this);
-  this.cfg_.getFields().pnforEach(addDiff);
+  this.cfg_.fields.pnforEach(addDiff);
   return diff;
 };
 

@@ -26,7 +26,6 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
 
   /** @type {!pn.ui.edit.FieldSpec} */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
@@ -170,7 +169,7 @@ pn.ui.edit.FieldCtx.prototype.isDirty = function(entity, control) {
   pn.assInst(entity, pn.data.Entity);
   pn.ass(control);
 
-  if (!this.isShown(control)) return false;
+  if (!this.isShown(control) || this.spec.ignoreDirty) return false;
 
   var orig = this.getEntityValue(entity);
   var curr = this.getControlValue(control);
@@ -253,4 +252,15 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
     }
   }
   return val;
+};
+
+
+/** @override */
+pn.ui.edit.FieldCtx.prototype.disposeInternal = function() {
+  pn.ui.edit.FieldCtx.superClass_.disposeInternal.call(this);
+
+  delete this.spec;
+  delete this.cache;
+  delete this.entitySpec;
+  delete this.schema;
 };

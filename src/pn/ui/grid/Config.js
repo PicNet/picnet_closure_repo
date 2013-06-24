@@ -18,8 +18,11 @@ goog.require('pn.ui.grid.Interceptor');
  * @param {function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)=}
  *    opt_interceptor An optional interceptor ctor to use to modify the
  *    internal workings of the grid.
+ * @param {string=} opt_type The optional type of this grid if the id is
+ *    not the type.
  */
-pn.ui.grid.Config = function(id, cCtxs, opt_commands, opt_interceptor) {
+pn.ui.grid.Config = function(
+    id, cCtxs, opt_commands, opt_interceptor, opt_type) {
   pn.assStr(id);
   pn.assArr(cCtxs);
   if (opt_commands) pn.assArr(opt_commands);
@@ -28,6 +31,9 @@ pn.ui.grid.Config = function(id, cCtxs, opt_commands, opt_interceptor) {
 
   /** @type {string} */
   this.id = id;
+
+  /** @type {string} */
+  this.type = opt_type || id;
 
   /** @type {!Array.<pn.ui.grid.ColumnCtx>} */
   this.cCtxs = cCtxs;
@@ -133,14 +139,4 @@ pn.ui.grid.Config.prototype.toSlick = function() {
   cfg.showHeaderRow = this.enableQuickFilters;
   cfg.syncColumnCellResize = this.syncColumnCellResize;
   return cfg;
-};
-
-
-/** @override */
-pn.ui.grid.Config.prototype.disposeInternal = function() {
-  pn.ui.grid.Config.superClass_.disposeInternal.call(this);
-
-  this.commands.pnforEach(goog.dispose);
-
-  delete this.commands;
 };

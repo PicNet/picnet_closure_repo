@@ -31,6 +31,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
   pn.web.ctx = this;
 
   this.cfg = new pn.app.WebAppConfig(opt_cfg);
+  this.registerDisposable(this.cfg);
 
   pn.app.BaseApp.call(this);
 
@@ -171,6 +172,11 @@ pn.web.BaseWebApp.prototype.acceptDirty = function() {
  * @param {Array.<Array.<string>>} data The data to export.
  */
 pn.web.BaseWebApp.prototype.listExport_ = function(type, format, data) {
+  pn.assStr(type);
+  pn.assStr(format);
+  pn.assArr(data);
+  pn.ass(format !== '0');
+
   var ed = {'exportType': format, 'exportData': pn.json.serialiseJson(data)};
   var uri = this.cfg.touri('ExportData', 'ExportData');
   pn.data.DataDownloader.send(uri, ed);

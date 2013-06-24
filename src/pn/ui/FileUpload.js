@@ -75,6 +75,12 @@ pn.ui.FileUpload = function(id, serverAction, opt_getData, opt_validateData) {
 goog.inherits(pn.ui.FileUpload, goog.ui.Component);
 
 
+/** @param {boolean} enabled Wether to enable or disable the control. */
+pn.ui.FileUpload.prototype.setEnabled = function(enabled) {
+  goog.style.showElement(this.fileInput_, enabled);
+};
+
+
 /** @override */
 pn.ui.FileUpload.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
@@ -105,9 +111,7 @@ pn.ui.FileUpload.prototype.enterDocument = function() {
 };
 
 
-/**
- * @private
- */
+/** @private */
 pn.ui.FileUpload.prototype.doUpload_ = function() {
   if (this.validateData_ &&
       !this.validateData_.call(this, this.fileInput_.value)) return;
@@ -150,9 +154,7 @@ pn.ui.FileUpload.prototype.setUploadData_ = function(data) {
 };
 
 
-/**
- * @private
- */
+/** @private */
 pn.ui.FileUpload.prototype.onComplete_ = function() {
   this.fileInput_.disabled = false;
   var complete = goog.net.EventType.COMPLETE,
@@ -176,6 +178,13 @@ pn.ui.FileUpload.prototype.onComplete_ = function() {
   goog.dispose(io);
   this.formFields_ = [];
   this.dispatchEvent(event);
+};
+
+
+/** @private */
+pn.ui.FileUpload.prototype.disposeInternal_ = function() {
+  pn.ui.FileUpload.superClass_.disposeInternal_.call(this);
+  goog.dispose(this.io_);
 };
 
 

@@ -27,8 +27,6 @@ goog.inherits(pn.ui.grid.pipe.HandlerPipeline, goog.events.EventTarget);
 pn.ui.grid.pipe.HandlerPipeline.prototype.add = function(handler) {
   pn.ass(handler);
 
-  this.registerDisposable(handler);
-
   this.handlers_.push(handler);
 };
 

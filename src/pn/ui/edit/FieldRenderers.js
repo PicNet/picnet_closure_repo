@@ -16,8 +16,8 @@ goog.provide('pn.ui.edit.FieldRenderers');
 pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
   var val = fctx.getEntityValue(entity);
   var dt = null;
-  if (val instanceof Number) {
-    dt = pn.date.fromMillis(/** @type {number} */ (val));
+  if (goog.isNumber(val)) {
+    dt = pn.date.fromMillis(val);
   } else if (val instanceof goog.date.DateTime) {
     dt = val;
   } else if (val instanceof Date) {
@@ -130,7 +130,7 @@ pn.ui.edit.FieldRenderers.boolRadioRenderer = function(fctx, p, en, opt_lbls) {
     {id: fctx.id, name: opt_lbls ? opt_lbls[0] : 'No', value: false},
     {id: fctx.id, name: opt_lbls ? opt_lbls[1] : 'Yes', value: true}
   ],
-      selected = fctx.getEntityValue(en) === true;
+      selected = fctx.getEntityValue(en);
   return pn.ui.edit.FieldRenderers.createRadioGroup_(lst, p, selected,
       function(s) { return s === 'true'; });
 };
@@ -150,8 +150,9 @@ pn.ui.edit.FieldRenderers.yesNoRenderer = function(fctx, parent, entity) {
       );
   var val = fctx.getEntityValue(entity);
   sel.value = goog.isDefAndNotNull(val) ? val.toString() : '0';
-  sel.getValue =
-      function() { return sel.value === '0' ? null : sel.value === 'true'; };
+  sel.getValue = function() {
+    return sel.value === '0' ? null : sel.value === 'true';
+  };
   goog.dom.appendChild(parent, sel);
   return sel;
 };
@@ -182,7 +183,7 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
   var value = fctx.spec.additionalProperties.clearOnLoad ?
       '' : (fctx.getEntityValue(entity) || '');
-
+  if (fctx.spec.additionalProperties.clearOnLoad) { entity[fctx.id] = ''; }
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
@@ -254,9 +255,9 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
       fctx, txt, lst, selected, -1);
-  var origgetv = select.getValue;
+  select.origgetv = select.getValue;
   select.getValue = function() {
-    var v = origgetv();
+    var v = select.origgetv();
     return v === -1 ? undefined : v;
   };
   goog.dom.appendChild(parent, select);
@@ -480,6 +481,10 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
   /** @return {number} The selected ID. */
   select.getValue = function() { return parseInt(select.value, 10); };
 
+  if (fctx.spec.additionalProperties.list) {
+    list = fctx.spec.additionalProperties.list();
+  }
+
   /** @param {number=} opt_selectedid The optional selected id. */
   select.refresh = function(opt_selectedid) {
     goog.dom.removeChildren(select);
@@ -488,14 +493,12 @@ pn.ui.edit.FieldRenderers.createDropDownList_ =
           {'value': goog.isDef(opt_noneId) ? opt_noneId.toString() : '0' },
           selectTxt));
     }
-    var arr = fctx.spec.additionalProperties.list ?
-        fctx.spec.additionalProperties.list() : list;
 
     var selected = opt_selectedid ? opt_selectedid :
         goog.isDef(selValue) ? selValue :
             select.getValue() ? select.getValue() :
                 opt_noneId ? opt_noneId : 0;
-    arr.pnforEach(function(e) {
+    list.pnforEach(function(e) {
       var opts = {'value': e.id};
       if (e.id === selected) { opts['selected'] = 'selected'; }
 

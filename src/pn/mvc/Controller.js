@@ -27,16 +27,12 @@ pn.mvc.Controller = function(view, opt_model) {
    * @type {pn.mvc.ModelBase}
    */
   this.model_ = opt_model || null;
-  if (this.model_) this.registerDisposable(this.model_);
 
   /**
    * @private
    * @type {!(Element|pn.mvc.View)}
    */
   this.view_ = view;
-  if (this.view_ instanceof pn.mvc.View) {
-    this.registerDisposable(/** @type {pn.mvc.View} */ this.view_);
-  }
 };
 goog.inherits(pn.mvc.Controller, pn.app.EventHandlerTarget);
 

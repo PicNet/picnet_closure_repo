@@ -22,13 +22,8 @@ pn.data.BaseDalCache = function(cache) {
   for (var key in cache) {
     var type = key.split(':')[0];
     pn.ass(!(type in this.cache_));
-    var arr = cache[key];
-    pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }),
-        'Array of type: ' + type + ' is not sorted.');
+    var arr = cache[key].pnsort(function(a, b) { return a.id - b.id; });
     this.cache_[type] = arr;
-
-    // Should always be ordered for performance.
-    pn.ass(goog.array.isSorted(arr));
   }
 };
 
@@ -53,9 +48,6 @@ pn.data.BaseDalCache.prototype.getImpl_ = function(type) {
 
   var arr = this.cache_[type];
   if (!arr) throw new Error('Type: ' + type + ' not in cache.');
-  pn.ass(goog.array.isSorted(arr,
-      function(a, b) { return a.id - b.id; }),
-      'Array of type: ' + type + ' is not sorted.');
   return arr;
 };
 
@@ -74,8 +66,6 @@ pn.data.BaseDalCache.prototype.getEntity = function(type, id) {
   pn.ass(goog.isNumber(id) && id > 0);
 
   var arr = this.getImpl_(type);
-  pn.ass(goog.array.isSorted(arr, function(a, b) { return a.id - b.id; }));
-
   var idx = goog.array.binarySelect(arr, function(e) { return id - e.id; });
   pn.ass(idx >= 0, 'Could not find entity of type ' + type + ' id: ' + id);
 

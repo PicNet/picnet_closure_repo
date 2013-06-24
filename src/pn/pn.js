@@ -19,6 +19,19 @@ goog.require('goog.string');
  */
 pn.toarr = function(args) { return goog.array.clone(args); };
 
+
+/**
+ * @param {T} d The disposable object to dispose when ctx is
+ *    disposed.
+ * @param {!goog.Disposable} ctx The context to use when disposing d.
+ * @return {T} The registered disposable.
+ * @template T
+ */
+pn.disp = function(d, ctx) {
+  ctx.registerDisposable(d);
+  return d;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Assertion Helpers
 ////////////////////////////////////////////////////////////////////////////////
@@ -718,8 +731,8 @@ Array.prototype.pntake = function(n) {
  *    (must be a string).
  * @param {function(T,number):*=} opt_value A function that takes the array item
  *    and index and returns the value for this map (if null the item is used).
- * @return {!Object.<T>} The new map.
- * @template T,S
+ * @return {!Object.<*>} The new map.
+ * @template T
  */
 Array.prototype.pntoMap = function(opt_key, opt_value) {
   var map = {};

@@ -88,8 +88,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
   var cctx = this.cctxs.pnfind(function(cctx1) { return cctx1.id === col; });
   pn.assInst(cctx, pn.ui.grid.ColumnCtx);
   var comparer = function(a, b) {
-    var x = cctx.getCompareableValue(a) || cctx.getEntityValue(a);
-    var y = cctx.getCompareableValue(b) || cctx.getEntityValue(b);
+    var x = cctx.getCompareableValue(a);
+    var y = cctx.getCompareableValue(b);
     if (goog.isString(x)) {
       return goog.string.caseInsensitiveCompare(
           /** @type {string} */ (x),

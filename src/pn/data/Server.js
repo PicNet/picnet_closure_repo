@@ -245,7 +245,7 @@ pn.data.Server.prototype.ajax_ = function(uri, data, success, failure, opt_bg) {
   var bg = goog.isDef(opt_bg) ? opt_bg : false;
   try { this.ajaxImpl_(uri, data, success, failure, bg); }
   catch (ex) {
-    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    var error = /** @type {!Error} */ (goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
     failure(ex.message);
   }
@@ -307,7 +307,7 @@ pn.data.Server.prototype.reply_ = function(xhr, start, success, failure, bg) {
 
   try { this.replyImpl_(xhr, start, success, failure, bg); }
   catch (ex) {
-    var error = (/** @type {!Error} */ goog.debug.normalizeErrorObject(ex));
+    var error = /** @type {!Error} */ (goog.debug.normalizeErrorObject(ex));
     this.log_.warning(error.stack || error.message);
     failure(ex.message);
   }
@@ -407,8 +407,8 @@ pn.data.Server.Response = function(raw) {
           /** @type {!Object} */ (pn.json.parseJson(raw['ResponseEntity']))) :
       null;
 
-  /** @type {Object|string} */
-  this.ajaxData = raw['AjaxResponse'] ?
+  /** @type {Object|string|number} */
+  this.ajaxData = goog.isDef(raw['AjaxResponse']) ?
       pn.json.parseJson(raw['AjaxResponse']) : null;
 
   /** @type {string} */
@@ -435,6 +435,7 @@ pn.data.Server.Response = function(raw) {
   pn.ass(
       this.ajaxData === null ||
       goog.isObject(this.ajaxData) ||
+      goog.isNumber(this.ajaxData) ||
       goog.isString(this.ajaxData));
   pn.ass(
       goog.isString(this.error) ||

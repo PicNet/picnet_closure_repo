@@ -80,13 +80,11 @@ pn.ui.grid.cmd.Command.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   if (!this.hasExplicitElem_) {
     this.commandElement_ = new goog.ui.Button(this.name_);
+    this.registerDisposable(this.commandElement_);
+
     this.commandElement_.setTooltip(this.tooltip_);
     this.commandElement_.enableClassName(
         goog.string.removeAll(this.name_.toLowerCase(), ''), true);
-  }
-  if (this.commandElement_ instanceof goog.Disposable) {
-    this.registerDisposable(/** @type {goog.Disposable} */ (
-        this.commandElement_));
   }
 
   if (this.commandElement_.render) this.commandElement_.render(element);

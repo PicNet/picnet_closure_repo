@@ -62,6 +62,13 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
   this.showOnAdd = true;
 
   /**
+   * This field will not be checked for dirty states if this is true.
+   *
+   * @type {boolean}
+   */
+  this.ignoreDirty = false;
+
+  /**
    * Wether this field is readonly.  If specifying a renderer this value is
    *    ignored.
    *
@@ -141,10 +148,6 @@ goog.inherits(pn.ui.edit.FieldSpec, pn.ui.BaseFieldSpec);
 /** @override */
 pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
-  if (this.renderer instanceof pn.ui.edit.ComplexRenderer) {
-    this.registerDisposable(
-        /** @type {pn.ui.edit.ComplexRenderer} */ (this.renderer));
-  }
 
   var firstStep = this.id.split('.')[0];
   if (goog.string.endsWith(firstStep, 'Entities')) {

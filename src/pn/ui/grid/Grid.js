@@ -56,7 +56,6 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @type {!pn.ui.grid.Config}
    */
   this.cfg_ = cfg;
-  this.registerDisposable(this.cfg_);
 
   /**
    * @private
@@ -78,7 +77,7 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @const
    * @type {string}
    */
-  this.gridId_ = this.cfg_.cCtxs.pnreduce(
+  this.gridId_ = this.cfg_.id + '_' + this.cfg_.cCtxs.pnreduce(
       function(acc, f) { return acc + f.id; }, '');
 
   /**
@@ -238,6 +237,8 @@ pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
   this.slick_.onColumnsResized.subscribe(goog.bind(function() {
     this.fireCustomPipelineEvent('resize');
   }, this));
+
+  $(window).bind('resize', this.slick_.resizeCanvas);
 };
 
 
@@ -260,17 +261,21 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
     this.dispatchEvent(event);
   });
 
-  this.pipeline_.add(
-      new pn.ui.grid.pipe.FilteringHandler(this.gridId_, this.cache_));
-  this.pipeline_.add(new pn.ui.grid.pipe.SortingHandler(this.gridId_));
-  this.pipeline_.add(new pn.ui.grid.pipe.OrderingHandler());
-  this.pipeline_.add(new pn.ui.grid.pipe.TotalsHandler(this.getElement()));
-  this.pipeline_.add(new pn.ui.grid.pipe.RowSelectionHandler());
-  this.pipeline_.add(new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_));
-  this.pipeline_.add(new pn.ui.grid.pipe.CommandsHandler(this.cfg_.id));
-  this.pipeline_.add(new pn.ui.grid.pipe.EditHandler());
   var noData = goog.dom.getElementByClass('grid-no-data', this.getElement());
-  this.pipeline_.add(new pn.ui.grid.pipe.NoDataHandler(noData));
+  var handlers = [
+    new pn.ui.grid.pipe.FilteringHandler(this.gridId_, this.cache_),
+    new pn.ui.grid.pipe.SortingHandler(this.gridId_),
+    new pn.ui.grid.pipe.OrderingHandler(),
+    new pn.ui.grid.pipe.TotalsHandler(this.getElement()),
+    new pn.ui.grid.pipe.RowSelectionHandler(),
+    new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_),
+    new pn.ui.grid.pipe.CommandsHandler(this.cfg_.type),
+    new pn.ui.grid.pipe.EditHandler(),
+    new pn.ui.grid.pipe.NoDataHandler(noData)
+  ];
+
+  handlers.pnforEach(this.pipeline_.add, this.pipeline_);
+  handlers.pnforEach(this.registerDisposable, this);
 
   this.pipeline_.setMembers(this.slick_, this.dataView_, this.cfg_,
       this.cfg_.cCtxs, this.interceptor_);
@@ -281,7 +286,20 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
 pn.ui.grid.Grid.prototype.disposeInternal = function() {
   pn.ui.grid.Grid.superClass_.disposeInternal.call(this);
 
-  if (this.slick_) { this.slick_.destroy(); }
+  if (this.slick_) {
+    $(window).unbind('resize', this.slick_.resizeCanvas);
+    this.dataView_.dispose();
+    goog.object.forEach(this.slick_, function(f) {
+      if (f instanceof Slick.Event) { f['unsubscribeAll'](); }
+    });
+    goog.object.forEach(this.dataView_, function(f) {
+      if (f instanceof Slick.Event) { f['unsubscribeAll'](); }
+    });
+    this.slick_.getColumns().pnforEach(function(c) { delete c['formatter']; });
+    this.slick_.destroy();
+    delete this.slick_;
+    delete this.dataView_;
+  }
 };
 
 

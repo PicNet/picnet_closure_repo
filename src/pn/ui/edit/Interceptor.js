@@ -8,7 +8,7 @@ goog.require('pn.data.Entity');
 
 /** @typedef {function(new:pn.ui.edit.Interceptor,
  *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.FState,
- *    !Object.<goog.ui.Button>)} */
+ *    !Object.<!Element>)} */
 pn.ui.edit.InterceptorCtor;
 
 
@@ -20,7 +20,7 @@ pn.ui.edit.InterceptorCtor;
  * @param {!pn.data.BaseDalCache} cache The cache with all loaded entities.
  * @param {!pn.ui.edit.state.FState} state The state of the fields in this
  *    interceptor.
- * @param {!Object.<goog.ui.Button>} commands The command elements.
+ * @param {!Object.<!Element>} commands The command elements.
  */
 pn.ui.edit.Interceptor = function(entity, cache, state, commands) {
   pn.assInst(entity, pn.data.Entity);
@@ -50,7 +50,7 @@ pn.ui.edit.Interceptor = function(entity, cache, state, commands) {
 
   /**
    * @private
-   * @type {!Object.<!goog.ui.Button>}
+   * @type {!Object.<!Element>}
    */
   this.commands_ = commands;
 
@@ -78,7 +78,7 @@ pn.ui.edit.Interceptor.prototype.getCustomValidationErrors = function(c) {
 
 /**
  * @param {string} id The id of the command we need.
- * @return {!(goog.ui.Button|Element)} The command button for the specified id.
+ * @return {!Element} The command button for the specified id.
  */
 pn.ui.edit.Interceptor.prototype.getCommand = function(id) {
   pn.ass(this.commands_[id], 'Could not find command with ID "%s"', id);

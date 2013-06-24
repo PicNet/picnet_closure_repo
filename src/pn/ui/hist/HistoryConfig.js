@@ -25,7 +25,6 @@ pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
    * @type {!pn.ui.UiSpec}
    */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /**
    * @const
@@ -39,6 +38,13 @@ pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
    */
   this.changes = changes;
 
+  var cfg = spec.getEditConfig(new pn.data.Entity(spec.type, 0), cache);
+  /**
+   * @const
+   * @type {!Array.<pn.ui.edit.FieldCtx>}
+   */
+  this.fields = cfg.fCtxs;
+  goog.dispose(cfg);
 };
 goog.inherits(pn.ui.hist.HistoryConfig, goog.Disposable);
 
@@ -57,17 +63,6 @@ pn.ui.hist.HistoryConfig.prototype.getHeading = function(e) {
     return 'History - ' + e[this.spec.type + 'Name'];
   }
   return 'History - ID: ' + e['ID'];
-};
-
-
-/** @return {!Array.<pn.ui.edit.FieldCtx>} The fields to display in the history
- *   display. */
-pn.ui.hist.HistoryConfig.prototype.getFields = function() {
-  var ctor = pn.data.TypeRegister.fromName(this.spec.type);
-  var c = this.spec.getEditConfig(new ctor({'ID': 0}), this.cache);
-  var fields = c.fCtxs;
-  goog.dispose(c);
-  return fields;
 };
 
 

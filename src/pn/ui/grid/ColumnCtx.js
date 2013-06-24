@@ -23,7 +23,6 @@ pn.ui.grid.ColumnCtx = function(spec, cache) {
 
   /** @type {!pn.ui.grid.ColumnSpec} */
   this.spec = spec;
-  this.registerDisposable(this.spec);
 
   /** @type {!pn.data.BaseDalCache} */
   this.cache = cache;
@@ -47,9 +46,10 @@ goog.inherits(pn.ui.grid.ColumnCtx, goog.Disposable);
 pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
   var cfg = this.spec.toSlick();
   var rnd = this.getColumnRenderer();
-  cfg['formatter'] = rnd ? goog.bind(function(row, cell, value, col, item) {
-    return rnd(this, item);
-  }, this) : null;
+  if (rnd) {
+    cfg['formatter'] = goog.bind(function(row, cell, value, col, item) 
+        { return rnd(this, item); }, this);
+  }
   return cfg;
 };
 
@@ -96,4 +96,15 @@ pn.ui.grid.ColumnCtx.prototype.getColumnRenderer = function() {
   return pn.web.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
       (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty) ?
           pn.ui.grid.ColumnRenderers.parentColumnRenderer : null);
+};
+
+
+/** @override */
+pn.ui.grid.ColumnCtx.prototype.disposeInternal = function() {
+  pn.ui.grid.ColumnCtx.superClass_.disposeInternal.call(this);
+
+  delete this.spec;
+  delete this.cache;
+  delete this.entitySpec;
+  delete this.schema;
 };

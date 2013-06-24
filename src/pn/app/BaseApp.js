@@ -69,14 +69,23 @@ pn.app.BaseApp = function(opt_cfg) {
   this.cfg = this.cfg || new pn.app.AppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
-  var cache = new pn.data.LocalCache(this.cfg.dbver);
-  var server = new pn.data.Server(this.cfg.facadeUri);
+  /**
+   * @protected
+   * @type {!pn.data.LocalCache}
+   */
+  this.cache = new pn.data.LocalCache(this.cfg.dbver);
+
+  /**
+   * @protected
+   * @type {!pn.data.Server}
+   */
+  this.server = new pn.data.Server(this.cfg.facadeUri);
 
   /** @type {!pn.data.BaseFacade} */
-  this.data = new pn.data.LazyFacade(cache, server);
+  this.data = new pn.data.LazyFacade(this.cache, this.server);
   this.registerDisposable(this.data);
-  this.registerDisposable(server);
-  this.registerDisposable(cache);
+  this.registerDisposable(this.server);
+  this.registerDisposable(this.cache);
 
   /**
    * @private
