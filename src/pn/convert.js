@@ -18,7 +18,7 @@ pn.convert.centsToCurrency = function(cents) {
 
 
 /**
- * @param {string} currency The dollar / cents string.
+ * @param {string|number} currency The dollar / cents string.
  * @return {number} The cents value amount.
  */
 pn.convert.currencyToCents = function(currency) {

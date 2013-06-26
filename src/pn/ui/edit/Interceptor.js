@@ -36,7 +36,7 @@ pn.ui.edit.Interceptor = function() {
    */
   this.components = {};
 
-  /** @type {!Object.<!goog.ui.Button>} The commands map in the UI. */
+  /** @type {!Object.<!Element>} The commands map in the UI. */
   this.commands = {};
 
   /**
@@ -63,7 +63,7 @@ goog.inherits(pn.ui.edit.Interceptor, goog.Disposable);
  * @param {!Object.<!Array.<!Object>>} cache The cache with all loaded entities.
  * @param {!Object.<Element|goog.ui.Component|Text>} components The components
  *    map for this UI.
- * @param {!Object.<goog.ui.Button>} commands The command elements.
+ * @param {!Object.<!Element>} commands The command elements.
  */
 pn.ui.edit.Interceptor.prototype.init =
     function(component, entity, cache, components, commands) {
@@ -80,7 +80,7 @@ pn.ui.edit.Interceptor.prototype.init =
   /** @type {!Object.<Element|goog.ui.Component|Text>} */
   this.components = components;
 
-  /** @type {!Object.<goog.ui.Button>} */
+  /** @type {!Object.<!Element>} */
   this.commands = commands;
 
   if (pn.data.EntityUtils.isNew(this.entity)) {
