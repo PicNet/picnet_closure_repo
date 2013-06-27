@@ -162,6 +162,7 @@ pn.ui.edit.FieldRenderers.readOnlyDateField =
   var txt = !date ? '' : pn.Utils.dateFormat.format(date);
   var li = new goog.ui.LabelInput(txt);
   li.render(parent);
+  li.element_['id'] = this.id;
   li.setEnabled(false);
   li.getValue = function() { return date ? date.getTime() : 0; };
 
