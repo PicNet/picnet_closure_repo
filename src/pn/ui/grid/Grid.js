@@ -212,6 +212,8 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.renderGrid_();
 
   this.pipeline_.postRender(!this.slick_);
+
+  goog.Timer.callOnce(this.slick_.resizeCanvas, 1, this.slick_);
 };
 
 
