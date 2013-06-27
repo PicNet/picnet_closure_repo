@@ -72,7 +72,7 @@ pn.ui.edit.FieldRenderers.textAreaRenderer =
     return pn.ui.edit.FieldRenderers.standardTextSearchField(parent);
   }
   var textarea = goog.dom.createDom('textarea',
-      {'rows': '5', 'value': val || ''});
+      {'rows': '5', 'value': val || '', 'id' : this.id});
   goog.dom.appendChild(parent, textarea);
   return textarea;
 };

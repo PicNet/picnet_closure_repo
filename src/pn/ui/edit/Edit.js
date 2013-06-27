@@ -264,7 +264,11 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
   var errors = [];
   var entity = this.getCurrentFormData();
   goog.array.forEach(this.getEditableFields_(), function(f) {
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(this.inputs_[f.id]);
+    var inp = this.inputs_[f.id];
+    if (inp.parentNode === undefined || inp.parentNode === null) { return; }
+    if (!goog.style.isElementShown(inp.parentNode)) { return; }
+
+    var val = pn.ui.edit.FieldBuilder.getFieldValue(inp);
     var error;
     if (f.renderer && f.renderer.validate) {
       error = f.renderer.validate(f, val);
@@ -289,6 +293,8 @@ pn.ui.edit.Edit.prototype.getFormErrors = function() {
 /** @inheritDoc */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
   var current = {};
+  if (this.cfg_.interceptor) this.cfg_.interceptor.getData(this.data_);
+
   goog.object.extend(current, this.data_);
   goog.object.extend(current, this.getFormData(current));
   return current;
@@ -343,7 +349,7 @@ pn.ui.edit.Edit.prototype.enterDocument = function() {
   if (this.data_['ID']) {
     goog.array.forEach(this.fields_, this.enterDocumentOnChildrenField_, this);
   }
-  if (this.cfg_.interceptor) this.cfg_.interceptor.init(this.data_);
+  if (this.cfg_.interceptor) this.cfg_.interceptor.init();
   // Hack to handle other Timer.callOnce hack in BaseMaterialRenderer:270
   goog.Timer.callOnce(this.resetDirty, 2, this);
 };
