@@ -70,8 +70,8 @@ pn.ui.edit.FieldBuilder.createAndAttach =
     function(field, parent, entity, cache, opt_search) {
   var fb = pn.ui.edit.FieldBuilder;
   var val = entity ? entity[field.dataColumn] : '';
-  var elem;
-  if (field.renderer) {
+  var elem;      
+  if (field.renderer) {    
     if (field.source) { val = fb.getValueFromSourceTable_(field, val, cache); }
     if (typeof (field.renderer) === 'object') {
       elem = field.renderer;
