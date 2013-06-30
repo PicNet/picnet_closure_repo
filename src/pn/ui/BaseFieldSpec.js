@@ -114,6 +114,9 @@ pn.ui.BaseFieldSpec.prototype.inferName_ = function() {
 
   var steps = this.id.split('.');
   var nameProperty = steps[steps.length - 1];
+  if (goog.string.startsWith(nameProperty, '_')) {
+    nameProperty = nameProperty.substring(1);
+  }
 
   // Not using EntityUtils.getTypeProperty as this is the name not the type
   // property.  I.e. This could be a field called 'ReviewerID' not
