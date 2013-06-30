@@ -79,6 +79,14 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     function(filterValue, spec, entity) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
+  if (spec.searchFilter) {
+    if (goog.isArray(filterValue)) {
+      goog.asserts.assert(filterValue.length === 1);
+      filterValue = filterValue[0];
+    }
+    goog.asserts.assert(goog.isString(filterValue));
+    return spec.searchFilter(entity, /** @type {string} */ (filterValue));
+  }
   if (filterValue === '0') return true;
   var steps = spec.filterColumn.split('.'),
       parentType = this.type_,

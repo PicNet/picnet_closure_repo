@@ -43,6 +43,9 @@ pn.ui.edit.Field = function(id, name) {
   /** @type {null|function(!Array.<Object>, !Object.<Array>):!Array.<Object>} */
   this.sourceFilter = null;
 
+  /** @type {null|function(!Object):boolean} */
+  this.searchFilter = null;
+
   /** @type {boolean} */
   this.showOnAdd = true;
 
