@@ -32,11 +32,14 @@ pn.ui.grid.Config = function(
   /** @type {string} */
   this.id = id;
 
+  /**
+   * @private
+   * @type {!Array.<pn.ui.grid.ColumnCtx>}
+   */
+  this.cCtxs_ = cCtxs;
+
   /** @type {string} */
   this.type = opt_type || id;
-
-  /** @type {!Array.<pn.ui.grid.ColumnCtx>} */
-  this.cCtxs = cCtxs;
 
   /** @type {!Array.<pn.ui.grid.cmd.Command>} */
   this.commands = opt_commands || [];
@@ -105,13 +108,24 @@ pn.ui.grid.Config = function(
 goog.inherits(pn.ui.grid.Config, goog.Disposable);
 
 
+/**
+ * @param {boolean=} opt_forExport Wether this is for export purposes
+ *    (defaults to false).
+ * @return {!Array.<pn.ui.grid.ColumnCtx>} The column contexts for this grid.
+ */
+pn.ui.grid.Config.prototype.getCctxs = function(opt_forExport) {
+  if (!!opt_forExport) return this.cCtxs_.pnclone();
+  return this.cCtxs_.pnfilter(function(c) { return !c.spec.exportOnly; });
+};
+
+
 /** @private */
 pn.ui.grid.Config.prototype.init_ = function() {
-  var hasOrder = !this.readonly && this.cCtxs.pnfindIndex(function(cctx) {
+  var hasOrder = !this.readonly && this.cCtxs_.pnfindIndex(function(cctx) {
     return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec; }) >= 0;
 
   if (hasOrder) {
-    this.cCtxs.pnforEach(function(cctx) { cctx.spec.sortable = false; });
+    this.cCtxs_.pnforEach(function(cctx) { cctx.spec.sortable = false; });
   }
 };
 
