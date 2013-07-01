@@ -197,6 +197,8 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   var cfg = this.cfg_;
   var columns = cfg.cCtxs.pnmap(function(cctx) { return cctx.toSlick(); });
   this.slick_ = new Slick.Grid(gc, this.dataView_, columns, cfg.toSlick());
+
+  goog.Timer.callOnce(this.slick_.resizeCanvas, 5, this.slick_);
 };
 
 
@@ -212,8 +214,6 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
   this.renderGrid_();
 
   this.pipeline_.postRender(!this.slick_);
-
-  goog.Timer.callOnce(this.slick_.resizeCanvas, 1, this.slick_);
 };
 
 
