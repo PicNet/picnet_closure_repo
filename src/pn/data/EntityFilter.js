@@ -88,22 +88,27 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     return spec.searchFilter(entity, /** @type {string} */ (filterValue));
   }
   if (filterValue === '0') return true;
-  var steps = spec.filterColumn.split('.'),
-      parentType = this.type_,
-      result = entity;
-  while (true) {
-    var step = steps.shift();
-    if (!step) break;
-    result = this.processStep_(step, parentType, result, steps.length === 0);
-    this.dbg_('process step result: ' + goog.debug.expose(result));
-    if (!goog.isDefAndNotNull(result)) {
-      this.dbg_('returning as is null');
-      return false;
+  var stepResult = false;
+  var thisParent = this;
+  var filters = spec.filterColumn.split('&&');
+  goog.array.forEach(filters, function(f) {
+    var steps = f.split('.'),
+        parentType = thisParent.type_,
+        result = entity;
+    while (!stepResult) {
+      var step = steps.shift();
+      if (!step) break;
+      result = thisParent.processStep_(step, parentType, result, steps.length === 0);
+      thisParent.dbg_('process step result: ' + goog.debug.expose(result));
+      if (!goog.isDefAndNotNull(result)) {
+        thisParent.dbg_('returning as is null');
+        continue;
+      }
+      parentType = thisParent.getStepType_(step);
     }
-    parentType = this.getStepType_(step);
-  }
-
-  return this.matchesFilter_(result, filterValue);
+    stepResult = stepResult || thisParent.matchesFilter_(result, filterValue);
+  });
+  return stepResult;
 };
 
 
