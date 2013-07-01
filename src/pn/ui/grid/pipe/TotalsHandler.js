@@ -44,7 +44,7 @@ goog.inherits(pn.ui.grid.pipe.TotalsHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.TotalsHandler.prototype.preRender = function() {
-  this.totalColumns_ = this.cctxs.pnfilter(
+  this.totalColumns_ = this.cfg.getCctxs().pnfilter(
       function(cctx) { return !!cctx.spec.total; });
   if (!this.totalColumns_.length) { return; }
 

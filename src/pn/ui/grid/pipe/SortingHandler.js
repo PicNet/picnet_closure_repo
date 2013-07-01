@@ -26,7 +26,7 @@ goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
   var hasOrderColumn = !this.cfg.readonly &&
-      this.cctxs.pnfindIndex(function(cctx) {
+      this.cfg.getCctxs().pnfindIndex(function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
       }) >= 0;
   // No sorting on orderable grids
@@ -85,7 +85,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
   pn.assStr(col);
   pn.assBool(asc);
 
-  var cctx = this.cctxs.pnfind(function(cctx1) { return cctx1.id === col; });
+  var cctx = this.cfg.getCctxs().pnfind(
+      function(cctx1) { return cctx1.id === col; });
   pn.assInst(cctx, pn.ui.grid.ColumnCtx);
   var comparer = function(a, b) {
     var x = cctx.getCompareableValue(a);

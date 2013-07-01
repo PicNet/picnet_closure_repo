@@ -77,7 +77,7 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @const
    * @type {string}
    */
-  this.gridId_ = this.cfg_.id + '_' + this.cfg_.cCtxs.pnreduce(
+  this.gridId_ = this.cfg_.id + '_' + this.cfg_.getCctxs().pnreduce(
       function(acc, f) { return acc + f.id; }, '');
 
   /**
@@ -195,7 +195,8 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   this.registerDisposable(this.dataView_);
 
   var cfg = this.cfg_;
-  var columns = cfg.cCtxs.pnmap(function(cctx) { return cctx.toSlick(); });
+  var columns = cfg.getCctxs().
+      pnmap(function(cctx) { return cctx.toSlick(); });
   this.slick_ = new Slick.Grid(gc, this.dataView_, columns, cfg.toSlick());
 
   goog.Timer.callOnce(this.slick_.resizeCanvas, 5, this.slick_);
@@ -279,8 +280,8 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   handlers.pnforEach(this.pipeline_.add, this.pipeline_);
   handlers.pnforEach(this.registerDisposable, this);
 
-  this.pipeline_.setMembers(this.slick_, this.dataView_, this.cfg_,
-      this.cfg_.cCtxs, this.interceptor_);
+  this.pipeline_.setMembers(
+      this.slick_, this.dataView_, this.cfg_, this.interceptor_);
 };
 
 
