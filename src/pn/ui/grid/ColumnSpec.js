@@ -46,6 +46,9 @@ pn.ui.grid.ColumnSpec = function(id, props, entitySpec) {
   /** @type {boolean} */
   this.rerenderOnResize = false;
 
+  /** @type {boolean} */
+  this.exportOnly = false;
+
   /** @type {string} */
   this.headerCssClass = '';
 

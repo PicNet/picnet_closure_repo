@@ -381,8 +381,8 @@ Array.prototype.pnany = function(f, opt_obj) {
  * @see goog.array.filter
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {?function(this:S, T, number, ?):boolean} f The function to call for
- *     every element. This function
+ * @param {?function(this:S, T, number, ?):boolean=} opt_f The function to
+ *     call for every element. This function
  *     takes 3 arguments (the element, the index and the array) and must
  *     return a Boolean. If the return value is true the element is added to the
  *     result array. If it is false the element is not included.
@@ -391,7 +391,7 @@ Array.prototype.pnany = function(f, opt_obj) {
  * @return {!T} The only matching element or an error is thrown.
  * @template T,S
  */
-Array.prototype.pnsingle = function(f, opt_obj) {
+Array.prototype.pnsingle = function(opt_f, opt_obj) {
   var arr = this;
   if (arguments.length) { arr = this.pnfilter.apply(this, arguments); }
   if (arr.length !== 1) {

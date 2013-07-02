@@ -18,7 +18,6 @@ goog.require('pn.ui.grid.ColumnSpec');
 pn.ui.grid.ColumnCtx = function(spec, cache) {
   pn.ass(spec);
   pn.ass(cache);
-
   goog.Disposable.call(this);
 
   /** @type {!pn.ui.grid.ColumnSpec} */
@@ -102,7 +101,6 @@ pn.ui.grid.ColumnCtx.prototype.getColumnRenderer = function() {
 /** @override */
 pn.ui.grid.ColumnCtx.prototype.disposeInternal = function() {
   pn.ui.grid.ColumnCtx.superClass_.disposeInternal.call(this);
-
   delete this.spec;
   delete this.cache;
   delete this.entitySpec;

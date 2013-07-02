@@ -81,7 +81,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
       pn.web.ctx.pub(e.type, this.entityType_, id);
       break;
     case ae.LIST_EXPORT:
-      var cols = this.cctxs;
+      var cols = this.cfg.getCctxs(true);
       var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
       pn.web.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
