@@ -66,7 +66,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
 
 /**
  * @private
- * @param {Array.<string>|string} filterValue The filter value to apply to
+ * @param {Array.<string>|string|number|Date} filterValue The filter value to apply to
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
  * @param {!pn.ui.edit.Field} spec The field specification for the given
@@ -211,7 +211,7 @@ pn.data.EntityFilter.prototype.getStepType_ = function(property) {
 /**
  * @private
  * @param {*} entityValue The value of the current entity(s) in the final step.
- * @param {string|Array.<string>} filterValue The filter value.
+ * @param {string|Array.<string>|Date|number} filterValue The filter value.
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.matchesFilter_ =
@@ -242,7 +242,7 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
 
 /**
  * @private
- * @param {string|Array.<string>} filterVal The filter value.
+ * @param {string|Array.<string>|Date|number} filterVal The filter value.
  * @param {*} entityVal The value of the current entity(s) in the final step.
  * @param {function(*,string,boolean):boolean} predicate The matching
  *    predicate which takes the single entity value, single filter value and
@@ -268,7 +268,7 @@ pn.data.EntityFilter.prototype.singleEntityMatches_ =
 
 /**
  * @private
- * @param {string} filterVal The filter value.
+ * @param {string|Date} filterVal The filter value.
  * @param {*} entityVal The value of the current entity(s) in the final step.
  * @param {boolean} exact Wether the match has to be exact.
  * @param {function(*, string, boolean):boolean} predicate The matching

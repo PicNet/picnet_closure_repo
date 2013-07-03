@@ -105,8 +105,12 @@ pn.ui.UiSpec.prototype.getGridCommands = function() {
 };
 
 
-/** @return {!pn.ui.edit.Config} The edit page config. */
-pn.ui.UiSpec.prototype.getEditConfig = function() {
+/**
+ * @param {!Object} entity The entity being displayed.
+ * @param {!Object=} opt_cache The current entities cache.
+ * @return {!pn.ui.edit.Config} The edit page config.
+ */
+pn.ui.UiSpec.prototype.getEditConfig = function(entity, opt_cache) {
   return new pn.ui.edit.Config(this.type);
 };
 
