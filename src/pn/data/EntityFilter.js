@@ -88,6 +88,13 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     return spec.searchFilter(entity, /** @type {string} */ (filterValue));
   }
   if (filterValue === '0') return true;
+
+  //Date filter
+  if (spec.renderer === pn.ui.edit.FieldRenderers.dateRenderer) {
+    if (filterValue === 0) return true;
+    filterValue = new Date((new Date(filterValue)).setHours(0, 0, 0, 0));
+  }
+
   var stepResult = false;
   var thisParent = this;
   var filters = spec.filterColumn.split('&&');
@@ -98,7 +105,8 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     while (!stepResult) {
       var step = steps.shift();
       if (!step) break;
-      result = thisParent.processStep_(step, parentType, result, steps.length === 0);
+      result = thisParent.processStep_(step, parentType, result,
+          steps.length === 0);
       thisParent.dbg_('process step result: ' + goog.debug.expose(result));
       if (!goog.isDefAndNotNull(result)) {
         thisParent.dbg_('returning as is null');
@@ -275,7 +283,12 @@ pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
       filterVal + ' entityVal: ' + entityVal + ' exact: ' + exact);
 
   if (!filterVal || filterVal === '0') return true;
-  filterVal = filterVal.toLowerCase();
+  if (filterVal.getMonth) {
+    entityVal = (new Date(entityVal)).setHours(0, 0, 0, 0);
+    filterVal = filterVal.setHours(0, 0, 0, 0);
+  }
+  if (filterVal.toLowerCase)
+    filterVal = filterVal.toLowerCase();
   return predicate.call(this, entityVal, filterVal, exact);
 };
 
