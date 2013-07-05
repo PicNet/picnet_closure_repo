@@ -57,13 +57,10 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    */
   this.cfg_ = cfg;
 
-  /**
-   * @private
-   * @type {pn.ui.grid.Interceptor}
-   */
-  this.interceptor_ = this.cfg_.interceptor ?
+  /** @type {pn.ui.grid.Interceptor} */
+  this.interceptor = this.cfg_.interceptor ?
       new this.cfg_.interceptor(cache) : null;
-  this.registerDisposable(this.interceptor_);
+  this.registerDisposable(this.interceptor);
 
   /**
    * @private
@@ -84,8 +81,8 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @private
    * @type {!Array.<!pn.data.Entity>}
    */
-  this.list_ = this.interceptor_ ?
-      this.interceptor_.filterList(list) : list;
+  this.list_ = this.interceptor ?
+      this.interceptor.filterList(list) : list;
 
   /**
    * @private
@@ -191,7 +188,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   }
   goog.style.setHeight(gc, height + 'px');
 
-  this.dataView_ = new pn.ui.grid.DataView(this.interceptor_);
+  this.dataView_ = new pn.ui.grid.DataView(this.interceptor);
   this.registerDisposable(this.dataView_);
 
   var cfg = this.cfg_;
@@ -281,7 +278,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   handlers.pnforEach(this.registerDisposable, this);
 
   this.pipeline_.setMembers(
-      this.slick_, this.dataView_, this.cfg_, this.interceptor_);
+      this.slick_, this.dataView_, this.cfg_, this.interceptor);
 };
 
 
