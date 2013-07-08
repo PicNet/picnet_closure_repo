@@ -170,6 +170,9 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
     'value': fctx.getEntityValue(entity) || ''
   });
   goog.dom.appendChild(parent, inp);
+
+  pn.ui.edit.FieldRenderers.createPrintDiv_(fctx, inp, parent);
+
   return inp;
 };
 
@@ -194,6 +197,9 @@ pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
     textarea.value = val || '';
   };
   goog.dom.append(parent, textarea);
+
+  pn.ui.edit.FieldRenderers.createPrintDiv_(fctx, textarea, parent);
+
   return textarea;
 };
 
@@ -451,6 +457,25 @@ pn.ui.edit.FieldRenderers.createFilteredEntityParentList =
     return defaultImpl(fctx, parent, entity, filter);
   };
   return renderer;
+};
+
+
+/**
+ * @private
+ * @param {!pn.ui.edit.FieldCtx} fctx The field to render.
+ * @param {!Element} inp The text input field to mirror in a printable div.
+ * @param {!Element} parent The parent to attach this control to.
+ */
+pn.ui.edit.FieldRenderers.createPrintDiv_ = function(fctx, inp, parent) {
+  if (!fctx.spec.createPrintDiv) { return; }
+
+  goog.dom.classes.add(inp, 'hide-on-print');
+  var mirror = goog.dom.createDom('div', 'print-only');
+  mirror.innerHTML = inp.value.replace(/\n/g, '<br/>');
+  goog.events.listen(inp, goog.events.EventType.KEYUP, function() {
+    mirror.innerHTML = inp.value.replace(/\n/g, '<br/>');
+  });
+  goog.dom.appendChild(parent, mirror);
 };
 
 
