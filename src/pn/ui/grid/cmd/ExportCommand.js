@@ -7,7 +7,7 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('goog.ui.Option');
 goog.require('goog.ui.Select');
-
+goog.require('pn.ui.grid.cmd.Command');
 goog.provide('pn.ui.grid.cmd.ExportCommand');
 
 
