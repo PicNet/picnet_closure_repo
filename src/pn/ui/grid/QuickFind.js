@@ -24,10 +24,10 @@ goog.require('pn.ui.grid.ColumnSpec');
  *    anywhere in a row.
  * @param {Element=} opt_clear An optional clear control.  This control will
  *    trigger a clear event that will clear all filters.
- * @param {string=} opt_filterToolTip An optional filter tooltip, overrrides 
+ * @param {string=} opt_filterToolTip An optional filter tooltip, overrrides
  *     default tooltip.
  */
-pn.ui.grid.QuickFind = 
+pn.ui.grid.QuickFind =
     function(cache, cctxs, slick, opt_quickfind, opt_clear, opt_filterToolTip) {
   pn.app.EventHandlerTarget.call(this);
 
@@ -65,7 +65,7 @@ pn.ui.grid.QuickFind =
    * @private
    * @type {string}
    */
-  this.filterToolTip_ = opt_filterToolTip || 
+  this.filterToolTip_ = opt_filterToolTip ||
       pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
 
   /**
@@ -86,7 +86,7 @@ pn.ui.grid.QuickFind =
    */
   this.search_ = new pn.ui.filter.SearchEngine();
 
-  
+
 
   /**
    * @private

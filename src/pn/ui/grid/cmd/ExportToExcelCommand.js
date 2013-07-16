@@ -3,9 +3,9 @@ goog.require('goog.events');
 goog.require('goog.events.Event');
 goog.require('goog.json');
 goog.require('goog.net.IframeIo');
+goog.require('goog.ui.Button');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
-goog.require('goog.ui.Button');
 goog.require('pn.ui.grid.cmd.Command');
 goog.provide('pn.ui.grid.cmd.ExportToExcelCommand');
 
@@ -44,9 +44,13 @@ pn.ui.grid.cmd.ExportToExcelCommand.prototype.createDom = function() {
 
 
 /** @override */
-pn.ui.grid.cmd.ExportToExcelCommand.prototype.decorateInternal = function(element) {
+pn.ui.grid.cmd.ExportToExcelCommand.prototype.decorateInternal =
+    function(element) {
   this.setElementInternal(element);
-  this.button_ = goog.dom.createDom('button', {'title' : 'Export To Excel', 'class' : 'button export-excel'});
+  this.button_ = goog.dom.createDom('button', {
+    'title' : 'Export To Excel',
+    'class' : 'button export-excel'
+  });
   goog.dom.appendChild(element, this.button_);
 };
 
