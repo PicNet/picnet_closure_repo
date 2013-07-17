@@ -53,6 +53,13 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
   /**
    * @private
    * @const
+   * @type {!goog.debug.Logger}
+   */
+  this.log_ = pn.log.getLogger('pn.ui.grid.Grid');
+
+  /**
+   * @private
+   * @const
    * @type {!pn.ui.grid.Config}
    */
   this.cfg_ = cfg;
@@ -101,6 +108,8 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @type {pn.ui.grid.DataView}
    */
   this.dataView_ = null;
+
+  this.log_.info('Grid created with: ' + this.list_.length + ' items');
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
