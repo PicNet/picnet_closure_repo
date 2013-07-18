@@ -471,10 +471,17 @@ pn.ui.edit.FieldRenderers.createPrintDiv_ = function(fctx, inp, parent) {
 
   goog.dom.classes.add(inp, 'hide-on-print');
   var mirror = goog.dom.createDom('div', 'print-only');
-  mirror.innerHTML = inp.value.replace(/\n/g, '<br/>');
-  goog.events.listen(inp, goog.events.EventType.KEYUP, function() {
+  var setText = function() {
     mirror.innerHTML = inp.value.replace(/\n/g, '<br/>');
-  });
+  };
+  setText();
+  goog.events.listen(inp, goog.events.EventType.KEYUP, setText);
+  var otig_setValue = inp.setValue;
+  inp.setValue = function(v) {
+    if (otig_setValue) otig_setValue(v);
+    else inp.value = v;
+    setText();
+  };
   goog.dom.appendChild(parent, mirror);
 };
 
