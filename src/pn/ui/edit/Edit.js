@@ -307,7 +307,10 @@ pn.ui.edit.Edit.prototype.autoFocus_ = function() {
 
   if (!toFocus) { return; }
   goog.Timer.callOnce(function() {
-    try { this.controls_[toFocus.id].focus(); } catch (ex) {}
+    try {
+      var c = this.controls_[toFocus.id];
+      c.selectionStart = c.selectionEnd = 0;
+    } catch (ex) {}
   }, 1, this);
 };
 
