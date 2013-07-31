@@ -84,6 +84,18 @@ pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
   this.showOnReadOnly = true;
 
   /**
+   * Wether this text field is mirrored in a div intended solely for printing.
+   *    To support this functionality the css file must include the following
+   *    two classes:
+   *      .print-only  Which is display:none when in media=screen and shown
+   *        in media=print.
+   *      .hide-on-print Which is hidden when media=print
+   *
+   * @type {boolean}
+   */
+  this.createPrintDiv = false;
+
+  /**
    * The default value to apply to the specified field.  This is only used
    *    when creating a new entity.
    *

@@ -1,4 +1,4 @@
-;
+
 goog.require('goog.array');
 goog.require('pn.ui.filter.TableFilter');
 goog.require('pn.ui.filter.TableFilterOptions');

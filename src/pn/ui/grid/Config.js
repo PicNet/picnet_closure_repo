@@ -71,6 +71,9 @@ pn.ui.grid.Config = function(
   /** @type {string} The object field to use as the identifier of the row. */
   this.rowid = 'id';
 
+  /** @type {string} The tooltip to display in the filters */
+  this.filterToolTip = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
+
   /**
    * @type {null|
    *    function(new:pn.ui.grid.Interceptor, !pn.data.BaseDalCache)}

@@ -24,8 +24,11 @@ goog.require('pn.ui.grid.ColumnSpec');
  *    anywhere in a row.
  * @param {Element=} opt_clear An optional clear control.  This control will
  *    trigger a clear event that will clear all filters.
+ * @param {string=} opt_filterToolTip An optional filter tooltip, overrrides
+ *     default tooltip.
  */
-pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
+pn.ui.grid.QuickFind =
+    function(cache, cctxs, slick, opt_quickfind, opt_clear, opt_filterToolTip) {
   pn.app.EventHandlerTarget.call(this);
 
   /**
@@ -60,6 +63,13 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
 
   /**
    * @private
+   * @type {string}
+   */
+  this.filterToolTip_ = opt_filterToolTip ||
+      pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
+
+  /**
+   * @private
    * @type {!Array.<!Element>}
    */
   this.filterControls_ = [];
@@ -76,12 +86,16 @@ pn.ui.grid.QuickFind = function(cache, cctxs, slick, opt_quickfind, opt_clear) {
    */
   this.search_ = new pn.ui.filter.SearchEngine();
 
+
+
   /**
    * @private
    * @type {!pn.ui.DelayedThrottleInputListener}
    */
   this.inputListener_ = new pn.ui.DelayedThrottleInputListener(250);
   this.registerDisposable(this.inputListener_);
+
+
 
   this.init_();
 };
@@ -134,8 +148,8 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
     var fctx = this.cctxs_[i];
     var header = this.slick_.getHeaderRowColumn(fctx.id);
     var val = this.filters_[fctx.id];
-    var tt = pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
-    var input = this.createFilterInput_(fctx, 100, val, tt);
+
+    var input = this.createFilterInput_(fctx, 100, val, this.filterToolTip_);
     this.filterControls_.push(input);
 
     goog.dom.removeChildren(header);
