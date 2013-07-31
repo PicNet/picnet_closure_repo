@@ -189,9 +189,7 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
 
   if (!height) {
     // Hack needed for IE9 and Chrome compatibility issues
-    var wh = Math.max(
-        (document.height) ? document.height : document.body.offsetHeight,
-        goog.dom.getDocumentHeight());
+    var wh = goog.dom.getViewportSize().height;
     var ey = goog.style.getClientPosition(gc).y;
     height = wh - ey - 80;
   }
