@@ -119,7 +119,7 @@ pn.web.BaseWebApp.prototype.enableAjaxImpersonisation_ = function() {
   var impersonate = this.impersonatee();
 
   this.data.server.ajax_ = function() {
-    if (impersonate) arguments[0] += '?' + impersonate;
+    if (impersonate) arguments[0] += '?impersonate=' + impersonate;
     origajax.apply(null, arguments);
   };
 };
@@ -137,10 +137,14 @@ pn.web.BaseWebApp.prototype.impersonatee = function() {
 };
 
 
-/** @protected */
-pn.web.BaseWebApp.prototype.gohome = function() {
+/**
+ * @protected
+ * @param {boolean=} opt_cancelImpersonate Wether to cancel impersonation.
+ *    Defaults to false.
+ */
+pn.web.BaseWebApp.prototype.gohome = function(opt_cancelImpersonate) {
   var uri = this.cfg.appPath;
-  var imp = this.impersonatee();
+  var imp = opt_cancelImpersonate === true ? '' : this.impersonatee();
   if (imp) uri += '?impersonate=' + imp;
   document.location.href = uri;
 };
