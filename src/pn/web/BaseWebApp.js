@@ -2,6 +2,7 @@
 goog.provide('pn.web.BaseWebApp');
 goog.provide('pn.web.ctx');
 
+goog.require('goog.Uri');
 goog.require('pn.app.BaseApp');
 goog.require('pn.app.WebAppConfig');
 goog.require('pn.data.DataDownloader');
@@ -115,11 +116,33 @@ pn.web.BaseWebApp.prototype.init = function() {
 pn.web.BaseWebApp.prototype.enableAjaxImpersonisation_ = function() {
   this.impersonationEnabled_ = true;
   var origajax = this.data.server.ajax_.pnbind(this.data.server);
+  var impersonate = this.impersonatee();
+
   this.data.server.ajax_ = function() {
-    var impersonate = document.location.href.split('?')[1];
     if (impersonate) arguments[0] += '?' + impersonate;
     origajax.apply(null, arguments);
   };
+};
+
+
+/**
+ * @protected
+ * @return {string} The user name of the person being impersonated.
+ */
+pn.web.BaseWebApp.prototype.impersonatee = function() {
+  if (!this.impersonationEnabled_) return '';
+  var qd = new goog.Uri(document.location.href).getQueryData();
+  if (!qd.containsKey('impersonate')) return '';
+  return qd.getValues('impersonate')[0];
+};
+
+
+/** @protected */
+pn.web.BaseWebApp.prototype.gohome = function() {
+  var uri = this.cfg.appPath;
+  var imp = this.impersonatee();
+  if (imp) uri += '?impersonate=' + imp;
+  document.location.href = uri;
 };
 
 
