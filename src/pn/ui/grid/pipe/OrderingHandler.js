@@ -24,11 +24,10 @@ goog.inherits(pn.ui.grid.pipe.OrderingHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
-  var orderCol = !this.cfg.readonly &&
-      this.cfg.getCctxs().pnfind(function(cctx) {
-        return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
-      });
-  if (!orderCol) return; // Not an odering grid
+  var col = !this.cfg.readonly && this.cfg.getCctxs().pnfind(function(cctx) {
+    return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
+  });
+  if (!col) return; // Not an odering grid
 
   this.rowOrdering_ = new pn.ui.grid.RowOrdering(this.slick);
   this.registerDisposable(this.rowOrdering_);
@@ -40,7 +39,7 @@ pn.ui.grid.pipe.OrderingHandler.prototype.postRender = function() {
   });
 
   this.fireCustomEvent('sort', {
-    'colid': orderCol.spec.dataProperty,
+    'colid': col.spec.dataProperty,
     'asc': true
   });
 };

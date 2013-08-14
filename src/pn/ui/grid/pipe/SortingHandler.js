@@ -25,15 +25,14 @@ goog.inherits(pn.ui.grid.pipe.SortingHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
-  var hasOrderColumn = !this.cfg.readonly &&
-      this.cfg.getCctxs().pnfindIndex(function(cctx) {
+  var orderCol = !this.cfg.readonly && this.cfg.getCctxs().pnfirstOrNull(
+      function(cctx) {
         return cctx.spec instanceof pn.ui.grid.OrderingColumnSpec;
-      }) >= 0;
-  // No sorting on orderable grids
-  if (hasOrderColumn) return;
+      });
+  if (orderCol) { return; }
 
   this.slick.onSort.subscribe(goog.bind(function(e, args) {
-    this.sortBy_({'colid': args['sortCol']['id'], 'asc': args['sortAsc'] });
+    this.sortBy_(args['sortCol']['id'], args['sortAsc'], false);
   }, this));
 
   this.setGridInitialSortState_();
@@ -42,7 +41,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.postRender = function() {
 
 /** @override */
 pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent = function(ev, opt_d) {
-  if (ev === 'sort') { this.sortBy_(/** @type {!Object} */ (opt_d)); }
+  if (ev === 'sort') { this.sortBy_(opt_d['colid'], opt_d['asc'], false); }
 };
 
 
@@ -54,25 +53,28 @@ pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
     'asc': this.cfg.defaultSortAscending
   };
   if (!data || !data['colid']) return;
-  this.sortBy_(data, true);
+
+  this.sortBy_(data['colid'], data['asc'], true);
 };
 
 
 /**
  * @private
- * @param {!Object} sortData The sorting properties.
- * @param {boolean=} opt_updateUi Wether to update the UI.
+ * @param {string} col The column ID to sort.
+ * @param {boolean} asc Wether to sort ascending.
+ * @param {boolean} updateui Wether to update the grid ui.
  */
 pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
-    function(sortData, opt_updateUi) {
-  pn.ass(sortData);
+    function(col, asc, updateui) {
+  pn.assStr(col);
+  pn.assBool(asc);
+  pn.assBool(updateui);
 
-  var col = sortData['colid'];
-  var asc = sortData['asc'];
-  if (!!opt_updateUi) this.slick.setSortColumn(col, asc);
+  if (updateui) this.slick.setSortColumn(col, asc);
   this.sortImpl_(col, asc);
 
-  pn.storage.set(this.storeId_, pn.json.serialiseJson(sortData));
+  var data = {'coldid' : col, 'asc': asc };
+  pn.storage.set(this.storeId_, pn.json.serialiseJson(data));
 };
 
 

@@ -87,7 +87,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
  * @return {boolean} Wether the current form is valid.
  */
 pn.ui.edit.AddOnFlyDialog.prototype.validate_ = function(edit) {
-  var errors = edit.getFormErrors();
+  var errors = edit.getFormErrors(null);
   if (!errors.length) return true;
   pn.web.ctx.pub(pn.web.WebAppEvents.ENTITY_VALIDATION_ERROR, errors);
   return false;
