@@ -113,10 +113,12 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
 };
 goog.inherits(pn.ui.grid.Grid, goog.ui.Component);
 
+
 /** @return {!Array.<number>} The selected row indexes. */
 pn.ui.grid.Grid.prototype.getSelectedRows = function() {
   return this.slick_.getSelectedRows().pnsort();
 };
+
 
 /**
  * @param {string} eventType The type of event to fire.

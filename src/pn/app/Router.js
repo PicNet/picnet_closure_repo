@@ -87,6 +87,7 @@ pn.app.Router.prototype.getLastToken = function() {
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
+
   var to = this.stack_[this.stack_.length - 2] || this.defaultRoute;
   this.history_.setToken(to);
 };
