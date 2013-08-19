@@ -23,6 +23,21 @@ pn.dom.get = function(id) {
 
 
 /**
+ * @param {string|Element} idorelem The ID or the actual element to show/hide.
+ * @param {boolean} visible Wether to show or hide the specified element.
+ */
+pn.dom.show = function(idorelem, visible) {
+  pn.assBool(visible);
+  var elem = goog.isString(idorelem) ?
+      pn.dom.get(idorelem) :
+      /** @type {!Element} */ (idorelem);
+  pn.assInst(elem, Element);
+
+  goog.style.showElement(elem, visible);
+};
+
+
+/**
  * Alias to goog.dom.createDom
  *
  * Returns a dom node with a set of attributes.  This function accepts varargs
