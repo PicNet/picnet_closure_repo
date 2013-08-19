@@ -231,7 +231,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(fctx, parent, entity) {
     'type': 'hidden',
     'value': fctx.getEntityValue(entity) || ''
   });
-  goog.style.showElement(parent, false);
+  pn.dom.show(parent, false);
   goog.dom.appendChild(parent, inp);
   return inp;
 };
@@ -307,7 +307,7 @@ pn.ui.edit.FieldRenderers.orderFieldRenderer = function(fctx, parent, entity) {
     'type': 'hidden',
     'value': order.toString()
   });
-  goog.style.showElement(parent, false);
+  pn.dom.show(parent, false);
   goog.dom.appendChild(parent, inp);
   inp.getValue = function() { return parseInt(inp.value, 10); };
   return inp;

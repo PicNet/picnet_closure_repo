@@ -77,7 +77,7 @@ goog.inherits(pn.ui.FileUpload, goog.ui.Component);
 
 /** @param {boolean} enabled Wether to enable or disable the control. */
 pn.ui.FileUpload.prototype.setEnabled = function(enabled) {
-  goog.style.showElement(this.fileInput_, enabled);
+  pn.dom.show(this.fileInput_, enabled);
 };
 
 

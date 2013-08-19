@@ -495,7 +495,7 @@ pn.ui.filter.GenericListFilter.prototype.hideElementsThatDoNotMatchAnyFiltres_ =
     if (this.cancelQuickFind_) return;
     var item = this.listItems[i];
     var show = item.getAttribute('filtermatch') !== 'false';
-    goog.style.showElement(item, show);
+    pn.dom.show(item, show);
   }
 };
 
