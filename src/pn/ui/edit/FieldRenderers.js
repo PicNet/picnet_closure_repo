@@ -252,7 +252,7 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
     if (goog.isNumber(val)) {
       lst.push({
         id: val,
-        name: name.replace(/_/g, ' ')
+        name: name === 'NA' ? 'N/A' : name.replace(/_/g, ' ')
       });
     }
   });
@@ -284,7 +284,7 @@ pn.ui.edit.FieldRenderers.enumRadioRenderer = function(fctx, parent, entity) {
     if (goog.isNumber(val)) lst.push({
       id: fctx.id,
       value: val,
-      name: name.replace(/_/g, ' ')
+      name: name === 'NA' ? 'N/A' : name.replace(/_/g, ' ')
     });
   });
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
