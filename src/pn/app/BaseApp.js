@@ -152,7 +152,6 @@ pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
  *    current page.  The default implementation is to always return true.
  *    However WebApps override this to do proper dirty checking.
  *
- * @protected
  * @return {boolean} Wether the user is happy to navigate away from the
  *    current page.
  */
