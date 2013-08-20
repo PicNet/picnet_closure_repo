@@ -136,14 +136,14 @@ pn.ui.hist.HistoryViewer.prototype.createDiffHeaderRow_ = function() {
 
 /**
  * @private
- * @param {pn.data.Entity} left The left entity to compare.
- * @param {pn.data.Entity} right The right entity to compare.
+ * @param {!pn.data.Entity} left The left entity to compare.
+ * @param {!pn.data.Entity} right The right entity to compare.
  * @return {!Object.<!Array.<string>>} The diff object which is just a list of
  *  fields with a value for left and right.
  */
 pn.ui.hist.HistoryViewer.prototype.getEntityDiff_ = function(left, right) {
-  pn.ass(left instanceof pn.data.Entity);
-  pn.ass(right instanceof pn.data.Entity);
+  pn.assInst(left, pn.data.Entity);
+  pn.assInst(right, pn.data.Entity);
 
   var diff = {};
   var addDiff = goog.bind(function(fctx) {

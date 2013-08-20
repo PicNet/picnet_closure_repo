@@ -97,7 +97,7 @@ pn.app.BaseApp = function(opt_cfg) {
   // Convenience delegates.
   /**
    * @param {string} topic Topic to publish to.
-   * @param {...*} args Arguments that are applied to each sub function.
+   * @param {...*} var_args Arguments that are applied to each sub function.
    */
   this.pub = goog.bind(this.bus_.pub, this.bus_);
 

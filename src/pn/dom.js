@@ -33,7 +33,7 @@ pn.dom.show = function(idorelem, visible) {
       /** @type {!Element} */ (idorelem);
   pn.assInst(elem, Element);
 
-  goog.style.showElement(elem, visible);
+  goog.style.setElementShown(elem, visible);
 };
 
 

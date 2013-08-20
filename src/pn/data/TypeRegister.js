@@ -58,7 +58,7 @@ pn.data.TypeRegister.create = function(type, raw) {
 /**
  * @param {string} type The type of the entities to attempt to parse.
  * @param {!Array} data The data to attempt to parse.
- * @return {!Array.<pn.data.Entity>} The parsed entity or the original data.
+ * @return {!Array.<!pn.data.Entity>} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntities = function(type, data) {
   pn.assStr(type);
@@ -72,7 +72,7 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
 /**
  * @param {string} type The type of the entity to attempt to parse.
  * @param {Object} data The data to attempt to parse.
- * @return {pn.data.Entity} The parsed entity or the original data.
+ * @return {!pn.data.Entity} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntity = function(type, data) {
   pn.assStr(type);

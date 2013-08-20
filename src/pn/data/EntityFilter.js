@@ -203,9 +203,9 @@ pn.data.EntityFilter.prototype.singleFilterValueMatches_ =
 
 /**
  * @private
- * @param {...*} args Any additional arguments to append to the message.
+ * @param {...*} var_args Any additional arguments to append to the message.
  */
-pn.data.EntityFilter.prototype.dbg_ = function(args) {
+pn.data.EntityFilter.prototype.dbg_ = function(var_args) {
   if (!this.debug_) return;
   var format = function(arg) {
     if (!goog.isString(arg) && arg && arg.length) {
