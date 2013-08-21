@@ -133,7 +133,6 @@ pn.ui.edit.state.FState.prototype.isRequired = function(id) {
 pn.ui.edit.state.FState.prototype.setRequired = function(id, value) {
   pn.assStr(id);
   pn.assBool(value);
-
   this.field_(id).required = value;
 
   this.fire_();

@@ -54,7 +54,7 @@ pn.app.EventBus.prototype.pub = function(topic, var_args) {
       'No subscribers found [' + topic + ']');
 
   var msg = this.topic_ = topic;
-  if (var_args && typeof(var_args) === 'string' && var_args.length < 20) 
+  if (var_args && typeof(var_args) === 'string' && var_args.length < 20)
     msg += ' ' + var_args;
   this.log_.fine(msg);
 
