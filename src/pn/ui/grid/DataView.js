@@ -4,7 +4,6 @@ goog.provide('pn.ui.grid.DataView');
 goog.require('goog.disposable.IDisposable');
 goog.require('goog.events.EventHandler');
 goog.require('pn');
-goog.require('pn.model.Collection');
 
 
 
@@ -12,13 +11,20 @@ goog.require('pn.model.Collection');
  * @constructor
  * @extends {Slick.Data.DataView}
  * @implements {goog.disposable.IDisposable}
+ * @param {pn.ui.grid.Interceptor} interceptor The interceptor for this grid.
  * @param {Object=} opt_options Optional slick grid DataView options.
  */
-pn.ui.grid.DataView = function(opt_options) {
+pn.ui.grid.DataView = function(interceptor, opt_options) {
   var members = Slick.Data.DataView.call(this, opt_options);
 
   // Required as Slick.Data.DataView uses ugly style crockford encapsulation.
   goog.object.extend(this, members);
+
+  /**
+   * @private
+   * @type {pn.ui.grid.Interceptor}
+   */
+  this.interceptor_ = interceptor;
 
   /**
    * @private
@@ -31,7 +37,16 @@ pn.ui.grid.DataView = function(opt_options) {
 
   /**
    * @private
-   * @type {pn.model.Collection}
+   * @type {Function}
+   */
+  this.origGetItemMetadata_ = this.getItemMetadata;
+
+  /** @override */
+  this.getItemMetadata = this.getItemMetadata_;
+
+  /**
+   * @private
+   * @type {!Array}
    */
   this.model_ = null;
 
@@ -41,7 +56,8 @@ pn.ui.grid.DataView = function(opt_options) {
    */
   this.eh_ = new goog.events.EventHandler(this);
 };
-goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
+if (window['Slick'])
+  goog.inherits(pn.ui.grid.DataView, Slick.Data.DataView);
 
 
 /**
@@ -53,19 +69,33 @@ pn.ui.grid.DataView.prototype.setItemsImpl_ = function(items, idprop) {
   pn.assArr(items);
 
   this.origSetItems_(items.pnclone(), idprop);
-
-  if (this.model_) {
-    this.eh_.unlisten(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
-    goog.dispose(this.model_);
-  }
-  this.model_ = new pn.model.Collection(items);
-  this.eh_.listen(this.model_, pn.model.EventType.CHANGE, this.updateGrid_);
+  this.model_ = items;
 };
 
 
 /**
  * @private
- * @param {!pn.model.ChangeEvent} e The change event with the details of
+ * @param {number|string} row The row index.
+ * @return {!Object} A map of metadata properties for this row.
+ */
+pn.ui.grid.DataView.prototype.getItemMetadata_ = function(row) {
+  var item = this.getItem(row),
+      ret = this.origGetItemMetadata_(row);
+  if (item && this.interceptor_) {
+    var additional = this.interceptor_.rowCssClass(item);
+    if (additional) {
+      ret = ret || {};
+      ret['cssClasses'] = (ret['cssClasses'] || '') + ' ' + additional;
+    }
+  }
+
+  return ret;
+};
+
+
+/**
+ * @private
+ * @param {!pn.mvc.ChangeEvent} e The change event with the details of
  *    changed items in the grid.
  */
 pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
@@ -75,11 +105,11 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
   this.beginUpdate();
   changes.pnforEach(function(details) {
     if (details.inserted) {
-      this.addItem(details.item);
+      this.addItem(details.model);
     } else if (details.removed) {
-      this.deleteItem(details.item.id);
+      this.deleteItem(details.model.id);
     } else {
-      this.updateItem(details.item.id, details.item);
+      this.updateItem(details.model.id, details.model);
     }
   }, this);
   this.endUpdate();
@@ -88,8 +118,12 @@ pn.ui.grid.DataView.prototype.updateGrid_ = function(e) {
 
 /** @override */
 pn.ui.grid.DataView.prototype.dispose = function() {
-  goog.dispose(this.model_);
+  if (this.destroy) this.destroy();
+
   goog.dispose(this.eh_);
+
+  delete this.interceptor_;
+  delete this.eh_;
 };
 
 
