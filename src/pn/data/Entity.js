@@ -16,10 +16,16 @@ pn.data.Entity = function(type, id) {
   pn.ass(goog.isString(type), 'Type [%s] is invalid', type);
   pn.ass(goog.isNumber(id), 'ID [%s] is invalid', id);
 
-  /** @type {string} */
+  /**
+   * @expose
+   * @type {string}
+   */
   this.type = type;
 
-  /** @type {number} */
+  /**
+   * @expose
+   * @type {number}
+   */
   this.id = id;
 };
 
