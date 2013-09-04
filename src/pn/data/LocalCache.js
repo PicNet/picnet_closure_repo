@@ -67,6 +67,13 @@ pn.data.LocalCache = function(dbver, opt_cachePrefix) {
 };
 goog.inherits(pn.data.LocalCache, goog.Disposable);
 
+/**
+ * Disables the local cache.
+ * @private
+ * @const
+ * @type {boolean}
+ */
+pn.data.LocalCache.OFF_ = true;
 
 /** Begins a transaction */
 pn.data.LocalCache.prototype.begin = function() {
@@ -283,7 +290,8 @@ pn.data.LocalCache.prototype.getLastUpdate = function() {
 /** @param {number} lastUpdate The last updated date in millis. */
 pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
   this.lastUpdate_ = lastUpdate;
-  window['localStorage'][this.STORE_PREFIX_ + 'last'] = lastUpdate.toString();
+  if (!pn.data.LocalCache.OFF_)
+    window['localStorage'][this.STORE_PREFIX_ + 'last'] = lastUpdate.toString();
 };
 
 
@@ -294,6 +302,8 @@ pn.data.LocalCache.prototype.setLastUpdate = function(lastUpdate) {
  *    invalidated.
  */
 pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
+  if (pn.data.LocalCache.OFF_) return;
+
   var exp = window['localStorage'][this.STORE_PREFIX_ + 'dbver'];
   window['localStorage'][this.STORE_PREFIX_ + 'dbver'] = dbver;
   if (!dbver || dbver === exp) { return; }
@@ -310,6 +320,8 @@ pn.data.LocalCache.prototype.checkDbVer_ = function(dbver) {
  * Clears the local cache.
  */
 pn.data.LocalCache.prototype.clear = function() {
+  if (pn.data.LocalCache.OFF_) return;
+
   this.lastUpdate_ = 0;
   for (var key in window['localStorage']) {
     if (goog.string.startsWith(key, this.STORE_PREFIX_)) {
@@ -321,6 +333,13 @@ pn.data.LocalCache.prototype.clear = function() {
 
 /** @private */
 pn.data.LocalCache.prototype.init_ = function() {
+  if (pn.data.LocalCache.OFF_) {
+    this.cachedQueries_ = {};
+    this.lastUpdate_ = 0;
+    this.cache_ = {};
+    return;
+  }
+
   var cachedtime = window['localStorage'][this.STORE_PREFIX_ + 'last'];
   this.lastUpdate_ = cachedtime ? parseInt(cachedtime, 10) : 0;
 
@@ -374,6 +393,8 @@ pn.data.LocalCache.prototype.init_ = function() {
  * @param {string} type The type (cache key) to flush to disk.
  */
 pn.data.LocalCache.prototype.flush_ = function(type) {
+  if (pn.data.LocalCache.OFF_) return;
+
   pn.assStr(type);
   pn.ass(type in this.cache_, type + ' not in cache');
 
