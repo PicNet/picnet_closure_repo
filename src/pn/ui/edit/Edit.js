@@ -174,7 +174,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
   var fb = pn.ui.edit.FieldBuilder;
   var fr = pn.ui.edit.FieldRenderers;
 
-  var fieldset = goog.dom.createDom('fieldset', 'fields'),
+  var fieldset = goog.dom.createDom('fieldset', 'fields commandfields'),
       focusSet = false;
 
   this.disposables_.push(fieldset);
