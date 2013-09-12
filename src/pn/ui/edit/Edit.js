@@ -162,7 +162,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
       if (useTemplate) {
         // Hide the parent only if using templates, otherwise it will try
         // to hide the parent fieldset which may include other fields.
-        goog.style.showElement(fctx.parentComponent, false);
+        goog.style.setElementShown(fctx.parentComponent, false);
       }
       return;
     }

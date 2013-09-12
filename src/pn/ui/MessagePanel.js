@@ -102,7 +102,7 @@ pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
   if (opt_clazz) newClass += opt_clazz;
   this.panel_.className = newClass;
   var visible = !!message;
-  goog.style.showElement(this.panel_, visible);
+  goog.style.setElementShown(this.panel_, visible);
   if (visible) {
     this.showMessageTimer_ = goog.Timer.callOnce(function() {
       this.showMessage_('');

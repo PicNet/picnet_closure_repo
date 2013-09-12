@@ -131,7 +131,7 @@ pn.ui.edit.Interceptor.prototype.showElement = function(id, visible) {
       'Could not find a component for field: ' + id);
 
   var el = this.getFieldContainer_(this.components[id], id);
-  goog.style.showElement(el, visible);
+  goog.style.setElementShown(el, visible);
 };
 
 
@@ -147,7 +147,7 @@ pn.ui.edit.Interceptor.prototype.showCommand = function(id, visible) {
   if (!cmd) return;
 
   var el = this.getFieldContainer_(cmd, id);
-  goog.style.showElement(el, visible);
+  goog.style.setElementShown(el, visible);
 };
 
 

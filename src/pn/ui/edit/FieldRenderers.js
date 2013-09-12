@@ -149,7 +149,7 @@ pn.ui.edit.FieldRenderers.hiddenTextField = function(field) {
     'type': 'hidden',
     'value': field.getEntityValue() || ''
   });
-  goog.style.showElement(field.parentComponent, false);
+  goog.style.setElementShown(field.parentComponent, false);
   goog.dom.appendChild(field.parentComponent, inp);
   return inp;
 };

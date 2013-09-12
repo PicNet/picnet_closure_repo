@@ -308,7 +308,7 @@ pn.ui.srch.SearchPanel.prototype.filterSelected_ = function() {
   this.addFieldToTheFiltersSearch_(fctx, option);
   goog.dispose(fctx);
 
-  goog.style.showElement(option, false);
+  goog.style.setElementShown(option, false);
   this.panelHeight_ = goog.style.getSize(this.searchPanel_).height;
 };
 
@@ -354,7 +354,7 @@ pn.ui.srch.SearchPanel.prototype.addFieldToTheFiltersSearch_ =
     delete this.filtersControls_[fieldId];
 
     goog.dom.removeNode(fieldParent);
-    goog.style.showElement(option, true);
+    goog.style.setElementShown(option, true);
 
     this.eh_.unlisten(input, goog.events.EventType.CHANGE, this.doSearch_);
 

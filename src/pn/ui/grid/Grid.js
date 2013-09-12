@@ -224,8 +224,8 @@ pn.ui.grid.Grid.prototype.decorateInternal = function(element) {
     goog.dom.appendChild(element, this.totalsLegend_);
   }
 
-  goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
-  goog.style.showElement(this.gridContainer_, true);
+  goog.style.setElementShown(this.noData_, this.dataView_.getLength() === 0);
+  goog.style.setElementShown(this.gridContainer_, true);
 };
 
 
@@ -351,7 +351,7 @@ pn.ui.grid.Grid.prototype.enterDocument = function() {
     this.slick_.updateRowCount();
     this.slick_.render();
     this.updateTotals_();
-    goog.style.showElement(this.noData_, this.dataView_.getLength() === 0);
+    goog.style.setElementShown(this.noData_, this.dataView_.getLength() === 0);
   }, this));
 
 

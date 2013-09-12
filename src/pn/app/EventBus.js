@@ -38,14 +38,16 @@ goog.inherits(pn.app.EventBus, goog.Disposable);
 
 /**
  * @param {string} topic Topic to publish to.
- * @param {...*} args Arguments that are applied to each subscription function.
+ * @param {...*} var_args Arguments that are applied to each
+ *    subscription function.
  */
-pn.app.EventBus.prototype.pub = function(topic, args) {
+pn.app.EventBus.prototype.pub = function(topic, var_args) {
   goog.asserts.assert(topic);
   goog.asserts.assert(this.pubsub_.getCount(topic) > 0, 'No subscribers found');
 
   var msg = topic;
-  if (args && typeof(args) === 'string' && args.length < 20) msg += ' ' + args;
+  if (var_args && typeof(var_args) === 'string' && var_args.length < 20)
+    msg += ' ' + var_args;
   this.log_.fine(msg);
 
   this.pubsub_.publish.apply(this.pubsub_, arguments);

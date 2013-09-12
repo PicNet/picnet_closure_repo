@@ -1,4 +1,4 @@
-;
+
 goog.require('goog.Disposable');
 goog.require('goog.debug.Logger');
 goog.require('goog.pubsub.PubSub');
