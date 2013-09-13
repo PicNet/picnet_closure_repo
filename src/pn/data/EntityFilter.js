@@ -133,7 +133,8 @@ pn.data.EntityFilter.prototype.processStep_ =
     function(property, parentType, source, isFinal) {
   this.dbg_('processStep_: property: ' + property + ' parentType: ' +
       parentType + ' source: ' + source + ' isFinal: ' + isFinal);
-
+  
+  if (!source) return false;
   var type,
       result;
   // Children Entities
