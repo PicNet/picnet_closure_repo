@@ -53,7 +53,7 @@ pn.ui.LoadingPnl.prototype.decrement = function() {
  * @param {boolean} visible Wether the loading panel should be shown or hidden.
  */
 pn.ui.LoadingPnl.prototype.showLoadingPanel_ = function(visible) {
-  var go = function() { goog.style.showElement(this.element_, visible); };
+  var go = function() { goog.style.setElementShown(this.element_, visible); };
 
   // Hiding the loading panel needs to be done async to allow any running
   // processes to complete.

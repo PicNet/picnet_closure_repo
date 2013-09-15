@@ -91,6 +91,6 @@ pn.ui.TabComposer.prototype.tabSelected_ = function() {
 
   goog.array.forEach(this.getTabIds(), function(id) {
     var dom = pn.dom.get('content-' + id);
-    goog.style.showElement(dom, id === selid);
+    goog.style.setElementShown(dom, id === selid);
   });
 };

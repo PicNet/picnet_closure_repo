@@ -1,4 +1,4 @@
-;
+
 goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.dom.classes');

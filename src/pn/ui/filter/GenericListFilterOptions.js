@@ -1,4 +1,4 @@
-;
+
 goog.require('pn.ui.filter.FilterState');
 
 goog.provide('pn.ui.filter.GenericListFilterOptions');

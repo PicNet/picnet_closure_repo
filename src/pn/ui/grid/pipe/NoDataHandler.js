@@ -29,6 +29,7 @@ goog.inherits(pn.ui.grid.pipe.NoDataHandler, pn.ui.grid.pipe.GridHandler);
 /** @override */
 pn.ui.grid.pipe.NoDataHandler.prototype.onCustomEvent = function(eventType) {
   if (eventType === 'row-count-changed') {
-    goog.style.showElement(this.noDataElement_, this.view.getLength() === 0);
+    var noelements = this.view.getLength() === 0;
+    goog.style.setElementShown(this.noDataElement_, noelements);
   }
 };

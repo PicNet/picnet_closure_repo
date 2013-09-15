@@ -155,7 +155,7 @@ pn.ui.DateRangePicker.prototype.enterDocument = function() {
   goog.dom.appendChild(el, this.popupConent_);
 
   this.popup_ = new goog.ui.Popup(this.popupConent_);
-  goog.style.showElement(this.popupConent_, false);
+  goog.style.setElementShown(this.popupConent_, false);
   this.registerDisposable(this.popup_);
 
   var fromContainer = goog.dom.createDom('div',
@@ -214,7 +214,7 @@ pn.ui.DateRangePicker.prototype.showHideFromToLabels_ = function() {
   var visible = this.showFromAndToLabels_;
   var divs = pn.toarr(goog.dom.getElementsByTagNameAndClass('div',
       goog.getCssName('picnet-daterangepicker-fromto-label')));
-  divs.pnforEach(function(d) { goog.style.showElement(d, visible); });
+  divs.pnforEach(function(d) { goog.style.setElementShown(d, visible); });
 };
 
 

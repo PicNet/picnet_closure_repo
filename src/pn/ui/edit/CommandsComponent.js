@@ -103,7 +103,7 @@ pn.ui.edit.CommandsComponent.prototype.createDom = function() {
 };
 
 
-/** @return {!Object.<goog.ui.Button>} The command buttons. */
+/** @return {!Object.<Element>} The command buttons. */
 pn.ui.edit.CommandsComponent.prototype.getCommandButtons = function() {
   return this.commandButtons_;
 };
