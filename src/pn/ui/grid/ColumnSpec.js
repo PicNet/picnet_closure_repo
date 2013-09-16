@@ -192,7 +192,7 @@ pn.ui.grid.ColumnSpec.prototype.toSlick = function() {
 
 /**
  * @typedef {(undefined|function(!pn.ui.grid.ColumnCtx,
- *    !pn.data.Entity):string)}
+ *    !pn.data.Entity, boolean=):string)}
  */
 pn.ui.grid.ColumnSpec.Renderer;
 
