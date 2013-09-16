@@ -91,7 +91,7 @@ pn.ui.grid.cmd.ExportCommand.getGridData = function(cctxs, headers, view) {
       var cctx = cctxs[cidx];
       var val = rowData[cctx.spec.dataProperty];
       var renderer = cctx.getColumnRenderer();
-      var txt = renderer ? renderer(cctx, rowData) : val;
+      var txt = renderer ? renderer(cctx, rowData, true) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);

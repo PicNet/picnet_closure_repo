@@ -385,7 +385,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
       spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec)),
       cfg = spec.getGridConfig(fctx.cache),
       g = new pn.ui.grid.Grid(cfg, data, fctx.cache);
-  goog.dispose(spec);
+  g.registerDisposable(spec);
   var container = goog.dom.createDom('div', {
     'class': 'child-grid-container',
     'style': 'width:' + $(parent).width() + 'px'
