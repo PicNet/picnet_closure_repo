@@ -1,3 +1,4 @@
+- Do not use @expose
 - It would be really nice if we could share the ApplicationSettings between 
   client and server given an attribute on the xml node.
 - Move Intercepto commands contractor arg to the Provider.js
