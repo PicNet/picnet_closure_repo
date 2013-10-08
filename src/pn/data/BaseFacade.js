@@ -128,31 +128,9 @@ pn.data.BaseFacade.prototype.createEntity = function(entity, callback) {
 
   this.log_.info('createEntity: ' + entity.type + '#' + entity.id);
 
-  entity = this.cache.createEntity(entity).clone();
-  var tmpid = entity.id;
-
-  var onsuccess = goog.bind(function(entity2) {
-    entity.id = entity2.id;
-    if (entity2.DateCreated) {
-      entity.DateCreated = entity2.DateCreated;
-    }
-    if (entity2.DateLastUpdated) {
-      entity.DateLastUpdated = entity2.DateLastUpdated;
-    }
-    pn.ass(entity.equals(entity2));
-
-    this.cache.updateEntity(entity, tmpid);
-    callback(entity);
-  }, this);
-
-  var onfail = goog.bind(function(error, opt_ex) {
-    this.cache.deleteEntity(entity.type, tmpid);
-    this.handleError(error, opt_ex);
-  }, this);
-
   this.server.createEntity(entity,
-      goog.bind(this.parseServerResponse, this, onsuccess),
-      onfail);
+      goog.bind(this.parseServerResponse, this, callback),
+      goog.bind(this.handleError, this));
 };
 
 
