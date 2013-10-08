@@ -21,6 +21,10 @@ Slick.Editors.Integer = function(args) {};
  */
 Slick.Grid = function(container,data,columns,options) {};
 Slick.Grid.prototype.debug = function() {};
+/**
+ * @param {number} idx The index of the row to scroll to.
+ */
+Slick.Grid.prototype.scrollRowToTop = function(idx) {};
 
 
 
