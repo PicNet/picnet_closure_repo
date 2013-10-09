@@ -53,7 +53,6 @@ pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
     'asc': this.cfg.defaultSortAscending
   };
   if (!data || !data['colid']) return;
-
   this.sortBy_(data['colid'], data['asc'], true);
 };
 
@@ -73,7 +72,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
   if (updateui) this.slick.setSortColumn(col, asc);
   this.sortImpl_(col, asc);
 
-  var data = {'coldid' : col, 'asc': asc };
+  var data = {'colid' : col, 'asc': asc };
   pn.storage.set(this.storeId_, pn.json.serialiseJson(data));
 };
 
