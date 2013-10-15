@@ -55,23 +55,20 @@ pn.ui.grid.editors.SelectEditor.prototype.init_ = function() {
 };
 
 
-/** @expose */
-pn.ui.grid.editors.SelectEditor.prototype.destroy = function() {
+/** */
+pn.ui.grid.editors.SelectEditor.prototype['destroy'] = function() {
   this.ctl_.remove();
 };
 
 
-/** @expose */
-pn.ui.grid.editors.SelectEditor.prototype.focus = function() {
+/** */
+pn.ui.grid.editors.SelectEditor.prototype['focus'] = function() {
   this.ctl_.focus();
 };
 
 
-/**
- * @expose
- * @param {!Object} item The item to load.
- */
-pn.ui.grid.editors.SelectEditor.prototype.loadValue = function(item) {
+/** @param {!Object} item The item to load. */
+pn.ui.grid.editors.SelectEditor.prototype['loadValue'] = function(item) {
   pn.assObj(item);
 
   this.defaultv_ = item[this.args_['column']['field']] || '';
@@ -79,11 +76,8 @@ pn.ui.grid.editors.SelectEditor.prototype.loadValue = function(item) {
 };
 
 
-/**
- * @expose
- * @return {string|boolean} The value of the current select control.
- */
-pn.ui.grid.editors.SelectEditor.prototype.serializeValue = function() {
+/** @return {string|boolean} The value of the current select control. */
+pn.ui.grid.editors.SelectEditor.prototype['serializeValue'] = function() {
   var val = /** @type {string} */ (this.ctl_.val());
   if (this.args_['column']['options']) {
     return val;
@@ -94,11 +88,11 @@ pn.ui.grid.editors.SelectEditor.prototype.serializeValue = function() {
 
 
 /**
- * @expose
  * @param {!Object} item The item to save the value to.
  * @param {string} state The value selected.
  */
-pn.ui.grid.editors.SelectEditor.prototype.applyValue = function(item, state) {
+pn.ui.grid.editors.SelectEditor.prototype['applyValue'] = 
+    function(item, state) {
   pn.assObj(item);
   pn.assStr(state);
 
@@ -106,21 +100,17 @@ pn.ui.grid.editors.SelectEditor.prototype.applyValue = function(item, state) {
 };
 
 
-/**
- * @expose
- * @return {boolean} Wether the value is dirty (has changed).
- */
-pn.ui.grid.editors.SelectEditor.prototype.isValueChanged = function() {
+/** @return {boolean} Wether the value is dirty (has changed). */
+pn.ui.grid.editors.SelectEditor.prototype['isValueChanged'] = function() {
   return (this.ctl_.val() != this.defaultv_);
 };
 
 
 /**
- * @expose
  * @return {{valid:boolean, msg:string?}} The validation information for
  *    this control.
  */
-pn.ui.grid.editors.SelectEditor.prototype.validate = function() {
+pn.ui.grid.editors.SelectEditor.prototype['validate'] = function() {
   return {
     'valid': true,
     'msg': null

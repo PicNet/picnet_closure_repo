@@ -142,10 +142,11 @@ pn.data.Server.prototype.getQueryUpdates =
   pn.ass(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   pn.assFun(success);
   pn.assFun(failure);
-
+  
   var json = {
     'lastUpdate': lastUpdate,
-    'queriesJson': pn.json.serialiseJson(queries)
+    'queriesJson': pn.json.serialiseJson(
+        queries.pnmap(function(q) { return q.toString(); }))
   };
   var uri = this.getFacadeControllerAction_('GetQueryUpdates');
   this.ajax_(uri, json, success, failure, true);
@@ -188,8 +189,10 @@ pn.data.Server.prototype.query =
   pn.assFun(failure);
 
   var json = {
-    'queriesJson': pn.json.serialiseJson(queries),
-    'queriesToUpdateJson': pn.json.serialiseJson(queriesToUpdate),
+    'queriesJson': pn.json.serialiseJson(
+        queries.pnmap(function(q) { return q.toString(); })),
+    'queriesToUpdateJson': pn.json.serialiseJson(
+        queriesToUpdate.pnmap(function(q) { return q.toString(); })),
     'lastUpdate': lastUpdate
   };
   var uri = this.getFacadeControllerAction_('Query');
