@@ -23,6 +23,7 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.postRender = function() {
   this.slick.setSelectionModel(new Slick.RowSelectionModel());
   var selectionHandler = goog.bind(this.handleSelection_, this);
   this.slick.onSelectedRowsChanged.subscribe(selectionHandler);
+  this.view.getDv().syncGridSelection(this.slick, true);
 };
 
 
@@ -33,13 +34,14 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.postRender = function() {
  */
 pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
     function(ev, evData) {
-  var target = window.event.target || window.event.srcElement;
+  var target = !window.event ? '' :
+      (window.event.target || window.event.srcElement);
 
   // Ignore if triggered by row re-ordering.
-  if (target.className.indexOf('reorder') >= 0) return;
+  if (target && target.className.indexOf('reorder') >= 0) return;
 
   var idx = evData['rows'][0];
-  var entity = this.view.getItem(idx);
+  var entity = this.view.getDv().getItem(idx);
   if (this.interceptor && !this.interceptor.canSelect(entity)) return;
 
   this.fireCustomEvent('select-row', entity);

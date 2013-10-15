@@ -1150,7 +1150,12 @@ Slick.Data = {};
  */
 Slick.Data.DataView = function(opt_options) {};
 Slick.Data.DataView.prototype.beginUpdate = function() {};
-
+/**
+ * @param {!Slick.Grid} grid
+ * @param {boolean} preserveHidden
+ */
+Slick.Data.DataView.prototype.syncGridSelection = 
+    function(grid, preserveHidden) {};
 
 /**
  * @param {*=} hints

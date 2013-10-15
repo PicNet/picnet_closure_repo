@@ -53,6 +53,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
     'asc': this.cfg.defaultSortAscending
   };
   if (!data || !data['colid']) return;
+
   this.sortBy_(data['colid'], data['asc'], true);
 };
 
@@ -98,5 +99,5 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortImpl_ = function(col, asc) {
           /** @type {string} */ (y));
     } else { return (x === y ? 0 : (x > y ? 1 : -1)); }
   };
-  this.view.sort(comparer, asc);
+  this.view.getDv().sort(comparer, asc);
 };

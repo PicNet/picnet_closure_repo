@@ -69,7 +69,7 @@ pn.ui.grid.pipe.TotalsHandler.prototype.onCustomEvent = function(eventType) {
 pn.ui.grid.pipe.TotalsHandler.prototype.updateTotals_ = function() {
   if (!this.totalColumns_ || !this.totalColumns_.length) return;
 
-  var items = this.view.getItems();
+  var items = this.view.getDv().getItems();
   var total = items.pnreduce(function(acc, item) {
     this.totalColumns_.pnforEach(function(cctx1) {
       if (acc[cctx1.id] === undefined) acc[cctx1.id] = 0;

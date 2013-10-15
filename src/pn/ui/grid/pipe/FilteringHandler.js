@@ -51,7 +51,7 @@ goog.inherits(pn.ui.grid.pipe.FilteringHandler, pn.ui.grid.pipe.GridHandler);
 
 /** @override */
 pn.ui.grid.pipe.FilteringHandler.prototype.postRender = function() {
-  this.view.setFilter(goog.bind(this.filterImpl_, this));
+  this.view.getDv().setFilter(goog.bind(this.filterImpl_, this));
   if (this.cfg.enableQuickFilters) { this.initQuickFilters_(); }
 };
 
@@ -125,8 +125,9 @@ pn.ui.grid.pipe.FilteringHandler.prototype.filter_ = function(filter) {
   pn.assFun(filter);
 
   this.log_.info('Filtering grid');
+
   this.currentFilter_ = filter;
-  this.view.refresh();
+  this.view.getDv().refresh();
   this.slick.render();
 };
 

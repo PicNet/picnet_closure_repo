@@ -76,15 +76,19 @@ pn.ui.grid.cmd.ExportCommand.prototype.enterDocument = function() {
  * @param {Array.<!pn.ui.grid.ColumnCtx>} cctxs The column contexts being
  *    displayed.
  * @param {Array.<string>} headers The headers of the data.
- * @param {Slick.Data.DataView} view The DataView with the data to export.
+ * @param {pn.ui.grid.DataView} view The DataView with the data to export.
  * @return {Array.<Array.<string>>} The data of the grid. This is used when
  *    exporting the grid contents.
  */
 pn.ui.grid.cmd.ExportCommand.getGridData = function(cctxs, headers, view) {
+  pn.assArr(cctxs);
+  pn.assArr(headers);
+  pn.assInst(view, pn.ui.grid.DataView);
+
   var gridData = [headers];
   var lencol = headers.length;
-  for (var row = 0, len = view.getLength(); row < len; row++) {
-    var rowData = view.getItem(row);
+  for (var row = 0, len = view.getDv().getLength(); row < len; row++) {
+    var rowData = view.getDv().getItem(row);
     var rowTxt = [];
 
     for (var cidx = 0; cidx < lencol; cidx++) {

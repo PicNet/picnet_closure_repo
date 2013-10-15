@@ -107,7 +107,7 @@ pn.ui.grid.Grid = function(cfg, list, cache) {
    * @private
    * @type {pn.ui.grid.DataView}
    */
-  this.dataView_ = null;
+  this.view_ = null;
 
   this.log_.info('Grid created with: ' + this.list_.length + ' items');
 };
@@ -203,13 +203,13 @@ pn.ui.grid.Grid.prototype.createSlick_ = function(parent) {
   }
   goog.style.setHeight(gc, height + 'px');
 
-  this.dataView_ = new pn.ui.grid.DataView(this.interceptor);
-  this.registerDisposable(this.dataView_);
+  this.view_ = new pn.ui.grid.DataView(this.interceptor);
+  this.registerDisposable(this.view_);
 
   var cfg = this.cfg_;
   var columns = cfg.getCctxs().
       pnmap(function(cctx) { return cctx.toSlick(); });
-  this.slick_ = new Slick.Grid(gc, this.dataView_, columns, cfg.toSlick());
+  this.slick_ = new Slick.Grid(gc, this.view_.getDv(), columns, cfg.toSlick());
 
   goog.Timer.callOnce(this.slick_.resizeCanvas, 5, this.slick_);
 };
@@ -236,14 +236,14 @@ pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
   // to support changing data sets i.e. 'pn.mvc.Collection'
   if (!this.slick_) return;
 
-  this.dataView_.onRowsChanged.subscribe(goog.bind(function(e, args) {
+  this.view_.getDv().onRowsChanged.subscribe(goog.bind(function(e, args) {
     this.slick_.invalidateRows(args.rows);
     this.slick_.render();
 
     this.fireCustomPipelineEvent('row-data-changed', args.rows);
   }, this));
 
-  this.dataView_.onRowCountChanged.subscribe(goog.bind(function() {
+  this.view_.getDv().onRowCountChanged.subscribe(goog.bind(function() {
     this.slick_.updateRowCount();
     this.slick_.render();
     this.fireCustomPipelineEvent('row-count-changed');
@@ -259,11 +259,12 @@ pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
 
 /** @private */
 pn.ui.grid.Grid.prototype.renderGrid_ = function() {
-  if (!this.dataView_) return;
+  if (!this.view_) return;
 
-  this.dataView_.beginUpdate();
-  this.dataView_.setItems(this.list_, this.cfg_.rowid);
-  this.dataView_.endUpdate();
+  var dv = this.view_.getDv();
+  dv.beginUpdate();
+  dv.setItems(this.list_, this.cfg_.rowid);
+  dv.endUpdate();
 };
 
 
@@ -293,7 +294,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
   handlers.pnforEach(this.registerDisposable, this);
 
   this.pipeline_.setMembers(
-      this.slick_, this.dataView_, this.cfg_, this.interceptor);
+      this.slick_, this.view_, this.cfg_, this.interceptor);
 };
 
 
@@ -303,17 +304,17 @@ pn.ui.grid.Grid.prototype.disposeInternal = function() {
 
   if (this.slick_) {
     $(window).unbind('resize', this.slick_.resizeCanvas);
-    this.dataView_.dispose();
+    this.view_.dispose();
     goog.object.forEach(this.slick_, function(f) {
       if (f instanceof Slick.Event) { f['unsubscribeAll'](); }
     });
-    goog.object.forEach(this.dataView_, function(f) {
+    goog.object.forEach(this.view_.getDv(), function(f) {
       if (f instanceof Slick.Event) { f['unsubscribeAll'](); }
     });
     this.slick_.getColumns().pnforEach(function(c) { delete c['formatter']; });
     this.slick_.destroy();
     delete this.slick_;
-    delete this.dataView_;
+    delete this.view_;
   }
 };
 
