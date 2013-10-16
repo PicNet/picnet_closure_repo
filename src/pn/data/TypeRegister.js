@@ -47,8 +47,9 @@ pn.data.TypeRegister.create = function(type, raw) {
   var ctor = pn.data.TypeRegister.fromName(type);
   var entity = new ctor(raw);
   for (var p in raw) {
+    // Hidden Fields
     if (goog.string.startsWith(p, '_')) {
-      entity[p] = raw[p];
+      entity.setExtValue(p, raw[p]);
     }
   }
   return entity;

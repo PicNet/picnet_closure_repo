@@ -9,6 +9,7 @@ goog.require('pn.log');
 
 /**
  * @constructor
+ * @struct
  * @param {string} type The entity type name.
  * @param {number} id The entity id.
  */
@@ -21,6 +22,42 @@ pn.data.Entity = function(type, id) {
 
   /** @type {number} */
   this.id = id;
+
+  /**
+   * @private
+   * @const
+   * @type {!Object.<*>}
+   */
+  this.extprops_ = {};
+};
+
+
+/**
+ * @param {string} prop The property name
+ * @return {*} The value of the specified extended property.
+ */
+pn.data.Entity.prototype.getExtValue = function(prop) {
+  return this.extprops_[prop];
+};
+
+
+/**
+ * @param {string} prop The property name
+ * @param {*} val The value to set on the extended property.
+ * @return {*} The value of the specified extended property.
+ */
+pn.data.Entity.prototype.setExtValue = function(prop, val) {
+  return this.extprops_[prop] = val;
+};
+
+
+/**
+ * @param {string} prop The property name
+ * @return {boolean} Wether the specified prop exists in the extended
+ *    properties map.
+ */
+pn.data.Entity.prototype.hasExtProp = function(prop) {
+  return (prop in this.extprops_);
 };
 
 
@@ -34,11 +71,13 @@ pn.data.Entity.prototype.equals = function(other) {
   return goog.object.getKeys(this).pnfindIndex(function(key) {
     if (key.indexOf('_') >= 0) return false;
 
-    var v1 = this[key];
-    var v2 = other[key];
+    var v1 = this.getValue(key);
+    var v2 = other.getValue(key);
     var eq;
     if (v1 instanceof goog.date.Date || v1 instanceof goog.date.DateTime) {
-      eq = goog.date.Date.prototype.equals.call(v1, v2); // Ignores hour/mins
+      eq = goog.date.Date.prototype.equals.call(
+          /** @type {!goog.date.Date} */ (v1),
+          /** @type {!goog.date.Date} */ (v2)); // Ignores hour/mins
     }
     else {
       eq = (!goog.isDefAndNotNull(v1) && !goog.isDefAndNotNull(v2)) ||
@@ -81,6 +120,37 @@ pn.data.EntityCtor;
 pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
 
 
+/**
+ * @param {string} prop The name of the property to set.
+ * @return {*} The value of the specified property.
+ */
+pn.data.Entity.prototype.getValue = goog.abstractMethod;
+
+
+/**
+ * @param {string} prop The name of the property to check.
+ * @return {boolean} Wether the specified property exists in this entity.
+ */
+pn.data.Entity.prototype.hasProp = goog.abstractMethod;
+
+
+/**
+ * @param {string} prop The name of the property to set.
+ * @param {*} val The value to set the given property to.
+ * @return {*} The new value of the specified property.
+ */
+pn.data.Entity.prototype.setValue = goog.abstractMethod;
+
+/**
+ * @param {string} prop The name of the property to set.
+ * @param {*} val The value to set the given property to.
+ * @return {*} The new value of the specified property.
+ */
+pn.data.Entity.prototype.setValueOrExt = function(prop, val) {
+  if (this.hasProp(prop)) return this.setValue(prop, val);
+  else return this.setExtValue(prop, val);
+};
+
 /** @return {!Array.<number|string>} A compressed version of this entity. */
 pn.data.Entity.prototype.toCompressed = function() {
   var arr = [];
@@ -108,6 +178,6 @@ pn.data.Entity.prototype.fromCompressed = function(arr) {
     if (v && goog.isString(v) && goog.string.startsWith(v, '||DATE||')) {
       v = pn.date.fromMillis(parseInt(v.substring(8), 10));
     }
-    this[key] = v;
+    this.setValue(key, v);
   }, this);
 };

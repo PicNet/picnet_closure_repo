@@ -88,7 +88,10 @@ pn.ui.hist.HistoryViewer.prototype.enterDocument = function() {
 pn.ui.hist.HistoryViewer.prototype.showAuditEntry_ = function(e) {
   var change = /** @type {pn.data.Entity} */ (e.selected);
 
-  var data = { 'id1': change.id, 'id2': change['PrevChangeLogEntryPK'] },
+  var data = {
+    'id1': change.id,
+    'id2': change.getValue('PrevChangeLogEntryPK')
+  },
       callback = goog.bind(this.showDiffBetween_, this),
       uri = pn.app.ctx.cfg.touri('History', 'GetHistoryDescriptions');
   pn.app.ctx.data.ajax(uri, data, callback);
@@ -171,7 +174,7 @@ pn.ui.hist.HistoryViewer.prototype.getRenderedText_ = function(fctx, entity) {
   // When storing audit logs we store the name of the parent in the ParentID
   // field not the ID so we cannot use the default renderer.
   if (pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty)) {
-    return entity[fctx.id];
+    return entity.getValue(fctx.id).toString();
   }
   var spec = fctx.spec;
   spec.readonly = true;
@@ -181,7 +184,7 @@ pn.ui.hist.HistoryViewer.prototype.getRenderedText_ = function(fctx, entity) {
     rend(fctx, div, entity);
     return goog.string.trim(div.innerText);
   } else {
-    return entity[fctx.id];
+    return entity.getValue(fctx.id).toString();
   }
 };
 

@@ -124,21 +124,15 @@ pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
 pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
   pn.assInst(entity, pn.data.Entity);
 
-  var prop = this.spec.dataProperty;
-  var v = entity[prop];
-  if (goog.isDef(v)) return v;
-  if (pn.data.EntityUtils.isNew(entity)) {
-    if (goog.isDefAndNotNull(this.spec.defaultValue)) {
-      return this.getDefaultFieldValue_();
-    }
-    return v;
+  var v = entity.hasProp(this.spec.dataProperty) ?
+      entity.getValue(this.spec.dataProperty) :
+      entity.getExtValue(this.spec.dataProperty);
+
+  if (!goog.isDef(v) && pn.data.EntityUtils.isNew(entity) &&
+      goog.isDefAndNotNull(this.spec.defaultValue)) {
+    return this.getDefaultFieldValue_();
   }
 
-  if (goog.string.endsWith(prop, 'Entities') && goog.isArray(v)) {
-    // Controls always return sorted IDs so here we ensure we never throw a
-    // dirty error if for somereason the original value is not sorted.
-    v.sort();
-  }
   return v;
 };
 
@@ -244,7 +238,7 @@ pn.ui.edit.FieldCtx.prototype.getDefaultFieldValue_ = function() {
         this.entitySpec.type, this.spec.dataProperty);
     var list = this.cache.get(type);
     val = list.pnfind(function(e) {
-      return e[type + 'Name'] === this.spec.defaultValue;
+      return e.getValue(type + 'Name') === this.spec.defaultValue;
     }, this).id;
   } else if (this.schema.type === 'Enumeration') {
     for (var name in this.schema.entityType) {

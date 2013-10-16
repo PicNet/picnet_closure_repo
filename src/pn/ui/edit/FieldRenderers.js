@@ -29,7 +29,7 @@ pn.ui.edit.FieldRenderers.dateRenderer = function(fctx, parent, entity) {
   idp.setDate(dt);
 
   // Fixes any dirty issues with date renderers
-  entity[fctx.id] = idp.getDate();
+  entity.setValueOrExt(fctx.id, idp.getDate());
   return idp;
 };
 
@@ -186,7 +186,9 @@ pn.ui.edit.FieldRenderers.textFieldRenderer = function(fctx, parent, entity) {
 pn.ui.edit.FieldRenderers.textAreaRenderer = function(fctx, parent, entity) {
   var value = fctx.spec.additionalProperties.clearOnLoad ?
       '' : (fctx.getEntityValue(entity) || '');
-  if (fctx.spec.additionalProperties.clearOnLoad) { entity[fctx.id] = ''; }
+  if (fctx.spec.additionalProperties.clearOnLoad) {
+    entity.setValueOrExt(fctx.id, '');
+  }
   var textarea = goog.dom.createDom('textarea', {
     'rows': '5',
     'cols': '34' ,
@@ -340,7 +342,8 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   if (!list) throw new Error('Expected access to "' + entityType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   list = list.pnfilter(function(e) {
-    return e.id === current || !goog.isDef(e.IsActive) || !!e.IsActive;
+    return e.id === current ||
+        !e.hasProp('IsActive') || !!e.getValue('IsActive');
   });
   if (opt_filter) list = opt_filter(entity, list);
 
@@ -381,7 +384,7 @@ pn.ui.edit.FieldRenderers.childEntitiesTableRenderer =
   if (!list) throw new Error('Expected access to "' + fctx.spec.tableType +
       '" but could not be found in cache. Field: ' + goog.debug.expose(fctx));
   var data = !parentId ? [] : list.pnfilter(
-      function(c) { return c[parentField] === parentId; }),
+      function(c) { return c.getValue(parentField) === parentId; }),
       spec = pn.web.ctx.specs.get(/** @type {string} */ (fctx.spec.tableSpec)),
       cfg = spec.getGridConfig(fctx.cache),
       g = new pn.ui.grid.Grid(cfg, data, fctx.cache);

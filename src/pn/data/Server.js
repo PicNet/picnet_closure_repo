@@ -142,7 +142,7 @@ pn.data.Server.prototype.getQueryUpdates =
   pn.ass(goog.isNumber(lastUpdate) && lastUpdate >= 0);
   pn.assFun(success);
   pn.assFun(failure);
-  
+
   var json = {
     'lastUpdate': lastUpdate,
     'queriesJson': pn.json.serialiseJson(

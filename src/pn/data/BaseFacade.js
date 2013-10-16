@@ -154,8 +154,8 @@ pn.data.BaseFacade.prototype.updateEntity = function(entity, callback) {
   this.cache.updateEntity(entity);
 
   var onsuccess = function(entity2) {
-    if (entity2.DateLastUpdated) {
-      entity.DateLastUpdated = entity2.DateLastUpdated;
+    if (entity2.hasProp('DateLastUpdated')) {
+      entity.setValue('DateLastUpdated', entity2.getValue('DateLastUpdated'));
     }
     pn.ass(entity.equals(entity2));
     callback(entity2);

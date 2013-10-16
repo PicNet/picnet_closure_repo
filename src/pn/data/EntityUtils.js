@@ -36,12 +36,12 @@ pn.data.EntityUtils.getEntityDisplayValue =
   pn.ass(target);
 
   var cacheKey = path + '_cache';
-  if (goog.isDef(target[cacheKey])) { return target[cacheKey]; }
+  if (target.hasExtProp(cacheKey)) { return target.getExtValue(cacheKey); }
 
   var entities = pn.data.EntityUtils.
       getTargetEntity(cache, path, type, target, opt_parentField);
   var value = entities.length > 1 ? entities.join(', ') : entities[0];
-  return (target[cacheKey] = value);
+  return target.setExtValue(cacheKey, value);
 };
 
 
@@ -82,11 +82,14 @@ pn.data.EntityUtils.getTargetEntity =
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = cache.get(type);
     if (opt_parentField) {
+      var parentField = /** @type {string} */ (opt_parentField);
       ids = pn.data.EntityUtils.getFromEntities(target, 'ID');
       // TODO: This filterBy is broken, this is an invalid evaluator for
       // binarySelect (as the entities are not ordered by this field)
       next = pn.data.EntityUtils.filterBy(cache.get(type), ids,
-          function(id, e) { return id - e[opt_parentField]; });
+          function(id, e) {
+            return id - /** @type {number} */ (e.getValue(parentField));
+          });
       opt_parentField = ''; // Only use once
     }
     if (!next) { throw new Error('Could not find: ' + type + ' in cache'); }
@@ -131,9 +134,9 @@ pn.data.EntityUtils.filterBy = function(entities, ids, opt_evaluator) {
  */
 pn.data.EntityUtils.getFromEntities = function(entities, property) {
   if (goog.isArray(entities)) {
-    return entities.pnmap(function(e) { return e[property]; });
+    return entities.pnmap(function(e) { return e.getValue(property); });
   } else {
-    return [entities[property]];
+    return [entities.getValue(property)];
   }
 };
 
@@ -222,9 +225,9 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
   var orderp = type + 'Order';
   var namep = type + 'Name';
 
-  var ordert = goog.isDef(template[orderp]) ?
+  var ordert = template.hasProp(orderp) ?
       pn.data.TypeRegister.getFieldSchema(type, orderp).type : null;
-  var namet = goog.isDef(template[namep]) ?
+  var namet = template.hasProp(namep) ?
       pn.data.TypeRegister.getFieldSchema(type, namep).type : null;
 
   if (ordert === 'number') { list.pnsortObjectsByKey(orderp); }

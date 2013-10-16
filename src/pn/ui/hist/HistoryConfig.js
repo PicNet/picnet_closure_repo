@@ -59,10 +59,11 @@ pn.ui.hist.HistoryConfig.prototype.getHeading = function(e) {
   pn.assInst(e, pn.data.Entity);
 
   if (!e) { return ''; }
-  if (e[this.spec.type + 'Name']) {
-    return 'History - ' + e[this.spec.type + 'Name'];
+  var nameprop = this.spec.type + 'Name';
+  if (e.hasProp(nameprop)) {
+    return 'History - ' + e.getValue(nameprop);
   }
-  return 'History - ID: ' + e['ID'];
+  return 'History - ID: ' + e.id;
 };
 
 

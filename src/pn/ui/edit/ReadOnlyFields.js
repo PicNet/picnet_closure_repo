@@ -142,7 +142,7 @@ pn.ui.edit.ReadOnlyFields.entityParentListField =
       fctx.cache, path, fctx.spec.entitySpec.type, entity) || '';
 
   var div = goog.dom.createDom('div', 'field', val.toString());
-  div.value = entity[path.split('.')[0]];
+  div.value = entity.getValue(path.split('.')[0]);
   goog.dom.appendChild(parent, div);
   return div;
 };

@@ -100,7 +100,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
   var entityType = this.spec_.type;
   var res = fieldId.indexOf('.') > 0 ? pn.data.EntityUtils.getTargetEntity(
-      this.cache_, fieldId, entityType, entity)[0] : entity[fieldId];
+      this.cache_, fieldId, entityType, entity)[0] : entity.getValue(fieldId);
   if (!res) return false;
   res = res.id ? res.id : res;
   return this.matchesFilter_(res, filterValue, fieldId);

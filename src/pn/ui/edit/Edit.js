@@ -168,7 +168,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
     // are using a complex renderer, lets set the initial value on the
     // current entity so we can use this later for dirty comparison.
     if (goog.string.startsWith(fctx.id, '_') && inp.getValue) {
-      this.entity[fctx.id] = inp.getValue();
+      this.entity.setValueOrExt(fctx.id, inp.getValue());      
     }
     this.controls_[fctx.id] = inp;
   }, this);
