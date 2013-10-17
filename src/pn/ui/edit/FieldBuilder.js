@@ -266,7 +266,7 @@ pn.ui.edit.FieldBuilder.createGrid = function(spec, readonly, data, cache) {
       goog.dom.getElement('view-container')).width - 25;
   var cfg = spec.getGridConfig(width, 'inner');
   cfg.readonly = readonly;
-  var cols = spec.getGridColumns();
+  var cols = spec.getGridColumns(data, cache);
   var commands = spec.getGridCommands();
   var grid = new pn.ui.grid.Grid(data, cols, commands, cfg, cache);
   return grid;
