@@ -428,14 +428,14 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     fctx.cache.get(adminEntity).pnforEach(function(ae) {
       var text = opt_displayStrategy ?
           opt_displayStrategy(ae) :
-          ae[adminEntity + 'Name'];
-      var opt = goog.dom.createDom('option', {
-        'text': text,
-        'value': ae.id,
-        'selected': adminIDs.pnfindIndex(function(adminID) {
-          return ae.id === adminID;
-        }) >= 0
-      });
+          ae.getValue(adminEntity + 'Name'),
+          opt = goog.dom.createDom('option', {
+            'text': text,
+            'value': ae.id,
+            'selected': adminIDs.pnfindIndex(function(adminID) {
+              return ae.id === adminID;
+            }) >= 0
+          });
       select.options.add(opt);
     });
     goog.dom.appendChild(parent, select);

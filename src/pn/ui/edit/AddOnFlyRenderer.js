@@ -77,7 +77,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refresh = function(opt_selectedId) {
     goog.dom.appendChild(this.select_, goog.dom.createDom('option', {
       'value': e.id,
       'selected': e.id === selected
-    }, e[this.spec_.type + 'Name']));
+    }, e.getValue(this.spec_.type + 'Name')));
   }, this);
 };
 

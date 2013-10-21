@@ -124,9 +124,7 @@ pn.ui.edit.FieldCtx.prototype.showElement = function(control, visible) {
 pn.ui.edit.FieldCtx.prototype.getEntityValue = function(entity) {
   pn.assInst(entity, pn.data.Entity);
 
-  var v = entity.hasProp(this.spec.dataProperty) ?
-      entity.getValue(this.spec.dataProperty) :
-      entity.getExtValue(this.spec.dataProperty);
+  var v = entity.getValueOrExt(this.spec.dataProperty);
 
   if (!goog.isDef(v) && pn.data.EntityUtils.isNew(entity) &&
       goog.isDefAndNotNull(this.spec.defaultValue)) {

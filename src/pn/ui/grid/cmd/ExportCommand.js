@@ -88,10 +88,10 @@ pn.ui.grid.cmd.ExportCommand.getGridData = function(cctxs, headers, view) {
     var rowTxt = [];
 
     for (var cidx = 0; cidx < lencol; cidx++) {
-      var cctx = cctxs[cidx];
-      var val = rowData.getValue(cctx.spec.dataProperty);
-      var renderer = cctx.getColumnRenderer();
-      var txt = renderer ? renderer(cctx, rowData, true) : val;
+      var cctx = cctxs[cidx],
+          val = rowData.getValueOrExt(cctx.spec.dataProperty),
+          renderer = cctx.getColumnRenderer(),
+          txt = renderer ? renderer(cctx, rowData, true) : val;
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);

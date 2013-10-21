@@ -81,7 +81,7 @@ pn.ui.grid.ColumnCtx.prototype.getCompareableValue = function(entity) {
 pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
   pn.assInst(entity, pn.data.Entity);
 
-  return entity.getValue(this.spec.dataProperty);
+  return entity.getValueOrExt(this.spec.dataProperty);
 };
 
 

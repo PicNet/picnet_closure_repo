@@ -151,8 +151,8 @@ pn.ui.hist.HistoryViewer.prototype.getEntityDiff_ = function(left, right) {
   var diff = {};
   var addDiff = goog.bind(function(fctx) {
     if (goog.string.startsWith(fctx.id, '_')) return;
-    var l = this.getRenderedText_(fctx, left);
-    var r = this.getRenderedText_(fctx, right);
+    var l = this.getRenderedText_(fctx, left),
+        r = this.getRenderedText_(fctx, right);
     diff[fctx.id] = [l, r];
     this.fieldSpecs_[fctx.id] = fctx;
   }, this);

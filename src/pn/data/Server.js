@@ -224,7 +224,7 @@ pn.data.Server.prototype.getEntityJson_ = function(entity) {
 
   return {
     'type': entity.type,
-    'entityJson': pn.json.serialiseJson(entity)
+    'entityJson': pn.json.serialiseJson(entity.toJsonObject())
   };
 };
 

@@ -2,6 +2,7 @@
 goog.provide('pn.data.Entity');
 goog.provide('pn.data.EntityCtor');
 
+goog.require('pn');
 goog.require('pn.data.FieldSchema');
 goog.require('pn.log');
 
@@ -14,8 +15,8 @@ goog.require('pn.log');
  * @param {number} id The entity id.
  */
 pn.data.Entity = function(type, id) {
-  pn.ass(goog.isString(type), 'Type [%s] is invalid', type);
-  pn.ass(goog.isNumber(id), 'ID [%s] is invalid', id);
+  pn.assStr(type);
+  pn.assNum(id);
 
   /** @type {string} */
   this.type = type;
@@ -68,7 +69,7 @@ pn.data.Entity.prototype.hasExtProp = function(prop) {
 pn.data.Entity.prototype.equals = function(other) {
   if (!(other instanceof pn.data.Entity)) return false;
 
-  return goog.object.getKeys(this).pnfindIndex(function(key) {
+  return this.getAllProps().pnfindIndex(function(key) {
     if (key.indexOf('_') >= 0) return false;
 
     var v1 = this.getValue(key);
@@ -127,11 +128,8 @@ pn.data.Entity.prototype.getFieldSchema = goog.abstractMethod;
 pn.data.Entity.prototype.getValue = goog.abstractMethod;
 
 
-/**
- * @param {string} prop The name of the property to check.
- * @return {boolean} Wether the specified property exists in this entity.
- */
-pn.data.Entity.prototype.hasProp = goog.abstractMethod;
+/** @return {!Array.<string>} All entity properties. */
+pn.data.Entity.prototype.getProps = goog.abstractMethod;
 
 
 /**
@@ -140,6 +138,26 @@ pn.data.Entity.prototype.hasProp = goog.abstractMethod;
  * @return {*} The new value of the specified property.
  */
 pn.data.Entity.prototype.setValue = goog.abstractMethod;
+
+
+/**
+ * @param {string} prop The name of the property to check.
+ * @return {boolean} Wether the specified property exists in this entity.
+ */
+pn.data.Entity.prototype.hasProp = function(prop) {
+  return this.getProps().pncontains(prop);
+};
+
+
+/**
+ * @return {!Array.<string>} All entity properties
+ * including extended properties.
+ */
+pn.data.Entity.prototype.getAllProps = function() {
+  return this.getProps().
+      pnconcat(goog.object.getKeys(this.extprops_));
+};
+
 
 /**
  * @param {string} prop The name of the property to set.
@@ -150,6 +168,31 @@ pn.data.Entity.prototype.setValueOrExt = function(prop, val) {
   if (this.hasProp(prop)) return this.setValue(prop, val);
   else return this.setExtValue(prop, val);
 };
+
+
+/**
+ * @param {string} prop The name of the property to get.
+ * @return {*} The value of the specified property.
+ */
+pn.data.Entity.prototype.getValueOrExt = function(prop) {
+  if (this.hasProp(prop)) return this.getValue(prop);
+  else return this.getExtValue(prop);
+};
+
+
+/**
+ * @return {!Object} An object that can be stringified and understood
+ *    by the server (No compiled property names).
+ */
+pn.data.Entity.prototype.toJsonObject = function() {
+  var ps = this.getProps();
+  var ps2 = goog.object.getKeys(this.extprops_);
+  var obj = {};
+  ps.pnforEach(function(p) { obj[p] = this.getValue(p); }, this);
+  ps2.pnforEach(function(p) { obj[p] = this.getExtValue(p); }, this);
+  return obj;
+};
+
 
 /** @return {!Array.<number|string>} A compressed version of this entity. */
 pn.data.Entity.prototype.toCompressed = function() {

@@ -233,7 +233,7 @@ pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
 
   if (!this.acceptDirty()) return;
 
-  var json = pn.json.serialiseJson(entity),
+  var json = pn.json.serialiseJson(entity.toJsonObject()),
       data = { 'type': entity.type, 'entityJson': json },
       uri = this.cfg.touri('CloneEntity', 'CloneEntity');
 

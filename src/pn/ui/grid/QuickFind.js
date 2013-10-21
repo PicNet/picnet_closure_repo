@@ -113,9 +113,9 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   var noMatchIdx = this.cctxs_.pnfindIndex(function(cctx) {
     var isFiltering = cctx.id in this.filters_;
     if (!isFiltering && !this.quickfind_) { return false; }
-    var val = cctx.getEntityValue(entity);
-    var fv = this.filters_[cctx.id];
-    var renderer = cctx.getColumnRenderer();
+    var val = cctx.getEntityValue(entity),
+        fv = this.filters_[cctx.id],
+        renderer = cctx.getColumnRenderer();
     if (renderer === pn.ui.grid.ColumnRenderers.parentColumnRenderer) {
       val = val ? (pn.data.EntityUtils.getEntityDisplayValue(
           this.cache_, cctx.spec.displayPath,
