@@ -47,6 +47,7 @@ function loadScriptUri(uri) {
   var script = document.createElement('script');
   script.type = 'text/javascript';
   script.src = uri;
+  script.charset="utf-8"
   document.body.appendChild(script);  
 };
 

@@ -1185,7 +1185,7 @@ Slick.Data.DataView.prototype.getItems = function() {};
 
 
 /**
- * @param {!Array.<!pn.data.Entity>} items The items to set in this data view.
+ * @param {!Array.<!Object>} items The items to set in this data view.
  * @param {string} objectIdProperty The ID property name .
  */
 Slick.Data.DataView.prototype.setItems = function(items, objectIdProperty) {};
@@ -1309,7 +1309,7 @@ Slick.Data.DataView.prototype.getLength = function() {};
 
 /**
  * @param {*} i
- * @return {!pn.data.Entity}
+ * @return {!Object}
  */
 Slick.Data.DataView.prototype.getItem = function(i) {};
 
