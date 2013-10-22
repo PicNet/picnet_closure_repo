@@ -71,6 +71,12 @@ pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
 };
 
 
+/** @return {goog.ui.Component|Node} The currently displayed view. */
+pn.ui.ViewMgr.prototype.currentView = function() {
+  return this.currentView_;
+};
+
+
 /** @return {boolean} Whether the screen is dirty. */
 pn.ui.ViewMgr.prototype.isDirty = function() {
   return this.currentView_ && this.currentView_.isDirty &&

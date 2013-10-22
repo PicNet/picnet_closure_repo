@@ -53,8 +53,12 @@ pn.ui.grid.DataView.prototype.getDv = function() { return this.dv_; };
 pn.ui.grid.DataView.prototype.setItems = function(items, idprop) {
   pn.assArr(items);
 
-  this.dv_.setItems(items.pnclone(), idprop);
-
+  this.dv_.beginUpdate();
+  this.dv_.setItems(items.pnmap(function(e) {
+    e[idprop] = e.getValue(idprop);
+    return e;
+  }), idprop);
+  this.dv_.endUpdate();
   if (this.model_) {
     this.eh_.unlisten(this.model_, pn.mvc.EventType.CHANGE, this.updateGrid_);
     goog.dispose(this.model_);

@@ -88,14 +88,18 @@ pn.ui.grid.cmd.ExportCommand.getGridData = function(cctxs, headers, view) {
   var gridData = [headers];
   var lencol = headers.length;
   for (var row = 0, len = view.getDv().getLength(); row < len; row++) {
-    var rowData = view.getDv().getItem(row);
-    var rowTxt = [];
+    var entity = /** @type {!pn.data.Entity} */ (view.getDv().getItem(row)),
+        rowTxt = [];
 
     for (var cidx = 0; cidx < lencol; cidx++) {
       var cctx = cctxs[cidx],
-          val = rowData.getValueOrExt(cctx.spec.dataProperty),
+          val = entity.getValueOrExt(cctx.spec.dataProperty),
           renderer = cctx.getColumnRenderer(),
-          txt = renderer ? renderer(cctx, rowData, true) : val;
+          txt = renderer ? renderer(cctx, entity, true) : val;
+      txt = goog.isDefAndNotNull(txt) ? txt.toString() : '';
+      if (txt.indexOf('<') >= 0) {
+        txt = goog.dom.getTextContent(pn.dom.htmlToEl(txt));
+      }
       rowTxt.push(txt);
     }
     gridData.push(rowTxt);

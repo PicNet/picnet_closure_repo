@@ -48,6 +48,11 @@ pn.ui.grid.ColumnCtx.prototype.toSlick = function() {
   if (rnd) {
     cfg['formatter'] = goog.bind(function(row, cell, value, col, item) 
         { return rnd(this, item); }, this);
+  } else {
+    cfg['formatter'] = goog.bind(function(row, cell, value, col, item) {
+      var entity = /** @type {!pn.data.Entity} */ (item);
+      return this.getEntityValue(entity);
+    }, this);
   }
   return cfg;
 };

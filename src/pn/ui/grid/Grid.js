@@ -261,10 +261,7 @@ pn.ui.grid.Grid.prototype.attachGridEvents_ = function() {
 pn.ui.grid.Grid.prototype.renderGrid_ = function() {
   if (!this.view_) return;
 
-  var dv = this.view_.getDv();
-  dv.beginUpdate();
-  dv.setItems(this.list_, this.cfg_.rowid);
-  dv.endUpdate();
+  this.view_.setItems(this.list_, this.cfg_.rowid);
 };
 
 
