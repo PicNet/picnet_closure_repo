@@ -38,7 +38,8 @@ pn.ui.hist.HistoryConfig = function(spec, cache, changes) {
    */
   this.changes = changes;
 
-  var cfg = spec.getEditConfig(new pn.data.Entity(spec.type, 0), cache);
+  var entity = pn.data.TypeRegister.create(spec.type, {'ID': 0});
+  var cfg = spec.getEditConfig(entity, cache);
   /**
    * @const
    * @type {!Array.<pn.ui.edit.FieldCtx>}
