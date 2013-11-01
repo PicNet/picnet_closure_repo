@@ -99,6 +99,10 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
   var stepResult = false;
   var thisParent = this;
+
+  // use filter function if defined
+  if (spec.filterFunction) { return spec.filterFunction(this.cache_, entity, filterValue); };
+
   var filters = spec.filterColumn.split('&&');
   goog.array.forEach(filters, function (f) {
 
@@ -121,8 +125,6 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
     stepResult = stepResult || thisParent.matchesFilter_(result, filterValue);
   });
-
-
   return stepResult;
 };
 
@@ -142,7 +144,7 @@ pn.data.EntityFilter.prototype.processStep_ =
   this.dbg_('processStep_: property: ' + property + ' parentType: ' +
       parentType + ' source: ' + source + ' isFinal: ' + isFinal);
   
-  if (!source) return false;
+  if (!source) { return false; }
   var type,
       result;
   // Children Entities
@@ -150,7 +152,6 @@ pn.data.EntityFilter.prototype.processStep_ =
     type = this.getStepType_(property);
     if (type && !this.cache_[type])
       throw new Error('Could not find ' + type + ' in the cache.');
-
     result = goog.array.filter(this.cache_[type], function(e) {
       if (goog.isArray(source)) {
         var idx = goog.array.findIndex(source,
@@ -196,7 +197,6 @@ pn.data.EntityFilter.prototype.processStep_ =
     } else { result = getVal(source); }
   }
   if (!goog.isArray(result)) { return result; }
-
   return goog.array.filter(result, function(r) {
     return goog.isDefAndNotNull(r);
   });
