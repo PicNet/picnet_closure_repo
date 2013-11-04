@@ -77,7 +77,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  */
 
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
-    function (filterValue, spec, entity) {
+    function(filterValue, spec, entity) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (spec.searchFilter) {
@@ -106,7 +106,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   var thisParent = this;
 
   var filters = spec.filterColumn.split('&&');
-  goog.array.forEach(filters, function (f) {
+  goog.array.forEach(filters, function(f) {
 
     var steps = f.split('.'),
         parentType = thisParent.type_,
@@ -141,11 +141,11 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
  * @return {Object|Array} The next level of entity value(s) from this step.
  */
 pn.data.EntityFilter.prototype.processStep_ =
-    function (property, parentType, source, isFinal) {
+    function(property, parentType, source, isFinal) {
 
   this.dbg_('processStep_: property: ' + property + ' parentType: ' +
       parentType + ' source: ' + source + ' isFinal: ' + isFinal);
-  
+
   if (!source) { return false; }
   var type,
       result;
@@ -194,7 +194,7 @@ pn.data.EntityFilter.prototype.processStep_ =
 
     if (goog.isArray(source)) {
 
-        result = goog.array.map(/** @type {Array} */(source), getVal, this);
+      result = goog.array.map(/** @type {Array} */(source), getVal, this);
 
     } else { result = getVal(source); }
   }
@@ -228,7 +228,7 @@ pn.data.EntityFilter.prototype.getStepType_ = function(property) {
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.matchesFilter_ =
-    function (entityValue, filterValue) {
+    function(entityValue, filterValue) {
 
   if (!goog.isDefAndNotNull(entityValue)) {
     this.dbg_('matchesFilter_ null entity value');
@@ -240,23 +240,23 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
     this.dbg_('matchesFilter_.matcher: ev: ' +
         ev + ' fv: ' + fv + ' exact: ' + exact);
     if (ev['ID']) {
-        return ev['ID'].toString() === fv
-    };
+      return ev['ID'].toString() === fv;
+    }
     var evaled = ev.toString().toLowerCase();
 
     if (exact) {
-        return evaled === fv
+      return evaled === fv;
     }
     else {
 
-        return evaled.indexOf(fv) >= 0
-    };
+      return evaled.indexOf(fv) >= 0;
+    }
   };
 
   if (goog.isArray(entityValue)) {
-      
-      return goog.array.findIndex(entityValue, function (entity) {
-          
+
+    return goog.array.findIndex(entityValue, function(entity) {
+
       return this.singleEntityMatches_(filterValue, entity, matcher);
     }, this) >= 0;
   } else {
@@ -276,25 +276,25 @@ pn.data.EntityFilter.prototype.matchesFilter_ =
  * @return {boolean} Wether the current entity matches the specified filter.
  */
 pn.data.EntityFilter.prototype.singleEntityMatches_ =
-    function (filterVal, entityVal, predicate) {
+    function(filterVal, entityVal, predicate) {
 
   if (!goog.isDefAndNotNull(entityVal)) return false;
   this.dbg_('singleEntityMatches_: filterVal: ' +
       filterVal + ' entityVal: ' + entityVal);
 
   if (goog.isArray(filterVal)) {
-      return goog.array.findIndex(filterVal, function (fv) {
+    return goog.array.findIndex(filterVal, function(fv) {
 
       return this.singleFilterValueMatches_(fv, entityVal, true, predicate);
     }, this) >= 0;
-  } else if (typeof entityVal === "number" && typeof filterVal === "string") {
+  } else if (typeof entityVal === 'number' && typeof filterVal === 'string') {
 
-      return this.singleFilterValueMatches_(
-         /** @type {string} */(filterVal), entityVal, true, predicate);
+    return this.singleFilterValueMatches_(
+        /** @type {string} */(filterVal), entityVal, true, predicate);
   } else {
 
-      return this.singleFilterValueMatches_(
-          /** @type {string} */(filterVal), entityVal, false, predicate);
+    return this.singleFilterValueMatches_(
+        /** @type {string} */(filterVal), entityVal, false, predicate);
   }
 };
 
