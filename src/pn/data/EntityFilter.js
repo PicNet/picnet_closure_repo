@@ -66,7 +66,8 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
 
 /**
  * @private
- * @param {Array.<string>|string|number|Date} filterValue The filter value to apply to
+ * @param {Array.<string>|string|number|Date}
+ *    filterValue The filter value to apply to
  *    the given entity. All filter values wether in array or a string MUST be
  *    lowercase.
  * @param {!pn.ui.edit.Field} spec The field specification for the given
@@ -91,7 +92,8 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   // use filter function with multi-filter values
   if (spec.multiFilter) {
     goog.asserts.assert(goog.isArray(filterValue));
-    return spec.multiFilter(entity, /** @type {array} */ (filterValue), this.cache_);
+    return spec.multiFilter(entity,
+        /** @type {array} */ (filterValue), this.cache_);
   }
 
   if (filterValue === '0') return true;
