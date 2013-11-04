@@ -78,7 +78,6 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
 
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
     function (filterValue, spec, entity) {
-
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (spec.searchFilter) {
@@ -89,6 +88,12 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
     goog.asserts.assert(goog.isString(filterValue));
     return spec.searchFilter(entity, /** @type {string} */ (filterValue));
   }
+  // use filter function with multi-filter values
+  if (spec.multiFilter) {
+    goog.asserts.assert(goog.isArray(filterValue));
+    return spec.multiFilter(entity, /** @type {array} */ (filterValue), this.cache_);
+  }
+
   if (filterValue === '0') return true;
 
   //Date filter
@@ -99,9 +104,6 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
 
   var stepResult = false;
   var thisParent = this;
-
-  // use filter function if defined
-  if (spec.filterFunction) { return spec.filterFunction(this.cache_, entity, filterValue); };
 
   var filters = spec.filterColumn.split('&&');
   goog.array.forEach(filters, function (f) {
