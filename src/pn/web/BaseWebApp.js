@@ -156,7 +156,7 @@ pn.web.BaseWebApp.prototype.gohome = function(opt_cancelImpersonate) {
  */
 pn.web.BaseWebApp.prototype.impersonate = function(username) {
   pn.assStr(username);
-  if (!username) return;
+  if (!username || username === '0') return;
 
   if (!this.impersonationEnabled_)
     throw new Error('Impersonation is not enabled');
