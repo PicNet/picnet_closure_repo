@@ -18,6 +18,7 @@ goog.require('pn.ui.grid.QuickFind');
 goog.require('pn.ui.grid.RowOrdering');
 goog.require('pn.ui.grid.pipe.ColWidthsHandler');
 goog.require('pn.ui.grid.pipe.CommandsHandler');
+goog.require('pn.ui.grid.pipe.DoubleClickMobileHandler');
 goog.require('pn.ui.grid.pipe.EditHandler');
 goog.require('pn.ui.grid.pipe.FilteringHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
@@ -282,6 +283,7 @@ pn.ui.grid.Grid.prototype.initialisePipeline_ = function() {
     new pn.ui.grid.pipe.TotalsHandler(this.getElement()),
     new pn.ui.grid.pipe.RowSelectionHandler(),
     new pn.ui.grid.pipe.ColWidthsHandler(this.gridId_),
+    new pn.ui.grid.pipe.DoubleClickMobileHandler(),
     new pn.ui.grid.pipe.CommandsHandler(this.cfg_.type),
     new pn.ui.grid.pipe.EditHandler(),
     new pn.ui.grid.pipe.NoDataHandler(noData)
