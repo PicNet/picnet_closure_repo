@@ -961,7 +961,7 @@ Slick.Grid.prototype.scrollRowIntoView = function(row, doPaging) {};
 
 
 /**
- * @return {*}
+ * @return {!Node}
  */
 Slick.Grid.prototype.getCanvasNode = function() {};
 
