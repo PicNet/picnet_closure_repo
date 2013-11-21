@@ -347,7 +347,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   });
   if (opt_filter) list = opt_filter(entity, list);
 
-  pn.data.EntityUtils.orderEntities(entityType, list);
+  pn.data.EntityUtils.orderEntitiesByName(entityType, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();

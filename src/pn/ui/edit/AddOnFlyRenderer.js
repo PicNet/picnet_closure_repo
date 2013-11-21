@@ -68,7 +68,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.refresh = function(opt_selectedId) {
   var selected = opt_selectedId ? opt_selectedId :
       this.getValue() ? this.getValue() : 0;
 
-  pn.data.EntityUtils.orderEntities(this.spec_.type, list);
+  pn.data.EntityUtils.orderEntitiesByName(this.spec_.type, list);
 
   goog.dom.removeChildren(this.select_);
   goog.dom.appendChild(this.select_, goog.dom.createDom('option', {

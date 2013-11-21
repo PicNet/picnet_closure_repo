@@ -236,6 +236,25 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
   }
 };
 
+/**
+ * @param {string} type The type of entities we are ordering.
+ * @param {!Array.<!Object>} list The entities to order.
+ */
+pn.data.EntityUtils.orderEntitiesByName = function(type, list) {
+  pn.assStr(type);
+  pn.ass(list);
+  if (!list.length) return;
+
+  var template = list[0];
+  var namep = type + 'Name';
+
+  pn.assDefAndNotNull(template[namep]);
+  
+  list.pnsort(function (a, b) {
+    return a[namep] > b[namep] ? 1 : -1;
+  });
+};
+
 
 /**
  * @param {Object.<number>} enumeration The enumeration.
