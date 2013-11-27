@@ -49,14 +49,14 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
  *    filters The filters to use to filter the list by.
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
-pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
+pn.data.EntityFilter.prototype.filterEntity = function(entity, filters, hash) {
   goog.asserts.assert(entity);
   goog.asserts.assert(filters);
   this.dbg_('filterEntity: ' + goog.debug.expose(filters));
 
   for (var id in filters) {
     var f = filters[id];
-    if (!this.filterEntityImpl_(f.value, f.spec, entity)) {
+    if (!this.filterEntityImpl_(f.value, f.spec, entity, hash)) {
       return false;
     }
   }
@@ -78,7 +78,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters) {
  */
 
 pn.data.EntityFilter.prototype.filterEntityImpl_ =
-    function(filterValue, spec, entity) {
+    function(filterValue, spec, entity, hash) {
   goog.asserts.assert(goog.isDefAndNotNull(filterValue));
   if (!goog.isDefAndNotNull(entity)) return false;
   if (spec.searchFilter) {
@@ -93,7 +93,7 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
   if (spec.multiFilter) {
     goog.asserts.assert(goog.isArray(filterValue));
     return spec.multiFilter(entity,
-        /** @type {array} */ (filterValue), this.cache_);
+        /** @type {array} */ (filterValue), this.cache_, hash);
   }
 
   if (filterValue === '0') return true;
