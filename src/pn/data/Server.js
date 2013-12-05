@@ -406,9 +406,8 @@ pn.data.Server.Response = function(raw) {
 
   /** @type {pn.data.Entity} */
   this.responseEntity = raw['ResponseEntityType'] ?
-      pn.data.TypeRegister.parseEntity(raw['ResponseEntityType'],
-          /** @type {!Object} */ (pn.json.parseJson(raw['ResponseEntity']))) :
-      null;
+      pn.data.TypeRegister.parseEntity(
+          raw['ResponseEntityType'], raw['ResponseEntity']) : null;
 
   /** @type {Object|string|number} */
   this.ajaxData = goog.isDef(raw['AjaxResponse']) ?
@@ -424,8 +423,8 @@ pn.data.Server.Response = function(raw) {
   this.queryResults = raw['QueryResults'] ?
       raw['QueryResults'].pnreduce(function(acc, qr) {
         var query = pn.data.PnQuery.fromString(qr['QueryId']);
-        var results = pn.data.TypeRegister.parseEntities(query.Type,
-            /** @type {!Array} */ (pn.json.parseJson(qr['ResultsJson'])));
+        var results = pn.data.TypeRegister.parseEntities(
+            query.Type, qr['ResultsJson']);
         acc[query.toString()] = results;
         return acc;
       }, {}) : null;
@@ -488,8 +487,7 @@ pn.data.Server.Update = function(raw) {
 
   /** @type {pn.data.Entity} */
   this.entity = raw['Entity'] ?
-      pn.data.TypeRegister.parseEntity(raw['EntityType'],
-          /** @type {!Object} */ (pn.json.parseJson(raw['Entity']))) :
+      pn.data.TypeRegister.parseEntity(raw['EntityType'], raw['Entity']) :
       null;
 
   pn.assNum(this.id);

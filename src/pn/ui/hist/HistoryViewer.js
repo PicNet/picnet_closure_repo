@@ -100,16 +100,15 @@ pn.ui.hist.HistoryViewer.prototype.showAuditEntry_ = function(e) {
 
 /**
  * @private
- * @param {!Array.<string>} descriptions The descriptions for this and the
+ * @param {!Array.<string>} descs The descriptions for this and the
  *    previous ChangeLogEntry entities.
  */
-pn.ui.hist.HistoryViewer.prototype.showDiffBetween_ = function(descriptions) {
-  pn.ass(descriptions.length === 1 || descriptions.length === 2);
-  var seleo = /** @type {!Object} */ (pn.json.parseJson(descriptions[0]));
-  var prevo = /** @type {Object} */ (pn.json.parseJson(descriptions[1]));
-  var selected = pn.data.TypeRegister.parseEntity(this.cfg_.spec.type, seleo);
-  var prev = prevo ?
-      pn.data.TypeRegister.parseEntity(this.cfg_.spec.type, prevo) : null;
+pn.ui.hist.HistoryViewer.prototype.showDiffBetween_ = function(descs) {
+  pn.ass(descs.length === 1 || descs.length === 2);
+  var selected = pn.data.TypeRegister.parseEntity(
+      this.cfg_.spec.type, descs[0]);
+  var prev = descs[1] ? pn.data.TypeRegister.parseEntity(
+      this.cfg_.spec.type, descs[1]) : null;
   pn.dom.get('audit-log-heading').innerHTML = this.cfg_.getHeading(selected);
   var diff = this.getEntityDiff_(prev || selected, selected);
   var diffTable = pn.dom.get('audit-log-diff-table');

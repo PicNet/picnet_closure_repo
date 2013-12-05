@@ -184,8 +184,8 @@ pn.web.BaseWebApp.prototype.getUiSpecs = goog.abstractMethod;
 
 /** @override */
 pn.web.BaseWebApp.prototype.acceptDirty = function() {
-  if (!this.view.isDirty()) return true;
-  return window.confirm('Any unsaved changes will be lost, continue?');
+  return !this.view.isDirty() ||
+      window.confirm('Any unsaved changes will be lost, continue?');
 };
 
 
