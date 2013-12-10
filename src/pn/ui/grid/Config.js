@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.Config');
 
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Interceptor');
-
+goog.require('pn.ui.grid.cmd.Command');
 
 
 /**

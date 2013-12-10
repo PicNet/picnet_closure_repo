@@ -8,7 +8,7 @@ goog.require('pn.ui.edit.cmd.CloneCommand');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.edit.cmd.DeleteCommand');
 goog.require('pn.ui.edit.cmd.SaveCommand');
-
+goog.require('pn.ui.edit.FieldCtx');
 
 
 /**

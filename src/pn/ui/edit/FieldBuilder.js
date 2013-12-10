@@ -1,15 +1,10 @@
 ﻿;
 goog.provide('pn.ui.edit.FieldBuilder');
 
-goog.require('goog.date.DateTime');
-goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
 goog.require('pn');
-goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.ui.grid.Grid');
-
 
 /**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a label for.

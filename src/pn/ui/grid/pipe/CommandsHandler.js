@@ -69,7 +69,7 @@ pn.ui.grid.pipe.CommandsHandler.prototype.onCommand_ = function(event) {
 /**
  * @private
  * @param {goog.events.Event} e The command event to publish using the
- *    pn.web.ctx.pub publishing mechanism.
+ *    pn.app.ctx.pub publishing mechanism.
  */
 pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
   pn.ass(e);
@@ -78,15 +78,15 @@ pn.ui.grid.pipe.CommandsHandler.prototype.doPubSubEvent_ = function(e) {
   switch (e.type) {
     case ae.ENTITY_SELECT:
       var id = e.selected.id;
-      pn.web.ctx.pub(e.type, this.entityType_, id);
+      pn.app.ctx.pub(e.type, this.entityType_, id);
       break;
     case ae.LIST_EXPORT:
       var cols = this.cfg.getCctxs(true);
       var hdrs = cols.pnmap(function(c) { return c.spec.name; });
       var dat = pn.ui.grid.cmd.ExportCommand.getGridData(cols, hdrs, this.view);
-      pn.web.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
+      pn.app.ctx.pub(e.type, this.entityType_, e.exportFormat, dat);
       break;
     default:
-      pn.web.ctx.pub(e.type, this.entityType_);
+      pn.app.ctx.pub(e.type, this.entityType_);
   }
 };

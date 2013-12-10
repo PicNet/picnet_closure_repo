@@ -27,7 +27,6 @@ goog.require('pn.ui.grid.Grid');
 goog.require('pn.ui.soy');
 
 
-
 /**
  * @constructor
  * @extends {pn.ui.edit.CommandsComponent}
@@ -179,7 +178,7 @@ pn.ui.edit.Edit.prototype.decorateFields_ = function(parent) {
 pn.ui.edit.Edit.prototype.isValidForm = function(c) {
   var errors = this.getFormErrors(c);
   if (errors.length) {
-    var et = pn.web.WebAppEvents.ENTITY_VALIDATION_ERROR;
+    var et = pn.app.AppEvents.ENTITY_VALIDATION_ERROR;
     var event = new goog.events.Event(et, this);
     event.errors = errors;
     this.publishEvent_(event);
@@ -345,7 +344,7 @@ pn.ui.edit.Edit.prototype.enterDocumentOnChildrenField_ = function(fctx) {
 
 /**
  * @private
- * @param {!goog.events.Event} e The event to publish using the pn.web.ctx.pub
+ * @param {!goog.events.Event} e The event to publish using the pn.app.ctx.pub
  *    mechanism.
  */
 pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
@@ -354,8 +353,9 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
     return;
   }
 
-  var ae = pn.web.WebAppEvents;
-  var args;
+  var ae = pn.web.WebAppEvents,
+      ae2 = pn.app.AppEvents,
+      args = null;
   switch (e.type) {
     case ae.CHILD_ENTITY_ADD:
       args = [e.type, e.parent, e.entityType, e.parentField];
@@ -363,11 +363,11 @@ pn.ui.edit.Edit.prototype.publishEvent_ = function(e) {
     case ae.ENTITY_SELECT:
       args = [e.type, e.entityType, e.entityId];
       break;
-    case ae.ENTITY_VALIDATION_ERROR:
+    case ae2.ENTITY_VALIDATION_ERROR:
       args = [e.type, e.errors];
       break;
     default:
       args = [e.type, this.spec.type, e.data];
   }
-  pn.web.ctx.pub.apply(null, args);
+  pn.app.ctx.pub.apply(null, args);
 };

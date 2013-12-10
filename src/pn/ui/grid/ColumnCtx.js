@@ -3,10 +3,8 @@ goog.provide('pn.ui.grid.ColumnCtx');
 
 goog.require('goog.date.DateTime');
 goog.require('pn.ui.edit.EditUtils');
-goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.grid.ColumnRenderers');
 goog.require('pn.ui.grid.ColumnSpec');
-
 
 
 /**
@@ -97,7 +95,7 @@ pn.ui.grid.ColumnCtx.prototype.getEntityValue = function(entity) {
 pn.ui.grid.ColumnCtx.prototype.getColumnRenderer = function() {
   if (goog.isDef(this.spec.renderer)) return this.spec.renderer;
   if (!this.schema) return null;
-  return pn.web.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
+  return pn.app.ctx.cfg.defaultColumnRenderers[this.schema.type] ||
       (pn.data.EntityUtils.isParentProperty(this.spec.dataProperty) ?
           pn.ui.grid.ColumnRenderers.parentColumnRenderer : null);
 };

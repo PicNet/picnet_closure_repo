@@ -1,5 +1,6 @@
 
 goog.provide('pn.app.BaseApp');
+goog.provide('pn.app.ctx');
 
 goog.require('goog.debug.Logger');
 goog.require('goog.events.EventHandler');
@@ -11,16 +12,11 @@ goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BaseFacade');
 goog.require('pn.data.LazyFacade');
+goog.require('pn.ui.LoadingPnl');
+goog.require('pn.ui.MessagePanel');
 goog.require('pn.log');
-
-
-/**
- * A globally accisble handle to the application context.
- * @type {pn.app.BaseApp}
- */
-pn.app.ctx = null;
-
-
+goog.require('pn.ui.UiSpecsRegister');
+goog.require('pn.ui.IDirtyAware');
 
 /**
  * This is the main starting point to any pn.app application. Extend this class
@@ -94,6 +90,22 @@ pn.app.BaseApp = function(opt_cfg) {
   this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
   this.registerDisposable(this.bus_);
 
+  /** @type {!pn.ui.MessagePanel} */
+  this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
+  this.registerDisposable(this.msg);  
+
+  /** @type {!pn.ui.LoadingPnl} */
+  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
+  this.registerDisposable(this.loading);
+
+  /** @type {!pn.ui.UiSpecsRegister} */
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.registerDisposable(this.specs);
+
+  /** @type {!pn.ui.AbstractViewMgr} */
+  this.view = this.createViewManager();
+  this.registerDisposable(this.view);
+
   // Convenience delegates.
   /**
    * @param {string} topic Topic to publish to.
@@ -105,6 +117,14 @@ pn.app.BaseApp = function(opt_cfg) {
   this.topic = goog.bind(this.bus_.topic, this.bus_);
 };
 goog.inherits(pn.app.BaseApp, goog.events.EventHandler);
+
+
+/**
+ * A globally accisble handle to the application context.
+ * @type {pn.app.BaseApp}
+ */
+pn.app.ctx = null;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // REQUIRED TEMPLATE METHODS
@@ -146,6 +166,11 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  */
 pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
 
+/**
+ * @return {!pn.ui.AbstractViewMgr} Creates a view manager to control current
+ *    view state.
+ */
+pn.app.BaseApp.prototype.createViewManager = goog.abstractMethod;
 
 /**
  * A template method used to determine if the user is happy to leave the
@@ -155,7 +180,24 @@ pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
  * @return {boolean} Wether the user is happy to navigate away from the
  *    current page.
  */
-pn.app.BaseApp.prototype.acceptDirty = function() { return true; };
+pn.app.BaseApp.prototype.acceptDirty = function() { 
+  return !this.isDirty() ||
+      window.confirm('Any unsaved changes will be lost, continue?');
+};
+
+
+/**
+ * A template method used to get all required UiSpecs.  This method should
+ *    return an object map (id/ctor pair) with types such as:
+ *    {
+ *      'Type1': pn.application.specs.Spec1,
+ *      'Type1': pn.application.specs.Spec2
+ *    {
+ *
+ * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
+ *    application. The first route is considered the default route.
+ */
+pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE IMPLEMENTATION DETAILS
@@ -175,8 +217,13 @@ pn.app.BaseApp.prototype.init = function() {
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
+  
+  var sset = pn.data.Server.EventType,
+      lp = this.loading,
+      navevent = pn.app.Router.EventType.NAVIGATING;
 
-  var navevent = pn.app.Router.EventType.NAVIGATING;
+  goog.events.listen(this.data, sset.LOADING, lp.increment, false, lp);
+  goog.events.listen(this.data, sset.LOADED, lp.decrement, false, lp);
   goog.events.listen(this.router, navevent, this.acceptDirty, false, this);
 
   this.router.initialise(this.getRoutes());
@@ -209,7 +256,30 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
   evs[ae.SHOW_DEBUG_MESSAGE] = this.showDebugMessage;
+
+  evs[ae.CLEAR_MESSAGE] = this.msg.clearMessage.pnbind(this.msg);
+  evs[ae.SHOW_MESSAGE] = this.msg.showMessage.pnbind(this.msg);
+  evs[ae.SHOW_MESSAGES] = this.msg.showMessages.pnbind(this.msg);
+  evs[ae.SHOW_ERROR] = this.msg.showError.pnbind(this.msg);
+  evs[ae.SHOW_ERRORS] = this.msg.showErrors.pnbind(this.msg);
+  evs[ae.ENTITY_VALIDATION_ERROR] = this.msg.showErrors.pnbind(this.msg);
   return evs;
+};
+
+/** Resets the dirty state of the current view */
+pn.app.BaseApp.prototype.resetDirty = function() {
+  var view = this.view.currentView();
+  if (view && view instanceof pn.ui.IDirtyAware) {
+    view.resetDirty();
+  }
+};
+
+/** @return {boolean} Whether the screen is dirty. */
+pn.app.BaseApp.prototype.isDirty = function() {
+  var view = this.view.currentView();
+  return !!view && 
+      view instanceof pn.ui.IDirtyAware &&
+      view.isDirty();
 };
 
 
@@ -250,6 +320,10 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
 
   this.log.info('Disposing Application');
 
-  var navevent = pn.app.Router.EventType.NAVIGATING;
-  goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
+  var sset = pn.data.Server.EventType,
+      lp = this.loading,
+      navevent = pn.app.Router.EventType.NAVIGATING;  
+  goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
+  goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
+  goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);  
 };

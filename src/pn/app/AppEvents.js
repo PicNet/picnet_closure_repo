@@ -20,5 +20,13 @@ pn.app.AppEvents = {
   LOADED_ENTITY: 'loaded-entity',
   ENTITY_CLONED: 'entity-cloned',
   ENTITY_SAVED: 'entity-saved',
-  ENTITY_DELETED: 'entity-deleted'
+  ENTITY_DELETED: 'entity-deleted',
+  
+  // MESSAGES
+  CLEAR_MESSAGE: 'clear-message',
+  SHOW_MESSAGE: 'show-message',
+  SHOW_MESSAGES: 'show-messages',
+  SHOW_ERROR: 'show-error',
+  SHOW_ERRORS: 'show-errors',
+  ENTITY_VALIDATION_ERROR: 'entity-validation-error'
 };

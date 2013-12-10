@@ -1,12 +1,12 @@
-﻿;
+﻿
+goog.provide('pn.ui.edit.FieldSpec');
+goog.provide('pn.ui.edit.FieldSpec.Renderer');
+
 goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.edit.ComplexRenderer');
 goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.edit.ValidateInfo');
-goog.provide('pn.ui.edit.FieldSpec');
-goog.provide('pn.ui.edit.FieldSpec.Renderer');
-
-
+goog.require('pn.ui.edit.FieldGridRenderers');
 
 /**
  * The Field specification defines how a field should be captioned and how
@@ -199,12 +199,12 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
       st = schema ? schema.type : '',
       drofr = {},
       dfr = {};
-  // In tests pn.web.ctx.cfg is usually not defined and also not important for
+  // In tests pn.app.ctx.cfg is usually not defined and also not important for
   // most tests.
   try {
-    tatl = pn.web.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold;
-    drofr = pn.web.ctx.cfg.defaultReadOnlyFieldRenderers;
-    dfr = pn.web.ctx.cfg.defaultFieldRenderers;
+    tatl = pn.app.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold;
+    drofr = pn.app.ctx.cfg.defaultReadOnlyFieldRenderers;
+    dfr = pn.app.ctx.cfg.defaultFieldRenderers;
   } catch (e) {}
 
   if (st === 'string' && tatl && schema.length > tatl) { st = 'LongString'; }
@@ -217,7 +217,7 @@ pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
   } else if (this.tableType) {
     return readonly ?
         pn.ui.edit.ReadOnlyFields.itemList :
-        pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
+        pn.ui.edit.FieldGridRenderers.childEntitiesTableRenderer;
   } else if (readonly) {
     if (!schema) throw Error('could not find schema for field: ' + this.id);
     return drofr[st] || pn.ui.edit.ReadOnlyFields.textField;

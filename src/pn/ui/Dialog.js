@@ -39,5 +39,5 @@ pn.ui.Dialog.prototype.onShowHide_ = function(e) {
   var event = e.type === goog.ui.PopupBase.EventType.SHOW ?
       pn.web.WebAppEvents.DALOG_SHOWN :
       pn.web.WebAppEvents.DALOG_HIDDEN;
-  pn.web.ctx.pub(event);
+  pn.app.ctx.pub(event);
 };
