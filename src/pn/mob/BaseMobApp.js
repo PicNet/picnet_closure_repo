@@ -14,11 +14,6 @@ goog.require('pn.ui.UiSpecsRegister');
  *    pn.app.AppConfig options.
  */
 pn.mob.BaseMobApp = function(opt_cfg) {
-  pn.ass(pn.mob.ctx === null, 'Only a single instance of base app supported');
-  
-  /** @type {pn.mob.BaseMobApp} */
-  pn.mob.ctx = this;
-
   this.cfg = new pn.mob.MobAppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
   
