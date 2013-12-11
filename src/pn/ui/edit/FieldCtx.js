@@ -3,7 +3,8 @@ goog.provide('pn.ui.edit.FieldCtx');
 
 goog.require('pn.ui.edit.EditUtils');
 goog.require('pn.ui.edit.FieldValidator');
-goog.require('pn.ui.edit.FieldBuilder');
+goog.require('pn.ui.edit.EditUtils');
+goog.require('pn.ui.edit.ValidateInfo');
 
 /**
  * @constructor
@@ -90,7 +91,7 @@ pn.ui.edit.FieldCtx.prototype.isDefaultRequired = function() {
  */
 pn.ui.edit.FieldCtx.prototype.getControlValue =
     function(component, opt_target) {
-  return pn.ui.edit.FieldBuilder.getFieldValue(component, opt_target);
+  return pn.ui.edit.EditUtils.getFieldValue(component, opt_target);
 };
 
 

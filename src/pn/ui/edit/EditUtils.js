@@ -79,3 +79,24 @@ pn.ui.edit.EditUtils.getFieldParent = function(control, id) {
   var element = control.getElement ? control.getElement() : control;
   return /** @type {!Element} */ (element.parentNode);
 };
+
+/**
+ * @param {Element|Text|goog.ui.Component} inp The input field.
+ * @param {Object=} opt_target The optional 'entity' target to inject values
+ *    into if required.
+ * @return {string|boolean} The value in the specified field.
+ */
+pn.ui.edit.EditUtils.getFieldValue = function(inp, opt_target) {
+  pn.ass(inp);
+
+  if (inp.getValue) { return inp.getValue(opt_target); }
+  else if (inp.options) {
+    var arr = [];
+    pn.toarr(inp.options).pnforEach(function(o) {
+      if (o.selected) { arr.push(o.value); }
+    });
+    return inp.multiple && arr.length > 1 ? arr : arr[0];
+  }
+  else if (inp.type === 'checkbox') { return !!inp.checked; }
+  else { return inp.value; }
+};

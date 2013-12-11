@@ -3,7 +3,7 @@ goog.provide('pn.web.BaseWebApp');
 
 goog.require('goog.Uri');
 goog.require('pn.app.BaseApp');
-goog.require('pn.app.WebAppConfig');
+goog.require('pn.web.WebAppConfig');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.Server');
 goog.require('pn.data.Server.EventType');
@@ -21,7 +21,7 @@ goog.require('pn.web.WebAppEvents');
  *    pn.app.AppConfig options.
  */
 pn.web.BaseWebApp = function(opt_cfg) {
-  this.cfg = new pn.app.WebAppConfig(opt_cfg);
+  this.cfg = new pn.web.WebAppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
   pn.app.BaseApp.call(this);
@@ -40,7 +40,7 @@ goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
 /** @override */
 pn.web.BaseWebApp.prototype.createViewManager = function() {
-  pn.assInst(this.cfg, pn.app.WebAppConfig);
+  pn.assInst(this.cfg, pn.web.WebAppConfig);
 
   return new pn.ui.WebViewMgr(pn.dom.get(this.cfg.viewContainerId));
 };

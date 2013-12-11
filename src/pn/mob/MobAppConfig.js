@@ -4,7 +4,7 @@ goog.provide('pn.mob.MobAppConfig');
 goog.require('pn.app.AppConfig');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.grid.ColumnSpec');
-
+goog.require('pn.ui.MobDefaultRenderer');
 
 /**
  * Note: The defaultFieldRenderers and the defaultColumnRenderers map a field
@@ -39,3 +39,7 @@ pn.mob.MobAppConfig = function(opt_opts) {
   pn.app.AppConfig.call(this, opt_opts);
 };
 goog.inherits(pn.mob.MobAppConfig, pn.app.AppConfig);
+
+/** @override */
+pn.mob.MobAppConfig.prototype.defaultRendererCreator = 
+    function() { return new pn.ui.MobDefaultRenderer(); };

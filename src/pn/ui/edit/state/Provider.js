@@ -43,7 +43,7 @@ pn.ui.edit.state.Provider = function(controls, fctxs) {
 pn.ui.edit.state.Provider.prototype.getValue = function(id) {
   pn.assStr(id);
 
-  return pn.ui.edit.FieldBuilder.getFieldValue(this.getControl(id));
+  return pn.ui.edit.EditUtils.getFieldValue(this.getControl(id));
 };
 
 

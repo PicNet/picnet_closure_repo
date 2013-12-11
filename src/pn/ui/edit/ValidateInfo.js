@@ -1,6 +1,7 @@
-﻿;
+﻿
 goog.provide('pn.ui.edit.ValidateInfo');
 
+goog.require('pn.ui.InputDatePicker');
 
 
 /** @constructor */
@@ -82,15 +83,12 @@ pn.ui.edit.ValidateInfo.createLengthValidator = function(min, opt_max) {
  * @return {string} Any error that this field can have.
  */
 pn.ui.edit.ValidateInfo.prototype.validateField = function(fctx, control) {
-  var fr = pn.ui.edit.FieldRenderers;
-
-  var val = fctx.getControlValue(control);
-  var isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty);
-  var renderer = fctx.spec.renderer;
-  var isYesNoRenderer = renderer === fr.yesNoRenderer;
-  var isEmptyParentOrYesNo = (isParent || isYesNoRenderer) &&
-      (val === '0' || val === 0);
-  var isNullDate = renderer === fr.dateRenderer && val === 0;
+  var val = fctx.getControlValue(control),
+      isParent = pn.data.EntityUtils.isParentProperty(fctx.spec.dataProperty),
+      isYesNoRenderer = control.className === 'yesno',
+      isEmptyParentOrYesNo = (isParent || isYesNoRenderer) &&
+          (val === '0' || val === 0),
+      isNullDate = control instanceof pn.ui.InputDatePicker && val === 0;
 
   if (!goog.isDefAndNotNull(val) || val === '' ||
       isEmptyParentOrYesNo || isNullDate) {

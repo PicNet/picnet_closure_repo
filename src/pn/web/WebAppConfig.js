@@ -1,5 +1,5 @@
 
-goog.provide('pn.app.WebAppConfig');
+goog.provide('pn.web.WebAppConfig');
 
 goog.require('goog.array');
 goog.require('goog.asserts');
@@ -8,7 +8,7 @@ goog.require('pn.data.BaseDalCache');
 goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.grid.ColumnRenderers');
-
+goog.require('pn.ui.WebDefaultRenderer');
 
 
 /**
@@ -20,9 +20,9 @@ goog.require('pn.ui.grid.ColumnRenderers');
  * @extends {pn.app.AppConfig}
  * @param {Object=} opt_opts The configuration options for the
  *    application. These options will be extended on top of the default
- *    pn.app.WebAppConfig options.
+ *    pn.web.WebAppConfig options.
  */
-pn.app.WebAppConfig = function(opt_opts) {
+pn.web.WebAppConfig = function(opt_opts) {
   var fr = pn.ui.edit.FieldRenderers,
       rr = pn.ui.edit.ReadOnlyFields,
       cr = pn.ui.grid.ColumnRenderers;
@@ -103,4 +103,8 @@ pn.app.WebAppConfig = function(opt_opts) {
 
   pn.app.AppConfig.call(this, opt_opts);
 };
-goog.inherits(pn.app.WebAppConfig, pn.app.AppConfig);
+goog.inherits(pn.web.WebAppConfig, pn.app.AppConfig);
+
+/** @override */
+pn.web.WebAppConfig.prototype.defaultRendererCreator = 
+    function() { return new pn.ui.WebDefaultRenderer(); };

@@ -82,3 +82,7 @@ pn.app.AppConfig.prototype.touri = function(controller, opt_action) {
   if (opt_action) uri += '/' + opt_action;
   return uri;
 };
+
+
+/** @return {!pn.ui.IDefaultRenderer} The default renderer builder. */
+pn.app.AppConfig.prototype.defaultRendererCreator = goog.abstractMethod;

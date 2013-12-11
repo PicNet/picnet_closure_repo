@@ -62,7 +62,8 @@ pn.ui.UiSpecHelper.createField = function(id, cache, opt_props) {
   pn.assStr(id);
   pn.assInst(cache, pn.data.BaseDalCache);
 
-  var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, uispec);
+  var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, uispec, 
+      pn.app.ctx.cfg.defaultRendererCreator());
   uispec.registerDisposable(spec);
   var fctx = new pn.ui.edit.FieldCtx(spec, cache);
   uispec.registerDisposable(fctx);
