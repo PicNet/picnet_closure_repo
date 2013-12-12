@@ -270,7 +270,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
 pn.app.BaseApp.prototype.resetDirty = function() {
   var view = this.view.currentView();
   if (view && view instanceof pn.ui.IDirtyAware) {
-    view.resetDirty();
+    /** @type {pn.ui.IDirtyAware} */ (view).resetDirty();
   }
 };
 
@@ -279,7 +279,7 @@ pn.app.BaseApp.prototype.isDirty = function() {
   var view = this.view.currentView();
   return !!view && 
       view instanceof pn.ui.IDirtyAware &&
-      view.isDirty();
+      /** @type {pn.ui.IDirtyAware} */ (view).isDirty();
 };
 
 
