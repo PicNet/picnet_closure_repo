@@ -8,7 +8,6 @@ goog.require('pn.ui.grid.ColumnSpec');
 goog.require('pn.ui.grid.OrderingColumnSpec');
 
 
-
 /**
  * @param {!pn.ui.UiSpec} uispec The spec being built.
  * @param {string} id The id representing the column.
@@ -57,12 +56,12 @@ pn.ui.UiSpecHelper.createOrderingColumn = function(uispec, id, cache) {
  * @param {Object=} opt_props Any additional properties for the field.
  * @return {!pn.ui.edit.FieldCtx} The field created.
  */
-pn.ui.UiSpecHelper.createField = function(id, cache, opt_props) {
+pn.ui.UiSpecHelper.createField = function(uispec, id, cache, opt_props) {
   pn.assInst(uispec, pn.ui.UiSpec);
   pn.assStr(id);
   pn.assInst(cache, pn.data.BaseDalCache);
 
-  var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, uispec, 
+  var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, uispec,
       pn.app.ctx.cfg.defaultRendererCreator());
   uispec.registerDisposable(spec);
   var fctx = new pn.ui.edit.FieldCtx(spec, cache);

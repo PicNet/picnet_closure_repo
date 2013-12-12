@@ -21,7 +21,7 @@ pn.app.AppEvents = {
   ENTITY_CLONED: 'entity-cloned',
   ENTITY_SAVED: 'entity-saved',
   ENTITY_DELETED: 'entity-deleted',
-  
+
   // MESSAGES
   CLEAR_MESSAGE: 'clear-message',
   SHOW_MESSAGE: 'show-message',

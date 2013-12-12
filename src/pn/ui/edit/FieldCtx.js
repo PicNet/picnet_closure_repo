@@ -2,9 +2,11 @@
 goog.provide('pn.ui.edit.FieldCtx');
 
 goog.require('pn.ui.edit.EditUtils');
-goog.require('pn.ui.edit.FieldValidator');
 goog.require('pn.ui.edit.EditUtils');
+goog.require('pn.ui.edit.FieldValidator');
 goog.require('pn.ui.edit.ValidateInfo');
+
+
 
 /**
  * @constructor

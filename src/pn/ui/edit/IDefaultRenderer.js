@@ -1,8 +1,11 @@
-﻿
+﻿;
 goog.provide('pn.ui.IDefaultRenderer');
+
+
 
 /** @interface */
 pn.ui.IDefaultRenderer = function() {};
+
 
 /**
  * @param {!pn.ui.edit.FieldSpec} spec The spec for the field to create

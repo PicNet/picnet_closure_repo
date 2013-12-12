@@ -2,9 +2,11 @@
 goog.provide('pn.mob.BaseMobApp');
 
 goog.require('pn.app.BaseApp');
-goog.require('pn.ui.MobViewMgr');
 goog.require('pn.mob.MobAppConfig');
+goog.require('pn.ui.MobViewMgr');
 goog.require('pn.ui.UiSpecsRegister');
+
+
 
 /**
  * @constructor
@@ -16,12 +18,12 @@ goog.require('pn.ui.UiSpecsRegister');
 pn.mob.BaseMobApp = function(opt_cfg) {
   this.cfg = new pn.mob.MobAppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
-  
+
   pn.app.BaseApp.call(this, opt_cfg);
 
   /** @type {!pn.ui.MobViewMgr} */
   this.view = new pn.ui.MobViewMgr();
-  this.registerDisposable(this.view);  
+  this.registerDisposable(this.view);
 };
 goog.inherits(pn.mob.BaseMobApp, pn.app.BaseApp);
 

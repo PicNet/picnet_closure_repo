@@ -1,4 +1,4 @@
-﻿
+﻿;
 goog.provide('pn.ui.edit.FieldRenderers');
 
 goog.require('goog.date.DateTime');
@@ -364,6 +364,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   goog.dom.appendChild(parent, select);
   return select;
 };
+
 
 /**
  * @param {string} mappingEntity The many-to-many entity table name.

@@ -6,6 +6,7 @@ goog.require('goog.events.EventHandler');
 goog.require('pn.data.Entity');
 goog.require('pn.ui.edit.state.FState');
 
+
 /** @typedef {function(new:pn.ui.edit.Interceptor,
  *    !pn.data.Entity,!pn.data.BaseDalCache,!pn.ui.edit.state.FState,
  *    !Object.<!Element>)} */

@@ -25,9 +25,10 @@ pn.ui.MobViewMgr.prototype.showComponent = function(component) {
   pn.dom.show(this.current, true);
 };
 
+
 /** @override */
 pn.ui.MobViewMgr.prototype.clearExistingState = function() {
   if (!this.current) return;
   var el = /** @type {!Element} */ (this.current);
-  pn.dom.show(el, false);  
+  pn.dom.show(el, false);
 };

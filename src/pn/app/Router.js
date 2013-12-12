@@ -203,7 +203,7 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   this.log_.fine('navigateImpl path: ' + path + ' to: ' + to);
 
   var route = this.routes_[to];
-  if (!route) { 
+  if (!route) {
     // Use the global route handler if specified (named '*')
     route = this.routes_['*'];
     tokens.push(to);

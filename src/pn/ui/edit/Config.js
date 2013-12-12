@@ -2,13 +2,14 @@
 goog.provide('pn.ui.edit.Config');
 
 goog.require('pn.ui.edit.CommandsComponent');
+goog.require('pn.ui.edit.FieldCtx');
 goog.require('pn.ui.edit.InterceptorCtor');
 goog.require('pn.ui.edit.cmd.BackCommand');
 goog.require('pn.ui.edit.cmd.CloneCommand');
 goog.require('pn.ui.edit.cmd.Command');
 goog.require('pn.ui.edit.cmd.DeleteCommand');
 goog.require('pn.ui.edit.cmd.SaveCommand');
-goog.require('pn.ui.edit.FieldCtx');
+
 
 
 /**

@@ -1,10 +1,12 @@
-﻿
+﻿;
 goog.provide('pn.ui.edit.FieldSpec');
 goog.provide('pn.ui.edit.FieldSpec.Renderer');
 
 goog.require('pn.ui.BaseFieldSpec');
 goog.require('pn.ui.IDefaultRenderer');
 goog.require('pn.ui.edit.ComplexRenderer');
+
+
 
 /**
  * The Field specification defines how a field should be captioned and how
@@ -21,7 +23,7 @@ goog.require('pn.ui.edit.ComplexRenderer');
  *    explicitally set.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
- * @param {!pn.ui.IDefaultRenderer} defrender The builder for the default 
+ * @param {!pn.ui.IDefaultRenderer} defrender The builder for the default
  *    renderer.
  */
 pn.ui.edit.FieldSpec = function(id, props, entitySpec, defrender) {
@@ -182,16 +184,13 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   if (this.tableType && !this.tableParentField) {
     this.tableParentField = this.entitySpec + 'ID';
   }
-  // if (this.renderer instanceof pn.ui.edit.ComplexRenderer && this.validator) {
-  //   throw new Error('Complex renderers cannot have validators, ' +
-  //       'please review field definition "' + this.id + '"');
-  // }
 
   if (!this.renderer) {
     this.renderer = this.defrender_.getDefaultRenderer(this);
     pn.ass(this.renderer);
   }
 };
+
 
 /**
  * @typedef {!pn.ui.edit.ComplexRenderer|

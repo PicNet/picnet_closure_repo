@@ -3,12 +3,12 @@ goog.provide('pn.web.BaseWebApp');
 
 goog.require('goog.Uri');
 goog.require('pn.app.BaseApp');
-goog.require('pn.web.WebAppConfig');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.Server');
 goog.require('pn.data.Server.EventType');
 goog.require('pn.ui.KeyShortcutMgr');
 goog.require('pn.ui.WebViewMgr');
+goog.require('pn.web.WebAppConfig');
 goog.require('pn.web.WebAppEvents');
 
 
@@ -28,7 +28,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
 
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
-  this.registerDisposable(this.keys);  
+  this.registerDisposable(this.keys);
 
   /**
    * @private
@@ -38,6 +38,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
 };
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
+
 /** @override */
 pn.web.BaseWebApp.prototype.createViewManager = function() {
   pn.assInst(this.cfg, pn.web.WebAppConfig);
@@ -45,13 +46,14 @@ pn.web.BaseWebApp.prototype.createViewManager = function() {
   return new pn.ui.WebViewMgr(pn.dom.get(this.cfg.viewContainerId));
 };
 
+
 /** @override. */
 pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
   // TODO: We should have a WebAppEvents enumeration
   var evs = goog.base(this, 'getDefaultAppEventHandlers'),
       ae = pn.web.WebAppEvents;
 
-  // Message  
+  // Message
   evs[ae.DALOG_SHOWN] = this.keys.disable.pnbind(this.keys);
   evs[ae.DALOG_HIDDEN] = this.keys.enable.pnbind(this.keys);
   evs[ae.LIST_EXPORT] = this.listExport_.pnbind(this);
@@ -63,7 +65,7 @@ pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
 
 /** @override. */
 pn.web.BaseWebApp.prototype.init = function() {
-  if (this.cfg.enableImpersonation) { this.enableAjaxImpersonisation_(); }  
+  if (this.cfg.enableImpersonation) { this.enableAjaxImpersonisation_(); }
 
   goog.base(this, 'init');
 };
@@ -127,6 +129,7 @@ pn.web.BaseWebApp.prototype.impersonate = function(username) {
       username.replace(/ /g, '%20');
   document.location.href = uri;
 };
+
 
 /**
  * @private

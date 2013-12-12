@@ -4,7 +4,6 @@ goog.provide('pn.app.ctx');
 
 goog.require('goog.debug.Logger');
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventHandler');
 goog.require('goog.pubsub.PubSub');
 goog.require('pn');
 goog.require('pn.app.AppConfig');
@@ -12,11 +11,13 @@ goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.BaseFacade');
 goog.require('pn.data.LazyFacade');
+goog.require('pn.log');
+goog.require('pn.ui.IDirtyAware');
 goog.require('pn.ui.LoadingPnl');
 goog.require('pn.ui.MessagePanel');
-goog.require('pn.log');
 goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.ui.IDirtyAware');
+
+
 
 /**
  * This is the main starting point to any pn.app application. Extend this class
@@ -92,7 +93,7 @@ pn.app.BaseApp = function(opt_cfg) {
 
   /** @type {!pn.ui.MessagePanel} */
   this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
-  this.registerDisposable(this.msg);  
+  this.registerDisposable(this.msg);
 
   /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
@@ -166,11 +167,13 @@ pn.app.BaseApp.prototype.getRoutes = goog.abstractMethod;
  */
 pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
 
+
 /**
  * @return {!pn.ui.AbstractViewMgr} Creates a view manager to control current
  *    view state.
  */
 pn.app.BaseApp.prototype.createViewManager = goog.abstractMethod;
+
 
 /**
  * A template method used to determine if the user is happy to leave the
@@ -180,7 +183,7 @@ pn.app.BaseApp.prototype.createViewManager = goog.abstractMethod;
  * @return {boolean} Wether the user is happy to navigate away from the
  *    current page.
  */
-pn.app.BaseApp.prototype.acceptDirty = function() { 
+pn.app.BaseApp.prototype.acceptDirty = function() {
   return !this.isDirty() ||
       window.confirm('Any unsaved changes will be lost, continue?');
 };
@@ -217,7 +220,7 @@ pn.app.BaseApp.prototype.init = function() {
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
-  
+
   var sset = pn.data.Server.EventType,
       lp = this.loading,
       navevent = pn.app.Router.EventType.NAVIGATING;
@@ -266,6 +269,7 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
   return evs;
 };
 
+
 /** Resets the dirty state of the current view */
 pn.app.BaseApp.prototype.resetDirty = function() {
   var view = this.view.currentView();
@@ -274,10 +278,11 @@ pn.app.BaseApp.prototype.resetDirty = function() {
   }
 };
 
+
 /** @return {boolean} Whether the screen is dirty. */
 pn.app.BaseApp.prototype.isDirty = function() {
   var view = this.view.currentView();
-  return !!view && 
+  return !!view &&
       view instanceof pn.ui.IDirtyAware &&
       /** @type {pn.ui.IDirtyAware} */ (view).isDirty();
 };
@@ -322,8 +327,8 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
 
   var sset = pn.data.Server.EventType,
       lp = this.loading,
-      navevent = pn.app.Router.EventType.NAVIGATING;  
+      navevent = pn.app.Router.EventType.NAVIGATING;
   goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
   goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
-  goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);  
+  goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
 };

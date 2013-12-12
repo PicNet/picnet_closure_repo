@@ -2,9 +2,11 @@
 goog.provide('pn.mob.MobAppConfig');
 
 goog.require('pn.app.AppConfig');
+goog.require('pn.ui.MobDefaultRenderer');
 goog.require('pn.ui.edit.FieldSpec');
 goog.require('pn.ui.grid.ColumnSpec');
-goog.require('pn.ui.MobDefaultRenderer');
+
+
 
 /**
  * Note: The defaultFieldRenderers and the defaultColumnRenderers map a field
@@ -25,11 +27,11 @@ pn.mob.MobAppConfig = function(opt_opts) {
   this.loadPnlId = 'loading-panel';
 
   /** @type {!Object} */
-  this.defaultFieldRenderers = {    
+  this.defaultFieldRenderers = {
   };
 
   /** @type {!Object} */
-  this.defaultReadOnlyFieldRenderers = {   
+  this.defaultReadOnlyFieldRenderers = {
   };
 
   /** @type {!Object} */
@@ -40,6 +42,7 @@ pn.mob.MobAppConfig = function(opt_opts) {
 };
 goog.inherits(pn.mob.MobAppConfig, pn.app.AppConfig);
 
+
 /** @override */
-pn.mob.MobAppConfig.prototype.defaultRendererCreator = 
+pn.mob.MobAppConfig.prototype.defaultRendererCreator =
     function() { return new pn.ui.MobDefaultRenderer(); };

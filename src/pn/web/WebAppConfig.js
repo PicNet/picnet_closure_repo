@@ -5,10 +5,11 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('pn.app.AppConfig');
 goog.require('pn.data.BaseDalCache');
+goog.require('pn.ui.WebDefaultRenderer');
 goog.require('pn.ui.edit.FieldRenderers');
 goog.require('pn.ui.edit.ReadOnlyFields');
 goog.require('pn.ui.grid.ColumnRenderers');
-goog.require('pn.ui.WebDefaultRenderer');
+
 
 
 /**
@@ -105,6 +106,7 @@ pn.web.WebAppConfig = function(opt_opts) {
 };
 goog.inherits(pn.web.WebAppConfig, pn.app.AppConfig);
 
+
 /** @override */
-pn.web.WebAppConfig.prototype.defaultRendererCreator = 
+pn.web.WebAppConfig.prototype.defaultRendererCreator =
     function() { return new pn.ui.WebDefaultRenderer(); };

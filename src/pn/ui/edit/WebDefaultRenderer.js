@@ -1,7 +1,9 @@
-﻿
+﻿;
 goog.provide('pn.ui.WebDefaultRenderer');
 
 goog.require('pn.ui.IDefaultRenderer');
+
+
 
 /**
  * @constructor
@@ -9,8 +11,9 @@ goog.require('pn.ui.IDefaultRenderer');
  */
 pn.ui.WebDefaultRenderer = function() {};
 
+
 /** @override */
-pn.ui.WebDefaultRenderer.prototype.getDefaultRenderer = 
+pn.ui.WebDefaultRenderer.prototype.getDefaultRenderer =
     function(spec, opt_readonly) {
   var schema = spec.id.indexOf('.') >= 0 ? null :
       pn.data.TypeRegister.getFieldSchema(spec.entitySpec.type, spec.id),

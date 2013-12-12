@@ -1,11 +1,13 @@
 ﻿;
 goog.provide('pn.ui.grid.Config');
 
+goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Interceptor');
-goog.require('pn.ui.grid.cmd.Command');
-goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.grid.OrderingColumnSpec');
+goog.require('pn.ui.grid.cmd.Command');
+
+
 
 /**
  * @constructor
