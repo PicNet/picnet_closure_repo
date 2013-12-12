@@ -32,10 +32,10 @@ pn.web.WebAppConfig = function(opt_opts) {
   this.viewContainerId = 'view-container';
 
   /** @type {string} */
-  this.messagePanelId = 'message';
+  this.messagePanelId = 'common-message-panel';
 
   /** @type {string} */
-  this.loadPnlId = 'loading-panel';
+  this.loadPnlId = 'common-loading-panel';
 
   /** @type {boolean} */
   this.enableImpersonation = false;
