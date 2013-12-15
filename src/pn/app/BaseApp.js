@@ -9,6 +9,7 @@ goog.require('pn');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
+goog.require('pn.app.Router.EventType');
 goog.require('pn.data.BaseFacade');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
