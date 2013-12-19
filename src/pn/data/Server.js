@@ -287,7 +287,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
       }, this);
 
   this.log_.info('Making request: ' + uri);
-  this.manager_.send(rid, uri, 'POST', qd, null, null, callback);
+  this.manager_.send(rid, uri, 'POST', qd, undefined, undefined, callback);
 };
 
 
