@@ -110,7 +110,7 @@ pn.data.Entity.prototype.clone = function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/** @typedef {function(new:pn.data.Entity, Object=):undefined} */
+/** @typedef {function(new:pn.data.Entity, Object):undefined} */
 pn.data.EntityCtor;
 
 
