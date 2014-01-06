@@ -51,3 +51,11 @@ pn.app.EventHandlerTarget.prototype.listenTo = function(src, type, opt_fn) {
 pn.app.EventHandlerTarget.prototype.unlistenTo = function(src, type, opt_fn) {
   return this.eh_.unlisten(src, type, opt_fn);
 };
+
+
+/**
+ * Unlistens to all events.
+ */
+pn.app.EventHandlerTarget.prototype.removeAll = function() {
+  this.eh_.removeAll();
+};
