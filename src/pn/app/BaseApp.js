@@ -56,7 +56,7 @@ pn.app.BaseApp = function(opt_cfg) {
    * @protected
    * @type {goog.debug.Logger}
    */
-  this.log = pn.log.getLogger('pn.app.BaseApp');
+  this.log = pn.log.getLogger('Application');
   this.log.info('Creating Application');
 
   /** @type {!pn.app.Router} */
