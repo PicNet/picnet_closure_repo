@@ -81,14 +81,14 @@ pn.ui.grid.pipe.GridHandler.prototype.setMembers =
  * Override to add functionality to the grid before the grid and dataview have
  *    their data and are rendered on the page.
  */
-pn.ui.grid.pipe.GridHandler.prototype.preRender = function() {};
+pn.ui.grid.pipe.GridHandler.prototype.preRender = goog.nullFunction;
 
 
 /**
  * Override to add functionality to the grid before the grid and dataview have
  *    their data and are rendered on the page.
  */
-pn.ui.grid.pipe.GridHandler.prototype.postRender = function() {};
+pn.ui.grid.pipe.GridHandler.prototype.postRender = goog.nullFunction;
 
 
 /**

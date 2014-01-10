@@ -4,7 +4,7 @@ goog.provide('pn.mob.ui.ISwipeable');
 
 
 /** @interface */
-pn.mob.ui.ISwipeable = function() {};
+pn.mob.ui.ISwipeable = goog.nullFunction;
 
 
 /**

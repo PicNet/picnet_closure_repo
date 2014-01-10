@@ -4,7 +4,7 @@ goog.provide('pn.ui.IDefaultRenderer');
 
 
 /** @interface */
-pn.ui.IDefaultRenderer = function() {};
+pn.ui.IDefaultRenderer = goog.nullFunction;
 
 
 /**

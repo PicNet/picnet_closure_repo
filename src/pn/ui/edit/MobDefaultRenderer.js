@@ -10,7 +10,7 @@ goog.require('pn.ui.IDefaultRenderer');
  * @constructor
  * @implements {pn.ui.IDefaultRenderer}
  */
-pn.ui.MobDefaultRenderer = function() {};
+pn.ui.MobDefaultRenderer = goog.nullFunction;
 
 
 /** @override */

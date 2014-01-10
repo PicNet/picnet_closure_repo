@@ -4,7 +4,7 @@ goog.provide('pn.data.IDataSource');
 
 
 /** @interface */
-pn.data.IDataSource = function() {};
+pn.data.IDataSource = goog.nullFunction;
 
 
 /**
