@@ -117,6 +117,8 @@ pn.app.BaseApp = function(opt_cfg) {
 
   /** @return {string} The current topic being submitted. */
   this.topic = goog.bind(this.bus_.topic, this.bus_);
+
+  this.initEvHandlers_();
 };
 goog.inherits(pn.app.BaseApp, goog.events.EventHandler);
 
@@ -209,18 +211,27 @@ pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
 
 
 /**
- * Needs to be called by implementing class to initialise the application.
- * @protected
+ * Initialise all the application event handlers, this registers things
+ *    like the show messages/error listeners that may be required before
+ *    init is called.
+ * @private
  */
-pn.app.BaseApp.prototype.init = function() {
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
-
+pn.app.BaseApp.prototype.initEvHandlers_ = function() {
   var eventBusEvents = this.getDefaultAppEventHandlers();
   var additional = this.getAppEventHandlers();
   if (additional) goog.object.extend(eventBusEvents, additional);
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
+};
+
+
+/**
+ * Needs to be called by implementing class to initialise the application.
+ * @protected
+ */
+pn.app.BaseApp.prototype.init = function() {
+  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
   var sset = pn.data.Server.EventType,
       lp = this.loading,
