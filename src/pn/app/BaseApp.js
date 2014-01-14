@@ -217,12 +217,17 @@ pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
  * @private
  */
 pn.app.BaseApp.prototype.initEvHandlers_ = function() {
-  var eventBusEvents = this.getDefaultAppEventHandlers();
-  var additional = this.getAppEventHandlers();
+  var eventBusEvents = this.getDefaultAppEventHandlers(),
+      additional = this.getAppEventHandlers(),
+      sset = pn.data.Server.EventType;
+
   if (additional) goog.object.extend(eventBusEvents, additional);
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
+
+  this.bus_.sub(sset.LOADING, this.loading.increment, this.loading);
+  this.bus_.sub(sset.LOADED, this.loading.decrement, this.loading);
 };
 
 
@@ -233,14 +238,8 @@ pn.app.BaseApp.prototype.initEvHandlers_ = function() {
 pn.app.BaseApp.prototype.init = function() {
   goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
 
-  var sset = pn.data.Server.EventType,
-      lp = this.loading,
-      navevent = pn.app.Router.EventType.NAVIGATING;
-
-  goog.events.listen(this.data, sset.LOADING, lp.increment, false, lp);
-  goog.events.listen(this.data, sset.LOADED, lp.decrement, false, lp);
-  goog.events.listen(this.router, navevent, this.acceptDirty, false, this);
-
+  var navevent = pn.app.Router.EventType.NAVIGATING;
+  this.listen(this.router, navevent, this.acceptDirty);
   this.router.initialise(this.getRoutes());
 };
 

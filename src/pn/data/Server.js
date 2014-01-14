@@ -275,8 +275,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
   var eventType = bg ?
       pn.data.Server.EventType.LOADING_BG :
       pn.data.Server.EventType.LOADING;
-
-  this.dispatchEvent(new goog.events.Event(eventType));
+  pn.app.ctx.pub(eventType);
 
   var start = goog.now(),
       rid = uri + (this.requestCount_++),
@@ -360,7 +359,7 @@ pn.data.Server.prototype.replyImpl_ =
   var eventType = bg ?
       pn.data.Server.EventType.LOADED_BG :
       pn.data.Server.EventType.LOADED;
-  this.dispatchEvent(new goog.events.Event(eventType));
+  pn.app.ctx.pub(eventType);
 };
 
 
