@@ -208,9 +208,10 @@ pn.ui.edit.Edit.prototype.getFormErrors = function(c) {
 
 /** @override */
 pn.ui.edit.Edit.prototype.getCurrentFormData = function() {
-  var current = {};
-  goog.object.extend(current, this.entity);
-  goog.object.extend(current, this.getFormData());
+  var current = this.entity.clone();
+  goog.object.forEach(this.getFormData(), function(v, k) {
+    current.setValueOrExt(k, v);
+  });
   return current;
 };
 

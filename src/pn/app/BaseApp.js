@@ -252,10 +252,13 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
 
   // Data
   evs[ae.QUERY] = bind(this.data.query, this.data);
-  evs[ae.ENTITY_SAVE] = bind(function(type, raw, opt_cb) {
-    var entity = pn.data.TypeRegister.create(type, raw);
+  evs[ae.ENTITY_SAVE] = bind(function(type, entity, opt_cb) {
+    pn.assInst(entity, pn.data.Entity);
+
+    // var entity = pn.data.TypeRegister.create(type, entity);
     var cb = opt_cb ||
         goog.bind(function(e) { this.pub(ae.ENTITY_SAVED, e); }, this);
+
     if (entity.id > 0) { this.data.updateEntity(entity, cb); }
     else { this.data.createEntity(entity, cb); }
   }, this);
