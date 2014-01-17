@@ -21,7 +21,11 @@ pn.ui.grid.DataView = function(interceptor, opt_options) {
    * @type {!Slick.Data.DataView}
    */
   this.dv_ = new Slick.Data.DataView(opt_options);
-
+  
+  /** @private @type {function(int):undefined} */
+  this.originalGetItemMetadata_ = goog.bind(this.dv_.getItemMetadata, this.dv_);
+  this.dv_.getItemMetadata = goog.bind(this.getItemMetadata, this);
+  
   /**
    * @private
    * @type {pn.ui.grid.Interceptor}
@@ -76,7 +80,7 @@ pn.ui.grid.DataView.prototype.getItemMetadata = function(row) {
   pn.assNum(row);
 
   var item = this.dv_.getItem(row),
-      ret = this.dv_.getItemMetadata(row) || {};
+      ret = this.originalGetItemMetadata_(row) || {};
   if (item && this.interceptor_) {
     var additional = this.interceptor_.rowCssClass(item);
     if (additional) {
