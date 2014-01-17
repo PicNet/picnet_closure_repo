@@ -7,7 +7,7 @@ goog.provide('pn.data.Storage.Type');
 /**
  * @constructor
  * @param {string} id The id of this storage.
- * @param {function():undefined} cb The on loaded callback.
+ * @param {!function(!pn.data.Storage):undefined} cb The on loaded callback.
  * @param {pn.data.Storage.Type=} opt_type The type of storage (websql,
  *    memory or localStorage);
  */
@@ -18,9 +18,12 @@ pn.data.Storage = function(id, cb, opt_type) {
 
   this.checkLawnchair_();
 
-  var opts = {'name': id};
+  var opts = { 'name': id };
   if (!!opt_type) { opts['adapter'] = opt_type; }
-  this.lc_ = new Lawnchair(opts, cb);
+  new window['Lawnchair'](opts, goog.bind(function(lc) {
+    this.lc_ = lc;
+    cb(this);
+  }, this));
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,7 +68,7 @@ pn.data.Storage.prototype.batch = function(arr, cb) {
 
 /**
  * @param {string|Array.<string>} keys The key or array of keys to retreive.
- * @param {function((Object|Array.<Object>):undefined} cb The callback with the
+ * @param {function((Object|Array.<Object>)):undefined} cb The callback with the
  *    retreived items.
  */
 pn.data.Storage.prototype.get = function(keys, cb) {
@@ -78,7 +81,7 @@ pn.data.Storage.prototype.get = function(keys, cb) {
 
 /**
  * @param {string|Array.<string>} keys The key or array of keys to validate.
- * @param {function((Object|Array.<Object>):undefined} cb The callback with the
+ * @param {function((Object|Array.<Object>)):undefined} cb The callback with the
  *    booleans of the validated items.
  */
 pn.data.Storage.prototype.exists = function(keys, cb) {

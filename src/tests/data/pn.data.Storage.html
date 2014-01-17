@@ -44,7 +44,7 @@ var tearDown = function() {
 var test_memory_db_only_uses_mem = function() {  
   tc.waitForAsync(); 
   store = new pn.data.Storage('db', function(store) {
-    assertEquals(pn.data.Storage.Type.memory, store.adapter);
+    assertEquals(pn.data.Storage.Type.memory, store.lc_.adapter);
     tc.continueTesting();
   }, pn.data.Storage.Type.memory);  
 };
@@ -52,7 +52,7 @@ var test_memory_db_only_uses_mem = function() {
 var test_localStorage_db_uses_localStorage = function() {
   tc.waitForAsync(); 
   store = new pn.data.Storage('db', function(store) {
-    assertEquals(pn.data.Storage.Type.localStorage, store.adapter);
+    assertEquals(pn.data.Storage.Type.localStorage, store.lc_.adapter);
     tc.continueTesting();
   }, pn.data.Storage.Type.localStorage);  
 };
@@ -60,7 +60,7 @@ var test_localStorage_db_uses_localStorage = function() {
 var test_websql_db_uses_websql = function() {
   tc.waitForAsync(); 
   store = new pn.data.Storage('db', function(store) {
-    assertEquals(pn.data.Storage.Type.websql, store.adapter);
+    assertEquals(pn.data.Storage.Type.websql, store.lc_.adapter);
     tc.continueTesting();
   }, pn.data.Storage.Type.websql);  
 };
@@ -89,7 +89,11 @@ var test_multiple_stores_on_local_storage_is_responsible = function() {
               assertTrue(goog.isString(ls[key2 + '._index_']));
               assertEquals(2, pn.json.parseJson(ls[key1 + '._index_']).length);
               assertEquals(2, pn.json.parseJson(ls[key2 + '._index_']).length);
-              tc.continueTesting();
+              store1.nuke(function() {
+                store2.nuke(function() {
+                  tc.continueTesting();
+                });
+              });              
             });      
           });      
         });      
@@ -98,7 +102,50 @@ var test_multiple_stores_on_local_storage_is_responsible = function() {
   }, pn.data.Storage.Type.localStorage);  
 };
 
+var test_object_marshalling_unmarshalling = function() {
+  store = new pn.data.Storage('test_object_store', function(s) {
+    var date = new Date(2000, 1, 1);
+    s.batch([
+        { 'key': 1, 'string': 'string value', 'int': 123, 'obj': {k1:1} },
+        { 'key': 2, 'date': date, 'arr': [1, 2, 3] }
+      ], function() {        
+        s.get([1, 2], function(arr) {
+          var v1 = arr[0], 
+              v2 = arr[1];
+          assertEquals('string value', v1['string']);
+          assertEquals(123, v1['int']);
+          assertEquals(1, v1['obj'].k1);
+
+          // NOTE: Date must be recreated
+          assertEquals(date.getTime(), new Date(v2['date']).getTime());
+          assertArrayEquals([1, 2, 3], v2['arr']);
+        });
+      });
+  }, pn.data.Storage.Type.localStorage);
+};
+
+var test_localStorage_is_synchronous = function() {
+  var date = new Date(2000, 1, 1);
+  store = new pn.data.Storage('test_object_store', function(s) {
+    s.batch([
+        { 'key': 1, 'string': 'string value', 'int': 123, 'obj': {k1:1} },
+        { 'key': 2, 'date': date, 'arr': [1, 2, 3] }], goog.nullFunction);
+    var arr;
+    s.get([1, 2], function(arr2) { arr = arr2; });
+    var v1 = arr[0], 
+        v2 = arr[1];
+    assertEquals('string value', v1['string']);
+    assertEquals(123, v1['int']);
+    assertEquals(1, v1['obj'].k1);
+
+    // NOTE: Date must be recreated
+    assertEquals(date.getTime(), new Date(v2['date']).getTime());
+    assertArrayEquals([1, 2, 3], v2['arr']);
+  }, pn.data.Storage.Type.localStorage);
+};
+
 var tc = goog.testing.AsyncTestCase.createAndInstall();
+
         </script>
     </body>
 </html>

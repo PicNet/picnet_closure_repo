@@ -81,7 +81,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.initPersistentFilters_ =
 
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
-  var statesStr = pn.storage.get(this.storeId_);
+  var statesStr = window.localStorage.getItem(this.storeId_);
   if (!statesStr) { return; }
   var filterStates = /** @type {!Object.<string>} */
       (goog.json.unsafeParse(statesStr));
@@ -92,7 +92,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
 /** @private */
 pn.ui.grid.pipe.FilteringHandler.prototype.saveFilterStates_ = function() {
   var jsonData = pn.json.serialiseJson(this.quickFind_.getFilterStates());
-  pn.storage.set(this.storeId_, jsonData);
+  window.localStorage.setItem(this.storeId_, jsonData);
 };
 
 

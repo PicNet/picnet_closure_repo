@@ -9,7 +9,6 @@ goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('pn.app.AppEvents');
 goog.require('pn.json');
-goog.require('pn.storage');
 goog.require('pn.ui.grid.ColumnCtx');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.grid.DataView');
