@@ -34,6 +34,7 @@ goog.inherits(pn.app.EventHandlerTarget, goog.events.EventTarget);
  *     calls.
  */
 pn.app.EventHandlerTarget.prototype.listenTo = function(src, type, opt_fn) {
+  pn.ass(goog.isString(type) || type.pnall(goog.isString));
   return this.eh_.listen(src, type, opt_fn);
 };
 
