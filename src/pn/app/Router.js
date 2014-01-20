@@ -206,7 +206,7 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   if (!route) {
     // Use the global route handler if specified (named '*')
     route = this.routes_['*'];
-    tokens.push(to);
+    tokens.unshift(to);
   }
   if (!route) { throw new Error('Route [' + path + '] not supported'); }
 
