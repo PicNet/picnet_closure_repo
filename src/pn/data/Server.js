@@ -22,7 +22,7 @@ goog.require('pn.log');
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {string} controller The controller Uri.
- * @param {function(string):undefined} publisher A method for
+ * @param {function(string,string=):undefined} pub A method for
  *    publishing messages to any interested listeners.
  */
 pn.data.Server = function(controller, pub) {
@@ -41,7 +41,7 @@ pn.data.Server = function(controller, pub) {
   /**
    * @private
    * @const
-   * @type {function(string):undefined}
+   * @type {function(string,string=):undefined}
    */
   this.pub_ = pub;
 
