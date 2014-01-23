@@ -49,6 +49,8 @@ pn.app.BaseApp = function(opt_cfg) {
   goog.events.EventHandler.call(this);
   pn.ass(pn.app.ctx === null, 'Only a single instance of base app supported');
 
+  this.listen(window, goog.events.EventType.UNLOAD, this.dispose);
+
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
 
@@ -236,8 +238,6 @@ pn.app.BaseApp.prototype.initEvHandlers_ = function() {
  * @protected
  */
 pn.app.BaseApp.prototype.init = function() {
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
-
   var navevent = pn.app.Router.EventType.NAVIGATING;
   this.listen(this.router, navevent, this.acceptDirty);
   this.router.initialise(this.getRoutes());
@@ -336,7 +336,6 @@ pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
 /** @override */
 pn.app.BaseApp.prototype.disposeInternal = function() {
   pn.app.BaseApp.superClass_.disposeInternal.call(this);
-
   this.log.info('Disposing Application');
 
   var sset = pn.data.Server.EventType,
@@ -345,4 +344,6 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
   goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
   goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
+  
+  delete pn.app.ctx;
 };
