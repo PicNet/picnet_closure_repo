@@ -79,7 +79,7 @@ pn.app.BaseApp = function(opt_cfg) {
    * @protected
    * @type {!pn.data.Server}
    */
-  this.server = new pn.data.Server(this.cfg.facadeUri);
+  this.server = new pn.data.Server(this.cfg.facadeUri, this.pub);
 
   /** @type {!pn.data.BaseFacade} */
   this.data = new pn.data.LazyFacade(this.cache, this.server);
@@ -344,6 +344,6 @@ pn.app.BaseApp.prototype.disposeInternal = function() {
   goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
   goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
   goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
-  
+
   delete pn.app.ctx;
 };

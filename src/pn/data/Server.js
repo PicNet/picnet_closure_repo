@@ -11,6 +11,7 @@ goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
 goog.require('pn.data.IDataSource');
+goog.require('pn.data.PnQuery');
 goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
 goog.require('pn.log');
@@ -21,9 +22,12 @@ goog.require('pn.log');
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {string} controller The controller Uri.
+ * @param {function(string):undefined} publisher A method for
+ *    publishing messages to any interested listeners.
  */
-pn.data.Server = function(controller) {
+pn.data.Server = function(controller, pub) {
   pn.assStr(controller);
+  pn.assFun(pub);
 
   goog.events.EventTarget.call(this);
 
@@ -33,6 +37,13 @@ pn.data.Server = function(controller) {
    * @type {string}
    */
   this.controller_ = controller;
+
+  /**
+   * @private
+   * @const
+   * @type {function(string):undefined}
+   */
+  this.pub_ = pub;
 
   /**
    * @private
@@ -275,7 +286,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
   var eventType = bg ?
       pn.data.Server.EventType.LOADING_BG :
       pn.data.Server.EventType.LOADING;
-  pn.app.ctx.pub(eventType);
+  this.pub_(eventType);
 
   var start = goog.now(),
       rid = uri + (this.requestCount_++),
@@ -344,7 +355,7 @@ pn.data.Server.prototype.replyImpl_ =
 
     if (response.debugMessage) {
       var sdb = pn.app.AppEvents.SHOW_DEBUG_MESSAGE;
-      pn.app.ctx.pub(sdb, response.debugMessage);
+      this.pub_(sdb, response.debugMessage);
     }
 
     if (response.error) {
@@ -359,7 +370,7 @@ pn.data.Server.prototype.replyImpl_ =
   var eventType = bg ?
       pn.data.Server.EventType.LOADED_BG :
       pn.data.Server.EventType.LOADED;
-  pn.app.ctx.pub(eventType);
+  this.pub_(eventType);
 };
 
 

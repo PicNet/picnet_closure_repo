@@ -1,6 +1,8 @@
 ﻿;
 goog.provide('pn.data.IDataSource');
 
+goog.require('pn.data.BaseDalCache');
+
 
 
 /** @interface */
