@@ -47,7 +47,6 @@ pn.ui.edit.Edit = function(spec, entity, cache, opt_keys) {
   pn.ass(!opt_keys || opt_keys instanceof pn.ui.KeyShortcutMgr);
 
   pn.ui.edit.CommandsComponent.call(this, spec, entity, cache, opt_keys);
-
   /**
    * @private
    * @type {goog.debug.Logger}
@@ -84,15 +83,13 @@ pn.ui.edit.Edit.prototype.isDirty = function() {
   var dirty = this.getEditableFields_().pnfindIndex(function(fctx) {
     return fctx.isDirty(this.entity, this.getControl(fctx.id));
   }, this) >= 0;
-  this.log_.fine('isDirty: ' + this.spec.id + ' -> ' + dirty);
   return dirty;
 };
 
 
 /** @override. */
 pn.ui.edit.Edit.prototype.resetDirty = function() {
-  var data = this.getCurrentFormData();
-  this.entity = pn.data.TypeRegister.create(this.spec.type, data);
+  this.entity = /** @type {!pn.data.Entity} */ (this.getCurrentFormData());
 };
 
 
