@@ -224,3 +224,22 @@ pn.data.Entity.prototype.fromCompressed = function(arr) {
     this.setValue(key, v);
   }, this);
 };
+
+
+/**
+ * * @param {string} path The path of the field we want the entity value for.
+ *    This supports paths along relationships using '.' notation.  Array
+ *    values are also supported within paths.
+ * @return {*} The value from the current entity given the current path.
+ */
+pn.data.Entity.prototype.evaluate = function(path) {
+  var steps = path.split('.');
+  var val = this;
+  while (!!val && steps.length) {
+    var step = steps.shift();
+    val = goog.isArray(val) ?
+        val.pnmap(function(v) { return v.getValue(step); }) :
+        val.getValue(step);
+  }
+  return val;
+};
