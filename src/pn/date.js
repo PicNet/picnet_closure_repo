@@ -93,6 +93,26 @@ pn.date.isPast = function(date) {
 
 
 /**
+ * @param {!number} millis The date to reset
+ * @return {?goog.date.DateTime} A new utc date time.
+ */
+pn.date.fromUtcMillis = function(millis) {
+
+  if (!goog.isDefAndNotNull(millis) || millis <= 0)
+    return null;
+
+  var datetime = new goog.date.DateTime(new Date(millis)),
+      year = datetime.getUTCFullYear(),
+      month = datetime.getUTCMonth(),
+      day = datetime.getUTCDate(),
+      hours = datetime.getUTCHours(),
+      mins = datetime.getUTCMinutes();
+
+  return new goog.date.DateTime(year, month, day, hours, mins);
+};
+
+
+/**
  * @param {number} millis The number of milliseconds from 1970.
  * @return {goog.date.DateTime} The goog.Date from the specified millis.
  */
