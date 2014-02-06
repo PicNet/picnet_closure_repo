@@ -236,19 +236,19 @@ Array.prototype.pnmap = function(f, opt_obj) {
  * @see goog.array.map
  * @this {Array.<T>|goog.array.ArrayLike} arr Array or array
  *     like object over which to iterate.
- * @param {?function(this:S, T, number, ?):Array} f The function to call for
- *    every element. This function
+ * @param {function(this:S, T, number):!Array.<R>} f The function to call
+ *    for every element. This function
  *    takes 3 arguments (the element, the index and the array) and should
  *    return something. The result will be appended into a new array.
  * @param {S=} opt_obj The object to be used as the value of 'this'
  *     within f.
- * @return {!Array} a new array with the results from f.
- * @template T,S
+ * @return {!Array.<R>} a new array with the results from f.
+ * @template T,S,R
  */
 Array.prototype.pnmapMany = function(f, opt_obj) {
   var manys = [];
-  goog.array.forEach(this, function(e, idx, arr) {
-    var sub = f(e, idx, arr);
+  goog.array.forEach(this, function(e, idx) {
+    var sub = f(e, idx);
     manys = manys.pnconcat(sub);
   });
   return manys;

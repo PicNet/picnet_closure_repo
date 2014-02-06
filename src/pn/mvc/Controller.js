@@ -43,3 +43,11 @@ pn.mvc.Controller.prototype.getView = function() { return this.view_; };
 
 /** @return {pn.mvc.ModelBase} The controllers model. */
 pn.mvc.Controller.prototype.getModel = function() { return this.model_; };
+
+
+/** @override */
+pn.mvc.Controller.prototype.disposeInternal = function() {
+  pn.mvc.Controller.superClass_.disposeInternal.call(this);
+
+  delete this.view_;
+};
