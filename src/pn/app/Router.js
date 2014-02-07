@@ -2,10 +2,10 @@
 goog.provide('pn.app.Router');
 goog.provide('pn.app.Router.EventType');
 
-goog.require('goog.History');
 goog.require('goog.asserts');
 goog.require('goog.events.Event');
 goog.require('goog.history.EventType');
+goog.require('goog.history.Html5History');
 goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.log');
 
@@ -46,11 +46,9 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
 
   /**
    * @private
-   * @type {!goog.History}
+   * @type {!goog.history.Html5History}
    */
-  this.history_ = new goog.History(!!opt_invisible,
-      !!opt_invisible ? (goog.isString(opt_invisible) ?
-          opt_invisible : 'blank.htm') : '');
+  this.history_ = new goog.history.Html5History();
   this.registerDisposable(this.history_);
 };
 goog.inherits(pn.app.Router, pn.app.EventHandlerTarget);
@@ -87,7 +85,6 @@ pn.app.Router.prototype.getLastToken = function() {
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
-
   var to = this.stack_[this.stack_.length - 2] || this.defaultRoute;
   this.history_.setToken(to);
 };
