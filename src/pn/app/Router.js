@@ -136,7 +136,7 @@ pn.app.Router.prototype.navigate = function(path) {
  */
 pn.app.Router.prototype.onNavigate_ = function(e) {
   this.log_.fine('onNavigate isNavigation: ' + e.isNavigation);
-  
+
   if (!this.fireNavigating_()) { this.undoLastNavigation_(); }
   else { this.navigateImpl_(e.token); }
 };
