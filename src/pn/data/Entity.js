@@ -241,5 +241,5 @@ pn.data.Entity.prototype.evaluate = function(path) {
         val.pnmap(function(v) { return v.getValue(step); }) :
         val.getValue(step);
   }
-  return val;
+  return val || '';
 };
