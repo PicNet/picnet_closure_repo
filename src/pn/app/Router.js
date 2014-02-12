@@ -16,11 +16,9 @@ goog.require('pn.log');
  * @extends {pn.app.EventHandlerTarget}
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
- * @param {(boolean|string)=} opt_invisible True to use hidden history
- *    states instead of the user-visible location hash.  This can also be a
- *    string of the hidden iframe url.
+ * @suppress {visibility} This is for the double back hack.
  */
-pn.app.Router = function(opt_defaultRoute, opt_invisible) {
+pn.app.Router = function(opt_defaultRoute) {
   pn.app.EventHandlerTarget.call(this);
 
   /**
@@ -50,12 +48,11 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
    */
   this.history_ = new goog.history.Html5History();
   this.registerDisposable(this.history_);
-  
-  // Hack to resolve history firing twice issues.  This is from: 
+
+  // Hack to resolve history firing twice issues.  This is from:
   // https://code.google.com/p/closure-library/issues/detail?id=449
-  // goog.events.unlisten(this.history_.window_, goog.events.EventType.POPSTATE, 
-  //    this.history_.onHistoryEvent_, false, this.history_);
-  goog.events.unlisten(this.history_.window_, goog.events.EventType.HASHCHANGE, 
+  /** @suppress {visibility} */
+  goog.events.unlisten(this.history_.window_, goog.events.EventType.HASHCHANGE,
       this.history_.onHistoryEvent_, false, this.history_);
 };
 goog.inherits(pn.app.Router, pn.app.EventHandlerTarget);
@@ -153,7 +150,7 @@ pn.app.Router.prototype.onNavigate_ = function(e) {
  * @private
  * @return {boolean} False if this navigation event is cancelled.
  */
-pn.app.Router.prototype.fireNavigating_ = function() {  
+pn.app.Router.prototype.fireNavigating_ = function() {
   var e = new goog.events.Event(pn.app.Router.EventType.NAVIGATING);
   var continuing = this.dispatchEvent(e);
   this.log_.fine('fireNavigating_ continuing: ' + continuing);
