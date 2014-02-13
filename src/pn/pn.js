@@ -775,7 +775,7 @@ pn.range = function(start, stop, opt_step) {
   pn.assNum(stop);
 
   var step = opt_step || (start > stop ? -1 : 1);
-  if (step > 0) pn.ass(stop > start);
+  if (step > 0) pn.ass(stop >= start);
   else pn.ass(stop < start);
 
   var result = [];
