@@ -185,11 +185,18 @@ pn.data.Entity.prototype.getValueOrExt = function(prop) {
  *    by the server (No compiled property names).
  */
 pn.data.Entity.prototype.toJsonObject = function() {
-  var ps = this.getProps();
-  var ps2 = goog.object.getKeys(this.extprops_);
-  var obj = {};
-  ps.pnforEach(function(p) { obj[p] = this.getValue(p); }, this);
-  ps2.pnforEach(function(p) { obj[p] = this.getExtValue(p); }, this);
+  var ps = this.getProps(),
+      ps2 = goog.object.getKeys(this.extprops_),
+      obj = { 'type': this.type },
+      value = function(v) {
+        if (!v) return v;
+        if (!!v.toJsonObject) return v.toJsonObject();
+        if (v instanceof goog.date.Date) return v.getTime();
+        if (goog.isArray(v)) return v.pnmap(value);
+        return v;
+      };
+  ps.pnforEach(function(p) { obj[p] = value(this.getValue(p)); }, this);
+  ps2.pnforEach(function(p) { obj[p] = value(this.getExtValue(p)); }, this);
   return obj;
 };
 
