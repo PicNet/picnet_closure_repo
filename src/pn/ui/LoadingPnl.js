@@ -60,3 +60,10 @@ pn.ui.LoadingPnl.prototype.showLoadingPanel_ = function(visible) {
   if (visible) action.call(this);
   else goog.Timer.callOnce(action, 1, this);
 };
+
+
+/** @override */
+pn.ui.LoadingPnl.prototype.disposeInternal = function() {
+  pn.ui.LoadingPnl.superClass_.disposeInternal.call(this);
+  delete this.element_;
+};

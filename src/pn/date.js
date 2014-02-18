@@ -32,6 +32,20 @@ pn.date.longDateFormat = new goog.i18n.DateTimeFormat("EEEE dd'/'MMM'/'yyyy");
 pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
 
+/** Disposed all static instances of formatters and parsers */
+pn.date.dispose = function() {
+  goog.dispose(pn.date.dateFormat);
+  goog.dispose(pn.date.dateTimeFormat);
+  goog.dispose(pn.date.longDateFormat);
+  goog.dispose(pn.date.dateParser);
+
+  delete pn.date.dateFormat;
+  delete pn.date.dateTimeFormat;
+  delete pn.date.longDateFormat;
+  delete pn.date.dateParser;
+};
+
+
 /**
  * @param {!goog.date.Date} date The date to check, if its a
  *    weekday (MON-FRI).
