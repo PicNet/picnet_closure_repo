@@ -17,7 +17,7 @@ goog.require('pn.mvc.View');
  *    controller's view.
  */
 pn.mvc.Controller = function(view, opt_model) {
-  pn.assInst(view, HTMLElement || view instanceof pn.mvc.View);
+  pn.ass(view instanceof HTMLElement || view instanceof pn.mvc.View);
   pn.ass(!opt_model || opt_model instanceof pn.mvc.ModelBase);
 
   pn.app.EventHandlerTarget.call(this);
@@ -43,3 +43,11 @@ pn.mvc.Controller.prototype.getView = function() { return this.view_; };
 
 /** @return {pn.mvc.ModelBase} The controllers model. */
 pn.mvc.Controller.prototype.getModel = function() { return this.model_; };
+
+
+/** @override */
+pn.mvc.Controller.prototype.disposeInternal = function() {
+  pn.mvc.Controller.superClass_.disposeInternal.call(this);
+
+  delete this.view_;
+};

@@ -211,7 +211,7 @@ pn.ui.edit.CommandsComponent.prototype.doCommandEvent_ = function(c) {
   var button = this.commandButtons_[c.name];
   this.getHandler().listen(button, goog.events.EventType.CLICK, function() {
     if (!this.shouldFireCommandEvent(c)) { return; }
-    this.fireCommandEvent(c, this.getCurrentFormData());
+    this.fireCommandEvent(c, this.getCurrentFormData(c));
   });
 };
 

@@ -32,6 +32,20 @@ pn.date.longDateFormat = new goog.i18n.DateTimeFormat("EEEE dd'/'MMM'/'yyyy");
 pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
 
+/** Disposed all static instances of formatters and parsers */
+pn.date.dispose = function() {
+  goog.dispose(pn.date.dateFormat);
+  goog.dispose(pn.date.dateTimeFormat);
+  goog.dispose(pn.date.longDateFormat);
+  goog.dispose(pn.date.dateParser);
+
+  delete pn.date.dateFormat;
+  delete pn.date.dateTimeFormat;
+  delete pn.date.longDateFormat;
+  delete pn.date.dateParser;
+};
+
+
 /**
  * @param {!goog.date.Date} date The date to check, if its a
  *    weekday (MON-FRI).
@@ -89,6 +103,26 @@ pn.date.isPast = function(date) {
   var now = new Date(goog.now());
   if (goog.date.isSameDay(date, now)) return false;
   return goog.date.Date.compare(date, now) < 0;
+};
+
+
+/**
+ * @param {!number} millis The date to reset
+ * @return {?goog.date.DateTime} A new utc date time.
+ */
+pn.date.fromUtcMillis = function(millis) {
+
+  if (!goog.isDefAndNotNull(millis) || millis <= 0)
+    return null;
+
+  var datetime = new goog.date.DateTime(new Date(millis)),
+      year = datetime.getUTCFullYear(),
+      month = datetime.getUTCMonth(),
+      day = datetime.getUTCDate(),
+      hours = datetime.getUTCHours(),
+      mins = datetime.getUTCMinutes();
+
+  return new goog.date.DateTime(year, month, day, hours, mins);
 };
 
 

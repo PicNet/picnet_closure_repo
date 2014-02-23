@@ -2,6 +2,7 @@
 goog.provide('pn.ui.edit.ComplexRenderer');
 
 goog.require('goog.ui.Component');
+goog.require('pn.ui.edit.FieldCtx');
 
 
 

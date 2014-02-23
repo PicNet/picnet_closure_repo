@@ -30,7 +30,7 @@ pn.mvc.View = function(el, opt_model) {
    */
   this.model_ = opt_model || null;
   if (this.model_) {
-    this.listen(this.model_, pn.mvc.EventType.CHANGE, this.refresh);
+    this.listenTo(this.model_, pn.mvc.EventType.CHANGE, this.refresh);
   }
 };
 goog.inherits(pn.mvc.View, pn.app.EventHandlerTarget);

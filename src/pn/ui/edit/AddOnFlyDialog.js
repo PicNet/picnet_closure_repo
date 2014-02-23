@@ -89,7 +89,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.show = function() {
 pn.ui.edit.AddOnFlyDialog.prototype.validate_ = function(edit) {
   var errors = edit.getFormErrors(null);
   if (!errors.length) return true;
-  pn.web.ctx.pub(pn.web.WebAppEvents.ENTITY_VALIDATION_ERROR, errors);
+  pn.app.ctx.pub(pn.app.AppEvents.ENTITY_VALIDATION_ERROR, errors);
   return false;
 };
 
@@ -106,7 +106,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.doAdd_ = function(edit, type) {
 
   var entity = edit.getCurrentFormData();
   var cb = goog.bind(this.entityAdded_, this, type);
-  pn.web.ctx.pub(pn.app.AppEvents.ENTITY_SAVE, type, entity, cb);
+  pn.app.ctx.pub(pn.app.AppEvents.ENTITY_SAVE, type, entity, cb);
 };
 
 
@@ -119,7 +119,7 @@ pn.ui.edit.AddOnFlyDialog.prototype.entityAdded_ = function(type, saved) {
   pn.assInst(saved, pn.data.Entity);
 
   if (goog.isString(saved)) {
-    pn.web.ctx.pub(pn.web.WebAppEvents.SHOW_ERROR, saved);
+    pn.app.ctx.pub(pn.app.AppEvents.SHOW_ERROR, saved);
     return;
   }
 

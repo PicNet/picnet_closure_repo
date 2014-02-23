@@ -4,6 +4,7 @@ goog.provide('pn.ui.edit.InterceptorCtor');
 
 goog.require('goog.events.EventHandler');
 goog.require('pn.data.Entity');
+goog.require('pn.ui.edit.state.FState');
 
 
 /** @typedef {function(new:pn.ui.edit.Interceptor,

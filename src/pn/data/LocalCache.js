@@ -379,7 +379,7 @@ pn.data.LocalCache.prototype.init_ = function() {
     pn.assArr(rawList);
     var ctor = pn.data.TypeRegister.fromName(query.Type);
     var entities = rawList.pnmap(function(data) {
-      var e = new ctor();
+      var e = new ctor({});
       e.fromCompressed(data);
       return e;
     });

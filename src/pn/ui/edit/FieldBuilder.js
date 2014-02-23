@@ -1,14 +1,10 @@
 ﻿;
 goog.provide('pn.ui.edit.FieldBuilder');
 
-goog.require('goog.date.DateTime');
-goog.require('goog.events.EventHandler');
 goog.require('goog.string');
 goog.require('goog.ui.ComboBox');
 goog.require('goog.ui.ComboBoxItem');
 goog.require('pn');
-goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.ui.grid.Grid');
 
 
 /**
@@ -30,28 +26,6 @@ pn.ui.edit.FieldBuilder.getFieldContainer = function(fctx) {
 
 
 /**
- * @param {Element|Text|goog.ui.Component} inp The input field.
- * @param {Object=} opt_target The optional 'entity' target to inject values
- *    into if required.
- * @return {string|boolean} The value in the specified field.
- */
-pn.ui.edit.FieldBuilder.getFieldValue = function(inp, opt_target) {
-  pn.ass(inp);
-
-  if (inp.getValue) { return inp.getValue(opt_target); }
-  else if (inp.options) {
-    var arr = [];
-    pn.toarr(inp.options).pnforEach(function(o) {
-      if (o.selected) { arr.push(o.value); }
-    });
-    return inp.multiple && arr.length > 1 ? arr : arr[0];
-  }
-  else if (inp.type === 'checkbox') { return !!inp.checked; }
-  else { return inp.value; }
-};
-
-
-/**
  * @param {!pn.ui.edit.FieldCtx} fctx The field to create a dom tree for.
  * @param {!Element} parent The parent control to attach this control to.
  * @param {!pn.data.Entity} entity The entity being edited.
@@ -61,7 +35,7 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx, parent, entity) {
   var renderer = fctx.spec.renderer;
   if (renderer instanceof pn.ui.edit.ComplexRenderer) {
     renderer.decorate(parent);
-    return renderer;
+    return /** @type {!pn.ui.edit.ComplexRenderer} */ (renderer);
   }
   var func = /** @type {Function} */ (renderer);
   return func(fctx, parent, entity);

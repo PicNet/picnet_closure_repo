@@ -26,7 +26,7 @@ goog.inherits(pn.ui.grid.pipe.ColWidthsHandler,
 
 /** @override */
 pn.ui.grid.pipe.ColWidthsHandler.prototype.preRender = function() {
-  var state = pn.storage.get(this.storeId_);
+  var state = window.localStorage.getItem(this.storeId_);
   if (!state) return;
 
   var widths = goog.json.unsafeParse(state);
@@ -46,5 +46,5 @@ pn.ui.grid.pipe.ColWidthsHandler.prototype.onCustomEvent = function(et) {
 pn.ui.grid.pipe.ColWidthsHandler.prototype.saveGridWidths_ = function() {
   var columns = this.slick.getColumns();
   var data = columns.pnmap(function(c) { return c['width']; });
-  pn.storage.set(this.storeId_, pn.json.serialiseJson(data));
+  window.localStorage.setItem(this.storeId_, pn.json.serialiseJson(data));
 };

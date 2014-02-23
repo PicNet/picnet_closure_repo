@@ -1,24 +1,22 @@
 
 goog.provide('pn.app.BaseApp');
+goog.provide('pn.app.ctx');
 
 goog.require('goog.debug.Logger');
-goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventHandler');
 goog.require('goog.pubsub.PubSub');
 goog.require('pn');
 goog.require('pn.app.AppConfig');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
+goog.require('pn.app.Router.EventType');
 goog.require('pn.data.BaseFacade');
 goog.require('pn.data.LazyFacade');
 goog.require('pn.log');
-
-
-/**
- * A globally accisble handle to the application context.
- * @type {pn.app.BaseApp}
- */
-pn.app.ctx = null;
+goog.require('pn.ui.IDirtyAware');
+goog.require('pn.ui.LoadingPnl');
+goog.require('pn.ui.MessagePanel');
+goog.require('pn.ui.UiSpecsRegister');
 
 
 
@@ -51,6 +49,8 @@ pn.app.BaseApp = function(opt_cfg) {
   goog.events.EventHandler.call(this);
   pn.ass(pn.app.ctx === null, 'Only a single instance of base app supported');
 
+  this.listen(window, goog.events.EventType.UNLOAD, this.dispose);
+
   // Create a globally accessible handle to the application context
   pn.app.ctx = this;
 
@@ -58,7 +58,7 @@ pn.app.BaseApp = function(opt_cfg) {
    * @protected
    * @type {goog.debug.Logger}
    */
-  this.log = pn.log.getLogger('pn.app.BaseApp');
+  this.log = pn.log.getLogger('Application');
   this.log.info('Creating Application');
 
   /** @type {!pn.app.Router} */
@@ -79,7 +79,7 @@ pn.app.BaseApp = function(opt_cfg) {
    * @protected
    * @type {!pn.data.Server}
    */
-  this.server = new pn.data.Server(this.cfg.facadeUri);
+  this.server = new pn.data.Server(this.cfg.facadeUri, this.pub);
 
   /** @type {!pn.data.BaseFacade} */
   this.data = new pn.data.LazyFacade(this.cache, this.server);
@@ -94,6 +94,22 @@ pn.app.BaseApp = function(opt_cfg) {
   this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
   this.registerDisposable(this.bus_);
 
+  /** @type {!pn.ui.MessagePanel} */
+  this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
+  this.registerDisposable(this.msg);
+
+  /** @type {!pn.ui.LoadingPnl} */
+  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
+  this.registerDisposable(this.loading);
+
+  /** @type {!pn.ui.UiSpecsRegister} */
+  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
+  this.registerDisposable(this.specs);
+
+  /** @type {!pn.ui.AbstractViewMgr} */
+  this.view = this.createViewManager();
+  this.registerDisposable(this.view);
+
   // Convenience delegates.
   /**
    * @param {string} topic Topic to publish to.
@@ -103,8 +119,18 @@ pn.app.BaseApp = function(opt_cfg) {
 
   /** @return {string} The current topic being submitted. */
   this.topic = goog.bind(this.bus_.topic, this.bus_);
+
+  this.initEvHandlers_();
 };
 goog.inherits(pn.app.BaseApp, goog.events.EventHandler);
+
+
+/**
+ * A globally accisble handle to the application context.
+ * @type {pn.app.BaseApp}
+ */
+pn.app.ctx = null;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // REQUIRED TEMPLATE METHODS
@@ -148,6 +174,13 @@ pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
 
 
 /**
+ * @return {!pn.ui.AbstractViewMgr} Creates a view manager to control current
+ *    view state.
+ */
+pn.app.BaseApp.prototype.createViewManager = goog.abstractMethod;
+
+
+/**
  * A template method used to determine if the user is happy to leave the
  *    current page.  The default implementation is to always return true.
  *    However WebApps override this to do proper dirty checking.
@@ -155,7 +188,24 @@ pn.app.BaseApp.prototype.getAppEventHandlers = function() { return null; };
  * @return {boolean} Wether the user is happy to navigate away from the
  *    current page.
  */
-pn.app.BaseApp.prototype.acceptDirty = function() { return true; };
+pn.app.BaseApp.prototype.acceptDirty = function() {
+  return !this.isDirty() ||
+      window.confirm('Any unsaved changes will be lost, continue?');
+};
+
+
+/**
+ * A template method used to get all required UiSpecs.  This method should
+ *    return an object map (id/ctor pair) with types such as:
+ *    {
+ *      'Type1': pn.application.specs.Spec1,
+ *      'Type1': pn.application.specs.Spec2
+ *    {
+ *
+ * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
+ *    application. The first route is considered the default route.
+ */
+pn.app.BaseApp.prototype.getUiSpecs = goog.abstractMethod;
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE IMPLEMENTATION DETAILS
@@ -163,22 +213,33 @@ pn.app.BaseApp.prototype.acceptDirty = function() { return true; };
 
 
 /**
- * Needs to be called by implementing class to initialise the application.
- * @protected
+ * Initialise all the application event handlers, this registers things
+ *    like the show messages/error listeners that may be required before
+ *    init is called.
+ * @private
  */
-pn.app.BaseApp.prototype.init = function() {
-  goog.events.listen(window, 'unload', goog.bind(this.dispose, this));
+pn.app.BaseApp.prototype.initEvHandlers_ = function() {
+  var eventBusEvents = this.getDefaultAppEventHandlers(),
+      additional = this.getAppEventHandlers(),
+      sset = pn.data.Server.EventType;
 
-  var eventBusEvents = this.getDefaultAppEventHandlers();
-  var additional = this.getAppEventHandlers();
   if (additional) goog.object.extend(eventBusEvents, additional);
   for (var event in eventBusEvents) {
     this.bus_.sub(event, eventBusEvents[event]);
   }
 
-  var navevent = pn.app.Router.EventType.NAVIGATING;
-  goog.events.listen(this.router, navevent, this.acceptDirty, false, this);
+  this.bus_.sub(sset.LOADING, this.loading.increment, this.loading);
+  this.bus_.sub(sset.LOADED, this.loading.decrement, this.loading);
+};
 
+
+/**
+ * Needs to be called by implementing class to initialise the application.
+ * @protected
+ */
+pn.app.BaseApp.prototype.init = function() {
+  var navevent = pn.app.Router.EventType.NAVIGATING;
+  this.listen(this.router, navevent, this.acceptDirty);
   this.router.initialise(this.getRoutes());
 };
 
@@ -191,10 +252,13 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
 
   // Data
   evs[ae.QUERY] = bind(this.data.query, this.data);
-  evs[ae.ENTITY_SAVE] = bind(function(type, raw, opt_cb) {
-    var entity = pn.data.TypeRegister.create(type, raw);
+  evs[ae.ENTITY_SAVE] = bind(function(type, entity, opt_cb) {
+    pn.assInst(entity, pn.data.Entity);
+
+    // var entity = pn.data.TypeRegister.create(type, entity);
     var cb = opt_cb ||
         goog.bind(function(e) { this.pub(ae.ENTITY_SAVED, e); }, this);
+
     if (entity.id > 0) { this.data.updateEntity(entity, cb); }
     else { this.data.createEntity(entity, cb); }
   }, this);
@@ -209,7 +273,32 @@ pn.app.BaseApp.prototype.getDefaultAppEventHandlers = function() {
   }, this);
   evs[ae.ENTITY_CANCEL] = bind(this.router.back, this.router);
   evs[ae.SHOW_DEBUG_MESSAGE] = this.showDebugMessage;
+
+  evs[ae.CLEAR_MESSAGE] = this.msg.clearMessage.pnbind(this.msg);
+  evs[ae.SHOW_MESSAGE] = this.msg.showMessage.pnbind(this.msg);
+  evs[ae.SHOW_MESSAGES] = this.msg.showMessages.pnbind(this.msg);
+  evs[ae.SHOW_ERROR] = this.msg.showError.pnbind(this.msg);
+  evs[ae.SHOW_ERRORS] = this.msg.showErrors.pnbind(this.msg);
+  evs[ae.ENTITY_VALIDATION_ERROR] = this.msg.showErrors.pnbind(this.msg);
   return evs;
+};
+
+
+/** Resets the dirty state of the current view */
+pn.app.BaseApp.prototype.resetDirty = function() {
+  var view = this.view.currentView();
+  if (view && view instanceof pn.ui.IDirtyAware) {
+    /** @type {pn.ui.IDirtyAware} */ (view).resetDirty();
+  }
+};
+
+
+/** @return {boolean} Whether the screen is dirty. */
+pn.app.BaseApp.prototype.isDirty = function() {
+  var view = this.view.currentView();
+  return !!view &&
+      view instanceof pn.ui.IDirtyAware &&
+      /** @type {pn.ui.IDirtyAware} */ (view).isDirty();
 };
 
 
@@ -247,9 +336,14 @@ pn.app.BaseApp.prototype.cloneEntity_ = function(entity) {
 /** @override */
 pn.app.BaseApp.prototype.disposeInternal = function() {
   pn.app.BaseApp.superClass_.disposeInternal.call(this);
-
   this.log.info('Disposing Application');
 
-  var navevent = pn.app.Router.EventType.NAVIGATING;
+  var sset = pn.data.Server.EventType,
+      lp = this.loading,
+      navevent = pn.app.Router.EventType.NAVIGATING;
+  goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
+  goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
   goog.events.unlisten(this.router, navevent, this.acceptDirty, false, this);
+
+  delete pn.app.ctx;
 };

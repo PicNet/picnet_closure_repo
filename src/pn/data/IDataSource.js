@@ -1,10 +1,12 @@
 ﻿;
 goog.provide('pn.data.IDataSource');
 
+goog.require('pn.data.BaseDalCache');
+
 
 
 /** @interface */
-pn.data.IDataSource = function() {};
+pn.data.IDataSource = goog.nullFunction;
 
 
 /**

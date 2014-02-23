@@ -9,7 +9,7 @@ goog.provide('pn.ui.filter.GenericListFilterOptions');
  * @constructor
  * @extends {goog.Disposable}
  */
-pn.ui.filter.GenericListFilterOptions = function() {};
+pn.ui.filter.GenericListFilterOptions = goog.nullFunction;
 
 
 /** @type {string} The default tooltip for the filter controls */

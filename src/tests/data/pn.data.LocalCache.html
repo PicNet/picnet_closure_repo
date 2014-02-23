@@ -19,7 +19,6 @@ goog.require('pn.data.LocalCache');
 goog.require('pn.data.Entity');
 goog.require('goog.object');
 goog.require('pn.data.PnQuery');
-goog.require('pn.storage');
 
 var entity,
     cache;
@@ -57,9 +56,9 @@ var testGetEntityReturnsEntityInCache = function() {
 
 var testGetEntityDoesNotUpdateLocalStorate = function() {
   var key = cache.key_('EntityType');
-  var json = pn.storage.get(key);
+  var json = localStorage.getItem(key);
   testGetEntityReturnsEntityInCache();
-  var json2 = pn.storage.get(key);
+  var json2 = localStorage.getItem(key);
   assertTrue(json2.length === json.length);
 };
 
@@ -99,9 +98,9 @@ var testCreateEntityCanThenBeRetreived = function() {
 
 var testCreateEntityUpdatesLocalStorage = function() {
   var key = cache.key_('EntityType');
-  var json = pn.storage.get(key);
+  var json = localStorage.getItem(key);
   testCreateEntityCanThenBeRetreived();
-  var json2 = pn.storage.get(key);
+  var json2 = localStorage.getItem(key);
   assertTrue(json2.length > json.length);
 };
 
@@ -142,9 +141,9 @@ var testUpdateEntityWithTmpIDAllowsChangeOfId = function() {
 
 var testUpdateEntityUpdatesLocalStorage = function() {
   var key = cache.key_('EntityType');
-  var json = pn.storage.get(key);
+  var json = localStorage.getItem(key);
   testUpdateEntityCanThenBeRetreived();
-  var json2 = pn.storage.get(key);
+  var json2 = localStorage.getItem(key);
   assertTrue(json2.length > json.length);
 };
 
@@ -175,9 +174,9 @@ var testDeleteEntityCannotThenBeRetreived = function() {
 
 var testDeleteEntityUpdatesLocalStorage = function() {
   var key = cache.key_('EntityType');
-  var json = pn.storage.get(key);
+  var json = localStorage.getItem(key);
   testDeleteEntityCannotThenBeRetreived();
-  var json2 = pn.storage.get(key);
+  var json2 = localStorage.getItem(key);
   assertTrue(json2.length < json.length);
 };
 
@@ -200,9 +199,9 @@ var testUndeleteEntityAllowsEntityToBeQueried = function() {
 
 var testUndeleteEntityUpdatesLocalStorage = function() {
   var key = cache.key_('EntityType');
-  var json = pn.storage.get(key);
+  var json = localStorage.getItem(key);
   testUndeleteEntityAllowsEntityToBeQueried();
-  var json2 = pn.storage.get(key);
+  var json2 = localStorage.getItem(key);
   assertTrue(json2.length > json.length);
 };
 

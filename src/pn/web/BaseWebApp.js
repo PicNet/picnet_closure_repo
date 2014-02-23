@@ -1,19 +1,14 @@
 ﻿;
 goog.provide('pn.web.BaseWebApp');
-goog.provide('pn.web.ctx');
 
 goog.require('goog.Uri');
 goog.require('pn.app.BaseApp');
-goog.require('pn.app.WebAppConfig');
 goog.require('pn.data.DataDownloader');
 goog.require('pn.data.Server');
 goog.require('pn.data.Server.EventType');
 goog.require('pn.ui.KeyShortcutMgr');
-goog.require('pn.ui.LoadingPnl');
-goog.require('pn.ui.MessagePanel');
-goog.require('pn.ui.UiSpec');
-goog.require('pn.ui.UiSpecsRegister');
-goog.require('pn.ui.ViewMgr');
+goog.require('pn.ui.WebViewMgr');
+goog.require('pn.web.WebAppConfig');
 goog.require('pn.web.WebAppEvents');
 
 
@@ -26,36 +21,14 @@ goog.require('pn.web.WebAppEvents');
  *    pn.app.AppConfig options.
  */
 pn.web.BaseWebApp = function(opt_cfg) {
-  pn.ass(pn.web.ctx === null, 'Only a single instance of base app supported');
-
-  /** @type {pn.web.BaseWebApp} */
-  pn.web.ctx = this;
-
-  this.cfg = new pn.app.WebAppConfig(opt_cfg);
+  this.cfg = new pn.web.WebAppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
   pn.app.BaseApp.call(this);
 
-  /** @type {!pn.ui.ViewMgr} */
-  this.view = new pn.ui.ViewMgr(pn.dom.get(this.cfg.viewContainerId));
-  this.registerDisposable(this.view);
-
-  /** @type {!pn.ui.MessagePanel} */
-  this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
-  this.registerDisposable(this.msg);
-
-
-  /** @type {!pn.ui.LoadingPnl} */
-  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
-  this.registerDisposable(this.loading);
-
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
   this.registerDisposable(this.keys);
-
-  /** @type {!pn.ui.UiSpecsRegister} */
-  this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
-  this.registerDisposable(this.specs);
 
   /**
    * @private
@@ -66,11 +39,12 @@ pn.web.BaseWebApp = function(opt_cfg) {
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
 
-/**
- * A globally accisble handle to the application context.
- * @type {pn.web.BaseWebApp}
- */
-pn.web.ctx = null;
+/** @override */
+pn.web.BaseWebApp.prototype.createViewManager = function() {
+  pn.assInst(this.cfg, pn.web.WebAppConfig);
+
+  return new pn.ui.WebViewMgr(pn.dom.get(this.cfg.viewContainerId));
+};
 
 
 /** @override. */
@@ -80,12 +54,6 @@ pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
       ae = pn.web.WebAppEvents;
 
   // Message
-  evs[ae.CLEAR_MESSAGE] = this.msg.clearMessage.pnbind(this.msg);
-  evs[ae.SHOW_MESSAGE] = this.msg.showMessage.pnbind(this.msg);
-  evs[ae.SHOW_MESSAGES] = this.msg.showMessages.pnbind(this.msg);
-  evs[ae.SHOW_ERROR] = this.msg.showError.pnbind(this.msg);
-  evs[ae.SHOW_ERRORS] = this.msg.showErrors.pnbind(this.msg);
-  evs[ae.ENTITY_VALIDATION_ERROR] = this.msg.showErrors.pnbind(this.msg);
   evs[ae.DALOG_SHOWN] = this.keys.disable.pnbind(this.keys);
   evs[ae.DALOG_HIDDEN] = this.keys.enable.pnbind(this.keys);
   evs[ae.LIST_EXPORT] = this.listExport_.pnbind(this);
@@ -98,11 +66,6 @@ pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
 /** @override. */
 pn.web.BaseWebApp.prototype.init = function() {
   if (this.cfg.enableImpersonation) { this.enableAjaxImpersonisation_(); }
-
-  var sset = pn.data.Server.EventType,
-      lp = this.loading;
-  goog.events.listen(this.data, sset.LOADING, lp.increment, false, lp);
-  goog.events.listen(this.data, sset.LOADED, lp.decrement, false, lp);
 
   goog.base(this, 'init');
 };
@@ -169,27 +132,6 @@ pn.web.BaseWebApp.prototype.impersonate = function(username) {
 
 
 /**
- * A template method used to get all required UiSpecs.  This method should
- *    return an object map (id/ctor pair) with types such as:
- *    {
- *      'Type1': pn.application.specs.Spec1,
- *      'Type1': pn.application.specs.Spec2
- *    {
- *
- * @return {!Object.<!function(new:pn.ui.UiSpec)>} The routes for this
- *    application. The first route is considered the default route.
- */
-pn.web.BaseWebApp.prototype.getUiSpecs = goog.abstractMethod;
-
-
-/** @override */
-pn.web.BaseWebApp.prototype.acceptDirty = function() {
-  if (!this.view.isDirty()) return true;
-  return window.confirm('Any unsaved changes will be lost, continue?');
-};
-
-
-/**
  * @private
  * @param {string} type The type of the entity being exported.
  *    This is not used in this fuction but must be there as this is a generic
@@ -224,15 +166,4 @@ pn.web.BaseWebApp.prototype.orderEntities_ = function(type, ids, opt_cb) {
       cb = opt_cb || goog.nullFunction,
       uri = this.cfg.touri('GridOrdering', 'OrderGrid');
   this.data.ajax(uri, data, cb);
-};
-
-
-/** @override */
-pn.web.BaseWebApp.prototype.disposeInternal = function() {
-  goog.base(this, 'disposeInternal');
-
-  var sset = pn.data.Server.EventType,
-      lp = this.loading;
-  goog.events.unlisten(this.data, sset.LOADING, lp.increment, false, lp);
-  goog.events.unlisten(this.data, sset.LOADED, lp.decrement, false, lp);
 };

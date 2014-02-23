@@ -1,10 +1,10 @@
 ﻿;
-goog.require('pn.ui.BaseFieldSpec');
-goog.require('pn.ui.edit.ComplexRenderer');
-goog.require('pn.ui.edit.ReadOnlyFields');
-goog.require('pn.ui.edit.ValidateInfo');
 goog.provide('pn.ui.edit.FieldSpec');
 goog.provide('pn.ui.edit.FieldSpec.Renderer');
+
+goog.require('pn.ui.BaseFieldSpec');
+goog.require('pn.ui.IDefaultRenderer');
+goog.require('pn.ui.edit.ComplexRenderer');
 
 
 
@@ -23,13 +23,22 @@ goog.provide('pn.ui.edit.FieldSpec.Renderer');
  *    explicitally set.
  * @param {!pn.ui.UiSpec} entitySpec The specifications (pn.ui.UiSpec) of
  *    the entity being displayed.
+ * @param {!pn.ui.IDefaultRenderer} defrender The builder for the default
+ *    renderer.
  */
-pn.ui.edit.FieldSpec = function(id, props, entitySpec) {
-  pn.ass(id);
-  pn.ass(props);
-  pn.ass(entitySpec);
+pn.ui.edit.FieldSpec = function(id, props, entitySpec, defrender) {
+  pn.assStr(id);
+  pn.assObj(props);
+  pn.assInst(entitySpec, pn.ui.UiSpec);
+  pn.ass(!!defrender && defrender.getDefaultRenderer);
 
   pn.ui.BaseFieldSpec.call(this, id, entitySpec);
+
+  /**
+   * @private
+   * @type {!pn.ui.IDefaultRenderer}
+   */
+  this.defrender_ = defrender;
 
   /**
    * The renderer to use to render this field value.  This can either be of
@@ -175,55 +184,10 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   if (this.tableType && !this.tableParentField) {
     this.tableParentField = this.entitySpec + 'ID';
   }
-  if (this.renderer instanceof pn.ui.edit.ComplexRenderer && this.validator) {
-    throw new Error('Complex renderers cannot have validators, ' +
-        'please review field definition "' + this.id + '"');
-  }
 
   if (!this.renderer) {
-    this.renderer = this.getDefaultRenderer();
+    this.renderer = this.defrender_.getDefaultRenderer(this);
     pn.ass(this.renderer);
-  }
-};
-
-
-/**
- * @param {boolean=} opt_readonly Wether to force the genration of a readonly
- *    renderer.
- * @return {pn.ui.edit.FieldSpec.Renderer} The inferred renderer for this field.
- */
-pn.ui.edit.FieldSpec.prototype.getDefaultRenderer = function(opt_readonly) {
-  var schema = this.id.indexOf('.') >= 0 ? null :
-      pn.data.TypeRegister.getFieldSchema(this.entitySpec.type, this.id),
-      tatl = 0,
-      st = schema ? schema.type : '',
-      drofr = {},
-      dfr = {};
-  // In tests pn.web.ctx.cfg is usually not defined and also not important for
-  // most tests.
-  try {
-    tatl = pn.web.ctx.cfg.defaultFieldRenderers.textAreaLengthThreshold;
-    drofr = pn.web.ctx.cfg.defaultReadOnlyFieldRenderers;
-    dfr = pn.web.ctx.cfg.defaultFieldRenderers;
-  } catch (e) {}
-
-  if (st === 'string' && tatl && schema.length > tatl) { st = 'LongString'; }
-  var readonly = opt_readonly || this.readonly;
-  if (pn.data.EntityUtils.isParentProperty(this.dataProperty) &&
-      !this.tableType) {
-    return readonly ?
-        pn.ui.edit.ReadOnlyFields.entityParentListField :
-        pn.ui.edit.FieldRenderers.entityParentListField;
-  } else if (this.tableType) {
-    return readonly ?
-        pn.ui.edit.ReadOnlyFields.itemList :
-        pn.ui.edit.FieldRenderers.childEntitiesTableRenderer;
-  } else if (readonly) {
-    if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return drofr[st] || pn.ui.edit.ReadOnlyFields.textField;
-  } else {
-    if (!schema) throw Error('could not find schema for field: ' + this.id);
-    return dfr[st] || pn.ui.edit.FieldRenderers.textFieldRenderer;
   }
 };
 

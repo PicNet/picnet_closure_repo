@@ -1,15 +1,8 @@
 ﻿;
 goog.provide('pn.ui.UiSpec');
 
-goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventType');
-goog.require('goog.style');
-goog.require('pn.data.TypeRegister');
-goog.require('pn.ui.edit.FieldCtx');
-goog.require('pn.ui.edit.FieldSpec');
-goog.require('pn.ui.edit.cmd.Command');
-goog.require('pn.ui.grid.cmd.Command');
-goog.require('pn.ui.grid.cmd.ExportCommand');
+goog.require('pn.ui.edit.Config');
+goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.srch.Config');
 
 
@@ -97,68 +90,3 @@ pn.ui.UiSpec.prototype.getEditAdditionalTypes = function() { return []; };
  * @return {!Array.<string>} The additional types to load.
  */
 pn.ui.UiSpec.prototype.getGridAdditionalTypes = function() { return []; };
-
-////////////////////////////////////////////////////////////////////////////////
-// PUBLIC HELPERS
-////////////////////////////////////////////////////////////////////////////////
-
-
-/**
- * @param {string} id The id representing this column.
- * @param {!pn.data.BaseDalCache} cache The current context cache.
- * @param {Object=} opt_props Any additional properties for this column.
- * @return {!pn.ui.grid.ColumnCtx} The created column.
- */
-pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
-  pn.assStr(id);
-  pn.assInst(cache, pn.data.BaseDalCache);
-
-  var spec = new pn.ui.grid.ColumnSpec(id, opt_props || {}, this);
-  this.registerDisposable(spec);
-  var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
-  this.registerDisposable(fctx);
-
-  return fctx;
-};
-
-
-/**
- * @param {string} id The id representing this ordering column.
- * @param {!pn.data.BaseDalCache} cache The current context cache.
- * @return {!pn.ui.grid.ColumnCtx} The created column.
- */
-pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
-  pn.assStr(id);
-  pn.assInst(cache, pn.data.BaseDalCache);
-
-  var spec = new pn.ui.grid.OrderingColumnSpec(id, this);
-  this.registerDisposable(spec);
-  var fctx = new pn.ui.grid.ColumnCtx(spec, cache);
-  this.registerDisposable(fctx);
-
-  return fctx;
-};
-
-
-/**
- * @param {string} id The id representing this field.
- * @param {!pn.data.BaseDalCache} cache The current context cache.
- * @param {Object=} opt_props Any additional properties for this field.
- * @return {!pn.ui.edit.FieldCtx} The field created.
- */
-pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
-  pn.assStr(id);
-  pn.assInst(cache, pn.data.BaseDalCache);
-
-  var spec = new pn.ui.edit.FieldSpec(id, opt_props || {}, this);
-  this.registerDisposable(spec);
-  var fctx = new pn.ui.edit.FieldCtx(spec, cache);
-  this.registerDisposable(fctx);
-
-  // HACK: This is not nice, but complex renderers do really need the fctx.
-  if (spec.renderer instanceof pn.ui.edit.ComplexRenderer) {
-    spec.renderer.fctx = fctx;
-  }
-
-  return fctx;
-};

@@ -2,6 +2,7 @@
 goog.provide('pn.ui.edit.Config');
 
 goog.require('pn.ui.edit.CommandsComponent');
+goog.require('pn.ui.edit.FieldCtx');
 goog.require('pn.ui.edit.InterceptorCtor');
 goog.require('pn.ui.edit.cmd.BackCommand');
 goog.require('pn.ui.edit.cmd.CloneCommand');

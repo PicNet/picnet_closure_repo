@@ -110,7 +110,7 @@ pn.data.Entity.prototype.clone = function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/** @typedef {function(new:pn.data.Entity, Object=):undefined} */
+/** @typedef {function(new:pn.data.Entity, Object):undefined} */
 pn.data.EntityCtor;
 
 
@@ -185,11 +185,18 @@ pn.data.Entity.prototype.getValueOrExt = function(prop) {
  *    by the server (No compiled property names).
  */
 pn.data.Entity.prototype.toJsonObject = function() {
-  var ps = this.getProps();
-  var ps2 = goog.object.getKeys(this.extprops_);
-  var obj = {};
-  ps.pnforEach(function(p) { obj[p] = this.getValue(p); }, this);
-  ps2.pnforEach(function(p) { obj[p] = this.getExtValue(p); }, this);
+  var ps = this.getProps(),
+      ps2 = goog.object.getKeys(this.extprops_),
+      obj = { 'type': this.type },
+      value = function(v) {
+        if (!v) return v;
+        if (!!v.toJsonObject) return v.toJsonObject();
+        if (v instanceof goog.date.Date) return v.getTime();
+        if (goog.isArray(v)) return v.pnmap(value);
+        return v;
+      };
+  ps.pnforEach(function(p) { obj[p] = value(this.getValue(p)); }, this);
+  ps2.pnforEach(function(p) { obj[p] = value(this.getExtValue(p)); }, this);
   return obj;
 };
 
@@ -223,4 +230,23 @@ pn.data.Entity.prototype.fromCompressed = function(arr) {
     }
     this.setValue(key, v);
   }, this);
+};
+
+
+/**
+ * * @param {string} path The path of the field we want the entity value for.
+ *    This supports paths along relationships using '.' notation.  Array
+ *    values are also supported within paths.
+ * @return {*} The value from the current entity given the current path.
+ */
+pn.data.Entity.prototype.evaluate = function(path) {
+  var steps = path.split('.');
+  var val = this;
+  while (!!val && steps.length) {
+    var step = steps.shift();
+    val = goog.isArray(val) ?
+        val.pnmap(function(v) { return v.getValue(step); }) :
+        val.getValue(step);
+  }
+  return val || '';
 };

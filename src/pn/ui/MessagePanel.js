@@ -109,3 +109,10 @@ pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
     }, 3000, this);
   }
 };
+
+
+/** @override */
+pn.ui.MessagePanel.prototype.disposeInternal = function() {
+  pn.ui.MessagePanel.superClass_.disposeInternal.call(this);
+  delete this.panel_;
+};

@@ -2,10 +2,10 @@
 goog.provide('pn.app.Router');
 goog.provide('pn.app.Router.EventType');
 
-goog.require('goog.History');
 goog.require('goog.asserts');
 goog.require('goog.events.Event');
 goog.require('goog.history.EventType');
+goog.require('goog.history.Html5History');
 goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.log');
 
@@ -16,11 +16,9 @@ goog.require('pn.log');
  * @extends {pn.app.EventHandlerTarget}
  * @param {string=} opt_defaultRoute The optional default route when non is
  *    available.  Be default this is the first route in the routes map.
- * @param {(boolean|string)=} opt_invisible True to use hidden history
- *    states instead of the user-visible location hash.  This can also be a
- *    string of the hidden iframe url.
+ * @suppress {visibility} This is for the double back hack.
  */
-pn.app.Router = function(opt_defaultRoute, opt_invisible) {
+pn.app.Router = function(opt_defaultRoute) {
   pn.app.EventHandlerTarget.call(this);
 
   /**
@@ -46,12 +44,16 @@ pn.app.Router = function(opt_defaultRoute, opt_invisible) {
 
   /**
    * @private
-   * @type {!goog.History}
+   * @type {!goog.history.Html5History}
    */
-  this.history_ = new goog.History(!!opt_invisible,
-      !!opt_invisible ? (goog.isString(opt_invisible) ?
-          opt_invisible : 'blank.htm') : '');
+  this.history_ = new goog.history.Html5History();
   this.registerDisposable(this.history_);
+
+  // Hack to resolve history firing twice issues.  This is from:
+  // https://code.google.com/p/closure-library/issues/detail?id=449
+  /** @suppress {visibility} */
+  goog.events.unlisten(this.history_.window_, goog.events.EventType.HASHCHANGE,
+      this.history_.onHistoryEvent_, false, this.history_);
 };
 goog.inherits(pn.app.Router, pn.app.EventHandlerTarget);
 
@@ -87,7 +89,6 @@ pn.app.Router.prototype.getLastToken = function() {
 
 /** Goes back to last history state */
 pn.app.Router.prototype.back = function() {
-
   var to = this.stack_[this.stack_.length - 2] || this.defaultRoute;
   this.history_.setToken(to);
 };
@@ -135,14 +136,13 @@ pn.app.Router.prototype.navigate = function(path) {
 /**
  * @private
  * @param {goog.history.Event} e The history event.
+ * TODO: This is being called twice when back is pressed.
  */
 pn.app.Router.prototype.onNavigate_ = function(e) {
   this.log_.fine('onNavigate isNavigation: ' + e.isNavigation);
-  if (!this.fireNavigating_()) {
-    this.undoLastNavigation_();
-    return;
-  }
-  this.navigateImpl_(e.token);
+
+  if (!this.fireNavigating_()) { this.undoLastNavigation_(); }
+  else { this.navigateImpl_(e.token); }
 };
 
 
@@ -202,7 +202,12 @@ pn.app.Router.prototype.navigateImpl_ = function(path) {
   var to = tokens.splice(0, 1)[0] || this.defaultRoute;
   this.log_.fine('navigateImpl path: ' + path + ' to: ' + to);
 
-  var route = this.routes_[to] || this.routes_['*'];
+  var route = this.routes_[to];
+  if (!route) {
+    // Use the global route handler if specified (named '*')
+    route = this.routes_['*'];
+    tokens.unshift(to);
+  }
   if (!route) { throw new Error('Route [' + path + '] not supported'); }
 
   var goingBack = path === this.stack_[this.stack_.length - 2];

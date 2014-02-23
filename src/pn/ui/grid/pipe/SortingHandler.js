@@ -47,7 +47,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent = function(ev, opt_d) {
 
 /** @private */
 pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
-  var state = pn.storage.get(this.storeId_);
+  var state = window.localStorage.getItem(this.storeId_);
   var data = state ? goog.json.unsafeParse(state) : {
     'colid': this.cfg.defaultSortColumn,
     'asc': this.cfg.defaultSortAscending
@@ -74,7 +74,7 @@ pn.ui.grid.pipe.SortingHandler.prototype.sortBy_ =
   this.sortImpl_(col, asc);
 
   var data = {'colid' : col, 'asc': asc };
-  pn.storage.set(this.storeId_, pn.json.serialiseJson(data));
+  window.localStorage.setItem(this.storeId_, pn.json.serialiseJson(data));
 };
 
 

@@ -9,17 +9,19 @@ goog.provide('pn.json');
 
 /**
  * @param {string} json The json string to parse.
- * @return {Object|string} The parsed object.
+ * @return {Object} The parsed object (or null if no input).
  */
 pn.json.parseJson = function(json) {
-  if (!json || typeof(json) !== 'string') return json;
+  if (!json) return null;
+  pn.assStr(json);
+
   var regex = /\"[\\]+\/Date\((-?\d+(\+\d+)?)\)[\\]+\/\"/g;
 
   if (!window['pn.date.fromMillis'])
     window['pn.date.fromMillis'] = pn.date.fromMillis;
 
   var jsonDateSafe = json.replace(regex, 'window["pn.date.fromMillis"]($1)');
-  return goog.json.unsafeParse(jsonDateSafe);
+  return /** @type {!Object} */ (goog.json.unsafeParse(jsonDateSafe));
 };
 
 

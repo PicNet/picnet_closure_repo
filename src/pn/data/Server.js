@@ -11,6 +11,7 @@ goog.require('goog.net.XhrManager');
 goog.require('goog.style');
 goog.require('pn.app.AppEvents');
 goog.require('pn.data.IDataSource');
+goog.require('pn.data.PnQuery');
 goog.require('pn.data.TypeRegister');
 goog.require('pn.json');
 goog.require('pn.log');
@@ -21,9 +22,12 @@ goog.require('pn.log');
  * @constructor
  * @extends {goog.events.EventTarget}
  * @param {string} controller The controller Uri.
+ * @param {function(string,string=):undefined} pub A method for
+ *    publishing messages to any interested listeners.
  */
-pn.data.Server = function(controller) {
+pn.data.Server = function(controller, pub) {
   pn.assStr(controller);
+  pn.assFun(pub);
 
   goog.events.EventTarget.call(this);
 
@@ -33,6 +37,13 @@ pn.data.Server = function(controller) {
    * @type {string}
    */
   this.controller_ = controller;
+
+  /**
+   * @private
+   * @const
+   * @type {function(string,string=):undefined}
+   */
+  this.pub_ = pub;
 
   /**
    * @private
@@ -275,8 +286,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
   var eventType = bg ?
       pn.data.Server.EventType.LOADING_BG :
       pn.data.Server.EventType.LOADING;
-
-  this.dispatchEvent(new goog.events.Event(eventType));
+  this.pub_(eventType);
 
   var start = goog.now(),
       rid = uri + (this.requestCount_++),
@@ -287,7 +297,7 @@ pn.data.Server.prototype.ajaxImpl_ = function(uri, data, success, failure, bg) {
       }, this);
 
   this.log_.info('Making request: ' + uri);
-  this.manager_.send(rid, uri, 'POST', qd, null, null, callback);
+  this.manager_.send(rid, uri, 'POST', qd, undefined, undefined, callback);
 };
 
 
@@ -345,7 +355,7 @@ pn.data.Server.prototype.replyImpl_ =
 
     if (response.debugMessage) {
       var sdb = pn.app.AppEvents.SHOW_DEBUG_MESSAGE;
-      pn.app.ctx.pub(sdb, response.debugMessage);
+      this.pub_(sdb, response.debugMessage);
     }
 
     if (response.error) {
@@ -360,7 +370,7 @@ pn.data.Server.prototype.replyImpl_ =
   var eventType = bg ?
       pn.data.Server.EventType.LOADED_BG :
       pn.data.Server.EventType.LOADED;
-  this.dispatchEvent(new goog.events.Event(eventType));
+  this.pub_(eventType);
 };
 
 
@@ -406,9 +416,8 @@ pn.data.Server.Response = function(raw) {
 
   /** @type {pn.data.Entity} */
   this.responseEntity = raw['ResponseEntityType'] ?
-      pn.data.TypeRegister.parseEntity(raw['ResponseEntityType'],
-          /** @type {!Object} */ (pn.json.parseJson(raw['ResponseEntity']))) :
-      null;
+      pn.data.TypeRegister.parseEntity(
+          raw['ResponseEntityType'], raw['ResponseEntity']) : null;
 
   /** @type {Object|string|number} */
   this.ajaxData = goog.isDef(raw['AjaxResponse']) ?
@@ -424,8 +433,8 @@ pn.data.Server.Response = function(raw) {
   this.queryResults = raw['QueryResults'] ?
       raw['QueryResults'].pnreduce(function(acc, qr) {
         var query = pn.data.PnQuery.fromString(qr['QueryId']);
-        var results = pn.data.TypeRegister.parseEntities(query.Type,
-            /** @type {!Array} */ (pn.json.parseJson(qr['ResultsJson'])));
+        var results = pn.data.TypeRegister.parseEntities(
+            query.Type, qr['ResultsJson']);
         acc[query.toString()] = results;
         return acc;
       }, {}) : null;
@@ -488,8 +497,7 @@ pn.data.Server.Update = function(raw) {
 
   /** @type {pn.data.Entity} */
   this.entity = raw['Entity'] ?
-      pn.data.TypeRegister.parseEntity(raw['EntityType'],
-          /** @type {!Object} */ (pn.json.parseJson(raw['Entity']))) :
+      pn.data.TypeRegister.parseEntity(raw['EntityType'], raw['Entity']) :
       null;
 
   pn.assNum(this.id);

@@ -6,7 +6,7 @@ goog.provide('pn.ui.grid.cmd.ICommand');
 /**
  * @interface
  */
-pn.ui.grid.cmd.ICommand = function() {};
+pn.ui.grid.cmd.ICommand = goog.nullFunction;
 
 
 /**

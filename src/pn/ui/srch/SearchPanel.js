@@ -243,7 +243,7 @@ pn.ui.srch.SearchPanel.prototype.doSearch_ = function() {
   var filters = {};
   for (var cid in this.filtersControls_) {
     var control = this.filtersControls_[cid][0];
-    var val = pn.ui.edit.FieldBuilder.getFieldValue(control);
+    var val = pn.ui.edit.EditUtils.getFieldValue(control);
 
     // Ensure that all parent lists select whole text field (not just part)
     if (control.options && goog.isString(val)) val = [val];

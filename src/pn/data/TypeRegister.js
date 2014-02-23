@@ -63,13 +63,17 @@ pn.data.TypeRegister.create = function(type, raw) {
 
 /**
  * @param {string} type The type of the entities to attempt to parse.
- * @param {!Array} data The data to attempt to parse.
+ * @param {!(Array|string)} data The data to attempt to parse either as an
+ *    array of objects or a json string.
  * @return {!Array.<!pn.data.Entity>} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntities = function(type, data) {
   pn.assStr(type);
-  pn.assArr(data);
+  pn.ass(goog.isArray(data) || goog.isString(data));
 
+  if (goog.isString(data)) {
+    data = /** @type {!Array} */ (pn.json.parseJson(data));
+  }
   var action = goog.partial(pn.data.TypeRegister.parseEntity, type);
   return data.pnmap(action);
 };
@@ -77,13 +81,16 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
 
 /**
  * @param {string} type The type of the entity to attempt to parse.
- * @param {Object} data The data to attempt to parse.
+ * @param {!(Object|string)} data The data to attempt to parse.  This is either
+ *    a raw Entity object or a json string.
  * @return {!pn.data.Entity} The parsed entity or the original data.
  */
 pn.data.TypeRegister.parseEntity = function(type, data) {
   pn.assStr(type);
-  pn.assObj(data);
-
+  pn.ass(goog.isObject(data) || goog.isString(data));
+  if (goog.isString(data)) {
+    data = /** @type {!Object} */ (pn.json.parseJson(data));
+  }
   var ctor = pn.data.TypeRegister.fromName(type);
   return new ctor(data);
 };

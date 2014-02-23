@@ -58,10 +58,12 @@ pn.log.trace = function() {
 };
 
 
-/** @param {string} msg Displays a message to the console. */
-pn.log.log = function(msg) {
+/**
+ * @param {...*} var_args Displays a message to the console.
+ */
+pn.log.log = function(var_args) {
   if (!window['console'] || !window['console']['log']) return;
-  window['console']['log'](msg);
+  window['console']['log'].apply(window['console'], arguments);
 };
 
 

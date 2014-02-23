@@ -143,7 +143,7 @@ pn.ui.grid.ColumnSpec.prototype.getDefaultRenderer_ = function() {
         this.entitySpec.type, this.id);
     schemaType = schema ? schema.type : '';
   }
-  return pn.web.ctx.cfg.defaultColumnRenderers[schemaType];
+  return pn.app.ctx.cfg.defaultColumnRenderers[schemaType];
 };
 
 
