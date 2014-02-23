@@ -1,6 +1,7 @@
 ﻿;
 goog.provide('pn.ui.UiSpec');
 
+goog.require('pn.ui.UiSpecHelper');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.grid.Config');
 goog.require('pn.ui.srch.Config');
@@ -90,3 +91,35 @@ pn.ui.UiSpec.prototype.getEditAdditionalTypes = function() { return []; };
  * @return {!Array.<string>} The additional types to load.
  */
 pn.ui.UiSpec.prototype.getGridAdditionalTypes = function() { return []; };
+
+
+/**
+ * @param {string} id The id representing the column.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
+ * @param {Object=} opt_props Any additional properties for the column.
+ * @return {!pn.ui.grid.ColumnCtx} The created column.
+ */
+pn.ui.UiSpec.prototype.createColumn = function(id, cache, opt_props) {
+  return pn.ui.UiSpecHelper.createColumn(this, id, cache, opt_props);
+};
+
+
+/**
+ * @param {string} id The id representing the ordering column.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
+ * @return {!pn.ui.grid.ColumnCtx} The created column.
+ */
+pn.ui.UiSpec.prototype.createOrderingColumn = function(id, cache) {
+  return pn.ui.UiSpecHelper.createOrderingColumn(this, id, cache);
+};
+
+
+/**
+ * @param {string} id The id representing the field.
+ * @param {!pn.data.BaseDalCache} cache The current context cache.
+ * @param {Object=} opt_props Any additional properties for the field.
+ * @return {!pn.ui.edit.FieldCtx} The field created.
+ */
+pn.ui.UiSpec.prototype.createField = function(id, cache, opt_props) {
+  return pn.ui.UiSpecHelper.createField(this, id, cache, opt_props);
+};
