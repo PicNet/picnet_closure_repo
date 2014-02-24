@@ -14,14 +14,14 @@ pn.ui.AbstractViewMgr = function() {
 
   /**
    * @protected
-   * @type {goog.ui.Component|Node}
+   * @type {goog.ui.Component|Node|string}
    */
   this.current = null;
 };
 goog.inherits(pn.ui.AbstractViewMgr, goog.events.EventHandler);
 
 
-/** @return {goog.ui.Component|Node} The currently displayed view. */
+/** @return {goog.ui.Component|Node|string} The currently displayed view. */
 pn.ui.AbstractViewMgr.prototype.currentView = function() {
   return this.current;
 };
