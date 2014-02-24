@@ -2,6 +2,7 @@
 goog.provide('pn.ui.WebDefaultRenderer');
 
 goog.require('pn.ui.IDefaultRenderer');
+goog.require('pn.ui.edit.FieldGridRenderers');
 
 
 
