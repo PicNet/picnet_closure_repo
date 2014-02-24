@@ -1,5 +1,6 @@
 ﻿;
 goog.provide('pn.web.BaseWebApp');
+goog.provide('pn.web.ctx');
 
 goog.require('goog.Uri');
 goog.require('pn.app.BaseApp');
@@ -21,6 +22,11 @@ goog.require('pn.web.WebAppEvents');
  *    pn.app.AppConfig options.
  */
 pn.web.BaseWebApp = function(opt_cfg) {
+  pn.ass(pn.web.ctx === null, 'Only a single instance of base app supported');
+
+  /** @type {pn.web.BaseWebApp} */
+  pn.web.ctx = this;
+
   this.cfg = new pn.web.WebAppConfig(opt_cfg);
   this.registerDisposable(this.cfg);
 
@@ -37,6 +43,13 @@ pn.web.BaseWebApp = function(opt_cfg) {
   this.impersonationEnabled_ = false;
 };
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
+
+
+/**
+ * A globally accisble handle to the application context.
+ * @type {pn.web.BaseWebApp}
+ */
+pn.web.ctx = null;
 
 
 /** @override */
