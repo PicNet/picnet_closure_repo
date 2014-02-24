@@ -4,8 +4,8 @@ goog.provide('pn.ui.UiSpec');
 goog.require('pn.ui.UiSpecHelper');
 goog.require('pn.ui.edit.Config');
 goog.require('pn.ui.grid.Config');
-goog.require('pn.ui.srch.Config');
 goog.require('pn.ui.grid.cmd.ExportCommand');
+goog.require('pn.ui.srch.Config');
 
 
 
