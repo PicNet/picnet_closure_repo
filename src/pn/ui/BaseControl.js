@@ -1,6 +1,5 @@
 goog.provide('pn.ui.BaseControl');
 
-goog.require('pn.Kernel');
 goog.require('pn.mvc.Controller');
 goog.require('pn.ui.GestureFilter');
 goog.require('pn.ui.MessagePanel');
@@ -22,7 +21,8 @@ pn.ui.BaseControl = function(el) {
   this.el = el;
 
   /** @private @const @type {!pn.ui.GestureFilter} */
-  this.gestures_ = new pn.ui.GestureFilter(pn.Kernel.instance.gestures());
+  var ggh = pn.ui.GlobalGestureHandler.instance();
+  this.gestures_ = new pn.ui.GestureFilter(ggh);
   this.registerDisposable(this.gestures_);
 
   /** @protected @type {goog.debug.Logger} */

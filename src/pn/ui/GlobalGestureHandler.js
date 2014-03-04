@@ -14,11 +14,14 @@ goog.require('pn.log');
 /**
  * @constructor
  * @extends {goog.events.EventTarget}
- * @param {!Element} parent The element to use as the parent for all events.
+ * @param {Element} parent The element to use as the parent for all events.
  *    This will then use event delegation to fire off events for the correct
  *    elements.
  */
 pn.ui.GlobalGestureHandler = function(parent) {
+  if (!!pn.ui.GlobalGestureHandler.instance_)
+    throw new Error('GlobalGestureHandler has already bee initialised');
+
   pn.assInst(parent, HTMLElement);
 
   goog.events.EventTarget.call(this);
@@ -61,6 +64,18 @@ pn.ui.GlobalGestureHandler = function(parent) {
   }, this));
 };
 goog.inherits(pn.ui.GlobalGestureHandler, goog.events.EventTarget);
+
+
+/** @private @type {pn.ui.GlobalGestureHandler} */
+pn.ui.GlobalGestureHandler.instance_ = null;
+
+
+/** @return {!pn.ui.GlobalGestureHandler} The global singleton instance. */
+pn.ui.GlobalGestureHandler.instance = function() {
+  return pn.ui.GlobalGestureHandler.instance_ ||
+      (pn.ui.GlobalGestureHandler.instance_ =
+      new pn.ui.GlobalGestureHandler(document.body));
+};
 
 
 /** @param {Element=} opt_el Disable clicks on all achors with '#' */
