@@ -27,7 +27,7 @@ pn.ui.GlobalGestureHandler = function(parent) {
     throw new Error('GlobalGestureHandler is intended to be used on the body');
   pn.ui.GlobalGestureHandler.initialised_ = true;
 
-  this.disableDesktopClicks_();
+  pn.ui.GlobalGestureHandler.disableDesktopClicks();
 
   var hammer = Hammer(parent, { swipe: false }),
       EventType = pn.ui.GlobalGestureHandler.EventType,
@@ -63,9 +63,9 @@ pn.ui.GlobalGestureHandler = function(parent) {
 goog.inherits(pn.ui.GlobalGestureHandler, goog.events.EventTarget);
 
 
-/** @private Disable clicks on all achors with '#' */
-pn.ui.GlobalGestureHandler.prototype.disableDesktopClicks_ = function() {
-  var as = pn.toarr(goog.dom.getElementsByTagNameAndClass('a'));
+/** @param {Element=} opt_el Disable clicks on all achors with '#' */
+pn.ui.GlobalGestureHandler.disableDesktopClicks = function(opt_el) {
+  var as = pn.toarr(goog.dom.getElementsByTagNameAndClass('a', '', opt_el));
   as.pnforEach(function(a) {
     if (!a.hasAttribute('href') || a.getAttribute('href') === '#') {
       a.onclick = function(e) { e.preventDefault(); return false; };
