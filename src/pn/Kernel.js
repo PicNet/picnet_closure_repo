@@ -71,24 +71,6 @@ pn.Kernel.prototype.init = goog.abstractMethod;
 
 
 /**
- * @return {!boolean} whether has initialised the instance
- */
-pn.Kernel.initialised = function() {
-  return pn.Kernel.initialised_;
-};
-
-
-/**
- * set the initialised_ to false
- */
-pn.Kernel.reset = function() {
-
-  pn.log.log('Reseting Kernel!!!');
-  pn.Kernel.initialised_ = false;
-};
-
-
-/**
  * @param {string} id The id of this storage.
  * @param {!function(!pn.data.Storage):undefined} cb The callback that takes
  *    a storage backed by web-sql.
