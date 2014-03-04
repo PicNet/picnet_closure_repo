@@ -35,6 +35,27 @@ pn.ctl.BaseController = function(el) {
 goog.inherits(pn.ctl.BaseController, pn.ui.BaseControl);
 
 
+/**
+ * @param {!pn.ctl.Director} director The director to use for
+ *   showing dialogs.
+ * @param {!pn.data.Storage} storage A local storage interface.
+ * @param {!pn.app.Router} router The request router.
+ * @param {!pn.ui.MessagePanel} msg The message panel.
+ */
+pn.ctl.BaseController.prototype.initialise =
+    function(director, storage, router, msg) {
+  pn.assInst(director, pn.ctl.Director);
+  pn.assInst(storage, pn.data.Storage);
+  pn.assInst(router, pn.app.Router);
+  pn.assInst(msg, pn.ui.MessagePanel);
+
+  this.director_ = director;
+  this.storage_ = storage;
+  this.router_ = router;
+  this.msg_ = msg;
+};
+
+
 /** @return {boolean} Return false to cancel this transition. */
 pn.ctl.BaseController.prototype.showing = function() { return true; };
 
