@@ -13,8 +13,8 @@ goog.require('pn.infra.MD5');
 pn.ctl.BaseDialog = function(el) {
   pn.ctl.BaseController.call(this, el);
 
-  /** @private @type {!goog.debug.Logger} */
-  this.log_ = pn.log.getLogger('pn.ctl.BaseDialog[' + el.id + ']');
+  /** @protected @type {!goog.debug.Logger} */
+  this.log = pn.log.getLogger('pn.ctl.BaseDialog[' + el.id + ']');
 
   /** @private @type {!function(Object):undefined} */
   this.onsubmit_ = null;
@@ -71,7 +71,7 @@ pn.ctl.BaseDialog.prototype.value = goog.abstractMethod;
 
 /** @private */
 pn.ctl.BaseDialog.prototype.cancel_ = function() {
-  this.log_.finest('cancel');
+  this.log.finest('cancel');
   this.hideDialog_();
 };
 
@@ -83,7 +83,7 @@ pn.ctl.BaseDialog.prototype.hideDialog_ = function() {
 
   this.show(this.el, false);
   this.hid();
-  this.log_.fine('hid dialog');
+  this.log.fine('hid dialog');
   if (this.onhide_) {
     this.onhide_();
     this.onhide_ = null;

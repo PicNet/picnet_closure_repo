@@ -31,39 +31,8 @@ pn.ctl.BaseController = function(el) {
 
   /** @private @type {!pn.ui.MessagePanel} */
   this.msg_;
-
-  /** @protected @type {!pn.infra.Domain} */
-  this.domain;
-
-  /** @protected @type {!pn.infra.CurrentUser} */
-  this.current;
 };
 goog.inherits(pn.ctl.BaseController, pn.ui.BaseControl);
-
-
-/**
- * @param {!pn.ctl.Director} director The director to use for
- *   showing dialogs.
- * @param {!pn.data.Storage} storage A local storage interface.
- * @param {!pn.app.Router} router The request router.
- * @param {!pn.ui.MessagePanel} msg The message panel.
- * @param {!pn.infra.Domain} domain The message panel.
- * @param {!pn.infra.CurrentUser} current The message panel.
- */
-pn.ctl.BaseController.prototype.init =
-    function(director, storage, router, msg, domain, current) {
-  pn.assInst(director, pn.ctl.Director);
-  pn.assInst(storage, pn.data.Storage);
-  pn.assInst(router, pn.app.Router);
-  pn.assInst(msg, pn.ui.MessagePanel);
-
-  this.director_ = director;
-  this.storage_ = storage;
-  this.router_ = router;
-  this.msg_ = msg;
-  this.domain = domain;
-  this.current = current;
-};
 
 
 /** @return {boolean} Return false to cancel this transition. */
