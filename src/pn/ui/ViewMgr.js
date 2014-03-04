@@ -60,7 +60,7 @@
 //  * @param {!pn.data.Entity} entity The entity to display/edit.
 //  * @param {!pn.data.BaseDalCache} cache The data cache to use for related
 //  *    entities.
- 
+
 // pn.ui.ViewMgr.prototype.showEdit = function(spec, entity, cache) {
 //   pn.ass(spec && spec.type);
 //   pn.ass(cache);
