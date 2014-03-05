@@ -20,7 +20,7 @@ pn.ui.BaseControl = function(el) {
   /** @type {!Element} */
   this.el = el;
 
-  /** @private @const @type {!pn.ui.GestureFilter} */
+  /** @private @const @type {!pn.ui.GlobalGestureHandler} */
   var ggh = pn.ui.GlobalGestureHandler.instance();
   this.gestures_ = new pn.ui.GestureFilter(ggh);
   this.registerDisposable(this.gestures_);

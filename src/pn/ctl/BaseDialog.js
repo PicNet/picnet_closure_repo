@@ -16,11 +16,11 @@ pn.ctl.BaseDialog = function(el) {
   /** @protected @type {!goog.debug.Logger} */
   this.log = pn.log.getLogger('pn.ctl.BaseDialog[' + el.id + ']');
 
-  /** @private @type {!function(Object):undefined} */
-  this.onsubmit_ = null;
+  /** @private @type {function(Object):undefined} */
+  this.onsubmit_;
 
-  /** @private @type {!function():undefined} */
-  this.onhide_ = null;
+  /** @private @type {function():undefined} */
+  this.onhide_;
 };
 goog.inherits(pn.ctl.BaseDialog, pn.ctl.BaseController);
 
@@ -55,6 +55,7 @@ pn.ctl.BaseDialog.prototype.hide = function() {
 /** @private */
 pn.ctl.BaseDialog.prototype.submit_ = function() {
   pn.assFun(this.onsubmit_);
+
   var value = this.value(),
       cb = this.onsubmit_;
 
@@ -79,14 +80,14 @@ pn.ctl.BaseDialog.prototype.cancel_ = function() {
 /** @private */
 pn.ctl.BaseDialog.prototype.hideDialog_ = function() {
   if (!this.hiding()) return;
-  this.onsubmit_ = null;
+  delete this.onsubmit_;
 
   this.show(this.el, false);
   this.hid();
   this.log.fine('hid dialog');
   if (this.onhide_) {
     this.onhide_();
-    this.onhide_ = null;
+    delete this.onhide_;
   }
   goog.dispose(this);
 };

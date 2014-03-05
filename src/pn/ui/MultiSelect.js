@@ -157,7 +157,7 @@ pn.ui.MultiSelect.prototype.defaultFilter_ = function(filter) {
 
 /** @private @param {!goog.events.Event} e */
 pn.ui.MultiSelect.prototype.toggleopen_ = function(e) {
-  var li = e.target;
+  var li = /** @type {!Node} */ (e.target);
   if (!li || !li.getAttribute('data-itemid') ||
       !goog.dom.classes.has(li, 'branch')) return;
   goog.dom.classes.toggle(li, 'open');
@@ -170,7 +170,7 @@ pn.ui.MultiSelect.prototype.toggleopen_ = function(e) {
 
 /** @private @param {!goog.events.Event} e */
 pn.ui.MultiSelect.prototype.selchanged_ = function(e) {
-  var li = e.target;
+  var li = /** @type {!Node} */ (e.target);
   if (!li || !li.getAttribute('data-itemid')) return;
   if (goog.dom.classes.has(li, 'branch')) {
     if (!this.allowMultiple) {
@@ -201,7 +201,7 @@ pn.ui.MultiSelect.prototype.setSelected_ = function(lis, selected) {
 };
 
 
-/** @private @param {!Element} from @return {!Array.<!Element>} selected */
+/** @private @param {!Node} from @return {!Array.<!Element>} selected */
 pn.ui.MultiSelect.prototype.getChildLis_ = function(from) {
   var parent = from.parentNode,
       lis = pn.toarr(parent.children),

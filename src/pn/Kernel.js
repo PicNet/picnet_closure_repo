@@ -38,13 +38,13 @@ pn.Kernel = function(appPath) {
   /** @protected @const @type {string} */
   this.appPath = appPath;
 
-  /** @protected @const @type {!Object} */
+  /** @protected @type {!Object} */
   this.registered = {};
 
   /**
    * Router must be initialised straight away to prevent History from
    *    killing the page.
-   * @protected @const @type {!pn.app.Router}
+   * @protected @type {!pn.app.Router}
    */
   this.registered['router'] = new pn.app.Router();
 

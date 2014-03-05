@@ -89,13 +89,13 @@ pn.ui.GlobalGestureHandler.disableDesktopClicks = function(opt_el) {
 };
 
 
-/** @private @param {!Element} el @return {!Element} */
+/** @private @param {Element} el @return {Element} */
 pn.ui.GlobalGestureHandler.prototype.getTouchEl_ = function(el) {
   while (!!el && el.hasAttribute) {
     var href = el.getAttribute('href');
     if (!!href && href !== '#') return null;
     if (el.hasAttribute('touch-action') || href === '#') return el;
-    el = el.parentNode;
+    el = /** @type {Element} */ (el.parentNode);
   }
   return null;
 };
