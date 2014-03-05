@@ -66,11 +66,6 @@ pn.Kernel.initialised_ = false;
 
 
 /**
- */
-pn.Kernel.prototype.init = goog.abstractMethod;
-
-
-/**
  * @param {string} id The id of this storage.
  * @param {!function(!pn.data.Storage):undefined} cb The callback that takes
  *    a storage backed by web-sql.
@@ -98,11 +93,6 @@ pn.Kernel.prototype.message = function() {
 };
 
 
-/**
- */
-pn.Kernel.prototype.loading = goog.abstractMethod;
-
-
 /** @return {!pn.ui.GlobalGestureHandler} The global gestures handler. */
 pn.Kernel.prototype.gestures = function() {
 
@@ -110,11 +100,6 @@ pn.Kernel.prototype.gestures = function() {
       new pn.ui.GlobalGestureHandler(
           /** @type {!Element} */ (document.body)));
 };
-
-
-/**
- */
-pn.Kernel.prototype.auth = goog.abstractMethod;
 
 
 /**
@@ -128,96 +113,6 @@ pn.Kernel.prototype.localStorage = function(id) {
       goog.nullFunction, pn.data.Storage.Type.localStorage);
   return this.registered['localStorage-' + id] = ls;
 };
-
-
-/**
- */
-pn.Kernel.prototype.online = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.recorder = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.currentUser = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.comms = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.dirty = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.replayer = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.director = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.customcontrols = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.logins = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.domain = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.taskcats = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.taskaging = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.quickprogs = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.assignvalidator = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.tasksFilterer = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.taskListViewModel = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.filterValueStore = goog.abstractMethod;
-
-
-/**
- */
-pn.Kernel.prototype.controller = goog.abstractMethod;
 
 
 /** @return {!pn.app.EventBus} */
