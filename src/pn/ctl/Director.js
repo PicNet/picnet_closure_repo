@@ -121,18 +121,27 @@ pn.ctl.Director.prototype.showDialog = function(id, opt_cb, var_args) {
   pn.ass(!opt_cb || goog.isFunction(opt_cb));
 
   var args = pn.toarr(arguments),
-      el = pn.dom.get(id + '-dialog');
+      el = pn.dom.get(id + '-dialog'),
+      pages,
+      top;
   args[1] = el;
   args.splice(2, 0, function(newc) {
     var crrentel = !!this.current_ ? this.current_.el : null;
     this.currentDialog_ = newc;
-
-    if (crrentel) pn.dom.show(crrentel, false);
+    if (crrentel) {
+      pages = pn.dom.get('pages');
+      top = pages.scrollTop;
+      pn.dom.show(crrentel, false);
+    }
     pn.dom.show(el, true);
 
     if (opt_cb) this.currentDialog_.onsubmit(opt_cb);
-    if (crrentel) this.currentDialog_.onhide(
-        pn.dom.show.pnpartial(crrentel, true));
+    if (crrentel) {
+      this.currentDialog_.onhide(function() {
+        pn.dom.show(crrentel, true);
+        pages.scrollTop = top;
+      });
+    }
     goog.Timer.callOnce(this.currentDialog_.shown, 0, this.currentDialog_);
   }.pnbind(this));
   this.get_.apply(this, args);
