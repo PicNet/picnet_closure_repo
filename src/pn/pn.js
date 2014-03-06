@@ -29,16 +29,25 @@ pn.toarr = function(args) { return goog.array.clone(args); };
  *      Example of a multi-line
  *      string
  *    * /}) === 'This is an\nExample of a multi-line\nstring'
+ * @param {Object=} opt_model The optional model using soy syntax '{$xxx}' for
+ *    variables.  Ensure that the model is a dictionary with string keys so
+ *    the compiler does not rename hence causing issues in compiled mode.
  * @return {string} A multi line string
  */
-pn.ml = function(ctx) {
+pn.ml = function(ctx, opt_model) {
   pn.assFun(ctx);
   // start matching after: comment start block => optional
   // whitespace => newline
   // stop matching before: last newline => optional whitespace => comment
   // end block
   var comments = /\/\*\s*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//;
-  return comments.exec(ctx.toString())[1];
+  var str = comments.exec(ctx.toString())[1];
+  if (opt_model) {
+    for (var k in opt_model) {
+      str = str.replace(new RegExp('\\{\\$' + k + '}', 'g'), opt_model[k]);
+    }
+  }
+  return str;
 };
 
 

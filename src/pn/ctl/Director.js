@@ -112,19 +112,6 @@ pn.ctl.Director.prototype.backargs = function() {
 
 
 /**
- * @param {string} title The title to display on the alert.
- * @param {string} body The html body to display in the alert.
- * @param {function(Object):undefined=} opt_cb The callback on dialog close.
- */
-pn.ctl.Director.prototype.alert = function(title, body, opt_cb) {
-  pn.assStr(title);
-  pn.assStr(body);
-
-  this.showDialog('alert', opt_cb, title, body);
-};
-
-
-/**
  * @param {string} id The ID of the dialog to get
  * @param {function(Object):undefined=} opt_cb The callback on dialog close.
  * @param {...*} var_args Any additional arguments passed to the controller.

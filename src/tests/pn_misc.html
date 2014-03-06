@@ -26,7 +26,7 @@ string
   assertEquals('Testing\nMulti-line\nstring', str);
 };
 
-var test_pnml2 = function() {
+var test_pnml_with_html = function() {
   var str = pn.ml(function() {    
 /*
 <div class="testdiv">
@@ -36,6 +36,19 @@ var test_pnml2 = function() {
   assertEquals('<div class="testdiv">\n  Content\n</div>', str);
 };
 
+var test_pnml_with_model = function() {
+  var str = pn.ml(function() {    
+/*
+P1: {$p1}
+P2: {$p2}
+P3: {$p3}
+*/}, {
+  'p1':1,
+  'p2':'str2',
+  'p3': { toString: function() { return 'p3obj'; } }
+});
+  assertEquals('P1: 1\nP2: str2\nP3: p3obj', str);
+};
     </script>    
   </body>
 </html>
