@@ -22,6 +22,27 @@ pn.toarr = function(args) { return goog.array.clone(args); };
 
 
 /**
+ * @param {function():undefined} ctx A function with a comment containing the
+ *    required multiline string.  Example:
+ *    pn.ml(function() {/*
+ *      This is an
+ *      Example of a multi-line
+ *      string
+ *    * /}) === 'This is an\nExample of a multi-line\nstring'
+ * @return {string} A multi line string
+ */
+pn.ml = function(ctx) {
+  pn.assFun(ctx);
+  // start matching after: comment start block => optional
+  // whitespace => newline
+  // stop matching before: last newline => optional whitespace => comment
+  // end block
+  var comments = /\/\*\s*(?:\r\n|\n)([\s\S]*?)(?:\r\n|\n)\s*\*\//;
+  return comments.exec(ctx.toString())[1];
+};
+
+
+/**
  * @param {T} d The disposable object to dispose when ctx is
  *    disposed.
  * @param {!goog.Disposable} ctx The context to use when disposing d.

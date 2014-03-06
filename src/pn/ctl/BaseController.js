@@ -146,6 +146,17 @@ pn.ctl.BaseController.prototype.dialog = function(id, opt_cb, var_args) {
 
 /**
  * @protected
+ * @param {string} title The title to display on the alert.
+ * @param {string} body The html body to display in the alert.
+ * @param {function(Object):undefined=} opt_cb The callback on dialog close.
+ */
+pn.ctl.BaseController.prototype.alert = function(title, body, opt_cb) {
+  this.director_.alert(title, body, opt_cb);
+};
+
+
+/**
+ * @protected
  * Goes through and validates that all 'required' elements have values.
  * @return {boolean} Wether the current arguments are valid (i.e. filled in).
  */
