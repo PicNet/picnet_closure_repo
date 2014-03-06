@@ -5,7 +5,7 @@ goog.require('pn.ui.BaseControl');
 
 
 /**
- * @typedef {{id:(number|string),name:string,cssclass:(string|undefined),
+ * @typedef {{id:string,name:string,cssclass:(string|undefined),
  *   selected:boolean, optn:boolean, nodes:Array.<!pn.ui.MultiSelectItem>}}
  */
 pn.ui.MultiSelectItem;
