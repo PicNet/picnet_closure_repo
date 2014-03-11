@@ -43,7 +43,7 @@ pn.ui.edit.FieldCtx = function(spec, cache) {
   this.entitySpec = spec.entitySpec;
 
   /** @type {pn.data.FieldSchema} */
-  this.schema = goog.string.startsWith(this.id, '_') ||
+  this.schema = this.id.pnstartsWith('_') ||
       this.id.indexOf('.') >= 0 ?
           null : pn.data.TypeRegister.getFieldSchema(
               this.entitySpec.type, this.id);

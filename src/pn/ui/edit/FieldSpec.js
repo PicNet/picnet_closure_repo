@@ -171,7 +171,7 @@ pn.ui.edit.FieldSpec.prototype.extend = function(props) {
   pn.ui.edit.FieldSpec.superClass_.extend.call(this, props);
 
   var firstStep = this.id.split('.')[0];
-  if (goog.string.endsWith(firstStep, 'Entities')) {
+  if (firstStep.pnendsWith('Entities')) {
     if (!goog.isDef(this.tableType) && !this.renderer) {
       this.tableType = pn.data.EntityUtils.getTypeProperty(
           this.entitySpec.type, firstStep);

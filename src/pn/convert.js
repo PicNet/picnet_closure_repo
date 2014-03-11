@@ -41,7 +41,7 @@ pn.convert.timeToMinutes = function(time) {
   pn.ass(goog.isDefAndNotNull(time));
   var hour = parseInt(time, 10);
   var minutes = parseInt(time.split(':')[1], 10);
-  var isPm = goog.string.endsWith(time, 'PM') && hour !== 12;
+  var isPm = time.pnendsWith('PM') && hour !== 12;
   if (isPm) hour += 12;
   return (hour * 60) + minutes;
 };

@@ -99,7 +99,7 @@ pn.mob.AudioPlayer.prototype.getPath_ = function(src) {
 /** @param {string} src The media file to stop. */
 pn.mob.AudioPlayer.prototype.stop = function(src) {
   if (this.html5Audio_) {
-    pn.ass(goog.string.endsWith(this.html5Audio_['src'], src));
+    pn.ass(this.html5Audio_['src'].pnendsWith(src));
     this.html5Audio_['stop']();
   } else {
     pn.ass(src in this.medias_);

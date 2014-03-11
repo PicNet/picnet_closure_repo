@@ -37,7 +37,7 @@ var tearDown = function() {
   }
   var ls = window.localStorage;
   goog.object.getKeys(ls).pnforEach(function(k) {
-    if (goog.string.startsWith(k, prefix)) { delete localStorage[k]; }
+    if (k.pnstartsWith(prefix)) { delete localStorage[k]; }
   });
 };
 

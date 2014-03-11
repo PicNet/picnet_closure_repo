@@ -136,7 +136,6 @@ pn.app.Router.prototype.navigate = function(path) {
 /**
  * @private
  * @param {goog.history.Event} e The history event.
- * TODO: This is being called twice when back is pressed.
  */
 pn.app.Router.prototype.onNavigate_ = function(e) {
   this.log_.fine('onNavigate isNavigation: ' + e.isNavigation);

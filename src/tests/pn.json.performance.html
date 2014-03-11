@@ -130,7 +130,7 @@ var join_to_json = function() {
 var test_do_display_of_performance = function() {
   var tests = [];
   for (var name in window) {
-    if (name.indexOf('_') > 0 && !goog.string.startsWith(name, 'test') && 
+    if (name.indexOf('_') > 0 && !name.pnstartsWith('test') && 
         typeof(window[name]) === 'function' && 
         name !== 'TO_STRING_EQUALITY_PREDICATE' &&
         name !== 'DOUBLE_EQUALITY_PREDICATE') {      

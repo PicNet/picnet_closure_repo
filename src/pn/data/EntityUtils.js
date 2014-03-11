@@ -74,11 +74,11 @@ pn.data.EntityUtils.getTargetEntity =
       next,
       ids;
 
-  if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {  // Parent
+  if (step !== 'ID' && step.pnendsWith('ID')) {  // Parent
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = pn.data.EntityUtils.filterBy(cache.get(type), ids);
-  } else if (goog.string.endsWith(step, 'Entities')) { // Child
+  } else if (step.pnendsWith('Entities')) { // Child
     type = pn.data.EntityUtils.getTypeProperty(type, step);
     next = cache.get(type);
     if (opt_parentField) {
@@ -185,8 +185,8 @@ pn.data.EntityUtils.isRelationshipProperty = function(property) {
   pn.ass(property);
 
   return property !== 'ID' &&
-      (goog.string.endsWith(property, 'ID') ||
-      goog.string.endsWith(property, 'Entities'));
+      (property.pnendsWith('ID') ||
+      property.pnendsWith('Entities'));
 };
 
 
@@ -197,7 +197,7 @@ pn.data.EntityUtils.isRelationshipProperty = function(property) {
  */
 pn.data.EntityUtils.isParentProperty = function(property) {
   pn.ass(property);
-  return property !== 'ID' && goog.string.endsWith(property, 'ID');
+  return property !== 'ID' && property.pnendsWith('ID');
 };
 
 
@@ -208,7 +208,7 @@ pn.data.EntityUtils.isParentProperty = function(property) {
  */
 pn.data.EntityUtils.isChildrenProperty = function(property) {
   pn.ass(property);
-  return goog.string.endsWith(property, 'Entities');
+  return property.pnendsWith('Entities');
 };
 
 

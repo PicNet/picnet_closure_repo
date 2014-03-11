@@ -60,7 +60,7 @@ pn.ui.filter.SelectFilter.prototype.init_ = function() {
 
 /** @private */
 pn.ui.filter.SelectFilter.prototype.filter_ = function() {
-  var filter = goog.string.trim(this.input_.value).toLowerCase(),
+  var filter = this.input_.value.pntrim().toLowerCase(),
       opts = !filter ? this.options_ : this.options_.pnfilter(function(o) {
         return goog.string.contains(o.innerText.toLowerCase(), filter);
       });

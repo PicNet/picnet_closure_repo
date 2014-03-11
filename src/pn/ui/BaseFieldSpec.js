@@ -114,20 +114,20 @@ pn.ui.BaseFieldSpec.prototype.inferName_ = function() {
 
   var steps = this.id.split('.');
   var nameProperty = steps[steps.length - 1];
-  if (goog.string.startsWith(nameProperty, '_')) {
+  if (nameProperty.pnstartsWith('_')) {
     nameProperty = nameProperty.substring(1);
   }
 
   // Not using EntityUtils.getTypeProperty as this is the name not the type
   // property.  I.e. This could be a field called 'ReviewerID' not
   // just 'UserID' and the name should be 'Reviewer' not 'User'.
-  if (goog.string.endsWith(nameProperty, 'Entities')) {
+  if (nameProperty.pnendsWith('Entities')) {
     nameProperty = nameProperty.substring(0, nameProperty.length - 8) + 's';
-  } else if (goog.string.endsWith(nameProperty, 'ID')) {
+  } else if (nameProperty.pnendsWith('ID')) {
     nameProperty = nameProperty.substring(0, nameProperty.length - 2);
   }
 
-  this.name = goog.string.trim(nameProperty.replace(/([A-Z])/g, ' $1'));
+  this.name = nameProperty.replace(/([A-Z])/g, ' $1').pntrim();
 };
 
 

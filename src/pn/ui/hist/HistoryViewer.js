@@ -149,7 +149,7 @@ pn.ui.hist.HistoryViewer.prototype.getEntityDiff_ = function(left, right) {
 
   var diff = {};
   var addDiff = goog.bind(function(fctx) {
-    if (goog.string.startsWith(fctx.id, '_')) return;
+    if (fctx.id.pnstartsWith('_')) return;
     var l = this.getRenderedText_(fctx, left),
         r = this.getRenderedText_(fctx, right);
     diff[fctx.id] = [l, r];
@@ -181,7 +181,7 @@ pn.ui.hist.HistoryViewer.prototype.getRenderedText_ = function(fctx, entity) {
   if (goog.isFunction(rend)) {
     var div = goog.dom.createDom('div');
     rend(fctx, div, entity);
-    return goog.string.trim(div.innerText);
+    return div.innerText.pntrim();
   } else {
     return entity.getValue(fctx.id).toString();
   }

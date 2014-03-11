@@ -108,11 +108,11 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   var el = (goog.isString(id) ? this.getel(id) : id),
       val = '';
   if (goog.isDef(opt_val)) {
-    val = goog.string.trim(opt_val.toString() || '');
+    val = opt_val.toString().pntrim();
     if (el.setValue) { el.setValue(val); }
     else el.value = val;
   } else {
-    val = goog.string.trim((!!el.getValue ? el.getValue() : el.value) || '');
+    val = ((!!el.getValue ? el.getValue() : el.value) || '').pntrim();
   }
   return val;
 };
@@ -134,7 +134,7 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
   if (goog.isDef(opt_val)) {
     el.value = (val = opt_val.getTime().toString());
   } else {
-    val = goog.string.trim(this.getel(id).value || '');
+    val = (this.getel(id).value || '').pntrim();
   }
   return new goog.date.DateTime(parseInt(val, 10));
 };
@@ -152,9 +152,9 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
 pn.ui.BaseControl.prototype.html = function(id, opt_html) {
   var html = '';
   if (goog.isDef(opt_html)) {
-    this.getel(id).innerHTML = goog.string.trim(opt_html || '');
+    this.getel(id).innerHTML = (opt_html || '').pntrim();
   } else {
-    html = goog.string.trim(this.getel(id).innerHTML || '');
+    html = (this.getel(id).innerHTML || '').pntrim();
   }
   return html;
 };

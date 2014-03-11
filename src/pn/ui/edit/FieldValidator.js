@@ -13,8 +13,8 @@ goog.provide('pn.ui.edit.FieldValidator');
 pn.ui.edit.FieldValidator.validateFieldValue =
     function(fctx, control, forceRequired) {
   var isDBField = function() {
-    return !goog.string.startsWith(fctx.id, '_') &&
-        !goog.string.endsWith(fctx.spec.dataProperty, 'Entities');
+    return !fctx.id.pnstartsWith('_') &&
+        !fctx.spec.dataProperty.pnendsWith('Entities');
   };
   var arraytise = pn.ui.edit.FieldValidator.arraytise_;
   var renderer = fctx.spec.renderer;

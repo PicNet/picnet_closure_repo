@@ -211,7 +211,7 @@ pn.ui.filter.TableFilter.prototype.getSelectFilter_ = function(colIdx) {
   });
   var values = [];
   cells.pnforEach(function(td) {
-    var txt = goog.string.trim(goog.dom.getTextContent(td));
+    var txt = goog.dom.getTextContent(td).pntrim();
     if (!txt || txt === '&nbsp;' || values.pnindexOf(txt) >= 0) {
       return;
     }
@@ -273,7 +273,7 @@ pn.ui.filter.TableFilter.prototype.doesElementContainText =
       var header = this.headers_[i];
       var visible = goog.style.isElementShown(header);
       if (!visible || header.getAttribute('filter') === 'false') { continue; }
-      txt.push(goog.string.trim(goog.dom.getTextContent(cells[i])));
+      txt.push(goog.dom.getTextContent(cells[i]).pntrim());
     }
     return pn.ui.filter.TableFilter.superClass_.doesElementContainText.
         call(this, state, tr, textTokens, txt);

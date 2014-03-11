@@ -53,7 +53,7 @@ pn.data.TypeRegister.create = function(type, raw) {
   var entity = new ctor(raw);
   for (var p in raw) {
     // Hidden Fields
-    if (goog.string.startsWith(p, '_')) {
+    if (p.pnstartsWith('_')) {
       entity.setExtValue(p, raw[p]);
     }
   }
@@ -105,6 +105,6 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
 pn.data.TypeRegister.getFieldSchema = function(type, property) {
   pn.ass(goog.isString(type), '"type" not specified');
   pn.ass(goog.isString(property), '"property" not specified');
-  if (goog.string.startsWith(property, '_')) return null;
+  if (property.pnstartsWith('_')) return null;
   return pn.data.TypeRegister.fromName(type).prototype.getFieldSchema(property);
 };

@@ -236,7 +236,7 @@ pn.ui.edit.ReadOnlyFields.getFieldType_ = function(fieldSpec) {
   var ro = pn.ui.edit.ReadOnlyFields;
   var curr = fieldSpec.renderer;
   var dataProp = fieldSpec.dataProperty;
-  var isList = goog.string.endsWith(dataProp, 'Entities');
+  var isList = dataProp.pnendsWith('Entities');
 
   if (pn.data.EntityUtils.isParentProperty(fieldSpec.dataProperty) &&
       !fieldSpec.tableType) throw new Error('Not Supported');

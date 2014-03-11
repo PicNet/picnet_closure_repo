@@ -333,7 +333,7 @@ pn.data.LocalCache.prototype.clear_ = function() {
   try {
     for (var i = 0; i < len; i++) {
       var key = ls.key(i) || '';
-      if (key && goog.string.startsWith(key, this.STORE_PREFIX_))
+      if (key && key.pnstartsWith(this.STORE_PREFIX_))
         ls.removeItem(key);
     }
   } catch (ex) { ls.clear(); } // IE9 bug workaround.

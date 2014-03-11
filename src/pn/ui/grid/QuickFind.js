@@ -131,7 +131,7 @@ pn.ui.grid.QuickFind.prototype.matches = function(entity) {
   if (noMatchIdx >= 0) return false;
 
   if (this.quickfind_) {
-    var value = goog.string.trim(this.quickfind_.value);
+    var value = this.quickfind_.value.pntrim();
     var rowstr = row.join('');
     return !value || this.search_.matches(rowstr, value);
   }
@@ -176,7 +176,7 @@ pn.ui.grid.QuickFind.prototype.init_ = function() {
 /** @private */
 pn.ui.grid.QuickFind.prototype.refresh_ = function() {
   this.filterControls_.pnforEach(function(inp) {
-    this.filters_[inp['data-id']] = goog.string.trim(inp.value);
+    this.filters_[inp['data-id']] = inp.value.pntrim();
   }, this);
   this.slick_.getData().refresh();
 

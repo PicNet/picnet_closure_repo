@@ -514,7 +514,7 @@ pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
   pn.ass(!goog.isDef(opt_txt) || goog.isArray(opt_txt));
 
   var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
-  var txt = opt_txt || [goog.string.trim(goog.dom.getTextContent(item))];
+  var txt = opt_txt || [goog.dom.getTextContent(item).pntrim()];
   var matches = this.doesTextContainText(txt, textTokens, exact);
   return matches && this.checkMatchingElementCallback_(state, item, textTokens);
 };

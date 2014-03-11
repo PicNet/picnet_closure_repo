@@ -225,7 +225,7 @@ pn.data.Entity.prototype.fromCompressed = function(arr) {
   });
   arr.pnforEach(function(v, idx) {
     var key = keys[idx];
-    if (v && goog.isString(v) && goog.string.startsWith(v, '||DATE||')) {
+    if (v && goog.isString(v) && v.pnstartsWith('||DATE||')) {
       v = pn.date.fromMillis(parseInt(v.substring(8), 10));
     }
     this.setValue(key, v);

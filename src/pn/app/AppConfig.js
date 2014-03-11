@@ -63,7 +63,7 @@ pn.app.AppConfig = function(opt_opts) {
   this.memCacheExpireMins = 15;
 
   if (opt_opts) goog.object.extend(this, opt_opts);
-  if (goog.string.endsWith(this.appPath, '/'))
+  if (this.appPath.pnendsWith('/'))
     this.appPath = this.appPath.substring(0, this.appPath.length - 1);
 
   this.facadeUri = this.touri(this.facadeUri);

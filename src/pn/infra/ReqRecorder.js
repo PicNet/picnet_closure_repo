@@ -29,7 +29,7 @@ pn.infra.ReqRecorder = function(storage) {
 pn.infra.ReqRecorder.prototype.getPosts = function(cb) {
   this.storage_.keys(goog.bind(function(keys) {
     var postkeys = keys.pnfilter(
-        function(key) { return goog.string.startsWith(key, 'post-'); });
+        function(key) { return key.pnstartsWith('post-'); });
     this.storage_.get(postkeys, function(data) {
       var posts = /** @type {!Array.<{key:string,data:
           {uri:string,data:string}}>} */ (data);

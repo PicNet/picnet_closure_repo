@@ -187,12 +187,14 @@ pn.assInst = function(val, ctor, opt_message, var_args) {
  *    arguments object.
  * @param {!goog.array.ArrayLike} args The arguments object to prepend 'this'
  *    to.
+ * @param {number=} opt_limit Limit the number of args to copy.
  * @return {!Array} The array of the given arguments with this prepended to
  *    the beggining of the array.
  */
-pn.aargs_ = function(thiso, args) {
-  var arr = [thiso];
-  for (var i = 0, len = args.length; i < len; i++) { arr.push(args[i]); }
+pn.aargs_ = function(thiso, args, opt_limit) {
+  var arr = [thiso],
+      lim = opt_limit > 0 ? opt_limit : args.length;
+  for (var i = 0; i < lim; i++) { arr.push(args[i]); }
   return arr;
 };
 
@@ -213,7 +215,116 @@ String.prototype.pnsubs = function(var_args) {
   return goog.string.subs.apply(null, pn.aargs_(this, arguments));
 };
 
-// TODO: Add pnendsWith, pnstartsWith, pnreplaceAll, pntrim
+
+/**
+ * Fast prefix-checker.
+ * @this {string} str The string to check.
+ * @param {string} prefix A string to look for at the start of {@code str}.
+ * @param {boolean=} opt_ignoreCase Wether to ignore case (default false)
+ * @return {boolean} True if {@code str} begins with {@code prefix}.
+ */
+String.prototype.pnstartsWith = function(prefix, opt_ignoreCase) {
+  var fn = !!opt_ignoreCase ?
+      goog.string.caseInsensitiveStartsWith :
+      goog.string.startsWith;
+  return fn.apply(null, pn.aargs_(this, arguments, 1));
+};
+
+
+/**
+ * Fast suffix-checker.
+ * @this {string} str The string to check.
+ * @param {string} suffix A string to look for at the end of {@code str}.
+ * @param {boolean=} opt_ignoreCase Wether to ignore case (default false)
+ * @return {boolean} True if {@code str} ends with {@code suffix}.
+ */
+String.prototype.pnendsWith = function(suffix, opt_ignoreCase) {
+  var fn = !!opt_ignoreCase ?
+      goog.string.caseInsensitiveEndsWith :
+      goog.string.endsWith;
+  return fn.apply(null, pn.aargs_(this, arguments, 1));
+};
+
+
+/**
+ * Case-insensitive equality checker.
+ * @this {string} str1 First string to check.
+ * @param {string} str2 Second string to check.
+ * @return {boolean} True if {@code str1} and {@code str2} are the same string,
+ *     ignoring case.
+ */
+String.prototype.pninsensitiveEquals = function(str2) {
+  return goog.string.caseInsensitiveEquals.
+      apply(null, pn.aargs_(this, arguments));
+};
+
+
+/**
+ * Trims white spaces to the left and right of a string.
+ * @this {string} str The string to trim.
+ * @return {string} A trimmed copy of {@code str}.
+ */
+String.prototype.pntrim = function() {
+  return goog.string.trim.apply(null, pn.aargs_(this, arguments));
+};
+
+
+/**
+ * Trims whitespaces at the left end of a string.
+ * @this {string} str The string to left trim.
+ * @return {string} A trimmed copy of {@code str}.
+ */
+String.prototype.pntrimLeft = function() {
+  return goog.string.trimLeft.apply(null, pn.aargs_(this, arguments));
+};
+
+
+/**
+ * Trims whitespaces at the right end of a string.
+ * @this {string} str The string to right trim.
+ * @return {string} A trimmed copy of {@code str}.
+ */
+String.prototype.pntrimRight = function() {
+  return goog.string.trimRight.apply(null, pn.aargs_(this, arguments));
+};
+
+
+/**
+ * A string comparator that ignores case.
+ * -1 = str1 less than str2
+ *  0 = str1 equals str2
+ *  1 = str1 greater than str2
+ *
+ * @this {string} str1 The string to compare.
+ * @param {string} str2 The string to compare {@code str1} to.
+ * @return {number} The comparator result, as described above.
+ */
+String.prototype.pninsensitiveCompare = function(str2) {
+  return goog.string.caseInsensitiveCompare.apply(null,
+      pn.aargs_(this, arguments));
+};
+
+
+/**
+ * String comparison function that handles numbers in a way humans might expect.
+ * Using this function, the string "File 2.jpg" sorts before "File 10.jpg". The
+ * comparison is mostly case-insensitive, though strings that are identical
+ * except for case are sorted with the upper-case strings before lower-case.
+ *
+ * This comparison function is significantly slower (about 500x) than either
+ * the default or the case-insensitive compare. It should not be used in
+ * time-critical code, but should be fast enough to sort several hundred short
+ * strings (like filenames) with a reasonable delay.
+ *
+ * @this {string} str1 The string to compare in a numerically sensitive way.
+ * @param {string} str2 The string to compare {@code str1} to.
+ * @return {number} less than 0 if str1 < str2, 0 if str1 == str2, greater than
+ *     0 if str1 > str2.
+ */
+String.prototype.pnnumerateCompare = function(str2) {
+  return goog.string.numerateCompare.apply(null,
+      pn.aargs_(this, arguments));
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Array prototype enhancements
