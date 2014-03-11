@@ -258,7 +258,9 @@ pn.ui.edit.FieldRenderers.enumRenderer = function(fctx, parent, entity) {
       });
     }
   });
-  lst.pnsortObjectsByKey('name');
+  lst.pnsort(function(a, b) {
+    return a.name - b.name;
+  });
 
   var selected = /** @type {number} */ (fctx.getEntityValue(entity));
   var select = pn.ui.edit.FieldRenderers.createDropDownList_(
