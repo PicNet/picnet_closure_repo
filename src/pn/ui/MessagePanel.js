@@ -70,6 +70,26 @@ pn.ui.MessagePanel.prototype.showErrors = function(list) {
 
 
 /**
+ * @param {string} message The error to display.
+ */
+pn.ui.MessagePanel.prototype.showWarning = function(message) {
+  this.showMessage_('<p>' + message + '</p>', 'warning');
+};
+
+
+/**
+ * @param {Array.<string>} list The error list to display.
+ */
+pn.ui.MessagePanel.prototype.showWarnings = function(list) {
+  pn.ass(list.length);
+  pn.ass(goog.isString(list[0]),
+      'Expected array of strings: ' + typeof(list[0]));
+  this.showMessage_('<ul><li>' + list.join('</li><li>') +
+      '</li></ul>', 'warning');
+};
+
+
+/**
  * @param {string} message The message to display.
  */
 pn.ui.MessagePanel.prototype.showMessage = function(message) {

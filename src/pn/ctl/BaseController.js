@@ -213,6 +213,18 @@ pn.ctl.BaseController.prototype.error = function(errors) {
 
 /**
  * @protected
+ * @param {string|Array.<string>} warning The error message or messages to
+ *    display.
+ */
+pn.ctl.BaseController.prototype.warning = function(warning) {
+  pn.ass(goog.isString(warning) || goog.isArray(warning));
+  if (goog.isString(warning)) { this.msg_.showWarning(warning); }
+  else { this.msg_.showWarnings(warning); }
+};
+
+
+/**
+ * @protected
  * @param {string|Array.<string>} messages The message or messages to display.
  */
 pn.ctl.BaseController.prototype.message = function(messages) {
