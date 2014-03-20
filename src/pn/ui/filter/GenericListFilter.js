@@ -4,14 +4,13 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.events.EventHandler');
-goog.require('goog.events.EventHandler');
 goog.require('goog.net.cookies');
 goog.require('goog.style');
+goog.require('pn.dom');
 goog.require('pn.ui.DelayedThrottleInputListener');
 goog.require('pn.ui.filter.FilterState');
 goog.require('pn.ui.filter.GenericListFilterOptions');
 goog.require('pn.ui.filter.SearchEngine');
-goog.require('pn.dom');
 
 goog.provide('pn.ui.filter.GenericListFilter');
 
