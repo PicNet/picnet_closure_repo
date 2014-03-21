@@ -47,6 +47,7 @@ goog.inherits(pn.data.EntityFilter, goog.Disposable);
  * @param {!Object} entity The entity to filter with the specified filters.
  * @param {!Object.<{value:(Array.<string>|string), spec:!pn.ui.edit.Field}>}
  *    filters The filters to use to filter the list by.
+ * @param {!object} hash the hash table
  * @return {boolean} Wether the specified entity meets the specified filters.
  */
 pn.data.EntityFilter.prototype.filterEntity = function(entity, filters, hash) {
@@ -73,6 +74,7 @@ pn.data.EntityFilter.prototype.filterEntity = function(entity, filters, hash) {
  * @param {!pn.ui.edit.Field} spec The field specification for the given
  *    filter.
  * @param {Object} entity The entity to test for match.
+ * @param {!object} hash the hash table
  * @return {boolean} Wether the specified entity meets the
  *    specified filterValue.
  */

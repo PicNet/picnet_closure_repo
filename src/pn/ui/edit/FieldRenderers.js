@@ -218,6 +218,16 @@ pn.ui.edit.FieldRenderers.createManyToManyRenderer =
     entity[mappingEntity + 'Entities'] = adminIDs;
 
     var select = goog.dom.createDom('select', {'multiple': 'multiple'});
+
+    // add an empty option
+    if (cache[adminEntity].length > 0) {
+      select.options.add(goog.dom.createDom('option', {
+        'text': 'Please select an item...',
+        'value': '',
+        'selected': false
+      }));
+    }
+
     goog.array.forEach(cache[adminEntity], function(ae) {
       var text = ae[adminEntity + 'Name'];
       var opt = goog.dom.createDom('option', {
