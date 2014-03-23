@@ -1,7 +1,7 @@
 goog.provide('pn.Kernel');
 
 goog.require('goog.Disposable');
-goog.require('goog.labs.Promise');
+goog.require('goog.Promise');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
 goog.require('pn.data.Storage');

@@ -1,9 +1,8 @@
 
-goog.require('goog.debug');
 goog.require('goog.debug.Console');
-goog.require('goog.debug.FancyWindow');
 goog.require('goog.debug.LogManager');
-goog.require('goog.debug.Logger');
+goog.require('goog.log');
+goog.require('goog.log.Logger');
 goog.require('goog.object');
 goog.require('pn');
 
@@ -15,7 +14,7 @@ goog.provide('pn.log');
  * @const
  * @type {boolean}
  */
-pn.log.OFF_ = false;
+pn.log.OFF_ = true;
 
 
 /**
@@ -41,10 +40,6 @@ pn.log.initialise_ = function() {
   pn.log.isInitialised_ = true;
 
   new goog.debug.Console().setCapturing(true);
-  // var ie7window = new goog.debug.FancyWindow('IE7 Logger');
-  // ie7window.setEnabled(true);
-  // ie7window.init();
-
   goog.debug.LogManager.getRoot().setLevel(goog.debug.Logger.Level.OFF);
 };
 
@@ -108,7 +103,7 @@ pn.log.info = function(msg, opt_exception) {
  * @return {!goog.debug.Logger} The logger created.
  */
 pn.log.getLoggerImpl_ = function(name, level) {
-  var log = goog.debug.Logger.getLogger(name);
+  var log = goog.log.getLogger(name);
   log.setLevel(level);
   return log;
 };
