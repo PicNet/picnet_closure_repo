@@ -6,7 +6,7 @@ goog.require('pn.ui.BaseControl');
 
 /**
  * @typedef {{id:string,name:string,cssclass:(string|undefined),
- *   selected:boolean, optn:boolean, nodes:Array.<!pn.ui.MultiSelectItem>}}
+ *   selected:boolean, open:boolean, nodes:Array.<!pn.ui.MultiSelectItem>}}
  */
 pn.ui.MultiSelectItem;
 
@@ -76,7 +76,7 @@ pn.ui.MultiSelect.prototype.options = function(list) {
       addargs.push(o.open ? 'open' : 'closed');
       var children = o.nodes.pnmapMany(function(n) { return doli(n); }, li);
       lis = lis.pnconcat(children);
-      if (o.open) this.show(children, true);
+      this.show(children, !!o.open);
     } else {
       if (!!parent) li.style.display = 'none';
       addargs.push('leaf');
