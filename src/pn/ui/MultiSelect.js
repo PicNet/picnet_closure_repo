@@ -209,7 +209,7 @@ pn.ui.MultiSelect.prototype.getChildLis_ = function(from) {
       end = lis.pnfindIndex(function(li2, idx) {
         return idx > start && goog.dom.classes.has(li2, 'branch');
       });
-
+  if (end === -1) { end = lis.length; }
   return pn.range(start + 1, end - 1).pnmap(function(i) { return lis[i]; });
 };
 

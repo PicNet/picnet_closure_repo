@@ -338,6 +338,7 @@ pn.ui.BaseControl.prototype.enabled = function(el) {
  */
 pn.ui.BaseControl.prototype.show = function(el, visible) {
   pn.assBool(visible);
+  pn.assDef(el);
   if (goog.isArray(el)) {
     el.pnforEach(function(el3) { this.show(el3, visible); }, this);
     return;
