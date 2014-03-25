@@ -112,7 +112,8 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
     if (el.setValue) { el.setValue(val); }
     else el.value = val;
   } else {
-    val = ((!!el.getValue ? el.getValue() : el.value) || '').pntrim();
+    val = (!!el.getValue ? el.getValue() : el.value) || '';
+    if (!!val && goog.isString(val)) val = val.pntrim();
   }
   return val;
 };
