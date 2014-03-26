@@ -108,15 +108,15 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   var el = (goog.isString(id) ? this.getel(id) : id),
       val = '';
   if (goog.isDef(opt_val)) {
-    val = opt_val.toString().pntrim();
     if (el.setValue) { el.setValue(val); }
-    else el.value = val;
+    else el.value = opt_val.toString().pntrim();
   } else {
     val = (!!el.getValue ? el.getValue() : el.value) || '';
     if (!!val && goog.isString(val)) val = val.pntrim();
   }
   return val;
 };
+
 
 
 /**
