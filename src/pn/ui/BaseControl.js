@@ -118,7 +118,6 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
 };
 
 
-
 /**
  * @protected
  * Helper to get or set the trimmed input value.
