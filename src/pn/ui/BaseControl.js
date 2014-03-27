@@ -211,6 +211,16 @@ pn.ui.BaseControl.prototype.onchange = function(el, cb) {
   this.listenTo(el2, goog.events.EventType.CHANGE, cb.pnbind(this));
 };
 
+/**
+ * @protected
+ * @param {string|!Element} el The ID or element of the element to listen to.
+ *    This uses the standard naming conventions for element IDs.
+ * @param {function():undefined} cb The callback for the event.
+ */
+pn.ui.BaseControl.prototype.onkeyup = function(el, cb) {
+  var el2 = goog.isString(el) ? this.getel(el) : el;
+  this.listenTo(el2, goog.events.EventType.KEYUP, cb.pnbind(this));
+};
 
 /**
  * @param {string|!Element} el The ID or element of the element to listen to.
