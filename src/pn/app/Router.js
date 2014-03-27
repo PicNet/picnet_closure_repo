@@ -127,9 +127,12 @@ pn.app.Router.prototype.replaceLocation = function(path) {
  */
 pn.app.Router.prototype.navigate = function(path) {
   pn.ass(path);
-  this.log_.fine('path: ' + path + ' added to history stack');
+  this.log_.fine('path: ' + path + ' added to history stack');  
+  // Html5 History ignores navitation to same path however this is needed
+  //    if we want to refresh the current page so manually force the navigation.
+  if (path === this.history_.getToken()) { this.navigateImpl_(path); }
   // This will trigger a NAVIGATE event which will inturn call navigateImpl_
-  this.history_.setToken(path);
+  else { this.history_.setToken(path); }
 };
 
 
