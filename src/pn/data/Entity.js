@@ -81,11 +81,13 @@ pn.data.Entity.prototype.equals = function(other) {
           /** @type {!goog.date.Date} */ (v2)); // Ignores hour/mins
     }
     else {
-      eq = (!goog.isDefAndNotNull(v1) && !goog.isDefAndNotNull(v2)) ||
-          v1 === v2;
+      eq = v1 === v2 ||
+          (!goog.isDefAndNotNull(v1) && !goog.isDefAndNotNull(v2)) ||
+          (goog.isArray(v1) && goog.isArray(v2) && v1.pnequals(v2));
     }
     if (!eq) {
-      var msg = 'Entity not equal - field: ' + key + ' 1: ' + v1 + ' 2: ' + v2;
+      var msg = 'Entity not equal - field: ' + key + ' 1: ' + v1 +
+          ' 2: ' + v2 + ' t1: ' + typeof(v1) + ' t2: ' + typeof(v2);
       pn.log.info(msg);
     }
     return !eq;
