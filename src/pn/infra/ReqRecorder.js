@@ -22,6 +22,14 @@ pn.infra.ReqRecorder = function(storage) {
 };
 
 
+/** @private @const @type {!Array.<string>} */
+pn.infra.ReqRecorder.IGNORED_ = [
+  'user-tasks',
+  'task-details',
+  'user-messages'
+];
+
+
 /**
  * @param {function(!Array.<{key:string,data:{uri:string,data:string}}>):undefined}
  *    cb The callback that takes the stored post in.
@@ -64,6 +72,10 @@ pn.infra.ReqRecorder.prototype.get = function(user, method, uri, data, cb) {
   pn.assStr(uri);
   pn.assStr(data);
 
+  var ignored = pn.infra.ReqRecorder.IGNORED_;
+  if (ignored.pnfindIndex(function(i) { return uri.pnstartsWith(i); }) >= 0)
+    throw new Error('ReqRecorder should not be called for request: ' + uri);
+
   var key = this.key_(user, method, uri, data);
   this.storage_.get(key, function(response) {
     cb(!!response ? response['data'] : null);
@@ -78,13 +90,12 @@ pn.infra.ReqRecorder.prototype.get = function(user, method, uri, data, cb) {
  * @param {function():undefined} cb The callback that takes the data in
  *    for the specified request.
  */
-pn.infra.ReqRecorder.prototype.post = function(user, uri, data, cb) {
+pn.infra.ReqRecorder.prototype.recordPost = function(user, uri, data, cb) {
   pn.assStr(user);
   pn.assStr(uri);
   pn.assStr(data);
 
   var key = 'post-' + new Date().valueOf();
-
   this.storage_.save({ 'key': key, 'data': { 'uri': uri, 'data': data } }, cb);
 };
 
@@ -96,13 +107,16 @@ pn.infra.ReqRecorder.prototype.post = function(user, uri, data, cb) {
  * @param {string} data The data to pass to the request.
  * @param {string} resp The response from the request.
  */
-pn.infra.ReqRecorder.prototype.save =
-    function(user, method, uri, data, resp) {
+pn.infra.ReqRecorder.prototype.save = function(user, method, uri, data, resp) {
   pn.assStr(user);
   pn.assStr(method);
   pn.assStr(uri);
   pn.assStr(data);
   pn.assStr(resp);
+
+  var ignored = pn.infra.ReqRecorder.IGNORED_;
+  if (ignored.pnfindIndex(function(i) { return uri.pnstartsWith(i); }) >= 0)
+    return;
 
   var key = this.key_(user, method, uri, data);
   this.storage_.save({ 'key' : key, 'data': resp }, goog.nullFunction);
