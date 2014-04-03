@@ -41,8 +41,8 @@ pn.ctl.BaseDialog.prototype.onhide = function(cb) {
 
 /** @override */
 pn.ctl.BaseDialog.prototype.shown = function() {
-  if (this.hasel('submit')) this.ontap('submit', this.submit_);
-  if (this.hasel('cancel')) this.ontap('cancel', this.cancel_);
+  if (this.hasel('submit')) this.ontap('submit', this.submit);
+  if (this.hasel('cancel')) this.ontap('cancel', this.cancel);
 };
 
 
@@ -52,8 +52,8 @@ pn.ctl.BaseDialog.prototype.hide = function() {
 };
 
 
-/** @private */
-pn.ctl.BaseDialog.prototype.submit_ = function() {
+/** @protected */
+pn.ctl.BaseDialog.prototype.submit = function() {
   pn.assFun(this.onsubmit_);
 
   var value = this.value(),
@@ -70,8 +70,8 @@ pn.ctl.BaseDialog.prototype.submit_ = function() {
 pn.ctl.BaseDialog.prototype.value = goog.abstractMethod;
 
 
-/** @private */
-pn.ctl.BaseDialog.prototype.cancel_ = function() {
+/** @protected */
+pn.ctl.BaseDialog.prototype.cancel = function() {
   this.log.finest('cancel');
   this.hideDialog_();
 };
