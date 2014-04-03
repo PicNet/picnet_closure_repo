@@ -50,13 +50,15 @@ goog.inherits(pn.app.EventBus, goog.Disposable);
  */
 pn.app.EventBus.prototype.pub = function(topic, var_args) {
   pn.ass(topic);
-  pn.ass(this.pubsub_.getCount(topic) > 0,
-      'No subscribers found [' + topic + ']');
 
-  var msg = this.topic_ = topic;
+  var cnt = this.pubsub_.getCount(topic),
+      msg = (this.topic_ = topic) + ' subscribers[' + cnt + '] ';
   if (var_args && typeof(var_args) === 'string' && var_args.length < 20)
     msg += ' ' + var_args;
+
   this.log_.fine(msg);
+
+  if (cnt === 0) { return; }
 
   this.pubsub_.publish.apply(this.pubsub_, arguments);
 };
