@@ -66,19 +66,30 @@ pn.app.EventBus.prototype.pub = function(topic, var_args) {
  * Use this method to to subscribe to the stream of events.
  *
  * @param {string} topic The topic to subscribe to.
- * @param {Function} callback The callback to call on the publishing
+ * @param {Function} cb The callback to call on the publishing
  *    of the specified topic.
- * @param {Object=} opt_handler The optional object to use as the callback
- *    context.
  */
-pn.app.EventBus.prototype.sub = function(topic, callback, opt_handler) {
-  var handler = opt_handler || this;
-  var cb = goog.bind(callback, handler);
+pn.app.EventBus.prototype.sub = function(topic, cb) {
   if (this.asyncPubSub_) {
     this.pubsub_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });
   } else {
     this.pubsub_.subscribe(topic, cb);
   }
+};
+
+
+/**
+ * Use this method to to subscribe to the stream of events.
+ *
+ * @param {string} topic The topic to subscribe to.
+ * @param {Function} cb The callback to call on the publishing
+ *    of the specified topic.
+ */
+pn.app.EventBus.prototype.unsub = function(topic, cb) {
+  if (this.asyncPubSub_) {
+    throw new Error('Unsubscribe not supported in async EventBus mode.');
+  }
+  this.pubsub_.unsubscribe(topic, cb);
 };
 
 
