@@ -54,7 +54,7 @@ pn.ctl.BaseDialog.prototype.hide = function() {
 
 /** @protected */
 pn.ctl.BaseDialog.prototype.submit = function() {
-  pn.assFun(this.onsubmit_);
+  pn.ass(!this.onsubmit_ || goog.isFunction(this.onsubmit_));
 
   var value = this.value(),
       cb = this.onsubmit_;
@@ -62,7 +62,7 @@ pn.ctl.BaseDialog.prototype.submit = function() {
   // Disposes the CB and possible controls responsible for this.value
   this.hideDialog_();
 
-  cb(value);
+  if (cb) cb(value);
 };
 
 

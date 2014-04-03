@@ -89,7 +89,9 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
       // On change of page hide any active dialog.  This assumes that the
       //    dialog triggered the page change and is no longer required.  E.g.
       //    the task actions dialog.
-      if (this.currentDialog_ && !this.currentDialog_.isDisposed()) {
+      if (this.currentDialog_ &&
+          !this.currentDialog_.isDisposed() &&
+          this.currentDialog_.hasshown) {
         this.disposeController_(this.currentDialog_);
       }
       this.currentDialog_ = null;
@@ -162,6 +164,7 @@ pn.ctl.Director.prototype.showNewController_ = function(c) {
   this.moveReusableControlls_(c.el);
   pn.dom.show(c.el, true);
   c.shown();
+  c.hasshown = true;
 
   this.log_.fine('new controller shown');
 };

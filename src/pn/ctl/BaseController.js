@@ -31,6 +31,9 @@ pn.ctl.BaseController = function(el) {
 
   /** @private @type {!pn.ui.MessagePanel} */
   this.msg_;
+
+  /** @type {boolean} */
+  this.hasshown = false;
 };
 goog.inherits(pn.ctl.BaseController, pn.ui.BaseControl);
 
