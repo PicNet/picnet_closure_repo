@@ -180,12 +180,14 @@ pn.ui.BaseControl.prototype.byclass = function(id, opt_parent) {
  * @protected
  * Helper to access the pn.dom.get and following the standard naming
  *    conventions of the controller.
- * @param {string} id The ID suffix (without the page id) of the control to
- *    get.
+ * @param {string|Element} id The ID suffix (without the page id) of the
+ *    control to get.
  * @return {!Element} The element on this page with the specified id.
  */
 pn.ui.BaseControl.prototype.getel = function(id) {
-  return pn.dom.get(this.el.id + '-' + id);
+  return id instanceof HTMLElement ?
+      /** @type {!Element} */ (id) :
+      pn.dom.get(this.el.id + '-' + id);
 };
 
 
@@ -202,25 +204,30 @@ pn.ui.BaseControl.prototype.hasel = function(id) {
 
 /**
  * @protected
- * @param {string|!Element} el The ID or element of the element to listen to.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to listen to. This uses the standard naming conventions
+ *    for element IDs.
  * @param {function():undefined} cb The callback for the event.
  */
 pn.ui.BaseControl.prototype.onchange = function(el, cb) {
-  var el2 = goog.isString(el) ? this.getel(el) : el;
-  this.listenTo(el2, goog.events.EventType.CHANGE, cb.pnbind(this));
+  this.getels_(el).pnforEach(function(e) {
+    this.listenTo(e, goog.events.EventType.CHANGE, cb.pnbind(this));
+  }, this);
+
 };
 
 
 /**
  * @protected
- * @param {string|!Element} el The ID or element of the element to listen to.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to listen to. This uses the standard naming conventions
+ *    for element IDs.
  * @param {function():undefined} cb The callback for the event.
  */
 pn.ui.BaseControl.prototype.onkeyup = function(el, cb) {
-  var el2 = goog.isString(el) ? this.getel(el) : el;
-  this.listenTo(el2, goog.events.EventType.KEYUP, cb.pnbind(this));
+  this.getels_(el).pnforEach(function(e) {
+    this.listenTo(e, goog.events.EventType.KEYUP, cb.pnbind(this));
+  }, this);
 };
 
 
@@ -238,26 +245,40 @@ pn.ui.BaseControl.prototype.ontap = function(el, cb) {
 /**
  * @protected
  * @param {Array.<string>|string} events The event types to listen to.
- * @param {string|!Element} el The ID or element of the element to listen to.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to listen to. This uses the standard naming conventions
+ *    for element IDs.
  * @param {function(goog.events.Event=):undefined} cb The callback for the
  *    event.
  */
 pn.ui.BaseControl.prototype.ongesture = function(events, el, cb) {
-  var el2 = goog.isString(el) ? this.getel(el) : el;
-  this.gestures_.ongesture(events, el2, cb.pnbind(this));
+  this.getels_(el).pnforEach(function(e) {
+    this.gestures_.ongesture(events, e, cb.pnbind(this));
+  }, this);
 };
 
 
 /**
  * @protected
- * @param {string|!Element} el The ID or element of the element to listen to.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to listen to. This uses the standard naming conventions
+ *    for element IDs.
  * @param {function():undefined} cb The callback for the event.
  */
 pn.ui.BaseControl.prototype.onselect = function(el, cb) {
+  this.getels_(el).pnforEach(function(e) {
+    this.listenTo(e, goog.events.EventType.SELECT, cb.pnbind(this));
+  }, this);
+};
+
+
+/**
+ * @protected
+ * @param {string|!Element} el The ID or element of the element to focus.
+ */
+pn.ui.BaseControl.prototype.focus = function(el) {
   var el2 = goog.isString(el) ? this.getel(el) : el;
-  this.listenTo(el2, goog.events.EventType.SELECT, cb.pnbind(this));
+  el2.focus();
 };
 
 
@@ -318,15 +339,17 @@ pn.ui.BaseControl.prototype.filterList = function(el, filter) {
 
 /**
  * @protected
- * @param {string|!Element} el The ID or element of the element to enable.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to enable. This uses the standard naming conventions
+ *    for element IDs.
  * @param {boolean} enabled Wether the element should be enabled or disabled.
  */
 pn.ui.BaseControl.prototype.enable = function(el, enabled) {
   pn.assBool(enabled);
-  var el2 = goog.isString(el) ? this.getel(el) : el;
-  if (enabled) el2.removeAttribute('disabled');
-  else el2.setAttribute('disabled', 'disabled');
+  this.getels_(el).pnforEach(function(e) {
+    if (enabled) e.removeAttribute('disabled');
+    else e.setAttribute('disabled', 'disabled');
+  }, this);
 };
 
 
@@ -344,19 +367,18 @@ pn.ui.BaseControl.prototype.enabled = function(el) {
 
 /**
  * @protected
- * @param {string|!Element|!Array} el The ID or element of the element to show.
- *    This uses the standard naming conventions for element IDs.
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to show. This uses the standard naming conventions for
+ *    element IDs.
  * @param {boolean} visible Wether the element should be shown or hidden.
  */
 pn.ui.BaseControl.prototype.show = function(el, visible) {
   pn.assBool(visible);
   pn.assDef(el);
-  if (goog.isArray(el)) {
-    el.pnforEach(function(el3) { this.show(el3, visible); }, this);
-    return;
-  }
-  var el2 = goog.isString(el) ? this.getel(el) : el;
-  pn.dom.show(el2, visible);
+
+  this.getels_(el).pnforEach(function(e) {
+    pn.dom.show(e, visible);
+  });
 };
 
 
@@ -375,6 +397,18 @@ pn.ui.BaseControl.prototype.isshown = function(el) {
     el2 = /** @type {!Element} */ (el2.parentNode);
   }
   return true;
+};
+
+
+/**
+ * @private
+ * @param {string|!Element|!Array.<(string|!Element)>} els The element or
+ *   element IDs to resolve into an element array.
+ * @return {!Array.<!Element>} The resolved element array.
+ */
+pn.ui.BaseControl.prototype.getels_ = function(els) {
+  if (!goog.isArray(els)) els = [els];
+  return els.pnmap(this.getel, this);
 };
 
 

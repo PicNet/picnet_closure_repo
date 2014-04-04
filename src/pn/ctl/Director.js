@@ -97,7 +97,7 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
       this.currentDialog_ = null;
     }
 
-    this.showNewController_(newc);
+    this.showNewController_(newc, id);
   }.pnbind(this));
 
   this.stack_.push(pn.toarr(arguments));
@@ -147,14 +147,17 @@ pn.ctl.Director.prototype.showDialog = function(id, opt_cb, var_args) {
         pages.scrollTop = top;
       });
     }
-    goog.Timer.callOnce(this.currentDialog_.shown, 0, this.currentDialog_);
+    goog.Timer.callOnce(function() {
+      this.currentDialog_.shown();
+      this.currentDialog_.hasshown = true;
+    }, 0, this);
   }.pnbind(this));
   this.get_.apply(this, args);
 };
 
 
-/** @private @param {!pn.ctl.BaseController} c */
-pn.ctl.Director.prototype.showNewController_ = function(c) {
+/** @private @param {!pn.ctl.BaseController} c @param {string} id */
+pn.ctl.Director.prototype.showNewController_ = function(c, id) {
   pn.assInst(c, pn.ctl.BaseController);
 
   this.current_ = c;
@@ -166,7 +169,7 @@ pn.ctl.Director.prototype.showNewController_ = function(c) {
   c.shown();
   c.hasshown = true;
 
-  this.log_.fine('new controller shown');
+  this.log_.fine('new controller shown [' + id + ']');
 };
 
 
