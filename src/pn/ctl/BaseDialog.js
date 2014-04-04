@@ -77,6 +77,14 @@ pn.ctl.BaseDialog.prototype.cancel = function() {
 };
 
 
+/** @param {string} html The html to set as the header. */
+pn.ctl.BaseDialog.prototype.header = function(html) {
+  pn.assStr(html);
+
+  pn.dom.byClass('dialog-header').innerHTML = html;
+};
+
+
 /** @private */
 pn.ctl.BaseDialog.prototype.hideDialog_ = function() {
   if (!this.hiding()) return;
