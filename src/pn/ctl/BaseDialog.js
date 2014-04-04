@@ -16,7 +16,7 @@ pn.ctl.BaseDialog = function(el) {
   /** @protected @type {!goog.debug.Logger} */
   this.log = pn.log.getLogger('pn.ctl.BaseDialog[' + el.id + ']');
 
-  /** @private @type {function(Object):undefined} */
+  /** @private @type {function(*):undefined} */
   this.onsubmit_;
 
   /** @private @type {function():undefined} */
@@ -25,7 +25,7 @@ pn.ctl.BaseDialog = function(el) {
 goog.inherits(pn.ctl.BaseDialog, pn.ctl.BaseController);
 
 
-/** @param {function(Object):undefined} cb The callback on submit. */
+/** @param {function(*):undefined} cb The callback on submit. */
 pn.ctl.BaseDialog.prototype.onsubmit = function(cb) {
   pn.assFun(cb);
   this.onsubmit_ = cb;
@@ -66,7 +66,7 @@ pn.ctl.BaseDialog.prototype.submit = function() {
 };
 
 
-/** @protected @return {Object} The object 'value' to return to the caller. */
+/** @protected @return {*} The object 'value' to return to the caller. */
 pn.ctl.BaseDialog.prototype.value = goog.abstractMethod;
 
 

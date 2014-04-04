@@ -137,7 +137,7 @@ pn.ctl.BaseController.prototype.localstore = function(id, opt_val) {
 /**
  * @protected
  * @param {string} id The id of the Dialog to show
- * @param {function(Object):undefined=} opt_cb The callback on close.
+ * @param {Function=} opt_cb The callback on close.
  * @param {...*} var_args Any additional arguments to pass to the dialog
  *    constructor.
  */
