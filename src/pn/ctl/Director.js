@@ -44,9 +44,11 @@ goog.inherits(pn.ctl.Director, goog.Disposable);
 /** @private */
 pn.ctl.Director.prototype.init_ = function() {
   this.log_.fine('initialising the director.');
-  if (goog.userAgent.ANDROID) goog.dom.classes.add(document.body, 'android');
-  if (goog.userAgent.IPAD) goog.dom.classes.add(document.body, 'ipad');
-  if (goog.userAgent.IPHONE) goog.dom.classes.add(document.body, 'iphone');
+  if (!goog.userAgent.WINDOWS) {
+    if (goog.userAgent.ANDROID) goog.dom.classes.add(document.body, 'android');
+    if (goog.userAgent.IPAD) goog.dom.classes.add(document.body, 'ipad');
+    if (goog.userAgent.IPHONE) goog.dom.classes.add(document.body, 'iphone');
+  }
 
   pn.toarr(goog.dom.getElementsByClass('page')).
       pnconcat(pn.toarr(goog.dom.getElementsByClass('dialog'))).
