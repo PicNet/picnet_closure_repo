@@ -56,6 +56,8 @@ pn.ctl.BaseDialog.prototype.hide = function() {
 pn.ctl.BaseDialog.prototype.submit = function() {
   pn.ass(!this.onsubmit_ || goog.isFunction(this.onsubmit_));
 
+  if (!this.validate()) return;
+
   var value = this.value(),
       cb = this.onsubmit_;
 
@@ -64,6 +66,14 @@ pn.ctl.BaseDialog.prototype.submit = function() {
 
   if (cb) cb(value);
 };
+
+
+/**
+ * @protected
+ * @return {boolean} Wether the dialog fields are valid inputs.
+ * If your dialog needs validation override this method.
+ */
+pn.ctl.BaseDialog.prototype.validate = function() { return true; };
 
 
 /** @protected @return {*} The object 'value' to return to the caller. */
