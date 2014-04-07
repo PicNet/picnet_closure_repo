@@ -70,12 +70,14 @@ pn.app.EventBus.prototype.pub = function(topic, var_args) {
  * @param {string} topic The topic to subscribe to.
  * @param {Function} cb The callback to call on the publishing
  *    of the specified topic.
+ * @param {Object=} opt_ctx The optional context.
  */
-pn.app.EventBus.prototype.sub = function(topic, cb) {
+pn.app.EventBus.prototype.sub = function(topic, cb, opt_ctx) {
   if (this.asyncPubSub_) {
-    this.pubsub_.subscribe(topic, function() { goog.Timer.callOnce(cb, 0); });
+    this.pubsub_.subscribe(topic,
+        function() { goog.Timer.callOnce(cb, 0); }, opt_ctx);
   } else {
-    this.pubsub_.subscribe(topic, cb);
+    this.pubsub_.subscribe(topic, cb, opt_ctx);
   }
 };
 
@@ -86,12 +88,13 @@ pn.app.EventBus.prototype.sub = function(topic, cb) {
  * @param {string} topic The topic to subscribe to.
  * @param {Function} cb The callback to call on the publishing
  *    of the specified topic.
+ * @param {Object=} opt_ctx The optional context.
  */
-pn.app.EventBus.prototype.unsub = function(topic, cb) {
+pn.app.EventBus.prototype.unsub = function(topic, cb, opt_ctx) {
   if (this.asyncPubSub_) {
     throw new Error('Unsubscribe not supported in async EventBus mode.');
   }
-  this.pubsub_.unsubscribe(topic, cb);
+  this.pubsub_.unsubscribe(topic, cb, opt_ctx);
 };
 
 
