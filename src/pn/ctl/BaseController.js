@@ -203,7 +203,6 @@ pn.ctl.BaseController.prototype.validateRequired = function(var_args) {
 
 
 /**
- * @protected
  * @param {string|Array.<string>} errors The error message or messages to
  *    display.
  */
