@@ -61,11 +61,7 @@ pn.ui.MessagePanel.prototype.showError = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showErrors = function(list) {
-  pn.ass(list.length);
-  pn.ass(goog.isString(list[0]),
-      'Expected array of strings: ' + typeof(list[0]));
-  this.showMessage_('<ul><li>' + list.join('</li><li>') +
-      '</li></ul>', 'error');
+  this.showList_(list, 'error');
 };
 
 
@@ -81,11 +77,7 @@ pn.ui.MessagePanel.prototype.showWarning = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showWarnings = function(list) {
-  pn.ass(list.length);
-  pn.ass(goog.isString(list[0]),
-      'Expected array of strings: ' + typeof(list[0]));
-  this.showMessage_('<ul><li>' + list.join('</li><li>') +
-      '</li></ul>', 'warning');
+  this.showList_(list, 'warning');
 };
 
 
@@ -101,10 +93,24 @@ pn.ui.MessagePanel.prototype.showMessage = function(message) {
  * @param {Array.<string>} list The message list to display.
  */
 pn.ui.MessagePanel.prototype.showMessages = function(list) {
+  this.showList_(list, 'info');
+};
+
+
+/**
+ * @private
+ * @param {Array.<string>} list The message list to display.
+ * @param {string} cls The class of the messages to displahy (error,
+ *    warning, info)
+ */
+pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
   pn.ass(list.length);
   pn.assStr(list[0]);
 
-  this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', 'info');
+  if (list.length === 1)
+    this.showMessage_('<p>' + list[0] + '</p>', cls);
+  else
+    this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', cls);
 };
 
 
