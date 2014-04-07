@@ -311,7 +311,6 @@ pn.ui.BaseControl.prototype.populateList = function(el, values, opt_v) {
     if (!!opt_v && opt_v === o.id) { option.selected = 'selected'; }
     return option;
   });
-
   goog.dom.append(el2, options);
 };
 

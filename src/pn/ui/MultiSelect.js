@@ -29,8 +29,18 @@ pn.ui.MultiSelect = function(ul, opt_children) {
   /** @type {boolean} Wether to allow allowMultiple selections */
   this.allowMultiple = true;
 
+  /**
+   * @type {string} The ID of the element that means 'All'. This item
+   *    is handled separately as it clears others when selected.  And others
+   *    clear this when selected.
+   */
+  this.allval = '';
+
   /** @private @const @type {!Element} */
   this.ul_ = ul;
+
+  /** @private @type {!Element} */
+  this.allli_;
 
   /**
    * @private
@@ -67,7 +77,7 @@ pn.ui.MultiSelect.prototype.options = function(list) {
             o.name + '</li>',
         li = pn.dom.htmlToEl(html),
         addargs = [li];
-
+    if (o.id === this.allval) this.allli_ = li;
     if (o.selected) { addargs.push('selected'); }
     if (o.cssclass) { addargs.push(o.cssclass); }
     var lis = [li];
@@ -172,6 +182,7 @@ pn.ui.MultiSelect.prototype.toggleopen_ = function(e) {
 pn.ui.MultiSelect.prototype.selchanged_ = function(e) {
   var li = /** @type {!Node} */ (e.target);
   if (!li || !li.getAttribute('data-itemid')) return;
+
   if (goog.dom.classes.has(li, 'branch')) {
     if (!this.allowMultiple) {
       // No multi select assume tap is same as hold
@@ -193,6 +204,21 @@ pn.ui.MultiSelect.prototype.selchanged_ = function(e) {
 
 /** @private @param {!Array.<!Element>} lis @param {boolean} selected */
 pn.ui.MultiSelect.prototype.setSelected_ = function(lis, selected) {
+  var ids = lis.pnmap(function(li) { return li.getAttribute('data-itemid'); }),
+      allsel = selected && !!this.allval && ids.pncontains(this.allval),
+      removeall = selected && !!this.allval && !ids.pncontains(this.allval);
+
+  if (allsel) {
+    pn.toarr(goog.dom.getChildren(this.ul_)).pnforEach(function(li) {
+      goog.dom.classes.remove(li, 'selected');
+    });
+    goog.dom.classes.add(this.allli_, 'selected');
+    return;
+  }
+  if (removeall) {
+    goog.dom.classes.remove(this.allli_, 'selected');
+  }
+
   lis.pnforEach(function(li) {
     if (selected) goog.dom.classes.add(li, 'selected');
     else goog.dom.classes.remove(li, 'selected');
