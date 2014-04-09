@@ -49,7 +49,6 @@ pn.ctl.Director.prototype.init_ = function() {
     if (goog.userAgent.IPAD) goog.dom.classes.add(document.body, 'ipad');
     if (goog.userAgent.IPHONE) goog.dom.classes.add(document.body, 'iphone');
   }
-
   pn.toarr(goog.dom.getElementsByClass('page')).
       pnconcat(pn.toarr(goog.dom.getElementsByClass('dialog'))).
       pnforEach(function(el) { pn.dom.show(el, false); });
