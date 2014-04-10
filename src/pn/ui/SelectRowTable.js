@@ -70,7 +70,8 @@ pn.ui.SelectRowTable.prototype.init_ = function() {
 
   var rowstrs = arrrows.pnmap(function(rowarr) {
     return seltd + rowarr.pnmap(
-        function(v) { return '<td>' + v + '</td>'; }).join('');
+        function(v) { return '<td>' +
+              (goog.isDefAndNotNull(v) ? v : '') + '</td>'; }).join('');
   }, this);
 
   var html = '<table class="select-row-table"><thead><tr>' + headtr +
