@@ -56,6 +56,21 @@ pn.ctl.BaseController.prototype.initialise =
   this.storage_ = storage;
   this.router_ = router;
   this.msg_ = msg;
+
+  this.setback_();
+};
+
+
+/** @private Replaces {ID} in back button if there */
+pn.ctl.BaseController.prototype.setback_ = function() {
+  var bb = goog.dom.getElementByClass('back-button', this.el);
+  var href = !bb ? null : bb.href;
+  if (!href || href.indexOf('{ID}') < 0) return;
+  var id = document.location.href.split('/').pnlast().split('?')[0];
+  var numid = parseInt(id, 10);
+  if (id !== numid.toString()) throw new Error('Expected the last step in ' +
+      'path to be a numerical ID for the back button');
+  bb.href = href.replace(/\{ID\}/, id);
 };
 
 
