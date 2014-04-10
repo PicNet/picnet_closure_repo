@@ -125,18 +125,20 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
  *    value to set/retreive.
  * @param {goog.date.DateTime=} opt_val The value to set.  If not specified then
  *    we just get the value;
- * @return {!goog.date.DateTime} The select date value.
+ * @return {goog.date.DateTime} The select date value.
  */
 pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
-  var val = '',
+  var val = /** @type {goog.date.DateTime} */ (null),
       el = this.getel(id);
+  pn.ass(el.getValue && el.setValue);
 
   if (goog.isDef(opt_val)) {
-    el.value = (val = opt_val.getTime().toString());
+    el.setValue(opt_val);
   } else {
-    val = (this.getel(id).value || '').pntrim();
+    val = /** @type {goog.date.DateTime} */ (el.getValue());
+    pn.assInst(val, goog.date.DateTime);
   }
-  return new goog.date.DateTime(parseInt(val, 10));
+  return !val || val.getYear() < 1970 || isNaN(val.getYear()) ? null : val;
 };
 
 
