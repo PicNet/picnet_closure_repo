@@ -44,7 +44,7 @@ pn.ui.LoadingPnl.prototype.increment = function() {
  */
 pn.ui.LoadingPnl.prototype.decrement = function() {
   this.workCount_--;
-  if (this.workCount_ === 0) this.showLoadingPanel_(false);
+  if (this.workCount_ <= 0) this.showLoadingPanel_(false);
 };
 
 
@@ -53,12 +53,13 @@ pn.ui.LoadingPnl.prototype.decrement = function() {
  * @param {boolean} visible Wether the loading panel should be shown or hidden.
  */
 pn.ui.LoadingPnl.prototype.showLoadingPanel_ = function(visible) {
-  var action = pn.dom.show.pnpartial(this.element_, visible);
-
   // Hiding the loading panel needs to be done async to allow any running
-  // processes to complete.
-  if (visible) action.call(this);
-  else goog.Timer.callOnce(action, 1, this);
+  // processes to complete.  And if another process sneak in we do not hide.
+  if (visible) pn.dom.show(this.element_, true);
+  else goog.Timer.callOnce(function() {
+    if (this.workCount_ > 0) { return; }
+    pn.dom.show(this.element_, false);
+  }, 100, this);
 };
 
 
