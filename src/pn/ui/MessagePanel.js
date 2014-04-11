@@ -3,6 +3,7 @@ goog.provide('pn.ui.MessagePanel');
 
 goog.require('goog.Timer');
 goog.require('goog.dom');
+goog.require('pn.log');
 
 
 
@@ -22,15 +23,15 @@ pn.ui.MessagePanel = function(panel) {
 
   /**
    * @private
-   * @type {string}
+   * @type {number}
    */
-  this.originalClass_ = this.panel_.className;
+  this.timer_ = 0;
 
   /**
    * @private
-   * @type {number}
+   * @type {!Array.<string>}
    */
-  this.showMessageTimer_ = 0;
+  this.messages_ = [];
 
   /**
    * @private
@@ -45,7 +46,10 @@ goog.inherits(pn.ui.MessagePanel, goog.Disposable);
  * Clears the message panel and resets to original class.
  */
 pn.ui.MessagePanel.prototype.clearMessage = function() {
-  this.showMessage_('');
+  this.messages_ = [];
+  if (this.timer_) goog.Timer.clear(this.timer_);
+  this.panel_.innerHTML = '';
+  pn.dom.show(this.panel_, false);
 };
 
 
@@ -53,7 +57,8 @@ pn.ui.MessagePanel.prototype.clearMessage = function() {
  * @param {string} message The error to display.
  */
 pn.ui.MessagePanel.prototype.showError = function(message) {
-  this.showMessage_('<p>' + message + '</p>', 'error');
+  pn.assStr(message);
+  this.showList_([message], 'error');
 };
 
 
@@ -61,6 +66,7 @@ pn.ui.MessagePanel.prototype.showError = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showErrors = function(list) {
+  pn.assArr(list);
   this.showList_(list, 'error');
 };
 
@@ -69,7 +75,8 @@ pn.ui.MessagePanel.prototype.showErrors = function(list) {
  * @param {string} message The error to display.
  */
 pn.ui.MessagePanel.prototype.showWarning = function(message) {
-  this.showMessage_('<p>' + message + '</p>', 'warning');
+  pn.assStr(message);
+  this.showList_([message], 'warning');
 };
 
 
@@ -77,6 +84,7 @@ pn.ui.MessagePanel.prototype.showWarning = function(message) {
  * @param {Array.<string>} list The error list to display.
  */
 pn.ui.MessagePanel.prototype.showWarnings = function(list) {
+  pn.assArr(list);
   this.showList_(list, 'warning');
 };
 
@@ -85,7 +93,8 @@ pn.ui.MessagePanel.prototype.showWarnings = function(list) {
  * @param {string} message The message to display.
  */
 pn.ui.MessagePanel.prototype.showMessage = function(message) {
-  this.showMessage_('<p>' + message + '</p>', 'info');
+  pn.assStr(message);
+  this.showList_([message], 'info');
 };
 
 
@@ -93,6 +102,7 @@ pn.ui.MessagePanel.prototype.showMessage = function(message) {
  * @param {Array.<string>} list The message list to display.
  */
 pn.ui.MessagePanel.prototype.showMessages = function(list) {
+  pn.assArr(list);
   this.showList_(list, 'info');
 };
 
@@ -105,35 +115,22 @@ pn.ui.MessagePanel.prototype.showMessages = function(list) {
  */
 pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
   pn.ass(list.length);
-  pn.assStr(list[0]);
 
-  if (list.length === 1)
-    this.showMessage_('<p>' + list[0] + '</p>', cls);
-  else
-    this.showMessage_('<ul><li>' + list.join('</li><li>') + '</li></ul>', cls);
-};
+  if (this.timer_) { goog.Timer.clear(this.timer_); }
+  this.messages_ = this.messages_.pnconcat(list.pnmap(
+      function(m) { return cls + '|:' + m; })).
+      pnremoveDuplicates();
 
+  this.log_.finest('Showing Messages:\n' + this.messages_.join('\n'));
 
-/**
- * @private
- * @param {string} message The message to display.
- * @param {string=} opt_clazz The class to use on the panel.
- */
-pn.ui.MessagePanel.prototype.showMessage_ = function(message, opt_clazz) {
-  this.log_.finest('showMessage message[' + message + ']');
-  if (this.showMessageTimer_) { goog.Timer.clear(this.showMessageTimer_); }
-  this.panel_.innerHTML = message;
-  var newClass = this.originalClass_;
-  if (newClass) newClass += ' ';
-  if (opt_clazz) newClass += opt_clazz;
-  this.panel_.className = newClass;
-  var visible = !!message;
-  pn.dom.show(this.panel_, visible);
-  if (visible) {
-    this.showMessageTimer_ = goog.Timer.callOnce(function() {
-      this.showMessage_('');
-    }, 3000, this);
-  }
+  var html = '<ul>' + this.messages_.pnmap(function(m) {
+    var tokens = m.split('|:');
+    return '<li class="' + tokens[0] + '">' + tokens[1];
+  }).join('</li>') + '</li></ul>';
+
+  this.panel_.innerHTML = html;
+  pn.dom.show(this.panel_, true);
+  this.timer_ = goog.Timer.callOnce(this.clearMessage, 3000, this);
 };
 
 

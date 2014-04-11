@@ -1,0 +1,92 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+<style>
+li.error { background-color: red; }
+li.warning{ background-color: orange; }
+li.info { background-color: green; }
+div#common-message-panel { border: solid 1px silver; }
+</style>
+  </head>
+  <body>
+    <div id="message-panel" style="display:none;"></div>
+    <script src="http://localhost/shared/closure-library/closure/goog/base.js"></script>
+    <script src="../../deps.js"></script>
+    <script src="../../../lib/hammer.min.js"></script>
+    <script>
+goog.require('goog.testing.jsunit');
+
+
+goog.require('pn');
+goog.require('pn.dom');
+goog.require('pn.ui.MessagePanel');
+
+var el, ms;
+var setUp = function() { ms = new pn.ui.MessagePanel(el = pn.dom.get('message-panel')); };
+
+var test_show_single_message = function() {
+  ms.showMessage('Test Message');
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="info">Test Message</li></ul>', el.innerHTML);  
+};
+
+var test_show_single_warn = function() {
+  ms.showWarning('Test Warning');
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="warning">Test Warning</li></ul>', el.innerHTML);
+};
+
+var test_show_single_error = function() {
+  ms.showError('Test Error');
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="error">Test Error</li></ul>', el.innerHTML);
+};
+
+var test_show_multiple_messages = function() {
+  ms.showMessages(['Msg 1', 'Msg 2']);
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="info">Msg 1</li><li class="info">Msg 2</li></ul>', el.innerHTML);  
+};
+
+var test_show_multiple_warnings = function() {
+  ms.showWarnings(['Warn 1', 'Warn 2']);
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="warning">Warn 1</li><li class="warning">Warn 2</li></ul>', el.innerHTML);  
+};
+
+var test_show_multiple_errors = function() {
+  ms.showErrors(['Err 1', 'Err 2']);
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="error">Err 1</li><li class="error">Err 2</li></ul>', el.innerHTML);  
+};
+
+var test_clear_message = function() {
+  ms.showMessage('1');
+  assertTrue(goog.style.isElementShown(el));
+  ms.clearMessage();
+  assertEquals('', el.innerHTML);
+  assertFalse(goog.style.isElementShown(el));
+};
+
+var test_messages_queue = function() {
+  ms.showMessage('1');
+  assertTrue(goog.style.isElementShown(el));
+  assertEquals('<ul><li class="info">1</li></ul>', el.innerHTML);  
+  ms.showMessage('2');
+  assertEquals('<ul><li class="info">1</li><li class="info">2</li></ul>', el.innerHTML);  
+  ms.showWarning('3');
+  assertEquals('<ul><li class="info">1</li><li class="info">2</li><li class="warning">3</li></ul>', el.innerHTML);  
+  ms.showError('4');
+  assertEquals('<ul><li class="info">1</li><li class="info">2</li><li class="warning">3</li><li class="error">4</li></ul>', el.innerHTML);  
+};
+
+/* Manual Tests For Timer */
+var test_message_clears_after_timer = function() {};
+    </script>    
+  </body>
+</html>
