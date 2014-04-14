@@ -118,6 +118,7 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   return val;
 };
 
+
 /**
  * @protected
  * Helper to get or set the numerical field value.
@@ -128,10 +129,11 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
  * @return {number} The select value or values.
  */
 pn.ui.BaseControl.prototype.numval = function(id, opt_val) {
-  var v = this.val(id, opt_val);
+  var v = parseFloat(this.val(id, opt_val));
   pn.assNum(v);
   return /** @type {number} */ (v);
 };
+
 
 /**
  * @protected
