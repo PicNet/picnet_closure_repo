@@ -108,7 +108,8 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   var el = (goog.isString(id) ? this.getel(id) : id),
       val = '';
   if (goog.isDef(opt_val)) {
-    if (el.setValue) { el.setValue(val); }
+    val = opt_val;
+    if (el.setValue) { el.setValue(opt_val); }
     else el.value = opt_val.toString().pntrim();
   } else {
     val = (!!el.getValue ? el.getValue() : el.value) || '';
@@ -117,6 +118,20 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   return val;
 };
 
+/**
+ * @protected
+ * Helper to get or set the numerical field value.
+ * @param {string} id The ID suffix (without the page id) of the control
+ *    value to set/retreive.
+ * @param {number=} opt_val The value to set.  If not specified then we just
+ *    get the value;
+ * @return {number} The select value or values.
+ */
+pn.ui.BaseControl.prototype.numval = function(id, opt_val) {
+  var v = this.val(id, opt_val);
+  pn.assNum(v);
+  return /** @type {number} */ (v);
+};
 
 /**
  * @protected
