@@ -75,6 +75,10 @@ pn.app.Router.prototype.initialise = function(routes) {
 };
 
 
+/** @return {boolean} Wether the router is initialised. */
+pn.app.Router.prototype.isInitialised = function() { return !!this.routes_; };
+
+
 /** @return {string} The current history token. */
 pn.app.Router.prototype.getCurrentToken = function() {
   return this.history_.getToken();
