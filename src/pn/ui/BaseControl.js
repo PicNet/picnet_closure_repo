@@ -129,7 +129,9 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
  * @return {number} The select value or values.
  */
 pn.ui.BaseControl.prototype.numval = function(id, opt_val) {
-  var v = /** @type {number} */ (this.val(id, opt_val) || 0);
+  var val = this.val(id, opt_val);
+  var nval = goog.isString(val) ? parseInt(val, 10) : val;
+  var v = /** @type {number} */ (nval || 0);
   pn.assNum(v);
   return v;
 };
