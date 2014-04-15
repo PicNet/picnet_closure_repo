@@ -217,34 +217,66 @@ pn.ctl.BaseController.prototype.validateRequired = function(var_args) {
 
 
 /**
- * @param {string|Array.<string>} errors The error message or messages to
- *    display.
+ * @param {string|Array.<string>} fieldOrErrors The field to display the error
+ *    message to or the error message or messages to display.
+ * @param {(string|Array.<string>)=} opt_errors The error message or messages
+ *    to display.
  */
-pn.ctl.BaseController.prototype.error = function(errors) {
+pn.ctl.BaseController.prototype.error = function(fieldOrErrors, opt_errors) {
+  var field = !!opt_errors ? fieldOrErrors : '';
+  var errors = !!opt_errors ?
+      /** @type {string|Array.<string>} */ (opt_errors) : fieldOrErrors;
+
+  pn.assStr(field);
   pn.ass(goog.isString(errors) || goog.isArray(errors));
+
+  if (!!field)
+    this.log.warning('error() does not support field level errors.');
+
   if (goog.isString(errors)) { this.msg_.showError(errors); }
   else { this.msg_.showErrors(errors); }
 };
 
 
 /**
- * @protected
- * @param {string|Array.<string>} warning The error message or messages to
- *    display.
+ * @param {string|Array.<string>} fieldOrWarns The field to display the warning
+ *    message to or the warning message or messages to display.
+ * @param {(string|Array.<string>)=} opt_warns The warning message or messages
+ *    to display.
  */
-pn.ctl.BaseController.prototype.warning = function(warning) {
+pn.ctl.BaseController.prototype.warning = function(fieldOrWarns, opt_warns) {
+  var field = !!opt_warns ? fieldOrWarns : '';
+  var warning = !!opt_warns ?
+      /** @type {string|Array.<string>} */ (opt_warns) : fieldOrWarns;
+
+  pn.assStr(field);
   pn.ass(goog.isString(warning) || goog.isArray(warning));
+
+  if (!!field)
+    this.log.warning('warning() does not support field level warnings.');
+
   if (goog.isString(warning)) { this.msg_.showWarning(warning); }
   else { this.msg_.showWarnings(warning); }
 };
 
 
 /**
- * @protected
- * @param {string|Array.<string>} messages The message or messages to display.
+ * @param {string|Array.<string>} fieldOrMessages The field to display the
+ *    message to or the message or messages to display.
+ * @param {(string|Array.<string>)=} opt_msgs The message or messages
+ *    to display.
  */
-pn.ctl.BaseController.prototype.message = function(messages) {
+pn.ctl.BaseController.prototype.message = function(fieldOrMessages, opt_msgs) {
+  var field = !!opt_msgs ? fieldOrMessages : '';
+  var messages = !!opt_msgs ?
+      /** @type {string|Array.<string>} */ (opt_msgs) : fieldOrMessages;
+
+  pn.assStr(field);
   pn.ass(goog.isString(messages) || goog.isArray(messages));
+
+  if (!!field)
+    this.log.warning('message() does not support field level messages.');
+
   if (goog.isString(messages)) { this.msg_.showMessage(messages); }
   else { this.msg_.showMessages(messages); }
 };

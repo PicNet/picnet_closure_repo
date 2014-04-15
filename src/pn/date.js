@@ -112,8 +112,7 @@ pn.date.isPast = function(date) {
  */
 pn.date.fromUtcMillis = function(millis) {
 
-  if (!goog.isDefAndNotNull(millis) || millis <= 0)
-    return null;
+  if (!goog.isDefAndNotNull(millis) || millis <= 0) return null;
 
   var datetime = new goog.date.DateTime(new Date(millis)),
       year = datetime.getUTCFullYear(),
@@ -122,7 +121,8 @@ pn.date.fromUtcMillis = function(millis) {
       hours = datetime.getUTCHours(),
       mins = datetime.getUTCMinutes();
 
-  return new goog.date.DateTime(year, month, day, hours, mins);
+  return isNaN(year) || year <= 1970 ?
+      null : new goog.date.DateTime(year, month, day, hours, mins);
 };
 
 
@@ -133,7 +133,8 @@ pn.date.fromUtcMillis = function(millis) {
 pn.date.fromMillis = function(millis) {
   var date = new goog.date.DateTime();
   date.setTime(millis);
-  return date.getYear() <= 1753 ? null : date;
+  var year = date.getYear();
+  return isNaN(year) || year <= 1970 ? null : date;
 };
 
 
