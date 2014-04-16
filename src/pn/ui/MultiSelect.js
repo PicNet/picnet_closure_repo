@@ -197,7 +197,7 @@ pn.ui.MultiSelect.prototype.selchanged_ = function(e) {
     }
     return;
   }
-  if (!this.allowMultiple) { this.clearSelected(); }
+  if (!this.allowMultiple) { this.clearSelected(true); }
   this.setSelected_([li], !goog.dom.classes.has(li, 'selected'));
 };
 
@@ -240,12 +240,15 @@ pn.ui.MultiSelect.prototype.getChildLis_ = function(from) {
 };
 
 
-/** Clears all selctions and fires changed event */
-pn.ui.MultiSelect.prototype.clearSelected = function() {
+/**
+ * Clears all selctions and fires changed event
+ * @param {boolean=} opt_silent wether to notify listeners of change.
+ */
+pn.ui.MultiSelect.prototype.clearSelected = function(opt_silent) {
   var els = goog.dom.getElementsByTagNameAndClass('li', 'selected', this.ul_);
   if (pn.toarr(els).pnforEach(
       function(li) { goog.dom.classes.remove(li, 'selected'); }).length) {
-    this.onselect_(this.selected());
+    if (opt_silent !== true) this.onselect_(this.selected());
   }
 };
 
