@@ -71,7 +71,7 @@ pn.ctl.FieldsValidator.prototype.clear = function(field) {
 
 /**
  * Validates all registered fields and returns wether there are no errors.
- * @param {boolean=} opt_show Wether to display the messages this defaults 
+ * @param {boolean=} opt_show Wether to display the messages this defaults
  *    to true.
  * @return {boolean} Wether there are any errors being shown by any field.
  */
@@ -83,7 +83,7 @@ pn.ctl.FieldsValidator.prototype.isvalid = function(opt_show) {
 
 /**
  * Validates all registered fields.
- * @param {boolean=} opt_show Wether to display the messages this defaults 
+ * @param {boolean=} opt_show Wether to display the messages this defaults
  *    to true.
  * @return {!Array.<{type:string,message:string}>} The errors on the current UI.
  */
