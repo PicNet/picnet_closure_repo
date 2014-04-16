@@ -17,32 +17,38 @@ pn.ctl.FieldsValidator = function(ctl) {
   this.ctl_ = ctl;
 
   /** @private @type {!Object.<!function(string):
-      {type:string,message:string}|null>} */
+      (null|string|{message: string, type: string})>} */
   this.validators_ = {};
 };
 
 
 /**
- * @param {string} field The field to add a validation listener to.  This field
- *    must have a corresponding id-message field used to display messages
- *    and warnings.
- * @param {!function(string):{type:string,message:string}|null} validator A
- *    validator function that takes the field ID and returns an error object
- *    which can be null if no error or must contain a type and message.  The
- *    type is either (message, warning, error).
+ * @param {string|Array.<string>} field The field(s) to add a validation
+ *    listener to.  This field must have a corresponding id-message field
+ *    used to display messages and warnings.
+ * @param {!function(string):(null|string|{message: string, type: string})}
+ *    validator A validator function that takes the field ID and returns an
+ *    error object which can be null if no error or must contain a type and
+ *    message.  The type is either (message, warning, error).
  */
 pn.ctl.FieldsValidator.prototype.add = function(field, validator) {
-  pn.assStr(field);
+  if (goog.isArray(field)) {
+    field.pnforEach(function(f) { this.add(f, validator); }, this);
+    return;
+  }
+
+  pn.ass(field);
   pn.assFun(validator);
 
-  var el = this.ctl_.getel(field),
-      mel = this.ctl_.getel(field + '-message');
+  var fields = /** @type {string} */ (field),
+      el = this.ctl_.getel(fields),
+      mel = this.ctl_.getel(fields + '-message');
   if (!mel) throw new Error('FieldsValidator.add only supports fields with ' +
       'corresponding ID-message elements');
 
-  this.validators_[field] = validator;
+  this.validators_[fields] = validator.pnbind(this.ctl_);
   this.ctl_.onchange(el, goog.bind(function() {
-    this.show_(field, validator(field));
+    this.show_(fields, this.validators_[fields](fields));
   }, this));
 };
 
@@ -96,7 +102,7 @@ pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
 /**
  * @private
  * @param {string} field The field to show.
- * @param {{type:string,message:string}|string|null} msg The message to
+ * @param {(null|string|{message: string, type: string})} msg The message to
  *    display on the field or null to hide.
  */
 pn.ctl.FieldsValidator.prototype.show_ = function(field, msg) {
