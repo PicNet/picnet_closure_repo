@@ -71,7 +71,8 @@ pn.ctl.FieldsValidator.prototype.clear = function(field) {
 
 /**
  * Validates all registered fields and returns wether there are no errors.
- * @param {boolean=} opt_show Wether to display the messages.
+ * @param {boolean=} opt_show Wether to display the messages this defaults 
+ *    to true.
  * @return {boolean} Wether there are any errors being shown by any field.
  */
 pn.ctl.FieldsValidator.prototype.isvalid = function(opt_show) {
@@ -82,7 +83,8 @@ pn.ctl.FieldsValidator.prototype.isvalid = function(opt_show) {
 
 /**
  * Validates all registered fields.
- * @param {boolean=} opt_show Wether to display the messages.
+ * @param {boolean=} opt_show Wether to display the messages this defaults 
+ *    to true.
  * @return {!Array.<{type:string,message:string}>} The errors on the current UI.
  */
 pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
@@ -92,7 +94,7 @@ pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
     return { field: field, msg: msg };
   }, this).pnfilter(function(err) { return !!err.msg; });
 
-  if (opt_show === true) {
+  if (opt_show !== false) {
     errors.pnforEach(function(err) { this.show_(err.field, err.msg); }, this);
   }
   return errors.pnmap(function(err) { return err.msg; });

@@ -60,7 +60,7 @@ pn.ctl.BaseController.prototype.initialise =
   this.director_ = director;
   this.storage_ = storage;
   this.router_ = router;
-  this.msg_ = msg;  
+  this.msg_ = msg;
 
   this.setback_();
 };
