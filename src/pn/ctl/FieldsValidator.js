@@ -47,9 +47,30 @@ pn.ctl.FieldsValidator.prototype.add = function(field, validator) {
 };
 
 
+/**
+ * @param {string} field The field to validate
+ * @param {...*} var_args Any other optional args to pass to the validator
+ *    function.
+ */
+pn.ctl.FieldsValidator.prototype.validate = function(field, var_args) {
+  this.show_(field, this.validators_[field].apply(this, arguments));
+};
+
+
 /** @param {string} field The field to clear and hide */
 pn.ctl.FieldsValidator.prototype.clear = function(field) {
   this.show_(field, null);
+};
+
+
+/**
+ * Validates all registered fields and returns wether there are no errors.
+ * @param {boolean=} opt_show Wether to display the messages.
+ * @return {boolean} Wether there are any errors being shown by any field.
+ */
+pn.ctl.FieldsValidator.prototype.isvalid = function(opt_show) {
+  var all = this.all(opt_show);
+  return !all.pnfind(function(msg) { return msg.type === 'error'; });
 };
 
 
@@ -61,8 +82,10 @@ pn.ctl.FieldsValidator.prototype.clear = function(field) {
 pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
   var errors = goog.object.getKeys(this.validators_).pnmap(function(field) {
     var msg = this.validators_[field](field);
-    return {field: field, msg: msg};
+    if (goog.isString(msg)) msg = { type: 'error', message: msg };
+    return { field: field, msg: msg };
   }, this).pnfilter(function(err) { return !!err.msg; });
+
   if (opt_show === true) {
     errors.pnforEach(function(err) { this.show_(err.field, err.msg); }, this);
   }
@@ -73,14 +96,19 @@ pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
 /**
  * @private
  * @param {string} field The field to show.
- * @param {{type:string,message:string}|null} msg The message to display on
- *    the field or null to hide.
+ * @param {{type:string,message:string}|string|null} msg The message to
+ *    display on the field or null to hide.
  */
 pn.ctl.FieldsValidator.prototype.show_ = function(field, msg) {
   var mel = this.ctl_.getel(field + '-message'),
       css = goog.dom.classes.enable,
       types = ['message', 'warning', 'error'];
-  pn.ass(!msg || (types.pncontains(msg.type) && goog.isString(msg.message)));
+
+  if (!!msg) {
+    if (goog.isString(msg)) msg = {type: 'error', message: msg};
+    pn.ass(types.pncontains(msg.type));
+    pn.assStr(msg.message);
+  }
 
   types.pnforEach(function(t) { css(mel, t, !!msg && t === msg.type); });
   mel.innerHTML = !!msg ? msg.message : '';
