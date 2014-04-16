@@ -34,6 +34,9 @@ pn.ctl.BaseController = function(el) {
 
   /** @type {boolean} */
   this.hasshown = false;
+
+  /** @private @type {!Object.<string>} */
+  this.fieldmessages_ = {};
 };
 goog.inherits(pn.ctl.BaseController, pn.ui.BaseControl);
 
@@ -223,18 +226,7 @@ pn.ctl.BaseController.prototype.validateRequired = function(var_args) {
  *    to display.
  */
 pn.ctl.BaseController.prototype.error = function(fieldOrErrors, opt_errors) {
-  var field = !!opt_errors ? fieldOrErrors : '';
-  var errors = !!opt_errors ?
-      /** @type {string|Array.<string>} */ (opt_errors) : fieldOrErrors;
-
-  pn.assStr(field);
-  pn.ass(goog.isString(errors) || goog.isArray(errors));
-
-  if (!!field)
-    this.log.warning('error() does not support field level errors.');
-
-  if (goog.isString(errors)) { this.msg_.showError(errors); }
-  else { this.msg_.showErrors(errors); }
+  this.showmsg_('error', fieldOrErrors, opt_errors);
 };
 
 
@@ -245,18 +237,7 @@ pn.ctl.BaseController.prototype.error = function(fieldOrErrors, opt_errors) {
  *    to display.
  */
 pn.ctl.BaseController.prototype.warning = function(fieldOrWarns, opt_warns) {
-  var field = !!opt_warns ? fieldOrWarns : '';
-  var warning = !!opt_warns ?
-      /** @type {string|Array.<string>} */ (opt_warns) : fieldOrWarns;
-
-  pn.assStr(field);
-  pn.ass(goog.isString(warning) || goog.isArray(warning));
-
-  if (!!field)
-    this.log.warning('warning() does not support field level warnings.');
-
-  if (goog.isString(warning)) { this.msg_.showWarning(warning); }
-  else { this.msg_.showWarnings(warning); }
+  this.showmsg_('warning', fieldOrWarns, opt_warns);
 };
 
 
@@ -267,16 +248,74 @@ pn.ctl.BaseController.prototype.warning = function(fieldOrWarns, opt_warns) {
  *    to display.
  */
 pn.ctl.BaseController.prototype.message = function(fieldOrMessages, opt_msgs) {
-  var field = !!opt_msgs ? fieldOrMessages : '';
-  var messages = !!opt_msgs ?
-      /** @type {string|Array.<string>} */ (opt_msgs) : fieldOrMessages;
+  this.showmsg_('message', fieldOrMessages, opt_msgs);
+};
 
+
+/** Clears all messages being displayed on fields. */
+pn.ctl.BaseController.prototype.clearAllFieldMessages = function() {
+  goog.object.getKeys(this.fieldmessages_).pnforEach(function(id) {
+    var msgel = pn.dom.get(id),
+        css = this.fieldmessages_[id];
+    goog.dom.classes.enable(msgel, css, false);
+    pn.dom.show(msgel, false);
+  }, this);
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of message (error, warning, message).
+ * @param {string|Array.<string>} fldOrMsg The field to display the
+ *    message to or the message or messages to display.
+ * @param {(string|Array.<string>)=} opt_msgs The message or messages
+ *    to display.
+ */
+pn.ctl.BaseController.prototype.showmsg_ = function(type, fldOrMsg, opt_msgs) {
+  var field = !!opt_msgs ? /** @type {string} */ (fldOrMsg) : '',
+      messages = !!opt_msgs ?
+          /** @type {string|Array.<string>} */ (opt_msgs) : fldOrMsg;
+
+  pn.assStr(type);
   pn.assStr(field);
   pn.ass(goog.isString(messages) || goog.isArray(messages));
 
-  if (!!field)
-    this.log.warning('message() does not support field level messages.');
+  var single = goog.isString(messages),
+      m = this.msg_,
+      action =
+          type === 'message' ? (single ? m.showMessage : m.showMessages) :
+          type === 'warning' ? (single ? m.showWarning : m.showWarnings) :
+          type === 'error' ? (single ? m.showError : m.showErrors) : null;
 
-  if (goog.isString(messages)) { this.msg_.showMessage(messages); }
-  else { this.msg_.showMessages(messages); }
+  action.call(m, messages);
+  if (!!field) this.fieldMsg_(type, field, /** @type {string} */ (messages));
+};
+
+
+/**
+ * @private
+ * @param {string} type The type of message (error, warning, message).
+ * @param {string} field The ID of the field to display the error on.
+ * @param {string} message The message to display on the field.
+ */
+pn.ctl.BaseController.prototype.fieldMsg_ = function(type, field, message) {
+  pn.assStr(type);
+  pn.assStr(field);
+  pn.assStr(message);
+
+  var id = this.el.id + '-' + field + '-message',
+      msgel = goog.dom.getElement(id) || goog.dom.getElementByClass(id);
+  if (!msgel) return;
+  msgel.innerHTML = message;
+
+  var showhide = function(show) {
+    goog.dom.classes.enable(msgel, type, show);
+    pn.dom.show(msgel, show);
+
+    if (show) this.fieldmessages_[id] = type;
+    else delete this.fieldmessages_[id];
+  };
+  showhide(true);
+  var events = ['change', 'keyup', 'click'];
+  this.listenOnceTo(msgel, events, showhide.pnpartial(false));
 };

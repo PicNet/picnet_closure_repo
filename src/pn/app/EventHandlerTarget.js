@@ -41,6 +41,22 @@ pn.app.EventHandlerTarget.prototype.listenTo = function(src, type, opt_fn) {
 
 /**
  * @protected
+ * @param {goog.events.EventTarget|EventTarget} src Event source.
+ * @param {string|Array.<string>} type Event type to listen for or array of
+ *     event types.
+ * @param {Function=} opt_fn Optional callback function to be used as the
+ *    listener.
+ * @return {goog.events.EventHandler} This object, allowing for chaining of
+ *     calls.
+ */
+pn.app.EventHandlerTarget.prototype.listenOnceTo = function(src, type, opt_fn) {
+  pn.ass(goog.isString(type) || type.pnall(goog.isString));
+  return this.eh_.listenOnce(src, type, opt_fn);
+};
+
+
+/**
+ * @protected
  * Unlistens on an event.
  * @param {goog.events.EventTarget|EventTarget} src Event source.
  * @param {string|Array.<string>} type Event type to listen for.
