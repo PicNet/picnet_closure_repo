@@ -34,7 +34,8 @@ pn.ctl.BaseController = function(el) {
   this.msg_;
 
   /** @protected @type {!pn.ctl.FieldsValidator} */
-  this.validator;
+  this.validator = new pn.ctl.FieldsValidator(this);
+  this.registerDisposable(this.validator);
 
   /** @type {boolean} */
   this.hasshown = false;
@@ -59,9 +60,7 @@ pn.ctl.BaseController.prototype.initialise =
   this.director_ = director;
   this.storage_ = storage;
   this.router_ = router;
-  this.msg_ = msg;
-  this.validator = new pn.ctl.FieldsValidator(this);
-  this.registerDisposable(this.validator);
+  this.msg_ = msg;  
 
   this.setback_();
 };
@@ -164,50 +163,6 @@ pn.ctl.BaseController.prototype.localstore = function(id, opt_val) {
 pn.ctl.BaseController.prototype.dialog = function(id, opt_cb, var_args) {
   if (goog.isFunction(arguments[1])) arguments[1] = arguments[1].pnbind(this);
   this.director_.showDialog.apply(this.director_, arguments);
-};
-
-
-/**
- * @protected
- * @param {...(string|Element)} var_args The ids to check for valid content.
- * @return {boolean} Wether the current arguments are valid (i.e. filled in).
- */
-pn.ctl.BaseController.prototype.validateRequired = function(var_args) {
-  if (!arguments.length) return true;
-  var hasval = function(e) {
-    var val = !!e.getValue ? e.getValue() : e.value;
-    return !!val;
-  };
-  var getvalel = function(e) {
-    if (!!e.getValue || e.hasAttribute('value') ||
-        e instanceof HTMLInputElement ||
-        e instanceof HTMLSelectElement ||
-        e instanceof HTMLTextAreaElement) { return e; }
-    return pn.toarr(e.children).pnfind(getvalel);
-  };
-
-  var orig = pn.toarr(arguments),
-      origels = orig.pnmap(
-          function(e) { return goog.isString(e) ? this.getel(e) : e;}, this),
-      valels = origels.pnmap(getvalel),
-      errors = [];
-  valels.pnforEach(function(valel, i) {
-    var el = origels[i];
-    if (!el.id || !valel || hasval(valel) || !this.isshown(valel)) return;
-    var name = valel.placeholder || valel.name || pn.toarr(el.children).
-            pnfilter(function(e) { return e instanceof HTMLLabelElement; }).
-            pnmap(function(l) { return l.innerHTML; })[0];
-    if (!name) {
-      throw new Error('Field: ' + valel.id +
-          ' does not have a name, placeholder or label child.  This is' +
-          ' required when using the BaseController validation helpers');
-    }
-
-    errors.push('<span class="error-message-field-name">' +
-        name + '</span> is required.');
-  }, this);
-  if (errors.length) this.error(errors);
-  return !errors.length;
 };
 
 

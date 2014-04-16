@@ -41,61 +41,6 @@ goog.inherits(pn.ui.BaseControl, pn.app.EventHandlerTarget);
 
 
 /**
- * @protected
- * Helper to get or set the required state of a field.  Setting required adds
- *   a 'required' class to the field.
- * @param {string} id The ID suffix (without the page id) of the control
- *    value to set/retreive the required state.
- * @param {boolean=} opt_val The required value to set.  If not specified
- *   then we just get the required value;
- * @return {boolean} The required state of the specified control.
- */
-pn.ui.BaseControl.prototype.required = function(id, opt_val) {
-  pn.assStr(id);
-
-  return this.requiredImpl_(this.getel(id), opt_val);
-};
-
-
-/**
- * @protected
- * Helper to get or set the required state of a field.  Setting required adds
- *   a 'required' class to the field.
- * @param {string} classname The class name of the control to set/retreive
- *    the required state.
- * @param {!Element} parent The parent control to search for the specified
- *    class name.
- * @param {boolean=} opt_val The required value to set.  If not specified
- *   then we just get the required value;
- * @return {boolean} The required state of the specified control.
- */
-pn.ui.BaseControl.prototype.requiredByClass =
-    function(classname, parent, opt_val) {
-  pn.assStr(classname);
-  pn.assInst(parent, HTMLElement);
-
-  return this.requiredImpl_(this.byclass(classname, parent), opt_val);
-};
-
-
-/**
- * @private
- * @param {!Element} el The element to set or get as required.
- *    value to set/retreive the required state.
- * @param {boolean=} opt_val The required value to set.  If not specified
- *   then we just get the required value;
- * @return {boolean} The required state of the specified control.
- */
-pn.ui.BaseControl.prototype.requiredImpl_ = function(el, opt_val) {
-  if (goog.isBoolean(opt_val)) {
-    goog.dom.classes.enable(el, 'required', !!opt_val);
-    return !!opt_val;
-  }
-  return goog.style.isElementShown(el) && goog.dom.classes.has(el, 'required');
-};
-
-
-/**
  * Helper to get or set the trimmed input value.
  * @param {string} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
