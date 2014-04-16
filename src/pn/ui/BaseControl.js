@@ -96,7 +96,6 @@ pn.ui.BaseControl.prototype.requiredImpl_ = function(el, opt_val) {
 
 
 /**
- * @protected
  * Helper to get or set the trimmed input value.
  * @param {string} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
@@ -120,7 +119,6 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
 
 
 /**
- * @protected
  * Helper to get or set the numerical field value.
  * @param {string} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
@@ -138,7 +136,6 @@ pn.ui.BaseControl.prototype.numval = function(id, opt_val) {
 
 
 /**
- * @protected
  * Helper to get or set the trimmed input value.
  * @param {string} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
@@ -162,7 +159,6 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
 
 
 /**
- * @protected
  * Helper to get or set the trimmed input value.
  * @param {string} id The ID suffix (without the page id) of the element
  *    html to set/retreive.
@@ -182,7 +178,6 @@ pn.ui.BaseControl.prototype.html = function(id, opt_html) {
 
 
 /**
- * @protected
  * Helper to access the pn.dom.byClass and following the standard naming
  *    conventions of the controller.
  * @param {string} id The ID suffix (without the page id) of the control to
@@ -198,7 +193,6 @@ pn.ui.BaseControl.prototype.byclass = function(id, opt_parent) {
 
 
 /**
- * @protected
  * Helper to access the pn.dom.get and following the standard naming
  *    conventions of the controller.
  * @param {string|Element} id The ID suffix (without the page id) of the
@@ -213,7 +207,6 @@ pn.ui.BaseControl.prototype.getel = function(id) {
 
 
 /**
- * @protected
  * @param {string} id The ID suffix (without the page id) of the control to
  *    test for existance.
  * @return {boolean} Wether the specified element exists on the current form.
@@ -224,7 +217,6 @@ pn.ui.BaseControl.prototype.hasel = function(id) {
 
 
 /**
- * @protected
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to listen to. This uses the standard naming conventions
  *    for element IDs.
@@ -239,7 +231,6 @@ pn.ui.BaseControl.prototype.onchange = function(el, cb) {
 
 
 /**
- * @protected
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to listen to. This uses the standard naming conventions
  *    for element IDs.
@@ -264,7 +255,6 @@ pn.ui.BaseControl.prototype.ontap = function(el, cb) {
 
 
 /**
- * @protected
  * @param {Array.<string>|string} events The event types to listen to.
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to listen to. This uses the standard naming conventions
@@ -280,7 +270,6 @@ pn.ui.BaseControl.prototype.ongesture = function(events, el, cb) {
 
 
 /**
- * @protected
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to listen to. This uses the standard naming conventions
  *    for element IDs.
@@ -293,10 +282,7 @@ pn.ui.BaseControl.prototype.onselect = function(el, cb) {
 };
 
 
-/**
- * @protected
- * @param {string|!Element} el The ID or element of the element to focus.
- */
+/** @param {string|!Element} el The ID or element of the element to focus. */
 pn.ui.BaseControl.prototype.focus = function(el) {
   var el2 = goog.isString(el) ? this.getel(el) : el;
   el2.focus();
@@ -304,7 +290,6 @@ pn.ui.BaseControl.prototype.focus = function(el) {
 
 
 /**
- * @protected
  * @param {string|!Element} el The ID or element of the element to listen to.
  *    This uses the standard naming conventions for element IDs.
  * @param {!(Array.<!pn.ui.MultiSelectItem>|Object.<string>)} values
@@ -337,7 +322,6 @@ pn.ui.BaseControl.prototype.populateList = function(el, values, opt_v) {
 
 
 /**
- * @protected
  * @param {string|!Element} el The ID or element of the element to listen to.
  *    This uses the standard naming conventions for element IDs.
  * @param {string} filter The filter to filter the list with.
@@ -358,7 +342,6 @@ pn.ui.BaseControl.prototype.filterList = function(el, filter) {
 
 
 /**
- * @protected
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to enable. This uses the standard naming conventions
  *    for element IDs.
@@ -374,7 +357,6 @@ pn.ui.BaseControl.prototype.enable = function(el, enabled) {
 
 
 /**
- * @protected
  * @param {string|!Element} el The ID or element of the element to enable.
  *    This uses the standard naming conventions for element IDs.
  * @return {boolean} Wether the element is enabled or disabled.
@@ -386,7 +368,6 @@ pn.ui.BaseControl.prototype.enabled = function(el) {
 
 
 /**
- * @protected
  * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
  *    of the element to show. This uses the standard naming conventions for
  *    element IDs.
@@ -403,7 +384,6 @@ pn.ui.BaseControl.prototype.show = function(el, visible) {
 
 
 /**
- * @protected
  * @param {string|!Element} el The ID or element of the element to
  *    get visibility state for. This uses the standard naming conventions
  *    for element IDs.
