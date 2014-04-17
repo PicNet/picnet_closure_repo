@@ -48,8 +48,19 @@ pn.ctl.FieldsValidator.prototype.add = function(field, validator) {
 
   this.validators_[fields] = validator.pnbind(this.ctl_);
   this.ctl_.onchange(el, goog.bind(function() {
-    this.show_(fields, this.validators_[fields](fields));
+    var impl = this.validators_[fields];
+    if (!impl) return;
+    this.show_(fields, impl(fields));
   }, this));
+};
+
+
+/**
+ * @param {string} field The field(s) to remove validation listener from.
+ */
+pn.ctl.FieldsValidator.prototype.remove = function(field) {
+  pn.assStr(field);
+  delete this.validators_[field];
 };
 
 
