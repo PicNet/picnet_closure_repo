@@ -295,8 +295,11 @@ pn.ui.BaseControl.prototype.filterList = function(el, filter) {
 pn.ui.BaseControl.prototype.enable = function(el, enabled) {
   pn.assBool(enabled);
   this.getels_(el).pnforEach(function(e) {
-    if (enabled) e.removeAttribute('disabled');
-    else e.setAttribute('disabled', 'disabled');
+    if (!!e.setEnabled) { e.setEnabled(enabled); }
+    else {
+      if (enabled) e.removeAttribute('disabled');
+      else e.setAttribute('disabled', 'disabled');
+    }
   }, this);
 };
 

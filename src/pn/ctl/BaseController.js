@@ -86,7 +86,8 @@ pn.ctl.BaseController.prototype.showing = function() { return true; };
 /** Called once this controller is shown */
 pn.ctl.BaseController.prototype.shown = function() {
   this.hasshown = true;
-  this.listenTo(this.el, goog.events.EventType.CLICK, this.focus_);
+  if (!goog.userAgent.WINDOWS) // Dont move fields around on the desktop.
+    this.listenTo(this.el, goog.events.EventType.CLICK, this.focus_);
 };
 
 
