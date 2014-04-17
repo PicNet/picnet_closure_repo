@@ -41,6 +41,7 @@ pn.ctl.BaseDialog.prototype.onhide = function(cb) {
 
 /** @override */
 pn.ctl.BaseDialog.prototype.shown = function() {
+  pn.ctl.BaseDialog.superClass_.shown.call(this);
   if (this.hasel('submit')) this.ontap('submit', this.submit);
   if (this.hasel('cancel')) this.ontap('cancel', this.cancel);
 };

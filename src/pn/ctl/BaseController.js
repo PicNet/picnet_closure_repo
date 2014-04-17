@@ -84,11 +84,37 @@ pn.ctl.BaseController.prototype.showing = function() { return true; };
 
 
 /** Called once this controller is shown */
-pn.ctl.BaseController.prototype.shown = goog.nullFunction;
+pn.ctl.BaseController.prototype.shown = function() {
+  this.hasshown = true;
+  this.listenTo(this.el, goog.events.EventType.CLICK, this.focus_);
+};
+
+
+/**
+ * This hack moves the screen up to ensure the input field is at the top of the
+ *    page.  This lets the soft keyboard show without obscuring the field.
+ * @private @param {!goog.events.Event} e The focus event.
+ */
+pn.ctl.BaseController.prototype.focus_ = function(e) {
+  pn.assInst(e, goog.events.Event);
+  var el = e.target,
+      isinput = el instanceof HTMLInputElement ||
+          el instanceof HTMLTextAreaElement;
+  if (!isinput ||
+      !!el.getAttribute('readonly') ||
+      !!el.getAttribute('disabled')) return;
+
+  goog.Timer.callOnce(el.scrollIntoView, 500, el);
+};
 
 
 /** @return {boolean} Return false to cancel this transition. */
-pn.ctl.BaseController.prototype.hiding = function() { return true; };
+pn.ctl.BaseController.prototype.hiding = function() {
+  if (!this.hasshown) { throw new Error('Controller: ' + this.el.id +
+      ' is hiding but appearts not to have been shown.  Ensure that ' +
+      'shown and hid always call superClass_.show/hid'); }
+  return true;
+};
 
 
 /**
