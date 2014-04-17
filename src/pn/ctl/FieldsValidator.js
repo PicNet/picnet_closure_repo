@@ -4,6 +4,44 @@ goog.provide('pn.ctl.FieldsValidator');
 
 
 /**
+ * New field validation structure:
+ *
+ * + Every input field requires its matching error field, for instance:
+ * <div id="page-datecontrol" type="datetime"></div>
+ * <span style="display:none" class="field-message"
+ *        id="page-datecontrol-message"></span>
+ * + This is required on soy and spark even JS if creating DOM dynamic.
+ *
+ * + In the controller in shown method add all fields to be validated
+ *    (which is usually all input fields) to the validator. The
+ *    validator (this.validator) is created for you in BaseController.
+ *
+ * this.validator.add(['field-id-1', 'field-id-2'], this.validateField_);
+ *
+ * + Before submit of form, re validate all fields by calling:
+ *
+ * if (!this.validator.isvalid()) return; // Exit if not valid
+ *
+ * + The validateField_ method taskes a field ID and should return errors for
+ *    that field:
+ *        // private
+ *        // param {string} field The specific field to validate.
+ *        // return {{type:string,message:string}|string|null} Errors if any
+ *        //    for the specified field.
+ *
+ * + Returns null for no error on specified field
+ * + Return object {type: 'error', message: 'Error Message'} for all errors.
+ *      Valid types are: 'message', 'warning', 'error'
+ * + Shortcut for returning errors, return a string.
+ *
+ * + You can force the validator to validate a field.
+ *
+ *    this.validator.validate('field')
+ *
+ * + You can pass additional args to validate, these arguments will be passed
+ *    to your validateField method.
+ * + This enables multi-field validation
+ *
  * @constructor
  * @param {!pn.ctl.BaseController} ctl The controller.
  * @extends {goog.Disposable}
