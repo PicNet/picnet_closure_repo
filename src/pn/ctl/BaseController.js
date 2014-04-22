@@ -33,7 +33,7 @@ pn.ctl.BaseController = function(el) {
   /** @private @type {!pn.ui.MessagePanel} */
   this.msg_;
 
-  /** @protected @type {!pn.ctl.FieldsValidator} */
+  /** @type {!pn.ctl.FieldsValidator} */
   this.validator = new pn.ctl.FieldsValidator(this);
   this.registerDisposable(this.validator);
 
