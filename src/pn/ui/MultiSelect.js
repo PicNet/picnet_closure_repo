@@ -30,6 +30,12 @@ pn.ui.MultiSelect = function(ul, opt_children) {
   this.allowMultiple = true;
 
   /**
+   * @type {boolean} Wether to treat selected items differently.
+   *    Default to true and selected class added to selected items.
+   */
+  this.showSelection = true;
+
+  /**
    * @type {string} The ID of the element that means 'All'. This item
    *    is handled separately as it clears others when selected.  And others
    *    clear this when selected.
@@ -78,7 +84,7 @@ pn.ui.MultiSelect.prototype.options = function(list) {
         li = pn.dom.htmlToEl(html),
         addargs = [li];
     if (o.id === this.allval) this.allli_ = li;
-    if (o.selected) { addargs.push('selected'); }
+    if (this.showSelection && o.selected) { addargs.push('selected'); }
     if (o.cssclass) { addargs.push(o.cssclass); }
     var lis = [li];
     if (!!o.nodes) {
@@ -128,6 +134,9 @@ pn.ui.MultiSelect.prototype.remove = function(list) {
       goog.dom.removeNode(li);
     }
   });
+  list.pnforEach(function(item) {
+    delete this.children_[item.id];
+  }, this);
 };
 
 
@@ -273,6 +282,12 @@ pn.ui.MultiSelect.prototype.selected = function() {
         return this.children_[id];
       }, this);
   return selected;
+};
+
+
+/** @return {!Array.<!pn.ui.MultiSelectItem>} All options */
+pn.ui.MultiSelect.prototype.all = function() {
+  return goog.object.getValues(this.children_);
 };
 
 
