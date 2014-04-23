@@ -470,7 +470,7 @@ pn.ui.grid.Grid.prototype.sortBy_ = function(col, asc) {
   this.dataView_.sort(function(a, b) {
     var x = renderer ? renderer(0, 0, a[col], col2, a) : a[col],
         y = renderer ? renderer(0, 0, b[col], col2, b) : b[col];
-    if (col2['dateType']) {x=a[col];y=b[col];}
+    if (col2.isDateType) {x=a[col];y=b[col];}
     return (x === y ? 0 : (x > y ? 1 : -1));
   }, asc);
 };

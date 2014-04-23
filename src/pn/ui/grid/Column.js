@@ -42,6 +42,8 @@ pn.ui.grid.Column = function(id, name) {
   this.total = false;
   /** @type {boolean} */
   this.tooltip = false;
+  /** @type {boolean} */
+  this.isDateType = false;
 };
 goog.inherits(pn.ui.grid.Column, pn.ui.SpecDisplayItem);
 
@@ -67,7 +69,7 @@ pn.ui.grid.Column.prototype.toSlick = function(formatter) {
     'headerCssClass': this.headerCssClass,
     'behavior': this.behavior,
     'formatter': formatter,
-    source: this.source
+     source: this.source
   });
   return col;
 };
