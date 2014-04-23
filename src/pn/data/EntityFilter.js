@@ -128,8 +128,14 @@ pn.data.EntityFilter.prototype.filterEntityImpl_ =
       }
       parentType = thisParent.getStepType_(step);
     }
-
-    stepResult = stepResult || thisParent.matchesFilter_(result, filterValue);
+    if(filterValue[0] === 'null' && spec['displayNotSelected'] !== undefined 
+        && spec['displayNotSelected'] === true){
+      stepResult = result === 0; 
+    }
+    else{
+      stepResult = stepResult || 
+          thisParent.matchesFilter_(result, filterValue);
+    }
   });
   return stepResult;
 };

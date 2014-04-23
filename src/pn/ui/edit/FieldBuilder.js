@@ -138,6 +138,10 @@ pn.ui.edit.FieldBuilder.createParentEntitySelect =
     opts['multiple'] = 'multiple';
     opts['rows'] = 2;
   }
+  if(spec['displayNotSelected'] !== undefined 
+      && spec['displayNotSelected'] === true){
+    opts['displayNotSelected'] = spec['displayNotSelected'];
+  }
   var selTxt = 'Select ' + spec.name + ' ...';
   return pn.ui.edit.FieldBuilder.
       createDropDownList(selTxt, list, textField, 'ID', id, opts);
@@ -160,6 +164,11 @@ pn.ui.edit.FieldBuilder.createDropDownList =
   if (selectTxt) {
     goog.dom.appendChild(select, goog.dom.createDom('option',
         {'value': '0' }, selectTxt));
+  }
+  if(opts['displayNotSelected'] !== undefined 
+      && opts['displayNotSelected'] === true){
+    goog.dom.appendChild(select, goog.dom.createDom('option',
+        {'value': null }, 'Value not set'));
   }
   var options = [];
   goog.array.forEach(list, function(e) {
