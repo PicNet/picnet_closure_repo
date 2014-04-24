@@ -41,6 +41,13 @@ pn.ctl.Director = function(ctlFactory) {
 goog.inherits(pn.ctl.Director, goog.Disposable);
 
 
+/**
+ * @private @const @type {!Array.<string>} A list of valid back button targets
+ *    for buttons that have the 'back' URI.
+ */
+pn.ctl.Director.VALID_BACKS_ = ['task-details', 'task-list'];
+
+
 /** @private */
 pn.ctl.Director.prototype.init_ = function() {
   this.log_.fine('initialising the director.');
@@ -106,14 +113,15 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
 };
 
 
-/** Go back @return {Array.<!Array.<*>>} The last controller arguments */
-pn.ctl.Director.prototype.backargs = function() {
-  if (this.stack_.length >= 2) {
-    return {current: this.stack_.pop(), last: this.stack_.pop()};
-  } else {
-    this.stack_ = [];
-    return null;
+/** Go back @return {Array.<*>} The last valid back page visited. */
+pn.ctl.Director.prototype.backto = function() {
+  if (!!this.stack_.length) this.stack_.pop(); // Ignore current page
+
+  while (!!this.stack_.length) {
+    var step = this.stack_.pop();
+    if (pn.ctl.Director.VALID_BACKS_.pncontains(step[0])) return step;
   }
+  return null;
 };
 
 
