@@ -13,13 +13,18 @@ goog.require('pn.ui.BaseControl');
  * @param {!Element} el The parent element
  * @param {!Array.<string>} headers The headers to display on the table.
  * @param {!Array.<*>} rows The rows to display on the table.
+ * @param {!string} cbheader The selection column header.
+ * @param {string=} opt_classname The optional class name for the table.
  * @param {function(string, *):string=} opt_valResolver An optional function
  *    that allows you to define how a table cell is displayed.
  */
-pn.ui.SelectRowTable = function(el, headers, rows, opt_valResolver) {
+pn.ui.SelectRowTable = function(el, headers, rows, 
+    cbheader, opt_classname, opt_valResolver) {
   pn.assInst(el, HTMLElement);
   pn.assArr(headers);
   pn.assArr(rows);
+  pn.assStr(cbheader);
+  pn.ass(!opt_classname || goog.isString(opt_classname));
   pn.ass(!opt_valResolver || goog.isFunction(opt_valResolver));
 
   pn.ui.BaseControl.call(this, el);
@@ -27,11 +32,17 @@ pn.ui.SelectRowTable = function(el, headers, rows, opt_valResolver) {
   /** @private @const @type {!Element} */
   this.el_ = el;
 
+  /** @private @const @type {string} */
+  this.cbheader_ = cbheader;
+
   /** @private @const @type {!Array.<string>} */
   this.headers_ = headers;
 
   /** @private @const @type {!Array.<*>} */
   this.rows_ = rows;
+
+  /** @private @const @type {string} */
+  this.tblclass_ = opt_classname || 'select-row-table';
 
   /** @private @const @type {null|function(string, *):string} */
   this.resolver_ = opt_valResolver || null;
@@ -54,7 +65,7 @@ pn.ui.SelectRowTable.prototype.selected = function() {
 
 /** @private */
 pn.ui.SelectRowTable.prototype.init_ = function() {
-  var headtr = '<th />' + this.headers_.
+  var headtr = '<th>' + this.cbheader_ + '</th>' + this.headers_.
       pnmap(function(h) { return '<th>' + h + '</th>'; }).join('');
 
   var arrrows = this.rows_.pnmap(function(r) {
@@ -74,7 +85,7 @@ pn.ui.SelectRowTable.prototype.init_ = function() {
               (goog.isDefAndNotNull(v) ? v : '') + '</td>'; }).join('');
   }, this);
 
-  var html = '<table class="select-row-table"><thead><tr>' + headtr +
+  var html = '<table class="' + this.tblclass_ + '"><thead><tr>' + headtr +
       '</tr></thead><tbody>' + rowstrs.pnmap(function(r) {
         return '<tr>' + r + '</tr>';
       }).join('') + '</tbody></table>';

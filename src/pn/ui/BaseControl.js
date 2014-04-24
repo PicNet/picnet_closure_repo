@@ -259,7 +259,9 @@ pn.ui.BaseControl.prototype.populateList = function(el, values, opt_v) {
   var options = arr.pnmap(function(o) {
     var html = '<option value="' + o.id + '">' + o.name + '</option>',
         option = pn.dom.htmlToEl(html);
-    if (!!opt_v && opt_v === o.id) { option.selected = 'selected'; }
+    if (!!opt_v && (opt_v === o.id || opt_v === o.name)) {
+      option.selected = 'selected';
+    }
     return option;
   });
   goog.dom.append(el2, options);
