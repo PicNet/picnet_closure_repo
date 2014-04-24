@@ -144,6 +144,7 @@ pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
   }, this).pnfilter(function(err) { return !!err.msg; });
 
   if (opt_show !== false) {
+    goog.object.getKeys(this.validators_).pnforEach(this.clear, this);
     errors.pnforEach(function(err) { this.show_(err.field, err.msg); }, this);
   }
   return errors.pnmap(function(err) { return err.msg; });
