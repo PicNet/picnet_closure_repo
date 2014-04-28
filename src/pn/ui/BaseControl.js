@@ -105,8 +105,8 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
 
 /**
  * Helper to get or set the trimmed input value.
- * @param {string} id The ID suffix (without the page id) of the element
- *    html to set/retreive.
+ * @param {string|Element} id The ID suffix (without the page id) of the
+ *    element to set/retreive the internal html.
  * @param {string=} opt_html The html to set.  If not specified then we just
  *    get the value
  * @return {string} The html content of the specified control.
