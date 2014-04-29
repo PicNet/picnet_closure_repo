@@ -139,6 +139,7 @@ pn.ctl.FieldsValidator.prototype.isvalid = function(opt_show) {
 pn.ctl.FieldsValidator.prototype.all = function(opt_show) {
   var errors = goog.object.getKeys(this.validators_).pnmap(function(field) {
     var msg = this.validators_[field](field);
+    if (!msg) msg = null;
     if (goog.isString(msg)) msg = { type: 'error', message: msg };
     return { field: field, msg: msg };
   }, this).pnfilter(function(err) { return !!err.msg; });
