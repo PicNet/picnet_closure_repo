@@ -42,7 +42,7 @@ goog.inherits(pn.ui.BaseControl, pn.app.EventHandlerTarget);
 
 /**
  * Helper to get or set the trimmed input value.
- * @param {string} id The ID suffix (without the page id) of the control
+ * @param {string|Element} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
  * @param {*=} opt_val The value to set.  If not specified then we just
  *    get the value;
