@@ -4,22 +4,17 @@ goog.provide('pn.ui.MessagePanel');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('pn.log');
+goog.require('pn.ui.BaseControl');
 
 
 
 /**
  * @constructor
- * @extends {goog.Disposable}
+ * @extends {pn.ui.BaseControl}
  * @param {!Element} panel The panel to use to display the messages/errors.
  */
 pn.ui.MessagePanel = function(panel) {
-  goog.Disposable.call(this);
-
-  /**
-   * @private
-   * @type {!Element}
-   */
-  this.panel_ = panel;
+  pn.ui.BaseControl.call(this, panel);
 
   /**
    * @private
@@ -38,8 +33,10 @@ pn.ui.MessagePanel = function(panel) {
    * @type {goog.debug.Logger}
    */
   this.log_ = pn.log.getLogger('pn.ui.MessagePanel');
+
+  this.ontap(panel, this.clearMessage.pnbind(this));
 };
-goog.inherits(pn.ui.MessagePanel, goog.Disposable);
+goog.inherits(pn.ui.MessagePanel, pn.ui.BaseControl);
 
 
 /**
@@ -48,8 +45,8 @@ goog.inherits(pn.ui.MessagePanel, goog.Disposable);
 pn.ui.MessagePanel.prototype.clearMessage = function() {
   this.messages_ = [];
   if (this.timer_) goog.Timer.clear(this.timer_);
-  this.panel_.innerHTML = '';
-  pn.dom.show(this.panel_, false);
+  this.el.innerHTML = '';
+  pn.dom.show(this.el, false);
 };
 
 
@@ -128,14 +125,16 @@ pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
     return '<li class="' + tokens[0] + '">' + tokens[1];
   }).join('</li>') + '</li></ul>';
 
-  this.panel_.innerHTML = html;
-  pn.dom.show(this.panel_, true);
-  this.timer_ = goog.Timer.callOnce(this.clearMessage, 3000, this);
+  this.el.innerHTML = html;
+  pn.dom.show(this.el, true);
+  // Variable length message timeout, 2s per message
+  var timeout = this.messages_.length * 2000;
+  this.timer_ = goog.Timer.callOnce(this.clearMessage, timeout, this);
 };
 
 
 /** @override */
 pn.ui.MessagePanel.prototype.disposeInternal = function() {
   pn.ui.MessagePanel.superClass_.disposeInternal.call(this);
-  delete this.panel_;
+  delete this.el;
 };

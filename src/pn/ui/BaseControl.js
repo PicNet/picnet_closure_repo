@@ -1,8 +1,8 @@
+
 goog.provide('pn.ui.BaseControl');
 
-goog.require('pn.mvc.Controller');
+goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.ui.GestureFilter');
-goog.require('pn.ui.MessagePanel');
 
 
 
