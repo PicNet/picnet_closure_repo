@@ -128,7 +128,9 @@ pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
   this.el.innerHTML = html;
   pn.dom.show(this.el, true);
   // Variable length message timeout, 2s per message
-  var timeout = this.messages_.length * 2000;
+  var totchars = this.messages_.pnreduce(
+      function(acc, m) { return acc + m.length; }),
+      timeout = Math.max(1500, totchars * 80);
   this.timer_ = goog.Timer.callOnce(this.clearMessage, timeout, this);
 };
 
