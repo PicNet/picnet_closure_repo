@@ -94,6 +94,8 @@ pn.ctl.BaseController.prototype.shown = function() {
 /**
  * This hack moves the screen up to ensure the input field is at the top of the
  *    page.  This lets the soft keyboard show without obscuring the field.
+ *    This now takes into account our fixed header by not moving the field
+ *    to the very top of the page but rather 60 pixels less.
  * @private @param {!goog.events.Event} e The focus event.
  */
 pn.ctl.BaseController.prototype.focus_ = function(e) {
@@ -105,7 +107,11 @@ pn.ctl.BaseController.prototype.focus_ = function(e) {
       !!el.getAttribute('readonly') ||
       !!el.getAttribute('disabled')) return;
 
-  goog.Timer.callOnce(el.scrollIntoView, 500, el);
+  goog.Timer.callOnce(function() {
+    var pages = pn.dom.get('pages'),
+        etop = el.getBoundingClientRect().top + pages.scrollTop;
+    pages.scrollTop = etop - 60;
+  }, 500, this);
 };
 
 
