@@ -90,9 +90,9 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
 pn.ui.edit.FieldBuilder.createParentEntitySelect_ = function(fctx) {
   var steps = fctx.spec.displayPath.split('.');
   var cascading = !!fctx.spec.tableType;
-  var entityType = cascading ?
+  var entityType = fctx.spec.entityType || (cascading ?
       fctx.spec.tableType :
-      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty);
+      pn.data.EntityUtils.getTypeProperty(fctx.spec.dataProperty));
 
   var list = fctx.cache[entityType];
   if (!list) throw new Error('Expected access to "' + entityType +

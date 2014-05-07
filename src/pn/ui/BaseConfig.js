@@ -41,7 +41,11 @@ pn.ui.BaseConfig.prototype.getRelatedTypes = function() {
   goog.array.forEach(this.fieldSpecs_, function(fSpec) {
     var additional = fSpec.additionalCacheTypes;
     if (additional.length) { types = goog.array.concat(types, additional); }
-
+    if (fSpec.entityType) {
+      types.push(fSpec.entityType);
+      // Ignore others as entityType usually means manual entity mapping.
+      return;
+    }
     if (fSpec.displayPath) {
       goog.array.forEach(fSpec.displayPath.split('.'), addIfType);
     }

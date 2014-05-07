@@ -69,7 +69,7 @@ pn.ui.grid.ExportCommand.prototype.enterDocument = function() {
     var e = new goog.events.Event(this.eventType, this);
     e.exportFormat = exportFormat;
     this.dispatchEvent(e);
-  }, false, this);
+  });
 };
 
 

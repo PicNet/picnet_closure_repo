@@ -69,6 +69,15 @@ pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
   this.dataProperty = '';
 
   /**
+   * Overrides the entity type of this field.  This is usually determined by
+   *    the EntityTypeNameID where ID is removed and EntityTypeName is assumed
+   *    to be the type of the entity.  This may not always be the case.
+   *
+   * @type {string}
+   */
+  this.entityType = '';
+
+  /**
    * The source entity type(s) path for the display of this field. This is an
    *    intelligent path to the source entity.  For instance:
    *    displayPath: 'Parent.GrandParent.GrandParentName' is a valid path.
