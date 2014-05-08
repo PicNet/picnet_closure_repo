@@ -22,19 +22,19 @@ pn.data.EntityUtils.isNew = function(entity) {
  *    'ChildEntities'.  In this case the parent field would be 'ParentID'
  *    which cannot be inferred from the path and given we have no type
  *    information for the target we cannot infer it that way either.
+ * @param {string=} opt_entityType Hack to handle different first step path.
  * @return {*} The entities name.
  */
 pn.data.EntityUtils.getEntityDisplayValue =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, target, opt_parentField, opt_entityType) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
   goog.asserts.assert(target);
 
   var cacheKey = path + '_cache';
   if (goog.isDef(target[cacheKey])) return target[cacheKey];
-
   var entities = pn.data.EntityUtils.
-      getTargetEntity(cache, path, target, opt_parentField);
+      getTargetEntity(cache, path, target, opt_parentField, opt_entityType);
   var value = entities.length > 1 ? entities.join(', ') : entities[0];
   return (target[cacheKey] = value);
 };
@@ -51,22 +51,21 @@ pn.data.EntityUtils.getEntityDisplayValue =
  *    'ChildEntities'.  In this case the parent field would be 'ParentID'
  *    which cannot be inferred from the path and given we have no type
  *    information for the target we cannot infer it that way either.
+ * @param {string=} opt_entityType Hack to handle different first step path.
  * @return {!Array.<!Object>} The matched entity/entities (as an array).
  */
 pn.data.EntityUtils.getTargetEntity =
-    function(cache, path, target, opt_parentField) {
+    function(cache, path, target, opt_parentField, opt_entityType) {
   goog.asserts.assert(cache);
   goog.asserts.assert(path);
   goog.asserts.assert(target);
-
   // Lets always work with arrays just to simplify
   if (!goog.isArray(target)) { target = [target]; }
 
   var steps = goog.isArray(path) ? path : path.split('.');
-  var step = steps[0],
+  var step = opt_entityType ? (opt_entityType + 'ID') : steps[0],
       next,
       ids;
-
   if (step !== 'ID' && goog.string.endsWith(step, 'ID')) {
     ids = pn.data.EntityUtils.getFromEntities(target, step);
     step = pn.data.EntityUtils.getTypeProperty(step);
@@ -87,7 +86,6 @@ pn.data.EntityUtils.getTargetEntity =
   } else {
     next = pn.data.EntityUtils.getFromEntities(target, step);
   }
-
   steps.shift();
   return steps.length > 0 ?
       pn.data.EntityUtils.getTargetEntity(cache, steps, next, opt_parentField) :

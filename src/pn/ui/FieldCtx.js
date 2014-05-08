@@ -131,7 +131,8 @@ pn.ui.FieldCtx.prototype.getDisplayValue = function() {
       this.cache,
       this.spec.displayPath,
       this.entity,
-      this.spec.tableParentField);
+      this.spec.tableParentField,
+      this.spec.entityType);
 };
 
 
