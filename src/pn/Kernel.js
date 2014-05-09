@@ -4,6 +4,7 @@ goog.require('goog.Disposable');
 goog.require('goog.Promise');
 goog.require('pn.app.EventBus');
 goog.require('pn.app.Router');
+goog.require('pn.data.Session');
 goog.require('pn.data.Storage');
 goog.require('pn.data.Storage.Type');
 goog.require('pn.log');
@@ -109,9 +110,27 @@ pn.Kernel.prototype.gestures = function() {
 pn.Kernel.prototype.localStorage = function(id) {
   pn.assStr(id);
 
+  var regid = 'localStorage-' + id;
+  if (regid in this.registered) return this.registered[regid];
+
   var ls = new pn.data.Storage(id,
       goog.nullFunction, pn.data.Storage.Type.localStorage);
-  return this.registered['localStorage-' + id] = ls;
+  return this.registered[regid] = ls;
+};
+
+
+/**
+ * @param {string} id The id of this storage.
+ * @return {!pn.data.Session} A storage backed by sessionStorage.
+ */
+pn.Kernel.prototype.sessionStorage = function(id) {
+  pn.assStr(id);
+
+  var regid = 'sessionStorage-' + id;
+  if (regid in this.registered) return this.registered[regid];
+
+  var ls = new pn.data.Session(id);
+  return this.registered[regid] = ls;
 };
 
 
