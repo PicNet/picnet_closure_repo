@@ -81,7 +81,11 @@ pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
    * @type {*}
    */
   this.defaultValue = undefined;
-
+   /** 
+   * Any tooltip to display to the user
+   * @type {string}
+   */
+  this.tooltip = '';
   /**
    * When displaying a table in this Field this field denotes the type of
    *    entity being displayed in the table.  If this is not specified we try
