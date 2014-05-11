@@ -89,10 +89,12 @@ pn.ui.MultiSelect.prototype.options = function(list) {
     var lis = [li];
     if (!!o.nodes) {
       addargs.push('branch');
-      addargs.push(o.open ? 'open' : 'closed');
+      var open = o.open || o.nodes.pnfindIndex(
+          function(n) { return n.selected || n.open; }) >= 0;
+      addargs.push(open ? 'open' : 'closed');
       var children = o.nodes.pnmapMany(function(n) { return doli(n); }, li);
       lis = lis.pnconcat(children);
-      this.show(children, !!o.open);
+      this.show(children, open);
     } else {
       if (!!parent) li.style.display = 'none';
       addargs.push('leaf');
