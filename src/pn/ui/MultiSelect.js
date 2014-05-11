@@ -276,13 +276,24 @@ pn.ui.MultiSelect.prototype.onselectChanged = function(handler) {
 
 /** @return {!Array.<!pn.ui.MultiSelectItem>} The selected options */
 pn.ui.MultiSelect.prototype.selected = function() {
-  var selected = pn.toarr(this.ul_.children).
-      pnfilter(function(el) { return goog.dom.classes.has(el, 'selected'); }).
-      pnmap(function(el) {
-        // data-itemid is not a number parseInt get NaN
-        var id = el.getAttribute('data-itemid');
-        return this.children_[id];
-      }, this);
+  // Ensure no duplicate selections even if ID exists multiple times
+  var selids = {},
+      selected = pn.toarr(this.ul_.children).
+          pnfilter(function(el) {
+            if (goog.dom.classes.has(el, 'selected')) {
+              var id = el.getAttribute('data-itemid');
+              if (!selids[id]) {
+                selids[id] = 1;
+                return true;
+              }
+            }
+            return false;
+          }).
+          pnmap(function(el) {
+            // data-itemid is not a number parseInt get NaN
+            var id = el.getAttribute('data-itemid');
+            return this.children_[id];
+          }, this);
   return selected;
 };
 
