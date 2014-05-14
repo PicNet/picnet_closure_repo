@@ -51,7 +51,8 @@ goog.inherits(pn.ui.BaseControl, pn.app.EventHandlerTarget);
 pn.ui.BaseControl.prototype.val = function(id, opt_val) {
   var el = (goog.isString(id) ? this.getel(id) : id),
       val = '';
-  if (goog.isDef(opt_val)) {
+  // check undefined and null
+  if (goog.isDefAndNotNull(opt_val)) {
     val = opt_val;
     if (el.setValue) { el.setValue(opt_val); }
     else el.value = opt_val.toString().pntrim();
