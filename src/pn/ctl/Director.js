@@ -11,9 +11,12 @@ goog.require('pn.log');
  * @param {function(string,!Element,
  *    function(!pn.ctl.BaseController):undefined):undefined} ctlFactory
  *    A strategy for creating controllers that are passed back in a callback.
+ * @param {!Array.<string>} validBacks A list of valid back targets.  This
+ *    is used to try to restrict and fix cyclical back button errors.
  */
-pn.ctl.Director = function(ctlFactory) {
+pn.ctl.Director = function(ctlFactory, validBacks) {
   pn.assFun(ctlFactory);
+  pn.assArr(validBacks);
 
   goog.Disposable.call(this);
 
@@ -27,6 +30,9 @@ pn.ctl.Director = function(ctlFactory) {
    */
   this.ctlFactory_ = ctlFactory;
 
+  /** @private @const @type {!Array.<string>} */
+  this.validBacks_ = validBacks;
+
   /** @private @type {pn.ctl.BaseController} */
   this.current_ = null;
 
@@ -39,13 +45,6 @@ pn.ctl.Director = function(ctlFactory) {
   this.init_();
 };
 goog.inherits(pn.ctl.Director, goog.Disposable);
-
-
-/**
- * @private @const @type {!Array.<string>} A list of valid back button targets
- *    for buttons that have the 'back' URI.
- */
-pn.ctl.Director.VALID_BACKS_ = ['task-details', 'task-list'];
 
 
 /** @private */
@@ -119,7 +118,7 @@ pn.ctl.Director.prototype.backto = function() {
 
   while (!!this.stack_.length) {
     var step = this.stack_.pop();
-    if (pn.ctl.Director.VALID_BACKS_.pncontains(step[0])) return step;
+    if (!this.validBacks_ || this.validBacks_.pncontains(step[0])) return step;
   }
   return null;
 };
