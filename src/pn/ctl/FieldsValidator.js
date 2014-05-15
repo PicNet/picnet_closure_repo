@@ -58,6 +58,7 @@ pn.ctl.FieldsValidator = function(ctl) {
       (null|string|{message: string, type: string})>} */
   this.validators_ = {};
 };
+goog.inherits(pn.ctl.FieldsValidator, goog.Disposable);
 
 
 /**
@@ -83,6 +84,7 @@ pn.ctl.FieldsValidator.prototype.add = function(field, validator) {
       mel = this.ctl_.getel(fields + '-message');
   if (!mel) throw new Error('FieldsValidator.add only supports fields with ' +
       'corresponding ID-message elements');
+  pn.dom.show(mel, false);
 
   this.validators_[fields] = validator.pnbind(this.ctl_);
   this.ctl_.onchange(el, goog.bind(function() {
@@ -109,6 +111,12 @@ pn.ctl.FieldsValidator.prototype.remove = function(field) {
  */
 pn.ctl.FieldsValidator.prototype.validate = function(field, var_args) {
   this.show_(field, this.validators_[field].apply(this, arguments));
+};
+
+
+/** Clears all shown field error, warnings and messages */
+pn.ctl.FieldsValidator.prototype.clearAll = function() {
+  goog.object.getKeys(this.validators_).pnforEach(this.clear, this);
 };
 
 
@@ -178,7 +186,8 @@ pn.ctl.FieldsValidator.prototype.show_ = function(field, msg) {
 
 /** @override */
 pn.ctl.FieldsValidator.prototype.disposeInternal = function() {
-  pn.ctl.FieldsValidator.superClass_.disposeInternal.call(this);
-
+  this.clearAll();
   delete this.validators_;
+
+  pn.ctl.FieldsValidator.superClass_.disposeInternal.call(this);
 };
