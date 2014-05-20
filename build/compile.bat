@@ -19,12 +19,12 @@ java -jar %CLOSURE_TEMPLATES%SoyToJsSrcCompiler.jar ^
   --shouldProvideRequireSoyNamespaces ^
   --outputPathFormat src\pn\ui\soy\{INPUT_FILE_NAME_NO_EXT}.compiled.soy.js ^
   src\pn\ui\soy\*.soy && ^
-c:\Python27\python.exe ^
+python.exe ^
   %CLOSURE_LIBRARY%closure\bin\build\depswriter.py ^
   --root_with_prefix="src\ %BASE%" ^
   --root_with_prefix="%CLOSURE_TEMPLATES% %CLOSURE_TEMPLATES_RELATIVE_URL%" ^
   --output_file=src\deps.js && ^
-c:\Python27\python.exe ^
+python.exe ^
   %CLOSURE_LIBRARY%closure\bin\build\closurebuilder.py ^
   --namespace="pn.closure.repo.demoscripts" ^
   --root=%CLOSURE_LIBRARY% ^

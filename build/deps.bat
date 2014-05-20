@@ -8,7 +8,7 @@ set CLOSURE_COMPILER=%DRIVE%dev\shared\lib\picnetcompiler.jar
 set CLOSURE_TEMPLATES_RELATIVE_URL=../../../../../../../shared/closure-templates/
 set BASE=../../../../isis/scripts/lib/picnet_closure_repo/src/
 
-c:\Python27\python.exe ^
+python.exe ^
   %CLOSURE_LIBRARY%closure\bin\build\depswriter.py ^
   --root_with_prefix="src\ %BASE%" ^
   --root_with_prefix="%CLOSURE_TEMPLATES% %CLOSURE_TEMPLATES_RELATIVE_URL%" ^

@@ -1,5 +1,5 @@
 set DRIVE=%cd:~0,3%
-set PYTHON27_EXEC=C:\Python27\python.exe
+set PYTHON27_EXEC=python.exe
 set CLOSURE_LIBRARY=%DRIVE%dev\shared\lib\closure-library\
 set CLOSURE_TEMPLATES=%DRIVE%dev\shared\lib\closure-templates\
 set CLOSURE_COMPILER=%DRIVE%dev\shared\lib\compiler.jar
