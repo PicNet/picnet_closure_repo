@@ -9,12 +9,8 @@ goog.require('pn');
 goog.provide('pn.log');
 
 
-/**
- * @private
- * @const
- * @type {boolean}
- */
-pn.log.OFF_ = true;
+/** @type {boolean} */
+pn.log.OFF = false;
 
 
 /**
@@ -70,7 +66,7 @@ pn.log.log = function(var_args) {
 pn.log.getLogger = function(name, opt_exclusive) {
   if (!pn.log.isInitialised_) { pn.log.initialise_(); }
 
-  if (pn.log.OFF_ || pn.log.isExclusive_) {
+  if (pn.log.OFF || pn.log.isExclusive_) {
     return pn.log.getLoggerImpl_(name,
         goog.debug.Logger.Level.OFF); }
 
