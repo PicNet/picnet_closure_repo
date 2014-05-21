@@ -112,10 +112,15 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
 };
 
 
+/** @return {!Array.<*>} The current page token . */
+pn.ctl.Director.prototype.currenttoken = function() {
+  return !this.stack_.length ? [] : this.stack_.pnlast();
+};
+
+
 /** Go back @return {Array.<*>} The last valid back page visited. */
 pn.ctl.Director.prototype.backto = function() {
   if (!!this.stack_.length) this.stack_.pop(); // Ignore current page
-
   while (!!this.stack_.length) {
     var step = this.stack_.pop();
     if (!this.validBacks_ || this.validBacks_.pncontains(step[0])) return step;
