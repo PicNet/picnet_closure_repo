@@ -29,6 +29,14 @@ goog.inherits(pn.ui.LoadingPnl, goog.Disposable);
 
 
 /**
+ * @return {boolean} Wether this loading panel is currently being displayed.
+ */
+pn.ui.LoadingPnl.prototype.showing = function() {
+  return this.workCount_ > 0;
+};
+
+
+/**
  * Increments the work counter by one.  If there was no work previously then
  * the loading panel is shown.
  */
