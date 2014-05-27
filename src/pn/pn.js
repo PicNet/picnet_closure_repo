@@ -7,6 +7,7 @@ goog.require('goog.asserts');
 goog.require('goog.functions');
 goog.require('goog.object');
 goog.require('goog.string');
+goog.require('goog.structs.Set');
 
 ////////////////////////////////////////////////////////////////////////////////
 // Misc Static Convenience Helpers
@@ -885,6 +886,58 @@ Array.prototype.pntoMap = function(opt_key, opt_value) {
     map[id] = opt_value ? opt_value(item, idx) : item;
   });
   return map;
+};
+
+
+/**
+ * @this {Array.<T>} arr Array over which to iterate.
+ * @param {!Array.<T>} arr2 A second array to remove from the first.
+ * @return {!Array.<T>} A new array with items from arr2 removed from this
+ *    array.
+ * @template T
+ */
+Array.prototype.pnexcept = function(arr2) {
+  pn.assArr(arr2);
+  return new goog.structs.Set(this).difference(arr2).getValues();
+};
+
+
+/**
+ * @this {Array.<T>} arr Array over which to iterate.
+ * @param {!Array.<T>} arr2 A second array to join to the first.
+ * @return {!Array.<T>} A new array with items from both arrays but no
+ *    duplicates
+ * @template T
+ */
+Array.prototype.pnunion = function(arr2) {
+  pn.assArr(arr2);
+  var s = new goog.structs.Set(this);
+  s.addAll(arr2);
+  return s.getValues();
+};
+
+
+/**
+ * @this {Array} arr Array over which to iterate.
+ * @param {!Array} largerarray The array which we want to check contains all
+ *    elements in this array.  I.e. This is the superset array.
+ * @return {boolean} Wether 'this' is a subset of the passed in argument.
+ */
+Array.prototype.pnissubset = function(largerarray) {
+  pn.assArr(largerarray);
+  return new goog.structs.Set(this).isSubsetOf(largerarray);
+};
+
+
+/**
+ * @this {Array.<T>} arr Array over which to iterate.
+ * @param {!Array.<T>} arr2 A second array to find the common values with.
+ * @return {!Array.<T>} A new array with common items from both arrays.
+ * @template T
+ */
+Array.prototype.pnintersect = function(arr2) {
+  pn.assArr(arr2);
+  return new goog.structs.Set(this).intersection(arr2).getValues();
 };
 
 

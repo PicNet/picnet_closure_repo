@@ -141,6 +141,29 @@ var test_pn_toMap = function() {
       function(i) { return i * 10; }));
 };
 
+var test_pnexcept = function() {
+  assertArrayEquals([9, 10, 11], [5, 6, 7, 8, 9, 10, 11].pnexcept([5, 6, 7, 8]));
+  assertArrayEquals([9, 10, 11], [9, 10, 11].pnexcept([5, 6, 7, 8]));
+  assertArrayEquals([9, 10, 11], [9, 10, 11].pnexcept([]));
+};
+
+var test_pnunion = function() {
+  assertArrayEquals([5, 6, 7, 8, 9, 10, 11], [9, 10, 11].pnunion([5, 6, 7, 8, 9, 10, 11]).pnsort());
+  assertArrayEquals([5, 6, 7, 8, 9, 10, 11], [9, 10, 11].pnunion([5, 6, 7, 8]).pnsort());
+  assertArrayEquals([9, 10, 11], [9, 10, 11].pnunion([]));
+};
+
+var test_pnintersect = function() {
+  assertArrayEquals([9, 10, 11], [9, 10, 11].pnintersect([5, 6, 7, 8, 9, 10, 11]));
+  assertArrayEquals([], [9, 10, 11].pnintersect([5, 6, 7, 8]));
+  assertArrayEquals([], [9, 10, 11].pnintersect([]));
+};
+
+var test_pnissubset = function() {
+  assertTrue([9, 10, 11].pnissubset([5, 6, 7, 8, 9, 10, 11]));
+  assertFalse([9, 10, 11].pnissubset([5, 6, 7, 8]));
+  assertFalse([9, 10, 11].pnissubset([]));
+};
     </script>    
   </body>
 </html>
