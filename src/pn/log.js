@@ -59,6 +59,18 @@ pn.log.log = function(var_args) {
 
 
 /**
+ * @param {...*} var_args Displays a warning to the console.
+ */
+pn.log.warn = function(var_args) {
+  if (!window['console'] || !window['console']['warn']) {
+    pn.log.log.apply(null, arguments);
+    return;
+  }
+  window['console']['warn'].apply(window['console'], arguments);
+};
+
+
+/**
  * @param {string} name The name of the logger to create.
  * @param {boolean=} opt_exclusive Wether to turn off all other loggers.
  * @return {!goog.debug.Logger} The logger create with the specified name.
