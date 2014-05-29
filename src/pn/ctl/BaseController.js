@@ -62,20 +62,40 @@ pn.ctl.BaseController.prototype.initialise =
   this.router_ = router;
   this.msg_ = msg;
 
-  this.setback_();
+  this.setDefaultBackButtonId_();
 };
 
 
-/** @private Replaces {ID} in back button if there */
-pn.ctl.BaseController.prototype.setback_ = function() {
-  var bb = goog.dom.getElementByClass('back-button', this.el);
-  var href = !bb ? null : bb.href.toLowerCase();
-  if (!href || href.indexOf('{id}') < 0 || href.indexOf('test') >= 0) return;
+/**
+ * @private
+ * By default controller support the {ID} tag in the back button URI.  This
+ *    will be resolved to the last path in the query string (after last /).
+ *    This is ignored if this is not numeric or if the {ID} tag does not
+ *    exist in the back button URI.  To set custom back button elements
+ *    use this.customiseBack({'FIELD_1':'1', 'FIELD_2':'2'});
+ */
+pn.ctl.BaseController.prototype.setDefaultBackButtonId_ = function() {
   var id = document.location.href.split('/').pnlast().split('?')[0];
   var numid = parseInt(id, 10);
-  if (id !== numid.toString()) throw new Error('Expected the last step in ' +
-      'path to be a numerical ID for the back button');
-  bb.href = href.replace(/\{id\}/, id);
+  if (id === numid.toString())
+    this.customiseBack({'ID': id});
+};
+
+
+/**
+ * @param {!Object} dict A key value pair mapping of fields to replace in back.
+ *    Case is ignored.
+ */
+pn.ctl.BaseController.prototype.customiseBack = function(dict) {
+  pn.assObj(dict);
+
+  var bb = goog.dom.getElementByClass('back-button', this.el);
+  if (!bb) return;
+  var href = bb.href.toLowerCase();
+  goog.object.forEach(dict, function(v, k) {
+    var field = k.toLowerCase().replace('{', '').replace('}', '');
+    bb.href = href.replace(field, v);
+  });
 };
 
 
