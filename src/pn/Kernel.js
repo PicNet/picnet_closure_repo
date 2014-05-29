@@ -48,12 +48,6 @@ pn.Kernel = function(appPath) {
    * @protected @type {!pn.app.Router}
    */
   this.registered['router'] = new pn.app.Router();
-
-  // Initialise the director so all pages and dialogs are hidden
-  this.customcontrols();
-
-  // Initialise the director so all pages and dialogs are hidden
-  this.director();
 };
 goog.inherits(pn.Kernel, goog.Disposable);
 
