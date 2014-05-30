@@ -57,7 +57,7 @@ pn.ctl.BaseDialog.prototype.hide = function() {
 pn.ctl.BaseDialog.prototype.submit = function() {
   pn.ass(!this.onsubmit_ || goog.isFunction(this.onsubmit_));
 
-  if (!this.validate()) return;
+  if (!this.validator.isvalid()) return;
 
   var value = this.value(),
       cb = this.onsubmit_;

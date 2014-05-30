@@ -92,13 +92,22 @@ pn.ui.BaseControl.prototype.numval = function(id, opt_val) {
 pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
   var val = /** @type {goog.date.DateTime} */ (null),
       el = this.getel(id);
-  pn.ass(el.getValue && el.setValue);
+  if (el instanceof HTMLInputElement && el.type === 'date') {
+    if (goog.isDef(opt_val)) {
+      el.value = isis.ui.Formatters.datetimeinput.format(opt_val);
+    } else {
+      val = isis.ui.Formatters.parseDateInpField(el.value);
+    }
+  }
+  else {
+    pn.ass(el.getValue && el.setValue);
 
-  if (goog.isDef(opt_val)) {
-    el.setValue(opt_val);
-  } else {
-    val = /** @type {goog.date.DateTime} */ (el.getValue());
-    pn.assInst(val, goog.date.DateTime);
+    if (goog.isDef(opt_val)) {
+      el.setValue(opt_val);
+    } else {
+      val = /** @type {goog.date.DateTime} */ (el.getValue());
+      pn.assInst(val, goog.date.DateTime);
+    }
   }
   return !val || val.getYear() < 1970 || isNaN(val.getYear()) ? null : val;
 };
