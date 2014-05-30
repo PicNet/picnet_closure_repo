@@ -11,12 +11,9 @@ goog.require('pn.log');
  * @param {function(string,!Element,
  *    function(!pn.ctl.BaseController):undefined):undefined} ctlFactory
  *    A strategy for creating controllers that are passed back in a callback.
- * @param {!Array.<string>} validBacks A list of valid back targets.  This
- *    is used to try to restrict and fix cyclical back button errors.
  */
-pn.ctl.Director = function(ctlFactory, validBacks) {
+pn.ctl.Director = function(ctlFactory) {
   pn.assFun(ctlFactory);
-  pn.assArr(validBacks);
 
   goog.Disposable.call(this);
 
@@ -30,9 +27,6 @@ pn.ctl.Director = function(ctlFactory, validBacks) {
    */
   this.ctlFactory_ = ctlFactory;
 
-  /** @private @const @type {!Array.<string>} */
-  this.validBacks_ = validBacks;
-
   /** @private @type {pn.ctl.BaseController} */
   this.current_ = null;
 
@@ -45,6 +39,36 @@ pn.ctl.Director = function(ctlFactory, validBacks) {
   this.init_();
 };
 goog.inherits(pn.ctl.Director, goog.Disposable);
+
+
+/** @return {pn.ctl.BaseController} */
+pn.ctl.Director.prototype.currentController = function() {
+  return this.current_;
+};
+
+
+/**
+ * @param {!Array.<string>} actions A list of valid back targets for this
+ *    current page.
+ * @return {Array.<string>} The back action arguments or null if no valid back
+ *    target is found.
+ */
+pn.ctl.Director.prototype.getValidBack = function(actions) {
+  pn.assArr(actions);
+  if (!!this.stack_.length) this.stack_.pop(); // Ignore current page
+  while (!!this.stack_.length) {
+    var step = this.stack_.pop();
+    var stepAction = step[0];
+    if (!this.validBacks_ || actions.pncontains(stepAction)) return step;
+  }
+  return null;
+};
+
+
+/** @return {!Array.<*>} The current page token . */
+pn.ctl.Director.prototype.currentToken = function() {
+  return !this.stack_.length ? [] : this.stack_.pnlast();
+};
 
 
 /** @private */
@@ -109,23 +133,6 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
 
   this.stack_.push(pn.toarr(arguments));
   this.get_.apply(this, args);
-};
-
-
-/** @return {!Array.<*>} The current page token . */
-pn.ctl.Director.prototype.currenttoken = function() {
-  return !this.stack_.length ? [] : this.stack_.pnlast();
-};
-
-
-/** Go back @return {Array.<*>} The last valid back page visited. */
-pn.ctl.Director.prototype.backto = function() {
-  if (!!this.stack_.length) this.stack_.pop(); // Ignore current page
-  while (!!this.stack_.length) {
-    var step = this.stack_.pop();
-    if (!this.validBacks_ || this.validBacks_.pncontains(step[0])) return step;
-  }
-  return null;
 };
 
 

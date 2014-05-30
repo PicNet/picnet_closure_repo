@@ -61,49 +61,6 @@ pn.ctl.BaseController.prototype.initialise =
   this.storage_ = storage;
   this.router_ = router;
   this.msg_ = msg;
-
-  this.setDefaultBackButtonId_();
-};
-
-
-/**
- * @private
- * By default controller support the {ID} tag in the back button URI.  This
- *    will be resolved to the last path in the query string (after last /).
- *    This is ignored if this is not numeric or if the {ID} tag does not
- *    exist in the back button URI.  To set custom back button elements
- *    use this.customiseBack({'FIELD_1':'1', 'FIELD_2':'2'});
- */
-pn.ctl.BaseController.prototype.setDefaultBackButtonId_ = function() {
-  var id = document.location.href.split('/').pnlast().split('?')[0];
-  var numid = parseInt(id, 10);
-  if (id === numid.toString())
-    this.customiseBack({'ID': id});
-};
-
-
-/**
- * @param {!Object} dict A key value pair mapping of fields to replace in back.
- *    Case is ignored.
- */
-pn.ctl.BaseController.prototype.customiseBack = function(dict) {
-  pn.assObj(dict);
-
-  var bb = goog.dom.getElementByClass('back-button', this.el);
-  if (!bb) return;
-
-  if (!bb.getAttribute('data-originaluri'))
-    bb.setAttribute('data-originaluri', bb.href);
-
-  var href = bb.getAttribute('data-originaluri');
-  href = href.replace(/{/g, '').replace(/}/g, '');
-
-  goog.object.forEach(dict, function(v, k) {
-    var field = k.replace('{', '').replace('}', '');
-    href = href.replace(field, v);
-  });
-
-  bb.href = href;
 };
 
 
