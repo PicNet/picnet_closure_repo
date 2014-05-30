@@ -91,11 +91,19 @@ pn.ctl.BaseController.prototype.customiseBack = function(dict) {
 
   var bb = goog.dom.getElementByClass('back-button', this.el);
   if (!bb) return;
-  var href = bb.href.toLowerCase();
+
+  if (!bb.getAttribute('data-originaluri'))
+    bb.setAttribute('data-originaluri', bb.href);
+
+  var href = bb.getAttribute('data-originaluri');
+  href = href.replace(/{/g, '').replace(/}/g, '');
+
   goog.object.forEach(dict, function(v, k) {
-    var field = k.toLowerCase().replace('{', '').replace('}', '');
-    bb.href = href.replace(field, v);
+    var field = k.replace('{', '').replace('}', '');
+    href = href.replace(field, v);
   });
+
+  bb.href = href;
 };
 
 
