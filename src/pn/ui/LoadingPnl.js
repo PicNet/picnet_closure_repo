@@ -7,25 +7,14 @@ goog.require('goog.Disposable');
 
 /**
  * @constructor
- * @extends {goog.Disposable}
- * @param {!Element} element The element that represents the loading panel DOM.
  */
-pn.ui.LoadingPnl = function(element) {
-  goog.Disposable.call(this);
-
-  /**
-   * @private
-   * @type {!Element}
-   */
-  this.element_ = element;
-
+pn.ui.LoadingPnl = function() {
   /**
    * @private
    * @type {number}
    */
   this.workCount_ = 0;
 };
-goog.inherits(pn.ui.LoadingPnl, goog.Disposable);
 
 
 /**
@@ -63,16 +52,9 @@ pn.ui.LoadingPnl.prototype.decrement = function() {
 pn.ui.LoadingPnl.prototype.showLoadingPanel_ = function(visible) {
   // Hiding the loading panel needs to be done async to allow any running
   // processes to complete.  And if another process sneak in we do not hide.
-  if (visible) pn.dom.show(this.element_, true);
+  if (visible) goog.dom.classes.enable(document.body, 'loading', visible);
   else goog.Timer.callOnce(function() {
     if (this.workCount_ > 0) { return; }
-    pn.dom.show(this.element_, false);
+    goog.dom.classes.enable(document.body, 'loading', visible);
   }, 100, this);
-};
-
-
-/** @override */
-pn.ui.LoadingPnl.prototype.disposeInternal = function() {
-  pn.ui.LoadingPnl.superClass_.disposeInternal.call(this);
-  delete this.element_;
 };

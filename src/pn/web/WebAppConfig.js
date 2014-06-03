@@ -34,9 +34,6 @@ pn.web.WebAppConfig = function(opt_opts) {
   /** @type {string} */
   this.messagePanelId = 'common-message-panel';
 
-  /** @type {string} */
-  this.loadPnlId = 'common-loading-panel';
-
   /** @type {boolean} */
   this.enableImpersonation = false;
 

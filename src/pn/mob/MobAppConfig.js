@@ -23,9 +23,6 @@ pn.mob.MobAppConfig = function(opt_opts) {
   /** @type {string} */
   this.messagePanelId = 'common-message-panel';
 
-  /** @type {string} */
-  this.loadPnlId = 'common-loading-panel';
-
   /** @type {!Object} */
   this.defaultFieldRenderers = {
   };

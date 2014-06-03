@@ -99,7 +99,7 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.msg);
 
   /** @type {!pn.ui.LoadingPnl} */
-  this.loading = new pn.ui.LoadingPnl(pn.dom.get(this.cfg.loadPnlId));
+  this.loading = new pn.ui.LoadingPnl();
   this.registerDisposable(this.loading);
 
   /** @type {!pn.ui.UiSpecsRegister} */
