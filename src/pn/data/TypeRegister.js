@@ -41,15 +41,23 @@ pn.data.TypeRegister.fromName = function(name) {
  */
 pn.data.TypeRegister.create = function(type, raw) {
   var ctor = pn.data.TypeRegister.fromName(type);
-
+  var p;
   // Refactor later
   if (typeof(raw.getValue) == "function") {
-    raw['DateCreated'] = raw.getValue('DateCreated');
-    raw['DateLastUpdated'] = raw.getValue('DateLastUpdated');
+    for (p in raw) {
+      if (p.indexOf("$") > -1) {
+        var pRaw = p.replace(/\$+/g, "");
+        if (raw[pRaw] === undefined) {
+          try {
+            raw[pRaw] = raw.getValue(pRaw);
+          } catch (e) {
+          }
+        }
+      }
+    }
   }
-
   var entity = new ctor(raw);
-  for (var p in raw) {
+  for (p in raw) {
     // Hidden Fields
     if (goog.string.startsWith(p, '_')) {
       entity.setExtValue(p, raw[p]);
