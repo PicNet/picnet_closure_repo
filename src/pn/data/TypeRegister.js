@@ -3,13 +3,11 @@ goog.provide('pn.data.TypeRegister');
 
 goog.require('goog.asserts');
 
-
 /**
  * @private
  * @type {!Object.<pn.data.EntityCtor>}
  */
 pn.data.TypeRegister.types_ = {};
-
 
 /**
  * @param {string} name The type name of the entity.
@@ -21,7 +19,6 @@ pn.data.TypeRegister.register = function(name, ctor) {
 
   pn.data.TypeRegister.types_[name] = ctor;
 };
-
 
 /**
  * @param {string} name The type name of the entity.
@@ -37,7 +34,6 @@ pn.data.TypeRegister.fromName = function(name) {
   return ctor;
 };
 
-
 /**
  * @param {string} type The type of the entity being saved/delete/clone.
  * @param {!Object} raw The raw entity data to send to the server.
@@ -45,11 +41,13 @@ pn.data.TypeRegister.fromName = function(name) {
  */
 pn.data.TypeRegister.create = function(type, raw) {
   var ctor = pn.data.TypeRegister.fromName(type);
-  
+
   // Refactor later
-  raw['DateCreated'] = raw.getValue('DateCreated');
-  raw['DateLastUpdated'] = raw.getValue('DateLastUpdated');
-  
+  if (typeof(raw.getValue) == "function") {
+    raw['DateCreated'] = raw.getValue('DateCreated');
+    raw['DateLastUpdated'] = raw.getValue('DateLastUpdated');
+  }
+
   var entity = new ctor(raw);
   for (var p in raw) {
     // Hidden Fields
@@ -59,7 +57,6 @@ pn.data.TypeRegister.create = function(type, raw) {
   }
   return entity;
 };
-
 
 /**
  * @param {string} type The type of the entities to attempt to parse.
@@ -74,7 +71,6 @@ pn.data.TypeRegister.parseEntities = function(type, data) {
   return data.pnmap(action);
 };
 
-
 /**
  * @param {string} type The type of the entity to attempt to parse.
  * @param {Object} data The data to attempt to parse.
@@ -88,7 +84,6 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
   return new ctor(data);
 };
 
-
 /**
  * @param {string} type The entity type to enfer the property type from.
  * @param {string} property The entity property to convert to a type name if
@@ -98,6 +93,7 @@ pn.data.TypeRegister.parseEntity = function(type, data) {
 pn.data.TypeRegister.getFieldSchema = function(type, property) {
   pn.ass(goog.isString(type), '"type" not specified');
   pn.ass(goog.isString(property), '"property" not specified');
-  if (goog.string.startsWith(property, '_')) return null;
+  if (goog.string.startsWith(property, '_'))
+    return null;
   return pn.data.TypeRegister.fromName(type).prototype.getFieldSchema(property);
 };
