@@ -9,6 +9,8 @@ goog.require('pn.ui.BaseControl');
 
 
 /**
+ * This is a message panel for mobile applications.  For webn application 
+ *    use WebMessagePanel.
  * @constructor
  * @extends {pn.ui.BaseControl}
  * @param {!Element} panel The panel to use to display the messages/errors.
@@ -34,7 +36,12 @@ pn.ui.MessagePanel = function(panel) {
    */
   this.log_ = pn.log.getLogger('pn.ui.MessagePanel');
 
-  this.ontap(panel, this.clearMessage.pnbind(this));
+  var cb = this.clearMessage.pnbind(this);
+  if (!window.Hammer) {
+    this.listenTo(panel, goog.events.EventType.CLICK, cb);
+  } else {
+    this.ontap(panel, cb);
+  }
 };
 goog.inherits(pn.ui.MessagePanel, pn.ui.BaseControl);
 
@@ -120,7 +127,8 @@ pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
 
   this.log_.finest('Showing Messages:\n' + this.messages_.join('\n'));
 
-  var html = '<ul>' + this.messages_.pnmap(function(m) {
+  var messsageType = this.messages_[0].split('|:')[0];
+  var html = '<ul class="' + messsageType + '">' + this.messages_.pnmap(function(m) {
     var tokens = m.split('|:');
     return '<li class="' + tokens[0] + '">' + tokens[1];
   }).join('</li>') + '</li></ul>';
@@ -129,11 +137,12 @@ pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
   pn.dom.show(this.el, true);
   // Variable length message timeout, 2s per message
   var totchars = this.messages_.pnreduce(
-      function(acc, m) { return acc + m.length; }),
-      timeout = Math.max(1500, totchars * 80);
+        function(acc, m) {
+          return acc + m.length;
+        }),
+    timeout = Math.max(1500, totchars * 80);
   this.timer_ = goog.Timer.callOnce(this.clearMessage, timeout, this);
 };
-
 
 /** @override */
 pn.ui.MessagePanel.prototype.disposeInternal = function() {
