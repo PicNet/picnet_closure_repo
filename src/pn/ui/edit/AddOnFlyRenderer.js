@@ -106,7 +106,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.enterDocument = function() {
 
 
 /** @private */
-pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function () {  
+pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function() {
   this.dialog_ = new pn.ui.edit.AddOnFlyDialog(
       this.spec_, this.fctx.cache, this.getNewEntity_());
 
@@ -122,7 +122,7 @@ pn.ui.edit.AddOnFlyRenderer.prototype.addOnFly_ = function () {
  *    template. This means that if any presets are required they can be set
  *    in a subclass or in an interceptor.
  */
-pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity_ = function () {
+pn.ui.edit.AddOnFlyRenderer.prototype.getNewEntity_ = function() {
   return !!this.fctx.spec.additionalProperties.getNewEntity ?
       this.fctx.spec.additionalProperties.getNewEntity() :
       pn.data.TypeRegister.create(this.spec_.type, {id: -goog.now()});

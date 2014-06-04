@@ -5,6 +5,7 @@ goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.ui.GestureFilter');
 
 
+
 /**
  * @constructor
  * @extends {pn.app.EventHandlerTarget}
@@ -27,8 +28,9 @@ pn.ui.BaseControl = function(el) {
 };
 goog.inherits(pn.ui.BaseControl, pn.app.EventHandlerTarget);
 
+
 /** @private */
-pn.ui.BaseControl.prototype.initgestures_ = function () {
+pn.ui.BaseControl.prototype.initgestures_ = function() {
   if (!!this.gestures_) return;
   var ggh = pn.ui.GlobalGestureHandler.instance();
   this.gestures_ = new pn.ui.GestureFilter(ggh);
@@ -221,7 +223,7 @@ pn.ui.BaseControl.prototype.ontap = function(el, cb) {
  * @param {function(goog.events.Event=):undefined} cb The callback for the
  *    event.
  */
-pn.ui.BaseControl.prototype.ongesture = function (events, el, cb) {
+pn.ui.BaseControl.prototype.ongesture = function(events, el, cb) {
   this.initgestures_();
   this.getels_(el).pnforEach(function(e) {
     this.gestures_.ongesture(events, e, cb.pnbind(this));

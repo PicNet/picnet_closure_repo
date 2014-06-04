@@ -31,6 +31,7 @@ pn.date.longDateFormat = new goog.i18n.DateTimeFormat("EEEE dd'/'MMM'/'yyyy");
 /** @type {!goog.i18n.DateTimeParse} */
 pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
+
 /** @type {!goog.i18n.DateTimeFormat} */
 pn.date.datetimeinput = new goog.i18n.DateTimeFormat("yyyy'-'MM'-'dd");
 
@@ -39,11 +40,12 @@ pn.date.datetimeinput = new goog.i18n.DateTimeFormat("yyyy'-'MM'-'dd");
 pn.date.datetimeinputparser =
     new goog.i18n.DateTimeParse("yyyy'-'MM'-'dd' 'HH:mm");
 
+
 /**
  * @param {!string} date The string date value from a input type=date field.
  * @return {goog.date.DateTime} The date value.
  */
-pn.date.parseDateInpField = function (date) {
+pn.date.parseDateInpField = function(date) {
   if (!goog.isDefAndNotNull(date)) return null;
   var d = new Date(date);
   return !isNaN(d.getTime()) ?

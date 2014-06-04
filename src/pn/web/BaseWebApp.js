@@ -28,7 +28,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
   pn.web.ctx = this;
 
   this.cfg = new pn.web.WebAppConfig(opt_cfg);
-  this.registerDisposable(this.cfg);  
+  this.registerDisposable(this.cfg);
 
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
