@@ -75,6 +75,23 @@ pn.app.BaseApp = function(opt_cfg) {
    */
   this.cache = new pn.data.LocalCache(this.cfg.dbver);
 
+
+  /**
+   * @private
+   * @type {!pn.app.EventBus}
+   */
+  this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
+  this.registerDisposable(this.bus_);
+
+  /**
+   * @param {string} topic Topic to publish to.
+   * @param {...*} var_args Arguments that are applied to each sub function.
+   */
+  this.pub = goog.bind(this.bus_.pub, this.bus_);
+
+  /** @return {string} The current topic being submitted. */
+  this.topic = goog.bind(this.bus_.topic, this.bus_);
+
   /**
    * @protected
    * @type {!pn.data.Server}
@@ -87,20 +104,12 @@ pn.app.BaseApp = function(opt_cfg) {
   this.registerDisposable(this.server);
   this.registerDisposable(this.cache);
 
-  /**
-   * @private
-   * @type {!pn.app.EventBus}
-   */
-  this.bus_ = new pn.app.EventBus(this.cfg.useAsyncEventBus);
-  this.registerDisposable(this.bus_);
-
   /** @type {!pn.ui.MessagePanel} */
   this.msg = new pn.ui.MessagePanel(pn.dom.get(this.cfg.messagePanelId));
   this.registerDisposable(this.msg);
 
   /** @type {!pn.ui.LoadingPnl} */
   this.loading = new pn.ui.LoadingPnl();
-  this.registerDisposable(this.loading);
 
   /** @type {!pn.ui.UiSpecsRegister} */
   this.specs = new pn.ui.UiSpecsRegister(this.getUiSpecs());
@@ -109,16 +118,6 @@ pn.app.BaseApp = function(opt_cfg) {
   /** @type {!pn.ui.AbstractViewMgr} */
   this.view = this.createViewManager();
   this.registerDisposable(this.view);
-
-  // Convenience delegates.
-  /**
-   * @param {string} topic Topic to publish to.
-   * @param {...*} var_args Arguments that are applied to each sub function.
-   */
-  this.pub = goog.bind(this.bus_.pub, this.bus_);
-
-  /** @return {string} The current topic being submitted. */
-  this.topic = goog.bind(this.bus_.topic, this.bus_);
 
   this.initEvHandlers_();
 };

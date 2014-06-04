@@ -249,10 +249,10 @@ pn.data.EntityUtils.orderEntitiesByName = function(type, list) {
   var template = list[0];
   var namep = type + 'Name';
 
-  pn.assDefAndNotNull(template[namep]);
+  pn.assDefAndNotNull(template.getValue(namep));
 
   list.pnsort(function(a, b) {
-    return a[namep] > b[namep] ? 1 : -1;
+    return a.getValue(namep) > b.getValue(namep) ? 1 : -1;
   });
 };
 

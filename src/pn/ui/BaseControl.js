@@ -5,7 +5,6 @@ goog.require('pn.app.EventHandlerTarget');
 goog.require('pn.ui.GestureFilter');
 
 
-
 /**
  * @constructor
  * @extends {pn.app.EventHandlerTarget}
@@ -20,16 +19,21 @@ pn.ui.BaseControl = function(el) {
   /** @type {!Element} */
   this.el = el;
 
-  /** @private @const @type {!pn.ui.GlobalGestureHandler} */
-  var ggh = pn.ui.GlobalGestureHandler.instance();
-  this.gestures_ = new pn.ui.GestureFilter(ggh);
-  this.registerDisposable(this.gestures_);
+  /** @private @type {pn.ui.GestureFilter} */
+  this.gestures_ = null;
 
   /** @protected @type {goog.debug.Logger} */
   this.log = pn.log.getLogger(el.id);
 };
 goog.inherits(pn.ui.BaseControl, pn.app.EventHandlerTarget);
 
+/** @private */
+pn.ui.BaseControl.prototype.initgestures_ = function () {
+  if (!!this.gestures_) return;
+  var ggh = pn.ui.GlobalGestureHandler.instance();
+  this.gestures_ = new pn.ui.GestureFilter(ggh);
+  this.registerDisposable(this.gestures_);
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 /// PROTECTED HELPERS
@@ -94,9 +98,9 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
       el = this.getel(id);
   if (el instanceof HTMLInputElement && el.type === 'date') {
     if (goog.isDef(opt_val)) {
-      el.value = isis.ui.Formatters.datetimeinput.format(opt_val);
+      el.value = pn.date.datetimeinput.format(opt_val);
     } else {
-      val = isis.ui.Formatters.parseDateInpField(el.value);
+      val = pn.date.parseDateInpField(el.value);
     }
   }
   else {
@@ -217,7 +221,8 @@ pn.ui.BaseControl.prototype.ontap = function(el, cb) {
  * @param {function(goog.events.Event=):undefined} cb The callback for the
  *    event.
  */
-pn.ui.BaseControl.prototype.ongesture = function(events, el, cb) {
+pn.ui.BaseControl.prototype.ongesture = function (events, el, cb) {
+  this.initgestures_();
   this.getels_(el).pnforEach(function(e) {
     this.gestures_.ongesture(events, e, cb.pnbind(this));
   }, this);
@@ -247,7 +252,7 @@ pn.ui.BaseControl.prototype.focus = function(el) {
 /**
  * @param {string|!Element} el The ID or element of the element to listen to.
  *    This uses the standard naming conventions for element IDs.
- * @param {!(Array.<!pn.ui.MultiSelectItem>|Object.<string>)} values
+ * @param {!(Array.<!Object>|Object.<string>)} values
  *    The values to populate the list with.
  * @param {(number|string)=} opt_v The optional selected value.
  */
@@ -255,7 +260,6 @@ pn.ui.BaseControl.prototype.populateList = function(el, values, opt_v) {
   var el2 = goog.isString(el) ? this.getel(el) : el;
   el2.origchildren = null;
   goog.dom.removeChildren(el2);
-  /** @type {!Array.<!pn.ui.MultiSelectItem>} */
   var arr = [];
 
   if (goog.isArray(values)) { arr = values; }

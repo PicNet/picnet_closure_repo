@@ -45,11 +45,6 @@ pn.data.TypeRegister.fromName = function(name) {
  */
 pn.data.TypeRegister.create = function(type, raw) {
   var ctor = pn.data.TypeRegister.fromName(type);
-
-  // Refactor later
-  raw['DateCreated'] = raw.getValue('DateCreated');
-  raw['DateLastUpdated'] = raw.getValue('DateLastUpdated');
-
   var entity = new ctor(raw);
   for (var p in raw) {
     // Hidden Fields

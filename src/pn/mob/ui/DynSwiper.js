@@ -166,6 +166,6 @@ pn.mob.ui.DynSwiper.prototype.updateAnim_ = function(idx) {
 
 /** @override */
 pn.mob.ui.DynSwiper.prototype.disposeInternal = function() {
-  goog.base(this, 'disposeInternal');
+  pn.mob.ui.DynSwiper.superClass_.disposeInternal.call(this);
   this.swiper_['destroy']();
 };

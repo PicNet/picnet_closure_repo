@@ -31,6 +31,26 @@ pn.date.longDateFormat = new goog.i18n.DateTimeFormat("EEEE dd'/'MMM'/'yyyy");
 /** @type {!goog.i18n.DateTimeParse} */
 pn.date.dateParser = new goog.i18n.DateTimeParse(pn.date.datePattern_);
 
+/** @type {!goog.i18n.DateTimeFormat} */
+pn.date.datetimeinput = new goog.i18n.DateTimeFormat("yyyy'-'MM'-'dd");
+
+
+/** @type {!goog.i18n.DateTimeParse} */
+pn.date.datetimeinputparser =
+    new goog.i18n.DateTimeParse("yyyy'-'MM'-'dd' 'HH:mm");
+
+/**
+ * @param {!string} date The string date value from a input type=date field.
+ * @return {goog.date.DateTime} The date value.
+ */
+pn.date.parseDateInpField = function (date) {
+  if (!goog.isDefAndNotNull(date)) return null;
+  var d = new Date(date);
+  return !isNaN(d.getTime()) ?
+      new goog.date.DateTime(d.getFullYear(), d.getMonth(), d.getDate()) :
+      null;
+};
+
 
 /** Disposed all static instances of formatters and parsers */
 pn.date.dispose = function() {
@@ -38,11 +58,15 @@ pn.date.dispose = function() {
   goog.dispose(pn.date.dateTimeFormat);
   goog.dispose(pn.date.longDateFormat);
   goog.dispose(pn.date.dateParser);
+  goog.dispose(pn.date.datetimeinput);
+  goog.dispose(pn.date.datetimeinputparser);
 
   delete pn.date.dateFormat;
   delete pn.date.dateTimeFormat;
   delete pn.date.longDateFormat;
   delete pn.date.dateParser;
+  delete pn.date.datetimeinput;
+  delete pn.date.datetimeinputparser;
 };
 
 

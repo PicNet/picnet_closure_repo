@@ -28,9 +28,7 @@ pn.web.BaseWebApp = function(opt_cfg) {
   pn.web.ctx = this;
 
   this.cfg = new pn.web.WebAppConfig(opt_cfg);
-  this.registerDisposable(this.cfg);
-
-  pn.app.BaseApp.call(this);
+  this.registerDisposable(this.cfg);  
 
   /** @type {!pn.ui.KeyShortcutMgr} */
   this.keys = new pn.ui.KeyShortcutMgr();
@@ -41,6 +39,8 @@ pn.web.BaseWebApp = function(opt_cfg) {
    * @type {boolean}
    */
   this.impersonationEnabled_ = false;
+
+  pn.app.BaseApp.call(this);
 };
 goog.inherits(pn.web.BaseWebApp, pn.app.BaseApp);
 
@@ -63,7 +63,8 @@ pn.web.BaseWebApp.prototype.createViewManager = function() {
 /** @override. */
 pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
   // TODO: We should have a WebAppEvents enumeration
-  var evs = goog.base(this, 'getDefaultAppEventHandlers'),
+  var evs = pn.web.BaseWebApp.
+          superClass_.getDefaultAppEventHandlers.call(this),
       ae = pn.web.WebAppEvents;
 
   // Message
@@ -79,8 +80,7 @@ pn.web.BaseWebApp.prototype.getDefaultAppEventHandlers = function() {
 /** @override. */
 pn.web.BaseWebApp.prototype.init = function() {
   if (this.cfg.enableImpersonation) { this.enableAjaxImpersonisation_(); }
-
-  goog.base(this, 'init');
+  pn.web.BaseWebApp.superClass_.init.call(this);
 };
 
 
