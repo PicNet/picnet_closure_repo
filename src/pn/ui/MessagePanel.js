@@ -34,7 +34,12 @@ pn.ui.MessagePanel = function(panel) {
    */
   this.log_ = pn.log.getLogger('pn.ui.MessagePanel');
 
-  this.ontap(panel, this.clearMessage.pnbind(this));
+  var cb = this.clearMessage.pnbind(this);
+  if (!window.Hammer) {
+    this.listenTo(panel, goog.events.EventType.CLICK, cb);
+  } else {
+    this.ontap(panel, cb);
+  }
 };
 goog.inherits(pn.ui.MessagePanel, pn.ui.BaseControl);
 
