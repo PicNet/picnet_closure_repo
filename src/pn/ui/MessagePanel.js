@@ -35,7 +35,7 @@ pn.ui.MessagePanel = function(panel) {
   this.log_ = pn.log.getLogger('pn.ui.MessagePanel');
 
   var cb = this.clearMessage.pnbind(this);
-  if (!window.Hammer) {
+  if (!window['Hammer']) {
     this.listenTo(panel, goog.events.EventType.CLICK, cb);
   } else {
     this.ontap(panel, cb);
