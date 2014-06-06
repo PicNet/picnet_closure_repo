@@ -307,6 +307,21 @@ String.prototype.pninsensitiveCompare = function(str2) {
 
 
 /**
+ * A string comparator.
+ * -1 = str1 less than str2
+ *  0 = str1 equals str2
+ *  1 = str1 greater than str2
+ *
+ * @this {string} str1 The string to compare.
+ * @param {string} str2 The string to compare {@code str1} to.
+ * @return {number} The comparator result, as described above.
+ */
+String.prototype.pncompare = function(str2) {
+  return this === str2 ? 0 : this < str2 ? -1 : 1;
+};
+
+
+/**
  * String comparison function that handles numbers in a way humans might expect.
  * Using this function, the string "File 2.jpg" sorts before "File 10.jpg". The
  * comparison is mostly case-insensitive, though strings that are identical

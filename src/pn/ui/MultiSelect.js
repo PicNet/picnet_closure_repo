@@ -76,36 +76,38 @@ goog.inherits(pn.ui.MultiSelect, pn.ui.BaseControl);
 /** @param {!Array.<!pn.ui.MultiSelectItem>} list The list of children. */
 pn.ui.MultiSelect.prototype.options = function(list) {
   this.children_ = {};
-  var doli = goog.bind(function(o, parent) {
+  var sb = new goog.string.StringBuffer();
+  var doli = goog.bind(function(o, parentsb, forceopen) {
     this.children_[o.id] = o;
 
-    var html = '<li data-itemid="' + o.id + '" touch-action>' +
-            o.name + '</li>',
-        li = pn.dom.htmlToEl(html),
-        addargs = [li];
-    if (o.id === this.allval) this.allli_ = li;
-    if (this.showSelection && o.selected) { addargs.push('selected'); }
-    if (o.cssclass) { addargs.push(o.cssclass); }
-    var lis = [li];
+    var hasparent = !!parentsb;
+    var listr = parentsb || new goog.string.StringBuffer();
+    listr.append('<li data-itemid="', o.id,
+        '" touch-action="" class="', o.cssclass || '');
+    if (this.showSelection && o.selected) { listr.append(' selected'); }
     if (!!o.nodes) {
-      addargs.push('branch');
-      var open = o.open || o.nodes.pnfindIndex(
+      var open = forceopen || o.open || o.nodes.pnfindIndex(
           function(n) { return n.selected || n.open; }) >= 0;
-      addargs.push(open ? 'open' : 'closed');
-      var children = o.nodes.pnmapMany(function(n) { return doli(n); }, li);
-      lis = lis.pnconcat(children);
-      this.show(children, open);
+      listr.append(' branch', open ? ' open' : ' closed', '"');
+      if (hasparent && !open) listr.append(' style="display:none"');
+      listr.append('>', o.name, '</li>');
+      o.nodes.pnforEach(function(n) { doli(n, listr, open); });
     } else {
-      if (!!parent) li.style.display = 'none';
-      addargs.push('leaf');
+      listr.append(' leaf"');
+      if (hasparent && !o.open && !forceopen)
+        listr.append(' style="display:none"');
+      listr.append('>', o.name, '</li>');
     }
-    goog.dom.classes.add.apply(this, addargs);
-    return lis;
+    return listr.toString();
   }, this);
-  var elements = list.pnmapMany(function(n) { return doli(n); });
-  goog.dom.removeChildren(this.ul_);
-  goog.dom.append(this.ul_, elements);
 
+  list.pnforEach(function(n) { sb.append(doli(n)); });
+  this.ul_.innerHTML = sb.toString();
+
+  if (!!this.allval)
+    this.allli_ = pn.toarr(this.ul_.children).pnfind(function(li) {
+      return li.getAttribute('data-itemid') === this.allval;
+    }, this);
 };
 
 
