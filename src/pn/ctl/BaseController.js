@@ -179,6 +179,9 @@ pn.ctl.BaseController.prototype.localstore = function(id, opt_val) {
  *    constructor.
  */
 pn.ctl.BaseController.prototype.dialog = function(id, opt_cb, var_args) {
+  pn.assStr(id);
+  pn.ass(!opt_cb || goog.isFunction(opt_cb));
+
   var args = pn.toarr(arguments);
   if (goog.isFunction(args[1])) args[1] = args[1].pnbind(this);
   args.unshift(false);
