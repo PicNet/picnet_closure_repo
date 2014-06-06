@@ -10,7 +10,7 @@ goog.provide('pn.log');
 
 
 /** @type {boolean} */
-pn.log.OFF = true;
+pn.log.OFF = false;
 
 
 /**

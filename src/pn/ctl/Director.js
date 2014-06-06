@@ -92,10 +92,12 @@ pn.ctl.Director.prototype.init_ = function() {
  *    3) Fire 'hid' on current
  *    3) Fire 'shown' on new
  * 'hiding' and 'showing' are cancellable.
+ * @param {boolean} isback Wether we are comming from a back invokation.
  * @param {string} id The ID of the controller to get
  * @param {...*} var_args Any additional arguments passed to the controller.
  */
-pn.ctl.Director.prototype.show = function(id, var_args) {
+pn.ctl.Director.prototype.show = function(isback, id, var_args) {
+  pn.assBool(isback);
   pn.assStr(id);
 
   this.log_.fine('show: ' + id);
@@ -105,9 +107,10 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
   }
   var newel = pn.dom.get(id + '-page'),
       args = pn.toarr(arguments);
-
-  args.splice(1, 0, newel);
-  args.splice(2, 0, function(newc) {
+  args.splice(2, 0, newel);
+  args.splice(3, 0, function(newc) {
+    if (newc instanceof pn.ctl.BaseDialog)
+      throw new Error('Controller: ' + id + ' should not inherit from Dialog');
     if (!newc.showing()) {
       goog.dispose(newc);
       this.log_.fine('show existing - new controller vetoed showing');
@@ -137,11 +140,13 @@ pn.ctl.Director.prototype.show = function(id, var_args) {
 
 
 /**
+ * @param {boolean} isback Wether we are comming from a back invokation.
  * @param {string} id The ID of the dialog to get
- * @param {function(Object):undefined=} opt_cb The callback on dialog close.
+ * @param {function(*):undefined=} opt_cb The callback on dialog close.
  * @param {...*} var_args Any additional arguments passed to the controller.
  */
-pn.ctl.Director.prototype.showDialog = function(id, opt_cb, var_args) {
+pn.ctl.Director.prototype.showDialog = function(isback, id, opt_cb, var_args) {
+  pn.assBool(isback);
   pn.assStr(id);
   pn.ass(!opt_cb || goog.isFunction(opt_cb));
 
@@ -149,8 +154,11 @@ pn.ctl.Director.prototype.showDialog = function(id, opt_cb, var_args) {
       el = pn.dom.get(id + '-dialog'),
       pages,
       top;
-  args[1] = el;
-  args.splice(2, 0, function(newc) {
+  args[2] = el;
+  args.splice(3, 0, function(newc) {
+    if (!(newc instanceof pn.ctl.BaseDialog))
+      throw new Error('Controller: ' + id + ' should inherit from Dialog');
+
     var crrentel = !!this.current_ ? this.current_.el : null;
     this.currentDialog_ = newc;
     if (crrentel) {
@@ -176,7 +184,6 @@ pn.ctl.Director.prototype.showDialog = function(id, opt_cb, var_args) {
 /** @private @param {!pn.ctl.BaseController} c @param {string} id */
 pn.ctl.Director.prototype.showNewController_ = function(c, id) {
   pn.assInst(c, pn.ctl.BaseController);
-
   this.current_ = c;
 
   window.scroll(0, 0);
@@ -217,17 +224,18 @@ pn.ctl.Director.prototype.disposeController_ = function(controller) {
 
 /**
  * @private
+ * @param {boolean} isback Wether we are navigating from a back button.
  * @param {string} id The ID of the controller to get
  * @param {!Element} el The div that represents this view.
  * @param {function(!pn.ctl.BaseController):undefined} cb The callback to
  *    pass the loaded controller to.
  * @param {...*} var_args Any additional arguments passed to the controller.
  */
-pn.ctl.Director.prototype.get_ = function(id, el, cb, var_args) {
+pn.ctl.Director.prototype.get_ = function(isback, id, el, cb, var_args) {
+  pn.assBool(isback);
   pn.assStr(id);
   pn.assInst(el, HTMLElement);
   pn.assFun(cb);
-
   this.ctlFactory_.apply(this, arguments);
 };
 

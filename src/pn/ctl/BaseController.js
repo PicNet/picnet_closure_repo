@@ -179,8 +179,10 @@ pn.ctl.BaseController.prototype.localstore = function(id, opt_val) {
  *    constructor.
  */
 pn.ctl.BaseController.prototype.dialog = function(id, opt_cb, var_args) {
-  if (goog.isFunction(arguments[1])) arguments[1] = arguments[1].pnbind(this);
-  this.director_.showDialog.apply(this.director_, arguments);
+  var args = pn.toarr(arguments);
+  if (goog.isFunction(args[1])) args[1] = args[1].pnbind(this);
+  args.unshift(false);
+  this.director_.showDialog.apply(this.director_, args);
 };
 
 
