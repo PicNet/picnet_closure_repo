@@ -46,7 +46,9 @@ pn.ui.GlobalGestureHandler = function(parent) {
     var el = this.getTouchEl_(e.target);
     if (!el) return;
     kill(e);
-    this.dispatchEvent(new goog.events.Event(type, el));
+    var ev = new goog.events.Event(type, el);
+    ev.actualtarget = e.target;
+    this.dispatchEvent(ev);
   };
 
   hammer.on('tap', fire.pnbind(this, EventType.TAP));
