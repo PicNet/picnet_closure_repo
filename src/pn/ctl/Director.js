@@ -170,10 +170,12 @@ pn.ctl.Director.prototype.showDialog = function(isback, id, opt_cb, var_args) {
 
     if (opt_cb) this.currentDialog_.onsubmit(opt_cb);
     if (crrentel) {
-      this.currentDialog_.onhide(function() {
+      this.currentDialog_.onhide(goog.bind(function() {
         pn.dom.show(crrentel, true);
         pages.scrollTop = top;
-      });
+        this.disposeController_(this.currentDialog_);
+        this.currentDialog_ = null;
+      }, this));
     }
     goog.Timer.callOnce(this.currentDialog_.shown, 0, this.currentDialog_);
   }.pnbind(this));
