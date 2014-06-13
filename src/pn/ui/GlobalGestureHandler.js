@@ -42,15 +42,17 @@ pn.ui.GlobalGestureHandler = function(parent) {
         e.gesture.stopPropagation();
         e.gesture.stopDetect();
       };
+  var isforinp = function(el) {
+    if (el instanceof HTMLInputElement) return true;
+    if (!(el instanceof HTMLLabelElement)) return false;
+    var id = el.getAttribute('for');
+    var forel = id ? pn.dom.get(id) : null;
+    return forel instanceof HTMLInputElement;
+  };
   var fire = function(type, e) {
     var el = this.getTouchEl_(e.target);
-    if (!el) return;
-    // Calling kill was stopping the checkboxes on lists working on Adnroid.
-    //    But this was originally put in for a reason, I think issues with IOs
-    //    so we may need to revisit this commenting out.  Perhaps only call
-    //    if IOs if checkboxes work. Leaving commented out code just in case
-    //    as this may bite even with Android in some cases.
-    // kill(e);
+    if (!el || isforinp(e.target)) { return; }
+    kill(e);
     var ev = new goog.events.Event(type, el);
     ev.actualtarget = e.target;
     this.dispatchEvent(ev);
@@ -65,7 +67,7 @@ pn.ui.GlobalGestureHandler = function(parent) {
     if (e.gesture.direction == 'left') { type = EventType.SWIPELEFT; }
     else if (e.gesture.direction == 'right') { type = EventType.SWIPERIGHT; }
     if (!el || !type) return;
-    // kill(e);
+    kill(e);
 
     this.dispatchEvent(new goog.events.Event(type, el));
   }, this));
