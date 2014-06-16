@@ -112,7 +112,8 @@ pn.ui.BaseControl.prototype.dateval = function(id, opt_val) {
       el.setValue(opt_val);
     } else {
       val = /** @type {goog.date.DateTime} */ (el.getValue());
-      pn.assInst(val, goog.date.DateTime);
+      // val could be null if the use doesn't enter anything to the controller
+      pn.ass(!val || val instanceof goog.date.DateTime);
     }
   }
   return !val || val.getYear() < 1970 || isNaN(val.getYear()) ? null : val;
