@@ -109,8 +109,6 @@ pn.ctl.Director.prototype.show = function(isback, id, var_args) {
       args = pn.toarr(arguments);
   args.splice(2, 0, newel);
   args.splice(3, 0, function(newc) {
-    if (newc instanceof pn.ctl.BaseDialog)
-      throw new Error('Controller: ' + id + ' should not inherit from Dialog');
     if (!newc.showing()) {
       goog.dispose(newc);
       this.log_.fine('show existing - new controller vetoed showing');
