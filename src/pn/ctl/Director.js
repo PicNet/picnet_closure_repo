@@ -163,7 +163,7 @@ pn.ctl.Director.prototype.showDialog = function(isback, id, opt_cb, var_args) {
     this.currentDialog_ = newc;
     if (crrentel) {
       pages = pn.dom.get('pages');
-      top = pages.scrollTop;
+      top = window.scrollY;
       pn.dom.show(crrentel, false);
     }
     pn.dom.show(el, true);
@@ -172,7 +172,7 @@ pn.ctl.Director.prototype.showDialog = function(isback, id, opt_cb, var_args) {
     if (crrentel) {
       this.currentDialog_.onhide(goog.bind(function() {
         pn.dom.show(crrentel, true);
-        pages.scrollTop = top;
+        window.scrollTo(0, top);
         this.disposeController_(this.currentDialog_);
         this.currentDialog_ = null;
       }, this));
