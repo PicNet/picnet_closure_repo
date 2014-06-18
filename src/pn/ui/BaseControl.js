@@ -72,7 +72,7 @@ pn.ui.BaseControl.prototype.val = function(id, opt_val) {
 
 /**
  * Helper to get or set the numerical field value.
- * @param {string} id The ID suffix (without the page id) of the control
+ * @param {string|Element} id The ID suffix (without the page id) of the control
  *    value to set/retreive.
  * @param {number=} opt_val The value to set.  If not specified then we just
  *    get the value;
