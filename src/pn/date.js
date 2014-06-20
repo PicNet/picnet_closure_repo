@@ -199,3 +199,22 @@ pn.date.CompareInSeconds = function(date1, date2) {
   result = date1.getSeconds() - date2.getSeconds();
   return result;
 };
+
+
+/**
+ * @param {goog.date.DateTime} date1 The goog Date object.
+ * @param {goog.date.DateTime} date2 The goog Date object.
+ * @return {!number} date1 smaller, equal, or larger then date2
+ */
+pn.date.CompareDate = function(date1, date2) {
+  if (!date1 && !date2) { return 0; }
+  if (!date1) { return -1; }
+  if (!date2) { return 1; }
+
+  var result;
+  result = date1.getYear() - date2.getYear();
+  if (!!result) return result;
+  result = date1.getMonth() - date2.getMonth();
+  if (!!result) return result;
+  return date1.getDate() - date2.getDate();
+};
