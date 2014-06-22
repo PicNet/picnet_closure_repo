@@ -180,7 +180,7 @@ pn.date.fromDate = function(d) {
  * @param {goog.date.DateTime} date2 The goog Date object.
  * @return {!number} date1 smaller, equal, or larger then date2
  */
-pn.date.CompareInSeconds = function(date1, date2) {
+pn.date.compareInSeconds = function(date1, date2) {
   if (!date1 && !date2) { return 0; }
   if (!date1) { return -1; }
   if (!date2) { return 1; }
@@ -206,7 +206,7 @@ pn.date.CompareInSeconds = function(date1, date2) {
  * @param {goog.date.DateTime} date2 The goog Date object.
  * @return {!number} date1 smaller, equal, or larger then date2
  */
-pn.date.CompareDate = function(date1, date2) {
+pn.date.compareDate = function(date1, date2) {
   if (!date1 && !date2) { return 0; }
   if (!date1) { return -1; }
   if (!date2) { return 1; }
