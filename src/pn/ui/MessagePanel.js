@@ -132,10 +132,11 @@ pn.ui.MessagePanel.prototype.showList_ = function(list, cls) {
 
   this.el.innerHTML = html;
   pn.dom.show(this.el, true);
-  // Variable length message timeout, 2s per message
+
+  // Variable length message timeout, with min length
   var totchars = this.messages_.pnreduce(
       function(acc, m) { return acc + m.length; }),
-      timeout = Math.max(1500, totchars * 80);
+      timeout = Math.max(2250, totchars * 80);
   this.timer_ = goog.Timer.callOnce(this.clearMessage, timeout, this);
 };
 
