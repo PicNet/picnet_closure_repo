@@ -174,7 +174,10 @@ pn.ui.MultiSelect.prototype.defaultFilter_ = function(filter) {
   pn.assStr(filter);
 
   var exp = filter.toLowerCase();
-  return function(val) { return val.toLowerCase().indexOf(exp) >= 0; };
+  return function(val) {
+    var tokens = val.toLowerCase().split(/(,|\(| )/);
+    return tokens.pnany(function(v) { return v.indexOf(exp) === 0; });
+  };
 };
 
 
