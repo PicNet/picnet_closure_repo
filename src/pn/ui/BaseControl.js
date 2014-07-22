@@ -206,6 +206,19 @@ pn.ui.BaseControl.prototype.onkeyup = function(el, cb) {
 
 
 /**
+ * @param {string|!Element|!Array.<(string|!Element)>} el The ID or element
+ *    of the element to listen to. This uses the standard naming conventions
+ *    for element IDs.
+ * @param {function(goog.events.Event):undefined} cb The callback for the event.
+ */
+pn.ui.BaseControl.prototype.oninput = function(el, cb) {
+  this.getels_(el).pnforEach(function(e) {
+    this.listenTo(e, goog.events.EventType.INPUT, cb.pnbind(this));
+  }, this);
+};
+
+
+/**
  * @param {string|!Element} el The ID or element of the element to listen to.
  *    This uses the standard naming conventions for element IDs.
  * @param {function(goog.events.Event=):undefined} cb The callback for
