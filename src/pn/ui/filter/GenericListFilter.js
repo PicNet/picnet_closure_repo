@@ -519,8 +519,11 @@ pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
 
   var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
   var txt = opt_txt || [goog.dom.getTextContent(item).pntrim()];
-  var matches = state.type === 'date' ?  this.doesTextContainTextImpl(this.search.formatDateToken_(txt, this.options['filterDateFormat'])[0], textTokens, exact) :
-  this.doesTextContainText(txt, textTokens, exact);
+  var filteringDate = state != null && state.type === 'date';
+  if (filteringDate){
+    txt = this.search.formatDateToken_(txt, this.options['filterDateFormat']);
+  }
+  var matches = this.doesTextContainText(txt, textTokens, exact);
   return matches && this.checkMatchingElementCallback_(state, item, textTokens);
 };
 

@@ -211,7 +211,7 @@ picnet.ui.filter.SearchEngine.prototype.formatDateToken_ = function(postFixToken
      postFixTokens = new Array(postFixTokens); 
   }
 
-  for (var idx in postFixTokens){
+  for (var idx = 0; idx < postFixTokens.length; idx++){
     postFixTokens[idx] = postFixTokens[idx].replace(regex, "$3$2$1");
   }
 

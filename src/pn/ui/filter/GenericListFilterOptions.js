@@ -40,7 +40,7 @@ pn.ui.filter.GenericListFilterOptions.prototype['filterToolTipMessage'] =
  * @export
  * @type {string}
  */
-picnet.ui.filter.GenericListFilterOptions.prototype['filterDateFormat'] = 'dd/mm/yyyy';
+pn.ui.filter.GenericListFilterOptions.prototype['filterDateFormat'] = 'dd/mm/yyyy';
 
 
 /** @type {boolean} */
