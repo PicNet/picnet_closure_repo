@@ -145,10 +145,36 @@ pn.date.fromUtcMillis = function(millis) {
       month = datetime.getUTCMonth(),
       day = datetime.getUTCDate(),
       hours = datetime.getUTCHours(),
-      mins = datetime.getUTCMinutes();
+      mins = datetime.getUTCMinutes(),
+      seconds = datetime.getUTCSeconds();
 
   return isNaN(year) || year <= 1970 ?
-      null : new goog.date.DateTime(year, month, day, hours, mins);
+      null : new goog.date.DateTime(year, month, day, hours, mins, seconds);
+};
+
+
+/**
+ * @param {!number} millis The date to reset
+ * @return {?goog.date.DateTime} A new utc date time.
+ */
+pn.date.convertUTCMillisToLocal = function(millis) {
+
+  if (!goog.isDefAndNotNull(millis) || millis <= 0) return null;
+
+  var utc = new goog.date.DateTime(new Date(millis)),
+      offset = utc.getTimezoneOffset(),
+      year = utc.getFullYear(),
+      month = utc.getMonth(),
+      day = utc.getDate(),
+      hours = utc.getHours(),
+      mins = utc.getMinutes(),
+      seconds = utc.getSeconds();
+
+  mins -= offset % 60;
+  hours -= Math.floor(offset / 60);
+
+  return isNaN(year) || year <= 1970 ?
+      null : new goog.date.DateTime(year, month, day, hours, mins, seconds);
 };
 
 
