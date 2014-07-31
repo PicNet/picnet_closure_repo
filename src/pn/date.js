@@ -154,15 +154,11 @@ pn.date.fromUtcMillis = function(millis) {
 
 
 /**
- * @param {!number} millis The date to reset
+ * @param {goog.date.DateTime} utc The date to reset
  * @return {?goog.date.DateTime} A new utc date time.
  */
-pn.date.convertUTCMillisToLocal = function(millis) {
-
-  if (!goog.isDefAndNotNull(millis) || millis <= 0) return null;
-
-  var utc = new goog.date.DateTime(new Date(millis)),
-      offset = utc.getTimezoneOffset(),
+pn.date.convertUTCMillisToLocal = function(utc) {
+  var offset = utc.getTimezoneOffset(),
       year = utc.getFullYear(),
       month = utc.getMonth(),
       day = utc.getDate(),
