@@ -290,6 +290,9 @@ pn.ui.filter.GenericListFilter.prototype.getFilterStateForFilter =
   switch (type) {
     case 'text':
       value = filter.value === null ? null : filter.value.toLowerCase();
+       if (filter['date-field']){
+              type = "date"; //capture the text and change type to date
+       }
       break;
     case 'select-one':
       value = filter.selectedIndex === 0 ?
@@ -481,6 +484,8 @@ pn.ui.filter.GenericListFilter.prototype.getNormalisedSearchTokensForState_ =
       return this.search_.parseSearchTokens(state.value);
     case 'checkbox':
       return null;
+    case 'date':
+      return this.search.parseSearchDateTokens(state.value, this.options['filterDateFormat']);
     default:
       throw 'State type ' + state.type + ' is not supported';
   }
@@ -514,6 +519,10 @@ pn.ui.filter.GenericListFilter.prototype.doesElementContainText =
 
   var exact = goog.isDefAndNotNull(state) && state.type === 'select-one';
   var txt = opt_txt || [goog.dom.getTextContent(item).pntrim()];
+  var filteringDate = state != null && state.type === 'date';
+  if (filteringDate){
+    txt = this.search.formatDateToken_(txt, this.options['filterDateFormat']);
+  }
   var matches = this.doesTextContainText(txt, textTokens, exact);
   return matches && this.checkMatchingElementCallback_(state, item, textTokens);
 };
