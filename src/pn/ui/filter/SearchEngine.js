@@ -126,21 +126,23 @@ pn.ui.filter.SearchEngine.prototype.parseSearchTokens = function(text) {
 
 /**
  * @param {string} text The filter text to use when testing entry for match.
- * @param {string} mask The mask of date 
+ * @param {string} mask The mask of date
  * @return {Array.<string>} The normalized postfix tokens representation of
  *    this text.
  */
-picnet.ui.filter.SearchEngine.prototype.parseSearchDateTokens = function(text, mask) {
-    if (!text) { return null; }
-    text = text.toLowerCase();
-    var normalisedTokens = this.normaliseExpression_(text);
-    normalisedTokens = this.allowFriendlySearchTerms_(normalisedTokens);
-    var asPostFix = this.convertExpressionToPostFix_(normalisedTokens);
-    var postFixTokens = asPostFix.split('|');
-    postFixTokens = this.formatDateToken_(postFixTokens, mask);
+picnet.ui.filter.SearchEngine.prototype.parseSearchDateTokens =
+    function(text, mask) {
+  if (!text) { return null; }
+  text = text.toLowerCase();
+  var normalisedTokens = this.normaliseExpression_(text);
+  normalisedTokens = this.allowFriendlySearchTerms_(normalisedTokens);
+  var asPostFix = this.convertExpressionToPostFix_(normalisedTokens);
+  var postFixTokens = asPostFix.split('|');
+  postFixTokens = this.formatDateToken_(postFixTokens, mask);
 
-    return postFixTokens;
+  return postFixTokens;
 };
+
 
 /**
  * @private
@@ -197,26 +199,29 @@ pn.ui.filter.SearchEngine.prototype.getNumberFrom_ = function(txt) {
   return parseFloat(txt);
 };
 
+
 /**
  * @private
  * @param {Array.<string>} postFixTokens The filter tokens to match against the
  *    specified text.
  * @param {string} mask The mask of date
- * @return {!Array.<string>} The postFixTokens formated 
+ * @return {!Array.<string>} The postFixTokens formated
  */
-picnet.ui.filter.SearchEngine.prototype.formatDateToken_ = function(postFixTokens, mask) {
+picnet.ui.filter.SearchEngine.prototype.formatDateToken_ =
+    function(postFixTokens, mask) {
   var regex = this.dateMaskToRegex_(mask);
 
-  if (!goog.isArray(postFixTokens)){
-     postFixTokens = new Array(postFixTokens); 
+  if (!goog.isArray(postFixTokens)) {
+    postFixTokens = new Array(postFixTokens);
   }
 
-  for (var idx = 0; idx < postFixTokens.length; idx++){
-    postFixTokens[idx] = postFixTokens[idx].replace(regex, "$3$2$1");
+  for (var idx = 0; idx < postFixTokens.length; idx++) {
+    postFixTokens[idx] = postFixTokens[idx].replace(regex, '$3$2$1');
   }
 
   return postFixTokens;
-}
+};
+
 
 /**
  * @private
@@ -224,16 +229,17 @@ picnet.ui.filter.SearchEngine.prototype.formatDateToken_ = function(postFixToken
  * @return {RegExp} The Regular Expression of mask
  */
 picnet.ui.filter.SearchEngine.prototype.dateMaskToRegex_ = function(mask) {
-    var separator = mask.match(/[^dmy]/);
-    regex = mask.replace("dd", "(\\d{1,2})");
-    regex = regex.replace("mm", "(\\d{1,2})");
-    regex = regex.replace("yyyy", "(\\d{4})");
-    if (separator.indexOf("/") === 0){
-      regex = regex.replace(new RegExp('/', 'g'), '\\\/');
-    }
+  var separator = mask.match(/[^dmy]/);
+  regex = mask.replace('dd', '(\\d{1,2})');
+  regex = regex.replace('mm', '(\\d{1,2})');
+  regex = regex.replace('yyyy', '(\\d{4})');
+  if (separator.indexOf('/') === 0) {
+    regex = regex.replace(new RegExp('/', 'g'), '\\\/');
+  }
 
-    return new RegExp(regex);
-}
+  return new RegExp(regex);
+};
+
 
 /**
  * @private

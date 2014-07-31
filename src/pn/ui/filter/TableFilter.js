@@ -192,11 +192,11 @@ pn.ui.filter.TableFilter.prototype.getFilterDom_ = function(colIdx, header) {
     });
     case 'ddl': return this.getSelectFilter_(colIdx);
     case 'date': return goog.dom.createDom('input', {
-      'type':'text',
+      'type': 'text',
       'id': this.getListId() + '_filter_' + colIdx,
-      'class':'filter',
-      'title':this.options['filterToolTipMessage'], 
-      'date-field':'true'
+      'class': 'filter',
+      'title': this.options['filterToolTipMessage'],
+      'date-field': 'true'
     });
     default: throw 'filter-type: ' + filterType + ' is not supported';
   }

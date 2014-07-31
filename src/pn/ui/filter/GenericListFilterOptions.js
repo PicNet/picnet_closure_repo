@@ -36,11 +36,13 @@ pn.ui.filter.GenericListFilterOptions.prototype['filterDelay'] = 250;
 pn.ui.filter.GenericListFilterOptions.prototype['filterToolTipMessage'] =
     pn.ui.filter.GenericListFilterOptions.DEFAULT_TOOLTIP;
 
+
 /**
  * @export
  * @type {string}
  */
-pn.ui.filter.GenericListFilterOptions.prototype['filterDateFormat'] = 'dd/mm/yyyy';
+pn.ui.filter.GenericListFilterOptions.prototype['filterDateFormat'] =
+    'dd/mm/yyyy';
 
 
 /** @type {boolean} */
