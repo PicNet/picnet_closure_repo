@@ -187,13 +187,35 @@ pn.data.Entity.prototype.getValueOrExt = function(prop) {
  *    by the server (No compiled property names).
  */
 pn.data.Entity.prototype.toJsonObject = function() {
+  return this.toJsonObjectImpl(function(d) { return d.getTime(); });
+};
+
+
+/**
+ * @return {!Object} An object that can be stringified and understood
+ *    by the server (No compiled property names).
+ */
+pn.data.Entity.prototype.toRawJsonObject = function() {
+  var r = this.toJsonObjectImpl(function(d) {
+    return d.getTime() - d.getTimezoneOffset() * 60 * 1000;
+  });
+  return r;
+};
+
+
+/**
+ * @param {!Function} dateParser function to parse date object
+ * @return {!Object} An object that can be stringified and understood
+ *    by the server (No compiled property names).
+ */
+pn.data.Entity.prototype.toJsonObjectImpl = function(dateParser) {
   var ps = this.getProps(),
       ps2 = goog.object.getKeys(this.extprops_),
       obj = { 'type': this.type },
       value = function(v) {
         if (!v) return v;
-        if (!!v.toJsonObject) return v.toJsonObject();
-        if (v instanceof goog.date.Date) return v.getTime();
+        if (!!v.toJsonObjectImpl) return v.toJsonObjectImpl(dateParser);
+        if (v instanceof goog.date.Date) return dateParser(v);
         if (goog.isArray(v)) return v.pnmap(value);
         return v;
       };
