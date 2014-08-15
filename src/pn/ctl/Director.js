@@ -47,6 +47,12 @@ pn.ctl.Director.prototype.currentController = function() {
 };
 
 
+/** @return {pn.ctl.BaseDialog} */
+pn.ctl.Director.prototype.currentDialog = function() {
+  return this.currentDialog_;
+};
+
+
 /**
  * @param {!Array.<string>} actions A list of valid back targets for this
  *    current page.

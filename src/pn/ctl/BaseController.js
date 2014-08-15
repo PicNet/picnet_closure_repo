@@ -21,8 +21,8 @@ pn.ctl.BaseController = function(el) {
    */
   this.log = pn.log.getLogger(el.id || 'pn.ctl.UnknownController');
 
-  /** @private @type {!pn.ctl.Director} */
-  this.director_;
+  /** @protected @type {!pn.ctl.Director} */
+  this.director;
 
   /** @private @type {!pn.data.Storage} */
   this.storage_;
@@ -57,7 +57,7 @@ pn.ctl.BaseController.prototype.initialise =
   pn.assInst(router, pn.app.Router);
   pn.assInst(msg, pn.ui.MessagePanel);
 
-  this.director_ = director;
+  this.director = director;
   this.storage_ = storage;
   this.router_ = router;
   this.msg_ = msg;
@@ -185,7 +185,7 @@ pn.ctl.BaseController.prototype.dialog = function(id, opt_cb, var_args) {
   var args = pn.toarr(arguments);
   if (goog.isFunction(args[1])) args[1] = args[1].pnbind(this);
   args.unshift(false);
-  this.director_.showDialog.apply(this.director_, args);
+  this.director.showDialog.apply(this.director, args);
 };
 
 
