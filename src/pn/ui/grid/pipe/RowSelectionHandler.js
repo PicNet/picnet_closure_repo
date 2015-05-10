@@ -39,7 +39,7 @@ pn.ui.grid.pipe.RowSelectionHandler.prototype.handleSelection_ =
 
   // Ignore if triggered by row re-ordering.
   if (target && target.className.indexOf('reorder') >= 0) return;
-
+  if (!pn.app.ctx.isUserAdmin) return;
   var idx = evData['rows'][0];
   var entity = this.view.getDv().getItem(idx);
   if (this.interceptor && !this.interceptor.canSelect(entity)) return;
