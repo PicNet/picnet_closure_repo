@@ -81,7 +81,7 @@ pn.ui.edit.FieldSpec = function(id, entitySpec, opt_name) {
    * @type {*}
    */
   this.defaultValue = undefined;
-   /** 
+  /**
    * Any tooltip to display to the user
    * @type {string}
    */

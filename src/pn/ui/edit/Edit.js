@@ -4,6 +4,7 @@ goog.provide('pn.ui.edit.Edit.EventType');
 
 goog.require('goog.date.Date');
 goog.require('goog.dom');
+goog.require('goog.dom.classes');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventHandler');
 goog.require('goog.ui.Button');
@@ -199,9 +200,9 @@ pn.ui.edit.Edit.prototype.updateRequiredClasses = function() {
     if (!parent) return; // Not shown, such as fields not shown on add
 
     if (fctx.isRequired()) {
-      goog.dom.classes.add(parent, 'required');
+      goog.dom.classlist.add(parent, 'required');
     } else {
-      goog.dom.classes.remove(parent, 'required');
+      goog.dom.classlist.remove(parent, 'required');
     }
   }, this);
 };

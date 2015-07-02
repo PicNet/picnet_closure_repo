@@ -50,6 +50,13 @@ pn.ui.BaseFieldSpec = function(id, entitySpec, opt_name) {
   this.name = opt_name || '';
 
   /**
+   * The className of this field or column.
+   *
+   * @type {string}
+   */
+  this.className = '';
+
+  /**
    * This field should represent the value in the currently displayed entity
    *    that marks the start of the relationship to the related entity.
    *

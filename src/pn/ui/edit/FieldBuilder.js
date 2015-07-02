@@ -78,7 +78,7 @@ pn.ui.edit.FieldBuilder.createAndAttach = function(fctx) {
     elem = goog.dom.createDom('input', { 'type': 'text', 'value': val});
     goog.dom.appendChild(fctx.parentComponent, elem);
   }
-  if (fctx.spec.tooltip) { fctx.parentComponent['title'] = fctx.spec.tooltip;  }
+  if (fctx.spec.tooltip) { fctx.parentComponent['title'] = fctx.spec.tooltip; }
   return elem;
 };
 
