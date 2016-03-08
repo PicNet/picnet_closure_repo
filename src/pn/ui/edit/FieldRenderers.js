@@ -349,7 +349,7 @@ pn.ui.edit.FieldRenderers.entityParentListField =
   });
   if (opt_filter) list = opt_filter(entity, list);
 
-  pn.data.EntityUtils.orderEntitiesByName(entityType, list);
+  pn.data.EntityUtils.orderEntities(entityType, list);
 
   var selTxt = 'Select ' + fctx.spec.name + ' ...';
   steps.shift();
@@ -470,7 +470,7 @@ pn.ui.edit.FieldRenderers.createPrintDiv_ = function(fctx, inp, parent) {
  * @return {!Element} The select box.
  */
 pn.ui.edit.FieldRenderers.createDropDownList_ =
-    function(fctx, selectTxt, list, selValue, opt_noneId) {
+    function (fctx, selectTxt, list, selValue, opt_noneId) {
   pn.ass(!selectTxt || goog.isString(selectTxt));
   pn.assArr(list);
   pn.ass(!goog.isDef(selValue) || goog.isNumber(selValue),
