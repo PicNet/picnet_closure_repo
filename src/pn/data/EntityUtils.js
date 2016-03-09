@@ -230,9 +230,16 @@ pn.data.EntityUtils.orderEntities = function(type, list) {
   var namet = template.hasProp(namep) ?
       pn.data.TypeRegister.getFieldSchema(type, namep).type : null;
 
-  if (ordert === 'number') { list.pnsortObjectsByKey(orderp); }
+  if (ordert === 'number') {
+    list.pnsort(function (a, b) {
+      return a.getValue(orderp) > b.getValue(orderp) ? 1 : -1;
+    });
+  }
   else if (namet === 'string') {
-    list.pnsortObjectsByKey(namep, goog.string.caseInsensitiveCompare);
+    list.pnsort(function (a, b) {
+      return a.getValue(namep).toUpperCase() > b.getValue(namep).toUpperCase() ?
+        1 : -1;
+    });
   }
 };
 

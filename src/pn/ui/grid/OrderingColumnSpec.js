@@ -26,7 +26,9 @@ pn.ui.grid.OrderingColumnSpec = function(id, entitySpec) {
   this.width = 8;
   this.renderer = function() { return ''; };
   this.sortValueRenderer =
-      function(cctx, entity) { return parseInt(entity[cctx.id], 10); };
+      function (cctx, entity) {
+        return parseInt(entity.getValue(cctx.id), 10);
+      };
   this.sortable = false;
 };
 goog.inherits(pn.ui.grid.OrderingColumnSpec, pn.ui.grid.ColumnSpec);
