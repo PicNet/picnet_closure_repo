@@ -1,5 +1,5 @@
 For assistance on tablefilter see:
-http://www.picnet.com.au/picnet_table_filter.html
+http://web.archive.org/web/20150124160820/http://www.picnet.com.au/picnet-table-filter.html
 
 
 How to compile picnet.table.filter.min.js
