@@ -123,6 +123,14 @@ pn.ui.edit.Edit.prototype.decorateInternal = function(element) {
     pn.ui.edit.Edit.superClass_.decorateInternal.call(this, div);
   }
   if (this.cfg_.template) {
+      this.entity.EventType = this.entity["EventType"];
+      this.entity.type = this.entity["type"];
+      this.entity.states = this.entity["states"];
+      this.entity.states = this.entity["stateid"];
+      this.entity.heading = this.entity["heading"];
+      this.entity.descriptionLabel = this.entity["descriptionLabel"];
+      this.entity.hcp = this.entity["hcp"];
+      this.entity.hcps = this.entity["hcps"];
     var html = this.cfg_.template(this.entity);
     var templateDiv = goog.dom.htmlToDocumentFragment(html);
     goog.dom.appendChild(div, templateDiv);
