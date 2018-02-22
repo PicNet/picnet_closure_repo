@@ -29,7 +29,7 @@ pn.ui.grid.pipe.ColWidthsHandler.prototype.preRender = function() {
   var state = pn.storage.get(this.storeId_);
   if (!state) return;
 
-  var processor = new goog.json.EvalJsonProcessor(null, true);
+  var processor = new goog.json.NativeJsonProcessor();
   var widths = processor.parse(state);
   this.slick.getColumns().pnforEach(function(col, idx) {
     col.width = widths[idx];

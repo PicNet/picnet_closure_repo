@@ -83,7 +83,7 @@ pn.ui.grid.pipe.FilteringHandler.prototype.initPersistentFilters_ =
 pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
   var statesStr = pn.storage.get(this.storeId_);
   if (!statesStr) { return; }
-  var processor = new goog.json.EvalJsonProcessor(null, true);
+  var processor = new goog.json.NativeJsonProcessor();
   var filterStates = /** @type {!Object.<string>} */
     (processor.parse(statesStr));
   this.quickFind_.setFilterStates(filterStates);
