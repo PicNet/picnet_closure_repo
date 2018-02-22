@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.pipe.ColWidthsHandler');
 
 goog.require('goog.events.Event');
 goog.require('pn.ui.grid.pipe.GridHandler');
-
+goog.require('goog.json.EvalJsonProcessor');
 
 
 /**
@@ -29,7 +29,8 @@ pn.ui.grid.pipe.ColWidthsHandler.prototype.preRender = function() {
   var state = pn.storage.get(this.storeId_);
   if (!state) return;
 
-  var widths = goog.json.unsafeParse(state);
+  var processor = new goog.json.EvalJsonProcessor(null, true);
+  var widths = processor.parse(state);
   this.slick.getColumns().pnforEach(function(col, idx) {
     col.width = widths[idx];
   });

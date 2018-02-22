@@ -469,7 +469,7 @@ pn.ui.edit.FieldRenderers.createFilteredEntityParentList =
 pn.ui.edit.FieldRenderers.createPrintDiv_ = function(fctx, inp, parent) {
   if (!fctx.spec.createPrintDiv) { return; }
 
-  goog.dom.classes.add(inp, 'hide-on-print');
+  goog.dom.classlist.add(inp, 'hide-on-print');
   var mirror = goog.dom.createDom('div', 'print-only');
   var setText = function() {
     mirror.innerHTML = inp.value.replace(/\n/g, '<br/>');

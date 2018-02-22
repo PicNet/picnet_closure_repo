@@ -60,8 +60,8 @@ pn.ui.edit.EditUtils.setRequired = function(control, id, required) {
     pn.log.log(msg);
     return;
   }
-  if (required) { goog.dom.classes.add(parent, 'required'); }
-  else { goog.dom.classes.remove(parent, 'required'); }
+  if (required) { goog.dom.classlist.add(parent, 'required'); }
+  else { goog.dom.classlist.remove(parent, 'required'); }
 };
 
 

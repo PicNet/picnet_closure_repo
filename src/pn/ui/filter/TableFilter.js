@@ -1,7 +1,7 @@
 
 goog.require('goog.array');
 goog.require('goog.dom');
-goog.require('goog.dom.classes');
+goog.require('goog.dom.classlist');
 goog.require('goog.string');
 goog.require('goog.style');
 goog.require('pn');
@@ -167,7 +167,7 @@ pn.ui.filter.TableFilter.prototype.buildFiltersRow_ = function() {
     }
 
     if (filterClass) {
-      goog.dom.classes.add(td, filterClass);
+      goog.dom.classlist.add(td, filterClass);
     }
     goog.dom.appendChild(tr, td);
   }

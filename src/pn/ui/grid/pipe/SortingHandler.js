@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.pipe.SortingHandler');
 
 goog.require('goog.events.EventHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
-
+goog.require('goog.json.EvalJsonProcessor');
 
 
 /**
@@ -48,7 +48,8 @@ pn.ui.grid.pipe.SortingHandler.prototype.onCustomEvent = function(ev, opt_d) {
 /** @private */
 pn.ui.grid.pipe.SortingHandler.prototype.setGridInitialSortState_ = function() {
   var state = pn.storage.get(this.storeId_);
-  var data = state ? goog.json.unsafeParse(state) : {
+  var processor = new goog.json.EvalJsonProcessor(null, true);
+  var data = state ? processor.parse(state) : {
     'colid': this.cfg.defaultSortColumn,
     'asc': this.cfg.defaultSortAscending
   };

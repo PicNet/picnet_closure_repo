@@ -1,7 +1,7 @@
 
 goog.require('goog.Timer');
 goog.require('goog.dom');
-goog.require('goog.dom.classes');
+goog.require('goog.dom.classlist');
 goog.require('goog.events');
 goog.require('goog.fx.Animation');
 goog.require('goog.fx.easing');
@@ -162,12 +162,12 @@ pn.ui.TabSlideMenu.prototype.initialise_ = function(args) {
   }
 
   if (this.settings_.tabLocation === 'right') {
-    var container = goog.dom.htmlToDocumentFragment(
+    var container = goog.dom.safeHtmlToNode(goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(
         '<div id="' + this.element_.id +
         '-slider-container" class="slider-container" style="height:' +
         this.properties_.containerHeight + 'px;top:' + this.settings_.topPos +
         'px;padding-left:' + this.properties_.tabWidth +
-        'px;position:absolute;overflow:hidden;right:0px;"></div>');
+        'px;position:absolute;overflow:hidden;right:0px;"></div>', null));
     this.element_.style[this.properties_.rightStyleProperty] = '-' +
         this.properties_.containerWidth + 'px';
     this.element_.style.position = 'relative';
@@ -228,10 +228,10 @@ pn.ui.TabSlideMenu.prototype.onAnimate_ = function(e) {
 
   if (e.type === goog.fx.Animation.EventType.END) {
     if (this.slidingIn_) {
-      goog.dom.classes.remove(this.element_, 'open');
+      goog.dom.classlist.remove(this.element_, 'open');
       if (this.settings_.onClose) this.settings_.onClose();
     } else {
-      goog.dom.classes.add(this.element_, 'open');
+      goog.dom.classlist.add(this.element_, 'open');
       if (this.settings_.onOpen) this.settings_.onOpen();
     }
   }
@@ -308,7 +308,7 @@ pn.ui.TabSlideMenu.prototype.clickAction_ = function() {
  * @param {Event} event The click mouse event.
  */
 pn.ui.TabSlideMenu.prototype.handleClickAction_ = function(event) {
-  if (goog.dom.classes.has(this.element_, 'open')) {
+  if (goog.dom.classlist.has(this.element_, 'open')) {
     this.slideIn_();
   } else { this.slideOut_(); }
 };
@@ -320,25 +320,25 @@ pn.ui.TabSlideMenu.prototype.handleClickAction_ = function(event) {
 pn.ui.TabSlideMenu.prototype.hoverAction_ = function() {
   goog.events.listen(this.settings_.tabHandle, goog.events.EventType.MOUSEOVER,
       function() {
-        if (!goog.dom.classes.has(this.element_, 'open')) {
+        if (!goog.dom.classlist.has(this.element_, 'open')) {
           this.slideOut_();
         }
       }, false, this);
   goog.events.listen(this.settings_.tabHandle, goog.events.EventType.MOUSEOUT,
       function() {
-        if (goog.dom.classes.has(this.element_, 'open')) {
+        if (goog.dom.classlist.has(this.element_, 'open')) {
           goog.Timer.callOnce(this.slideIn_, 1000, this);
         }
       }, false, this);
 
   goog.events.listen(this.settings_.tabHandle, goog.events.EventType.CLICK,
       function(event) {
-        if (goog.dom.classes.has(this.element_, 'open')) { this.slideIn_(); }
+        if (goog.dom.classlist.has(this.element_, 'open')) { this.slideIn_(); }
       }, false, this);
   if (this.settings_.toggleButton) {
     goog.events.listen(/** @type {Element} */ (this.settings_.toggleButton),
         goog.events.EventType.CLICK, function(event) {
-          if (goog.dom.classes.has(this.element_, 'open')) { this.slideIn_(); }
+          if (goog.dom.classlist.has(this.element_, 'open')) { this.slideIn_(); }
           else { this.slideOut_(); }
         }, false, this);
   }

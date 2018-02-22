@@ -5,6 +5,7 @@ goog.require('pn');
 goog.require('pn.date');
 
 goog.provide('pn.json');
+goog.require('goog.json.EvalJsonProcessor');
 
 
 /**
@@ -19,7 +20,9 @@ pn.json.parseJson = function(json) {
     window['pn.date.fromMillis'] = pn.date.fromMillis;
 
   var jsonDateSafe = json.replace(regex, 'window["pn.date.fromMillis"]($1)');
-  return goog.json.unsafeParse(jsonDateSafe);
+
+  var processor = new goog.json.EvalJsonProcessor(null, true);
+  return processor.parse(jsonDateSafe);
 };
 
 

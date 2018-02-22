@@ -3,7 +3,7 @@ goog.provide('pn.ui.grid.pipe.FilteringHandler');
 
 goog.require('goog.events.EventHandler');
 goog.require('pn.ui.grid.pipe.GridHandler');
-
+goog.require('goog.json.EvalJsonProcessor');
 
 
 /**
@@ -83,8 +83,9 @@ pn.ui.grid.pipe.FilteringHandler.prototype.initPersistentFilters_ =
 pn.ui.grid.pipe.FilteringHandler.prototype.setSavedFilterStates_ = function() {
   var statesStr = pn.storage.get(this.storeId_);
   if (!statesStr) { return; }
+  var processor = new goog.json.EvalJsonProcessor(null, true);
   var filterStates = /** @type {!Object.<string>} */
-      (goog.json.unsafeParse(statesStr));
+    (processor.parse(statesStr));
   this.quickFind_.setFilterStates(filterStates);
 };
 

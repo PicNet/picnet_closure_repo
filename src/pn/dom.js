@@ -122,5 +122,5 @@ pn.dom.addHtml = function(parent, html) {
 pn.dom.htmlToEl = function(html) {
   pn.assStr(html);
 
-  return /** @type {!Element} */ (goog.dom.htmlToDocumentFragment(html));
+  return /** @type {!Element} */ (goog.dom.safeHtmlToNode(goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(html, null)));
 };
