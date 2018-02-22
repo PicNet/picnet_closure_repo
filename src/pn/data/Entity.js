@@ -17,13 +17,13 @@ pn.data.Entity = function(type, id) {
   pn.ass(goog.isNumber(id), 'ID [%s] is invalid', id);
 
   /**
-   * @expose
+   * @export
    * @type {string}
    */
   this.type = type;
 
   /**
-   * @expose
+   * @export
    * @type {number}
    */
   this.id = id;

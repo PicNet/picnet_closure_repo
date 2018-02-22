@@ -18,14 +18,14 @@ pn.data.PnQuery = function(type, opt_linq) {
   /**
    * @type {string}
    * @const
-   * @expose
+   * @export
    */
   this.Type = type;
 
   /**
    * @type {string}
    * @const
-   * @expose
+   * @export
    */
   this.Linq = opt_linq || '';
 };

@@ -55,20 +55,20 @@ pn.ui.grid.editors.SelectEditor.prototype.init_ = function() {
 };
 
 
-/** @expose */
+/** @export */
 pn.ui.grid.editors.SelectEditor.prototype.destroy = function() {
   this.ctl_.remove();
 };
 
 
-/** @expose */
+/** @export */
 pn.ui.grid.editors.SelectEditor.prototype.focus = function() {
   this.ctl_.focus();
 };
 
 
 /**
- * @expose
+ * @export
  * @param {!Object} item The item to load.
  */
 pn.ui.grid.editors.SelectEditor.prototype.loadValue = function(item) {
@@ -80,7 +80,7 @@ pn.ui.grid.editors.SelectEditor.prototype.loadValue = function(item) {
 
 
 /**
- * @expose
+ * @export
  * @return {string|boolean} The value of the current select control.
  */
 pn.ui.grid.editors.SelectEditor.prototype.serializeValue = function() {
@@ -94,7 +94,7 @@ pn.ui.grid.editors.SelectEditor.prototype.serializeValue = function() {
 
 
 /**
- * @expose
+ * @export
  * @param {!Object} item The item to save the value to.
  * @param {string} state The value selected.
  */
@@ -107,7 +107,7 @@ pn.ui.grid.editors.SelectEditor.prototype.applyValue = function(item, state) {
 
 
 /**
- * @expose
+ * @export
  * @return {boolean} Wether the value is dirty (has changed).
  */
 pn.ui.grid.editors.SelectEditor.prototype.isValueChanged = function() {
@@ -116,7 +116,7 @@ pn.ui.grid.editors.SelectEditor.prototype.isValueChanged = function() {
 
 
 /**
- * @expose
+ * @export
  * @return {{valid:boolean, msg:string?}} The validation information for
  *    this control.
  */
